@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angst - TrøstMig.dk</title>
+    
+    <!-- VIGTIG: Central TTS konfiguration -->
+    <script src="tts-config.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #9f7aea;
+            --accent-hover: #b794f4;
+            --border: #4a5568;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        
+        .welcome-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .welcome-message {
+            max-width: 700px;
+            padding: 40px;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            animation: fadeIn 2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .skip-intro {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .emergency-notice {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 80px 20px 20px;
+            text-align: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        [data-theme="dark"] .emergency-notice {
+            background: rgba(254, 242, 242, 0.1);
+        }
+        
+        .emergency-notice a {
+            color: #dc2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .main-selection {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .main-selection.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .script-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 500;
+        }
+        
+        .script-display.active {
+            display: flex;
+            flex-direction: column;
+            padding-top: 70px;
+        }
+        
+        .script-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .script-content {
+            max-width: 800px;
+            font-size: 1.3rem;
+            line-height: 2;
+        }
+        
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px var(--shadow);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        .back-to-selection {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .selection-grid { grid-template-columns: 1fr; }
+            .script-content { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-message" id="welcomeText"></div>
+        <button class="skip-intro" onclick="skipIntro()">Spring over</button>
+    </div>
+    
+    <div class="nav-header">
+        <a href="index.html" class="back-link" id="backLink">← Tilbage til forsiden</a>
+        <div class="nav-controls">
+            <select class="voice-selector" id="voiceSelector" onchange="changeVoice()"></select>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+    
+    <div class="emergency-notice">
+        <strong>Hvis du har panikangst eller selvmordstanker:</strong> 
+        <a href="tel:70201201">Ring Livslinjen 70 20 12 01</a> eller 
+        <a href="tel:116123">Psykiatrifonden 116 123</a>. 
+        Du er ikke alene.
+    </div>
+    
+    <div class="main-selection" id="mainSelection">
+        <div class="selection-header">
+            <h1>Angst</h1>
+            <p>Find ro og kontrol. Du kan håndtere dette.</p>
+        </div>
+        <div class="selection-grid">
+            <div class="selection-card" onclick="startSection('akut')">
+                <div class="selection-icon">🌊</div>
+                <h2>Akut ro</h2>
+                <p>Når panikken eller angsten er overvældende. Øjeblikkelig lindring.</p>
+            </div>
+            <div class="selection-card" onclick="startSection('forstaa')">
+                <div class="selection-icon">🧠</div>
+                <h2>Forstå angst</h2>
+                <p>Hvad sker der i din krop og hjerne? Viden giver kontrol.</p>
+            </div>
+            <div class="selection-card" onclick="startSection('vaerktoj')">
+                <div class="selection-icon">🛠️</div>
+                <h2>Værktøjer</h2>
+                <p>Praktiske teknikker til daglig håndtering af angst.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="script-display" id="scriptDisplay">
+        <div class="script-text">
+            <div class="script-content" id="scriptContent"></div>
+        </div>
+        <div class="controls-bar">
+            <button class="control-btn" onclick="previousScript()">◀</button>
+            <button class="control-btn" onclick="togglePlay()" id="playBtn">▶</button>
+            <button class="control-btn" onclick="nextScript()">▶</button>
+            <span id="progressIndicator">1 / 40</span>
+            <button class="back-to-selection" onclick="backToSelection()">← Tilbage til angst</button>
+        </div>
+    </div>
+    
+    <script>
+        const welcomeMessages = [
+            "Angst er ubehagelig, men den er ikke farlig. Din krop reagerer på en trussel der ikke er der.",
+            "Det du oplever lige nu - hjertebanken, svimmelhed, åndenød - er angst. Det er midlertidigt og det går over.",
+            "Angsten lyver for dig. Den siger 'farligt!' om ting der er sikre. Du kan lære at se gennem løgnen.",
+            "Din hjerne er i høj alarmberedskab. Men der er ingen reel fare. Vi hjælper dig med at slukke alarmen.",
+            "Millioner kender til denne følelse. Du er ikke alene, og der findes veje ud af angsten."
+        ];
+        
+        const scriptsDatabase = {
+            akut: [
+                "Du er sikker lige nu. Gentag: 'Jeg er sikker. Dette er angst, ikke fare.'",
+                "Tæl din vejrtrækning: Indånd 1-2-3-4, hold 1-2-3-4, udånd 1-2-3-4-5-6.",
+                "Læg mærke til 5 ting du kan se. Navngiv dem højt eller i dit hoved.",
+                "Mærk dine fødder mod gulvet. Pres dem ned. Du er jordforbundet.",
+                "Angst topper efter 10 minutter. Du er måske halvvejs igennem allerede.",
+                "Kold vand i ansigtet aktiverer vagusnerven og stopper panik. Prøv det.",
+                "Spænd hver muskel i 5 sekunder, slap så af. Start med tæerne, arbejd opad.",
+                "Lav en lyd - hum, syng, råb. Det afbryder panikcyklus.",
+                "Tæl baglæns fra 100 i syv'ere. Det optager din nervøse hjerne.",
+                "Din krop kan ikke være både afslappet OG i panik. Bevidst slap af i skuldrene.",
+                "Forestil dig din angst som en bølge - den stiger, topper, og falder altid.",
+                "Angreb varer 3-10 minutter max. Check tiden - se den gå over.",
+                "Bevæg dig - gå, hop, ryk - for at metabolisere stress-hormoner.",
+                "Tal til dig selv som til et barn: 'Det er okay, jeg er her, vi klarer det.'",
+                "Åbn et vindue. Frisk luft og temperaturskift hjælper.",
+                "Brug 54321: 5 ting du ser, 4 du mærker, 3 du hører, 2 du lugter, 1 du smager.",
+                "Angsten kan ikke skade dig. Ubehagelig ≠ farlig.",
+                "Drik koldt vand langsomt. Fokuser på følelsen.",
+                "Massage dine håndflader, øreflippe, eller nakke. Fysisk stimulation hjælper.",
+                "Gentag et mantra: 'Dette går over. Jeg har overlevet før. Jeg overlever nu.'",
+                "Ring til nogen. Fortæl dem 'Jeg har angst lige nu.' Connection hjælper.",
+                "Lav matematik: Hvor mange dage til jul? Hvor gammel er din mor? Omdiriger hjernen.",
+                "Forestil dig din angst som en kurve på en skærm - se den falde.",
+                "Accepter følelsen i stedet for at kæmpe. 'Okay angst, du er her. Gør dit.'",
+                "Husk: Du har 100% track record for at overleve angstanfald. Denne gang er ikke anderledes.",
+                "Fokuser på noget i rummet. Beskriv det detaljeret i dit hoved.",
+                "Placer hånden på maven. Mærk den bevæge sig med din vejrtrækning.",
+                "Angst er falsk alarm. Din røgalarm bipper ved brændt toast, ikke brand.",
+                "Gå til badeværelset. Splash vand, se dig i spejlet, mind dig om hvem du er.",
+                "Skift miljø hvis muligt. Gå ud, til et andet rum, ændre scenen.",
+                "Sæt ord på følelsen: 'Jeg har hurtig puls, svimmelhed, jeg føler panik.'",
+                "Find noget blødt at røre - en trøje, et tæppe, dit hår.",
+                "Lugt noget stærkt - parfume, pebermynte, kaffe. Sansestimulation hjælper.",
+                "Husk at DU kontrollerer din vejrtrækning. Tag vejret tilbage.",
+                "Put isterninger i hænderne. Kulde afbryder paniksignal.",
+                "Forestil dig dit trygge sted. Byg detaljerne i dit hoved.",
+                "Angsten vil forsøge at få dig til at flygte. Bliv. Vis din hjerne der ikke er fare.",
+                "Ryst dine hænder, arme, ben. Ryst angsten af.",
+                "Lyt til en særlig sang du har klaret angst igennem før.",
+                "Nu er du her. Nu ånder du. Nu er du sikker. Kun nu tæller."
+            ],
+            forstaa: [
+                "Angst er din hjernes overdrevne beskyttelsesmekanisme. Den er ikke defekt - bare overivrig.",
+                "Din amygdala (frygtcenter) reagerer hurtigere end din tænkende hjerne kan analysere.",
+                "Fight-or-flight responset er designet til løver, ikke arbejde eller sociale situationer.",
+                "Adrenalin og cortisol i blodet giver alle de fysiske symptomer. Det er biokemi.",
+                "Din vagusnerve kan aktiveres for at slukke stress-responset. Du har kontrollen.",
+                "Hjertebanken er din krop der pumper blod til muskler for at 'flygte'. Ingen fare.",
+                "Hyperventilation ændrer CO2-niveauer. Derfor svimmelhed. Kontroller vejrtrækning.",
+                "Angst er fremtidsorienteret - din hjerne forestiller sig trusler der måske aldrig sker.",
+                "Neurotransmittere som GABA og serotonin er ofte ude af balance ved angst.",
+                "Hippocampus (kontekst) bliver offline under angst. Derfor føles alt farligt.",
+                "Din hjerne kan ikke skelne mellem faktisk fare og forestillet fare.",
+                "Kronisk angst kan ændre hjernens struktur, MEN neuroplasticitet betyder du kan ændre den tilbage.",
+                "HPA-aksen (stress-system) bliver overaktiv. Den 'tror' du er under angreb konstant.",
+                "Inflammation i kroppen kan drive angst. Det er ikke kun mentalt.",
+                "Dårlig søvn dysregulerer dit nervesystem. Angst og søvnløshed fodrer hinanden.",
+                "Koffein og alkohol påvirker angst negativt via neurochemistry.",
+                "Din prefrontale cortex (rationel tænkning) får mindre blodflow under angst.",
+                "Tarmfloraen påvirker humør og angst via gut-brain axis.",
+                "Generaliseret angst vs. specifik fobi vs. panikangst - forskellige hjernemekanismer.",
+                "Sensitivitet til interoceptive signaler - du mærker for meget af hvad der sker i kroppen.",
+                "Sikkerhedsadfærd vedligeholder angst. Undgåelse lærer hjernen at fare er reel.",
+                "Anticipatorisk angst - at være bange for at blive bange - skaber onde cirkler.",
+                "Kognitiv fusion - du tror dine tanker er sandheden. De er bare tanker.",
+                "Katastrofetænkning aktiverer samme hjernedele som faktisk trussel.",
+                "Din hjerne lagrer traumatiske oplevelser i amygdala uden tidskode.",
+                "Neurogenese - nye hjerneceller - kan fremmes med motion og meditation.",
+                "GABA-receptorer kan blive mindre følsomme. Benzodiazepiner virker her.",
+                "Oxytocin fra social kontakt modvirker cortisol. Connection healer.",
+                "Din 'window of tolerance' - hvor meget stress du kan håndtere - kan udvides.",
+                "Hypersensitivt nervesystem - nogle er født med mere reaktivt autonomt nervesystem.",
+                "Interoceptive exposure - at lære at fysiske sensationer ikke er farlige.",
+                "Default mode network overaktivitet - derfor kan du ikke stoppe grubling.",
+                "Angst kan være lærd respons fra opvækst eller erfaring.",
+                "Epigenetik - stress ændrer genekspression, men det er reversibelt.",
+                "Insula cortex misfortolker kroppens signaler som farlige.",
+                "Din sympathiske nervesystem kører i overdrev. Parasympathetic kan aktiveres.",
+                "Myelinering påvirkes af kronisk stress - derfor træg tænkning ved angst.",
+                "Angst kan være resultat af unbalance mellem bottom-up (følelser) og top-down (kontrol).",
+                "Neuroplastiske ændringer tager 8-12 uger. Vær tålmodig med recovery.",
+                "Din hjerne KAN re-læres at føle sig sikker. Exposure og terapi virker."
+            ],
+            vaerktoj: [
+                "Box breathing dagligt: 4 ind, 4 hold, 4 ud, 4 hold. 5 minutter.",
+                "Progressive muskelafslapning om aftenen. Spænd og slip hver muskelgruppe.",
+                "Eksponering gradvist: Lav liste fra mindst til mest angstprovokerende.",
+                "Mindfulness meditation 10 min dagligt. Observer tanker uden at reagere.",
+                "Kognitive omstruktureringer: Identificer forvrængning i tanke.",
+                "Acceptans fremfor kamp. 'Velkommen angst, gør dit, jeg fortsætter.'",
+                "Fysisk aktivitet dagligt. Motion regulerer nervesystem bedre end medicin.",
+                "Søvnhygiejne: Samme tider, mørkt rum, ingen skærme 1 time før.",
+                "Anti-inflammatorisk kost: Omega-3, grøntsager, undgå sukker.",
+                "Skriv bekymringer i tidsbegrænset periode. Så læg dem væk.",
+                "Defusion teknikker: 'Jeg bemærker tanken at...' i stedet for 'Jeg er...'",
+                "Opbyg angst-tolerance: Sid med følelsen i stigende perioder.",
+                "Sociale eksponering: Start småt, øg gradvist.",
+                "Lær at mærke forskel på angst og faktisk fare.",
+                "Varm bad med magnesium (Epsom salt) om aftenen.",
+                "Begrænset koffein og alkohol. Begge forværrer angst.",
+                "Yoga eller tai chi for at regulere nervesystem.",
+                "Journaling: Skriv dine frygte ud af hovedet og på papir.",
+                "Skab sikkerhedsoplevelser: Små succeser hvor du klarer angsten.",
+                "Naturoplevelser 2 timer ugentligt. Grønt miljø reducerer cortisol.",
+                "Cold exposure: Kolde brusere træner nervesystem i regulation.",
+                "Dybe relationer: Tal om angsten i stedet for at skjule den.",
+                "Humor og latter frigiver endorfiner der modvirker stress.",
+                "Kreativt udtryk: Tegn, musik, dans - alternative processing pathways.",
+                "Mindful vejrtrækning når angst starter: 4 dybe vejrtrækninger.",
+                "Drop sikkerhedsadfærd gradvist. Test dine fears.",
+                "Byg rutine: Struktur giver tryghed for angst-hjerner.",
+                "Grænser: Lær at sige nej. Overcommitment trigger angst.",
+                "Mestre noget nyt: Kompetence bygger self-efficacy.",
+                "Søg professionel hjælp: Terapi + evt. medicin når nødvendigt.",
+                "EFT tapping: Akupressur points for angst-lindring.",
+                "4-7-8 breathing: Ind 4, hold 7, ud 8. Instant calm.",
+                "Lav worst-case scenarie: Gå det igennem rationelt.",
+                "Reality testing: Hvad er faktisk sandsynlighed for din frygt?",
+                "Byg support netværk: Find din tribe.",
+                "Timer-trick: 'Jeg kan håndtere dette i 10 minutter mere.'",
+                "Selvkompassion: Vær venlig mod dig selv når angsten rammer.",
+                "Fejr små sejre: Hver gang du håndterer angst er fremskridt.",
+                "Husk: Recovery er muligt. Angst er behandlingsbar. Du kan lære at leve frit.",
+                "Byg din angst-værktøjskasse. Test og find hvad virker for DIG."
+            ]
+        };
+        
+        // Voice management
+        function populateVoiceSelector() {
+            const selector = document.getElementById('voiceSelector');
+            if (!window.TrøstMigTTS) return;
+            
+            const voices = window.TrøstMigTTS.getVoices();
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = voice.description;
+                selector.appendChild(option);
+            });
+            
+            selector.value = 9; // Despina by default
+        }
+        
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelector');
+            const voiceIndex = parseInt(selector.value);
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.setVoice(voiceIndex);
+            }
+        }
+        
+        let currentSection = null;
+        let currentScriptIndex = 0;
+        let isPlaying = false;
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.TrøstMigTTS) {
+                populateVoiceSelector();
+                window.TrøstMigTTS.setVoice(9);
+            }
+            
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            
+            const randomMsg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+            document.getElementById('welcomeText').textContent = randomMsg;
+            setTimeout(skipIntro, 8000);
+        });
+        
+        function skipIntro() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('mainSelection').classList.add('active');
+        }
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        function startSection(section) {
+            currentSection = section;
+            currentScriptIndex = 0;
+            document.getElementById('mainSelection').classList.remove('active');
+            document.getElementById('scriptDisplay').classList.add('active');
+            document.getElementById('backLink').style.display = 'none';
+            loadScript();
+        }
+        
+        function backToSelection() {
+            if (window.speechSynthesis) speechSynthesis.cancel();
+            document.getElementById('scriptDisplay').classList.remove('active');
+            document.getElementById('mainSelection').classList.add('active');
+            document.getElementById('backLink').style.display = 'flex';
+            currentSection = null;
+            isPlaying = false;
+        }
+        
+        function loadScript() {
+            if (!currentSection) return;
+            const scripts = scriptsDatabase[currentSection];
+            const script = scripts[currentScriptIndex];
+            document.getElementById('scriptContent').textContent = script;
+            document.getElementById('progressIndicator').textContent = `${currentScriptIndex + 1} / ${scripts.length}`;
+            setTimeout(() => speakText(script), 500);
+        }
+        
+        function nextScript() {
+            const scripts = scriptsDatabase[currentSection];
+            if (currentScriptIndex < scripts.length - 1) {
+                currentScriptIndex++;
+                loadScript();
+            }
+        }
+        
+        function previousScript() {
+            if (currentScriptIndex > 0) {
+                currentScriptIndex--;
+                loadScript();
+            }
+        }
+        
+        function togglePlay() {
+            if (isPlaying) {
+                speechSynthesis.pause();
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+            } else {
+                if (speechSynthesis.paused) {
+                    speechSynthesis.resume();
+                } else {
+                    loadScript();
+                }
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            }
+        }
+        
+        function speakText(text) {
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.speak(text);
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            } else {
+                if (!('speechSynthesis' in window)) return;
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'da-DK';
+                utterance.rate = 0.9;
+                utterance.onstart = () => {
+                    isPlaying = true;
+                    document.getElementById('playBtn').textContent = '⏸';
+                };
+                utterance.onend = () => {
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶';
+                    setTimeout(() => nextScript(), 3000);
+                };
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('scriptDisplay').classList.contains('active')) return;
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowRight':
+                    nextScript();
+                    break;
+                case 'ArrowLeft':
+                    previousScript();
+                    break;
+                case 'Escape':
+                    backToSelection();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

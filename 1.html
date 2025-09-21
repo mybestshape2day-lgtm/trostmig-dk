@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Udtale Test - Avanceret</title>
+    
+    <!-- VIGTIG: Brug TrøstMigTTS systemet -->
+    <script src="tts-config.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .voice-selector-container {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .voice-selector {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid white;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            color: #2d3748;
+            cursor: pointer;
+            min-width: 300px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .version-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            color: #2d3748;
+        }
+        
+        .version-card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .version-card.original h2 { color: #ef4444; }
+        .version-card.basic h2 { color: #f59e0b; }
+        .version-card.advanced h2 { color: #10b981; }
+        
+        .script-item {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .script-number {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .script-text {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .play-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .play-btn:hover {
+            background: #5568d3;
+        }
+        
+        .play-btn.playing {
+            background: #ef4444;
+        }
+        
+        .explanation {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .explanation h4 {
+            margin-bottom: 8px;
+            color: #667eea;
+        }
+        
+        .explanation ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .explanation li {
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .explanation li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+        
+        .tips-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            color: #2d3748;
+            margin-top: 40px;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ TTS Udtale Test - Avanceret Optimering</h1>
+        
+        <!-- STEMME-VÆLGER -->
+        <div class="voice-selector-container">
+            <label for="voiceSelect" style="display: block; margin-bottom: 10px; font-size: 1.2rem;">Vælg stemme:</label>
+            <select id="voiceSelect" class="voice-selector" onchange="changeVoice()">
+                <!-- Fyldes af JavaScript -->
+            </select>
+        </div>
+        
+        <div class="comparison-grid">
+            <!-- ORIGINAL VERSION -->
+            <div class="version-card original">
+                <h2>❌ Original (Problematisk)</h2>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 1: Store bogstaver</div>
+                    <div class="script-text" id="original1">
+                        FØR du fortsætter, PRØV denne ØVELSE. Tag en DYB vejrtrækning GENNEM næsen.
+                    </div>
+                    <button class="play-btn" onclick="play('original1', this)">▶ Lyt</button>
+                </div>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 2: Vejrtrækning</div>
+                    <div class="script-text" id="original2">
+                        Box breathing: Indånd 1-2-3-4, hold 1-2-3-4, udånd 1-2-3-4, hold 1-2-3-4. Gentag 5 gange.
+                    </div>
+                    <button class="play-btn" onclick="play('original2', this)">▶ Lyt</button>
+                </div>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 3: Lang sætning</div>
+                    <div class="script-text" id="original3">
+                        Når du mærker angsten komme, er det vigtigt at du husker at tage det roligt og ånde dybt samtidig med at du forsøger at fokusere på noget andet end det der gør dig nervøs.
+                    </div>
+                    <button class="play-btn" onclick="play('original3', this)">▶ Lyt</button>
+                </div>
+            </div>
+            
+            <!-- BASIC OPTIMERET -->
+            <div class="version-card basic">
+                <h2>⚠️ Basis Optimering</h2>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 1: Store bogstaver</div>
+                    <div class="script-text" id="basic1">
+                        Inden du fortsætter, prøv denne teknik. Tag en dyb vejrtrækning igennem næsen.
+                    </div>
+                    <button class="play-btn" onclick="play('basic1', this)">▶ Lyt</button>
+                    
+                    <div class="explanation">
+                        <h4>Ændringer:</h4>
+                        <ul>
+                            <li>Store bogstaver → små</li>
+                            <li>FØR → Inden</li>
+                            <li>ØVELSE → teknik</li>
+                            <li>GENNEM → igennem</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 2: Vejrtrækning</div>
+                    <div class="script-text" id="basic2">
+                        Box breathing. Indånd. En to tre fire. Hold. En to tre fire. Udånd. En to tre fire. Hold. En to tre fire. Gentag fem gange.
+                    </div>
+                    <button class="play-btn" onclick="play('basic2', this)">▶ Lyt</button>
+                    
+                    <div class="explanation">
+                        <h4>Ændringer:</h4>
+                        <ul>
+                            <li>Tal som ord (ikke cifre)</li>
+                            <li>Punktum mellem trin</li>
+                            <li>5 → fem</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 3: Lang sætning</div>
+                    <div class="script-text" id="basic3">
+                        Når du mærker angsten komme, skal du huske at tage det roligt. Ånd dybt. Fokuser på noget andet. Noget der ikke gør dig nervøs.
+                    </div>
+                    <button class="play-btn" onclick="play('basic3', this)">▶ Lyt</button>
+                    
+                    <div class="explanation">
+                        <h4>Ændringer:</h4>
+                        <ul>
+                            <li>Opdelt i 4 sætninger</li>
+                            <li>Kortere enheder</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ADVANCED OPTIMERET -->
+            <div class="version-card advanced">
+                <h2>✅ Avanceret (Med menneskelige lyde)</h2>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 1: Store bogstaver</div>
+                    <div class="script-text" id="advanced1">
+                        Okay. Inden du fortsætter. Lad os prøve denne teknik. Tag nu en dyb vejrtrækning. Igennem næsen. Sådan ja.
+                    </div>
+                    <button class="play-btn" onclick="play('advanced1', this)">▶ Lyt</button>
+                    
+                    <div class="explanation">
+                        <h4>Avancerede tricks:</h4>
+                        <ul>
+                            <li>+"Okay" (naturlig start)</li>
+                            <li>+"Lad os" (inkluderende)</li>
+                            <li>+"Nu" (nu-fokus)</li>
+                            <li>+"Sådan ja" (bekræftende)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 2: Vejrtrækning</div>
+                    <div class="script-text" id="advanced2">
+                        Okay. Lad os lave box breathing sammen. Klar? Indånd. En. To. Tre. Fire. Hold nu. En. To. Tre. Fire. Godt. Udånd. En. To. Tre. Fire. Fem. Seks. Fint. Hold igen. En. To. Tre. Fire. Perfekt. Gentag dette fem gange mere.
+                    </div>
+                    <button class="play-btn" onclick="play('advanced2', this)">▶ Lyt</button>
+                    
+                    <div class="explanation">
+                        <h4>Avancerede tricks:</h4>
+                        <ul>
+                            <li>+"Lad os...sammen"</li>
+                            <li>+"Klar?" (engagement)</li>
+                            <li>+"Godt", "Fint", "Perfekt" (bekræftelse)</li>
+                            <li>+"Nu", "Igen" (guidning)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="script-item">
+                    <div class="script-number">Test 3: Lang sætning</div>
+                    <div class="script-text" id="advanced3">
+                        Hmm. Når du mærker angsten komme. Så. Tag det roligt. Ånd dybt. Sådan. Godt. Fokuser nu på noget helt andet. Noget behageligt. Noget der ikke gør dig nervøs. Det går fint.
+                    </div>
+                    <button class="play-btn" onclick="play('advanced3', this)">▶ Lyt</button>
+                    
+                    <div class="explanation">
+                        <h4>Avancerede tricks:</h4>
+                        <ul>
+                            <li>+"Hmm" (tænkepause)</li>
+                            <li>+"Så" (connecting word)</li>
+                            <li>+"Sådan", "Godt" (opfordring)</li>
+                            <li>+"Det går fint" (beroligelse)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TIPS SEKTION -->
+        <div class="tips-section">
+            <h2>🎯 Regler for God Dansk TTS</h2>
+            
+            <div class="tips-grid">
+                <div>
+                    <h3 style="color: #ef4444; margin-bottom: 15px;">❌ Lyder Robotagtigt:</h3>
+                    <ul style="line-height: 2;">
+                        <li><strong>STORE BOGSTAVER</strong> - Lyder unaturligt</li>
+                        <li>FØR, GENNEM - Udtales forkert</li>
+                        <li>1-2-3-4 - Hurtige cifre</li>
+                        <li>Lange sætninger (30+ ord)</li>
+                        <li>Ingen pauser/flow</li>
+                        <li>Fagsprog og komplicerede ord</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #10b981; margin-bottom: 15px;">✅ Lyder Naturligt:</h3>
+                    <ul style="line-height: 2;">
+                        <li><strong>små bogstaver</strong> - Normal tale</li>
+                        <li>Inden, igennem - Simple ord</li>
+                        <li>En to tre fire - Tal som ord</li>
+                        <li>Korte sætninger (8-15 ord)</li>
+                        <li>Punktum = pause</li>
+                        <li>Dagligdags sprog</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #3b82f6; margin-bottom: 15px;">💡 Menneskelige Tricks:</h3>
+                    <ul style="line-height: 2;">
+                        <li><strong>"Okay"</strong> - Starter naturligt</li>
+                        <li><strong>"Hmm"</strong> - Tænkepause</li>
+                        <li><strong>"Sådan", "Godt"</strong> - Bekræftelse</li>
+                        <li><strong>"Lad os"</strong> - Inkluderende</li>
+                        <li><strong>"Nu", "Så"</strong> - Guidende ord</li>
+                        <li><strong>"Det går fint"</strong> - Beroligende</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 10px;">
+                <h3 style="color: #92400e; margin-bottom: 10px;">🔑 Gylden Regel:</h3>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #78350f;">
+                    <strong>Skriv som om du taler til en ven.</strong> Brug små ord, korte sætninger, og tilføj små bekræftende ord ("okay", "godt", "sådan") for at skabe flow. Test altid ved at læse højt først!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Populate voice selector med TrøstMigTTS
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.TrøstMigTTS) {
+                const selector = document.getElementById('voiceSelect');
+                const voices = window.TrøstMigTTS.getVoices();
+                
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = voice.description;
+                    selector.appendChild(option);
+                });
+                
+                // Set default til Despina (index 9)
+                selector.value = 9;
+                window.TrøstMigTTS.setVoice(9);
+            }
+        });
+        
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelect');
+            const voiceIndex = parseInt(selector.value);
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.setVoice(voiceIndex);
+            }
+        }
+        
+        let currentButton = null;
+        
+        function play(elementId, button) {
+            // Stop previous audio
+            if (currentButton) {
+                speechSynthesis.cancel();
+                currentButton.textContent = '▶ Lyt';
+                currentButton.classList.remove('playing');
+            }
+            
+            const text = document.getElementById(elementId).textContent.trim();
+            
+            button.textContent = '⏹ Stop';
+            button.classList.add('playing');
+            currentButton = button;
+            
+            // Brug TrøstMigTTS hvis tilgængeligt
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.speak(text);
+                
+                // Reset button after approximate duration
+                setTimeout(() => {
+                    if (currentButton === button) {
+                        button.textContent = '▶ Lyt';
+                        button.classList.remove('playing');
+                        currentButton = null;
+                    }
+                }, text.length * 70);
+            } else {
+                // Fallback til browser TTS
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'da-DK';
+                utterance.rate = 0.9;
+                
+                utterance.onend = () => {
+                    button.textContent = '▶ Lyt';
+                    button.classList.remove('playing');
+                    currentButton = null;
+                };
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+</body>
+</html>

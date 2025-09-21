@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrøstMig.dk - Mental sundhed og støtte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --sos-bg: #dc2626;
+            --sos-hover: #b91c1c;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #9f7aea;
+            --accent-hover: #b794f4;
+            --border: #4a5568;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --sos-bg: #ef4444;
+            --sos-hover: #dc2626;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        /* Hero Section with SOS */
+        .hero-section {
+            text-align: center;
+            padding: 40px 0;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+
+        /* Big SOS Button */
+        .big-sos-button {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 25px 50px;
+            border-radius: 100px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.4);
+            animation: pulse-sos 2s infinite;
+            margin: 0 auto;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.3s;
+        }
+
+        .big-sos-button:hover {
+            transform: scale(1.1);
+        }
+
+        .sos-icon {
+            font-size: 2rem;
+        }
+
+        .sos-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .sos-subtext {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        @keyframes pulse-sos {
+            0%, 100% { 
+                box-shadow: 0 10px 40px rgba(239, 68, 68, 0.4);
+            }
+            50% { 
+                box-shadow: 0 15px 60px rgba(239, 68, 68, 0.6);
+            }
+        }
+
+        /* Crisis Bar */
+        .crisis-bar {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        [data-theme="dark"] .crisis-bar {
+            background: rgba(254, 242, 242, 0.1);
+        }
+
+        .crisis-link {
+            color: var(--sos-bg);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .crisis-link:hover {
+            background: white;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.2);
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: all 0.3s;
+            border-radius: 8px 8px 0 0;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            background: var(--bg-secondary);
+        }
+
+        .tab-button.active {
+            color: var(--accent);
+            background: var(--bg-secondary);
+            font-weight: bold;
+        }
+
+        /* Category sections */
+        .category-section {
+            display: none;
+        }
+
+        .category-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .category-card:hover::before {
+            transform: translateY(0);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .category-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .category-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Special cards */
+        .special-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .special-card .category-description {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Floating SOS */
+        .floating-sos {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.5);
+            z-index: 999;
+            animation: float 3s ease-in-out infinite;
+            text-decoration: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* SOS Modal */
+        .sos-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .sos-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sos-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .sos-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sos-header h2 {
+            color: var(--sos-bg);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .sos-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .sos-option {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .sos-option:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .sos-option strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .close-modal {
+            background: var(--text-secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .crisis-bar {
+                flex-direction: column;
+            }
+            
+            .category-tabs {
+                overflow-x: scroll;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">TrøstMig.dk</div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </header>
+
+        <!-- Hero Section with Central SOS -->
+        <div class="hero-section">
+            <h1>TrøstMig.dk</h1>
+            <p>Find ro når livet gør ondt</p>
+            
+            <button class="big-sos-button" onclick="openSOS()">
+                <span class="sos-icon">🆘</span>
+                <span class="sos-text">AKUT HJÆLP</span>
+                <span class="sos-subtext">Tryk her hvis du har det rigtig svært</span>
+            </button>
+        </div>
+
+        <!-- Crisis Bar -->
+        <div class="crisis-bar">
+            <a href="tel:70201201" class="crisis-link">
+                📞 Livslinjen: 70 20 12 01
+            </a>
+            <a href="tel:116123" class="crisis-link">
+                📞 Psykiatrifonden: 116 123  
+            </a>
+            <a href="sms:1999" class="crisis-link">
+                💬 SMS: 1999 (Børn/unge)
+            </a>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <button class="tab-button" onclick="showCategory('akut')">Akut hjælp</button>
+            <button class="tab-button" onclick="showCategory('almindelige')">Almindelige udfordringer</button>
+            <button class="tab-button" onclick="showCategory('specifikke')">Specifikke tilstande</button>
+            <button class="tab-button" onclick="showCategory('livssituationer')">Livssituationer</button>
+            <button class="tab-button active" onclick="showCategory('alle')">Vis alle</button>
+        </div>
+
+        <!-- Akut hjælp -->
+        <div id="akut" class="category-section">
+            <h2 class="section-title">Akut hjælp og kriser</h2>
+            <div class="category-grid">
+                <a href="selvmordstanker.html" class="category-card">
+                    <span class="category-icon">🚨</span>
+                    <div class="category-name">Selvmordstanker</div>
+                    <div class="category-description">Du er ikke alene - find hjælp og håb her</div>
+                </a>
+
+                <a href="panik.html" class="category-card">
+                    <span class="category-icon">😱</span>
+                    <div class="category-name">Panikangst</div>
+                    <div class="category-description">Stop panikken og find ro igen</div>
+                </a>
+
+                <a href="selvskade.html" class="category-card">
+                    <span class="category-icon">🩹</span>
+                    <div class="category-name">Selvskade</div>
+                    <div class="category-description">Alternativer til at skade dig selv</div>
+                </a>
+
+                <a href="akut-krise.html" class="category-card">
+                    <span class="category-icon">⚡</span>
+                    <div class="category-name">Akut krise</div>
+                    <div class="category-description">Når alt falder fra hinanden</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Almindelige udfordringer -->
+        <div id="almindelige" class="category-section">
+            <h2 class="section-title">Almindelige udfordringer</h2>
+            <div class="category-grid">
+                <a href="angst.html" class="category-card">
+                    <span class="category-icon">😰</span>
+                    <div class="category-name">Angst</div>
+                    <div class="category-description">Håndter bekymringer og uro</div>
+                </a>
+
+                <a href="depression.html" class="category-card">
+                    <span class="category-icon">😔</span>
+                    <div class="category-name">Depression</div>
+                    <div class="category-description">Find lys i mørket</div>
+                </a>
+
+                <a href="stress.html" class="category-card">
+                    <span class="category-icon">😣</span>
+                    <div class="category-name">Stress</div>
+                    <div class="category-description">Skab balance i hverdagen</div>
+                </a>
+
+                <a href="sovn.html" class="category-card">
+                    <span class="category-icon">😴</span>
+                    <div class="category-name">Søvnproblemer</div>
+                    <div class="category-description">Bedre søvnkvalitet</div>
+                </a>
+
+                <a href="selvvaerd.html" class="category-card">
+                    <span class="category-icon">💪</span>
+                    <div class="category-name">Selvværd</div>
+                    <div class="category-description">Styrk dit selvbillede</div>
+                </a>
+
+                <a href="ensomhed.html" class="category-card">
+                    <span class="category-icon">🤗</span>
+                    <div class="category-name">Ensomhed</div>
+                    <div class="category-description">Du er ikke alene</div>
+                </a>
+
+                <a href="vrede.html" class="category-card">
+                    <span class="category-icon">😤</span>
+                    <div class="category-name">Vrede</div>
+                    <div class="category-description">Håndter vrede konstruktivt</div>
+                </a>
+
+                <a href="udbraendthed.html" class="category-card">
+                    <span class="category-icon">🔥</span>
+                    <div class="category-name">Udbrændthed</div>
+                    <div class="category-description">Genopbyg din energi</div>
+                </a>
+
+                <a href="bekymringer.html" class="category-card">
+                    <span class="category-icon">💭</span>
+                    <div class="category-name">Overtænkning</div>
+                    <div class="category-description">Stop tankemylderet</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Specifikke tilstande -->
+        <div id="specifikke" class="category-section">
+            <h2 class="section-title">Specifikke tilstande</h2>
+            <div class="category-grid">
+                <a href="adhd.html" class="category-card">
+                    <span class="category-icon">🧠</span>
+                    <div class="category-name">ADHD</div>
+                    <div class="category-description">Fokus og struktur</div>
+                </a>
+
+                <a href="autisme.html" class="category-card">
+                    <span class="category-icon">🧩</span>
+                    <div class="category-name">Autisme</div>
+                    <div class="category-description">Forståelse og mestring</div>
+                </a>
+
+                <a href="ptsd.html" class="category-card">
+                    <span class="category-icon">⚡</span>
+                    <div class="category-name">PTSD</div>
+                    <div class="category-description">Heling efter trauma</div>
+                </a>
+
+                <a href="ocd.html" class="category-card">
+                    <span class="category-icon">🔄</span>
+                    <div class="category-name">OCD</div>
+                    <div class="category-description">Bryd tvangstanker</div>
+                </a>
+
+                <a href="bipolar.html" class="category-card">
+                    <span class="category-icon">🎭</span>
+                    <div class="category-name">Bipolar</div>
+                    <div class="category-description">Balance mellem yderpunkter</div>
+                </a>
+
+                <a href="borderline.html" class="category-card">
+                    <span class="category-icon">💭</span>
+                    <div class="category-name">Borderline</div>
+                    <div class="category-description">Emotionel stabilitet</div>
+                </a>
+
+                <a href="spiseforstyrrelse.html" class="category-card">
+                    <span class="category-icon">🍽️</span>
+                    <div class="category-name">Spiseforstyrrelser</div>
+                    <div class="category-description">Sund relation til mad</div>
+                </a>
+
+                <a href="misbrug.html" class="category-card">
+                    <span class="category-icon">🚫</span>
+                    <div class="category-name">Misbrug</div>
+                    <div class="category-description">Vej til recovery</div>
+                </a>
+
+                <a href="hsp.html" class="category-card">
+                    <span class="category-icon">🌟</span>
+                    <div class="category-name">Højsensitivitet</div>
+                    <div class="category-description">Din sensitivitet som styrke</div>
+                </a>
+
+                <a href="social-angst.html" class="category-card">
+                    <span class="category-icon">👥</span>
+                    <div class="category-name">Social angst</div>
+                    <div class="category-description">Tryg blandt andre</div>
+                </a>
+
+                <a href="fobi.html" class="category-card">
+                    <span class="category-icon">🕷️</span>
+                    <div class="category-name">Fobier</div>
+                    <div class="category-description">Overkom din frygt</div>
+                </a>
+
+                <a href="kronisk-smerte.html" class="category-card">
+                    <span class="category-icon">🩹</span>
+                    <div class="category-name">Kroniske smerter</div>
+                    <div class="category-description">Lev med smerter</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Livssituationer -->
+        <div id="livssituationer" class="category-section">
+            <h2 class="section-title">Livssituationer</h2>
+            <div class="category-grid">
+                <a href="sorg.html" class="category-card">
+                    <span class="category-icon">💔</span>
+                    <div class="category-name">Sorg og tab</div>
+                    <div class="category-description">Bearbejd tab og sorg</div>
+                </a>
+
+                <a href="skilsmisse.html" class="category-card">
+                    <span class="category-icon">💔</span>
+                    <div class="category-name">Skilsmisse/brud</div>
+                    <div class="category-description">Start forfra efter brud</div>
+                </a>
+
+                <a href="mobning.html" class="category-card">
+                    <span class="category-icon">😢</span>
+                    <div class="category-name">Mobning</div>
+                    <div class="category-description">Håndter mobning</div>
+                </a>
+
+                <a href="arbejdsloshed.html" class="category-card">
+                    <span class="category-icon">💼</span>
+                    <div class="category-name">Arbejdsløshed</div>
+                    <div class="category-description">Hold modet oppe</div>
+                </a>
+
+                <a href="eksamen.html" class="category-card">
+                    <span class="category-icon">📚</span>
+                    <div class="category-name">Eksamensangst</div>
+                    <div class="category-description">Præster uden panik</div>
+                </a>
+
+                <a href="foraldre.html" class="category-card">
+                    <span class="category-icon">👨‍👩‍👧</span>
+                    <div class="category-name">Forældrestress</div>
+                    <div class="category-description">Overskud som forælder</div>
+                </a>
+
+                <a href="identitet.html" class="category-card">
+                    <span class="category-icon">🏳️‍🌈</span>
+                    <div class="category-name">Identitet & seksualitet</div>
+                    <div class="category-description">Vær dig selv</div>
+                </a>
+
+                <a href="alderskriser.html" class="category-card">
+                    <span class="category-icon">🎂</span>
+                    <div class="category-name">Livskriser</div>
+                    <div class="category-description">Quarter-/midlife crisis</div>
+                </a>
+
+                <a href="meningsloshed.html" class="category-card">
+                    <span class="category-icon">❓</span>
+                    <div class="category-name">Meningsløshed</div>
+                    <div class="category-description">Find mening igen</div>
+                </a>
+
+                <a href="psykologens-ord.html" class="category-card special-card">
+                    <span class="category-icon">👨‍⚕️</span>
+                    <div class="category-name">Psykologens ord</div>
+                    <div class="category-description">Professionel indsigt</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Alle kategorier -->
+        <div id="alle" class="category-section active">
+            <!-- Her kopierer vi alle kategorier ind -->
+        </div>
+    </div>
+
+    <!-- Floating SOS Button -->
+    <button class="floating-sos" onclick="openSOS()">🆘</button>
+
+    <!-- SOS Modal -->
+    <div class="sos-modal" id="sosModal">
+        <div class="sos-content">
+            <div class="sos-header">
+                <h2>🆘 Akut hjælp</h2>
+                <p>Hvad oplever du lige nu?</p>
+            </div>
+            
+            <div class="sos-options" id="sosStep1">
+                <div class="sos-option" onclick="sosNavigate('suicide')">
+                    <strong>Selvmordstanker</strong>
+                    <p>Jeg tænker på at gøre skade på mig selv</p>
+                </div>
+                <div class="sos-option" onclick="sosNavigate('panic')">
+                    <strong>Panikangst</strong>
+                    <p>Hjertet hamrer, kan ikke få luft</p>
+                </div>
+                <div class="sos-option" onclick="sosNavigate('crisis')">
+                    <strong>Akut krise</strong>
+                    <p>Alt falder fra hinanden</p>
+                </div>
+                <div class="sos-option" onclick="sosNavigate('emotions')">
+                    <strong>Overvældende følelser</strong>
+                    <p>Gråd, vrede eller kaos indeni</p>
+                </div>
+                <div class="sos-option" onclick="sosNavigate('thoughts')">
+                    <strong>Tankemylder</strong>
+                    <p>Kan ikke stoppe tankerne</p>
+                </div>
+                <div class="sos-option" onclick="sosNavigate('unsure')">
+                    <strong>Ved ikke hvad jeg fejler</strong>
+                    <p>Jeg har det bare dårligt</p>
+                </div>
+            </div>
+
+            <button class="close-modal" onclick="closeSOS()">Luk</button>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeBtn = document.querySelector('.theme-toggle');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                themeBtn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeBtn = document.querySelector('.theme-toggle');
+            
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+            }
+
+            // Populate "alle" category
+            populateAllCategories();
+        });
+
+        // Category tabs
+        function showCategory(category) {
+            // Hide all sections
+            document.querySelectorAll('.category-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(category).classList.add('active');
+            
+            // Set active tab
+            event.target.classList.add('active');
+        }
+
+        // Populate all categories
+        function populateAllCategories() {
+            const alleSection = document.getElementById('alle');
+            const allCards = document.querySelectorAll('.category-card');
+            const uniqueCards = new Map();
+            
+            allCards.forEach(card => {
+                const href = card.getAttribute('href');
+                if (!uniqueCards.has(href)) {
+                    uniqueCards.set(href, card.cloneNode(true));
+                }
+            });
+            
+            alleSection.innerHTML = '<h2 class="section-title">Alle emner</h2><div class="category-grid"></div>';
+            const grid = alleSection.querySelector('.category-grid');
+            
+            uniqueCards.forEach(card => {
+                grid.appendChild(card);
+            });
+        }
+
+        // SOS System
+        function openSOS() {
+            document.getElementById('sosModal').classList.add('active');
+        }
+
+        function closeSOS() {
+            document.getElementById('sosModal').classList.remove('active');
+        }
+
+        function sosNavigate(type) {
+            const sosOptions = document.getElementById('sosStep1');
+            
+            const recommendations = {
+                suicide: {
+                    urgent: true,
+                    message: 'Du er ikke alene. Ring nu:',
+                    links: [
+                        { text: '📞 Livslinjen: 70 20 12 01', href: 'tel:70201201' },
+                        { text: '📞 Psykiatrifonden: 116 123', href: 'tel:116123' },
+                        { text: '💬 SMS til SOS: 1999', href: 'sms:1999' },
+                        { text: '🏥 Psykiatrisk skadestue', href: 'https://www.psykiatri-regionh.dk/akut' }
+                    ]
+                },
+                panic: {
+                    links: ['panik.html', 'angst.html', 'vejrtraekning.html']
+                },
+                crisis: {
+                    links: ['akut-krise.html', 'angst.html', 'psykologens-ord.html']
+                },
+                emotions: {
+                    links: ['vrede.html', 'sorg.html', 'depression.html']
+                },
+                thoughts: {
+                    links: ['angst.html', 'ocd.html', 'overtaenkning.html']
+                },
+                unsure: {
+                    links: ['angst.html', 'depression.html', 'stress.html', 'psykologens-ord.html']
+                }
+            };
+            
+            const rec = recommendations[type];
+            
+            if (rec.urgent) {
+                sosOptions.innerHTML = `
+                    <div style="background: #fee; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h3 style="color: #dc2626; margin-bottom: 10px;">${rec.message}</h3>
+                        ${rec.links.map(link => 
+                            `<a href="${link.href}" class="sos-option" style="text-decoration: none; background: white;">
+                                ${link.text}
+                            </a>`
+                        ).join('')}
+                    </div>
+                    <p style="text-align: center; color: #666;">Du betyder noget. Der er hjælp at få.</p>
+                `;
+            } else {
+                sosOptions.innerHTML = `
+                    <h3>Vi anbefaler disse ressourcer:</h3>
+                    ${rec.links.map(url => {
+                        const name = url.replace('.html', '').replace(/-/g, ' ');
+                        return `<a href="${url}" class="sos-option" style="text-decoration: none;">
+                            <strong>${name.charAt(0).toUpperCase() + name.slice(1)}</strong>
+                            <p>Klik for at få hjælp nu</p>
+                        </a>`;
+                    }).join('')}
+                `;
+            }
+        }
+
+        // Click outside to close modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('sosModal');
+            if (event.target === modal) {
+                closeSOS();
+            }
+        }
+    </script>
+</body>
+</html>

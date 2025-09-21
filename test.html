@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrøstMig Backend Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #7c3aed;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .test-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+        
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .error {
+            background: #ef4444;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .info {
+            background: #3b82f6;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        #output {
+            background: #1a202c;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-online { background: #10b981; }
+        .status-offline { background: #ef4444; }
+        .status-checking { background: #f59e0b; animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 TrøstMig Backend Test</h1>
+        
+        <!-- API Status -->
+        <div class="test-section">
+            <h2><span class="status-indicator status-checking" id="apiStatus"></span>API Status</h2>
+            <button onclick="testAPI()">Test API Forbindelse</button>
+            <button onclick="showDebug()">Vis Database Info</button>
+            <div id="apiResult"></div>
+        </div>
+        
+        <!-- User Test -->
+        <div class="test-section">
+            <h2>👤 Bruger Test</h2>
+            <button onclick="createTestUser()">Opret Test Bruger</button>
+            <button onclick="showUserId()">Vis Mit Bruger ID</button>
+            <div id="userResult"></div>
+        </div>
+        
+        <!-- Session Test -->
+        <div class="test-section">
+            <h2>📊 Session Test</h2>
+            <button onclick="startTestSession()">Start Session</button>
+            <button onclick="endTestSession()">Afslut Session</button>
+            <div id="sessionResult"></div>
+        </div>
+        
+        <!-- Mood Test -->
+        <div class="test-section">
+            <h2>😊 Mood Tracking Test</h2>
+            <div>
+                <button onclick="logMood(1)">😢 1</button>
+                <button onclick="logMood(3)">😕 3</button>
+                <button onclick="logMood(5)">🙂 5</button>
+                <button onclick="logMood(7)">😄 7</button>
+                <button onclick="logMood(10)">🥰 10</button>
+            </div>
+            <div id="moodResult"></div>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="test-section">
+            <h2>📈 Statistik</h2>
+            <button onclick="showStats()">Vis Mine Stats</button>
+            <div id="statsResult"></div>
+        </div>
+        
+        <!-- Console Output -->
+        <div class="test-section">
+            <h2>💻 Console Output</h2>
+            <div id="output">Venter på kommandoer...</div>
+        </div>
+    </div>
+    
+    <!-- Load tracker.js -->
+    <script src="/api/tracker.js"></script>
+    
+    <script>
+        // Update console output
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString('da-DK');
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6';
+            output.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        // Test API connection
+        async function testAPI() {
+            log('Testing API connection...');
+            try {
+                const response = await fetch('/api/test-api.php?action=test');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('apiResult').innerHTML = 
+                        `<div class="success">✅ API virker! ${data.data.message}</div>`;
+                    document.getElementById('apiStatus').className = 'status-indicator status-online';
+                    log('API connection successful!', 'success');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                document.getElementById('apiResult').innerHTML = 
+                    `<div class="error">❌ API fejl: ${error.message}</div>`;
+                document.getElementById('apiStatus').className = 'status-indicator status-offline';
+                log('API error: ' + error.message, 'error');
+            }
+        }
+        
+        // Show debug info
+        async function showDebug() {
+            log('Fetching database info...');
+            try {
+                const response = await fetch('/api/test-api.php?action=debug');
+                const data = await response.json();
+                if (data.success) {
+                    const tables = Object.entries(data.data.tables)
+                        .map(([table, count]) => `${table}: ${count} rows`)
+                        .join('\n');
+                    document.getElementById('apiResult').innerHTML = 
+                        `<div class="info"><strong>Database: ${data.data.database}</strong><br><pre>${tables}</pre></div>`;
+                    log('Database info retrieved', 'success');
+                }
+            } catch (error) {
+                log('Debug error: ' + error.message, 'error');
+            }
+        }
+        
+        // Create test user
+        function createTestUser() {
+            const testUserId = 'test_' + Date.now();
+            fetch('/api/test-api.php?action=createUser', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    userId: testUserId,
+                    name: 'Test Bruger',
+                    email: 'test@example.com'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('userResult').innerHTML = 
+                        `<div class="success">✅ Test bruger oprettet: ${testUserId}</div>`;
+                    log('Test user created: ' + testUserId, 'success');
+                }
+            });
+        }
+        
+        // Show current user ID
+        function showUserId() {
+            const userId = window.TrostMig?.userId || localStorage.getItem('trostmig_userId');
+            document.getElementById('userResult').innerHTML = 
+                `<div class="info">Dit bruger ID: <strong>${userId}</strong></div>`;
+            log('Current user ID: ' + userId);
+        }
+        
+        // Start session
+        function startTestSession() {
+            window.TrostMig?.startSession('test');
+            document.getElementById('sessionResult').innerHTML = 
+                `<div class="success">✅ Session startet!</div>`;
+            log('Session started', 'success');
+        }
+        
+        // End session
+        function endTestSession() {
+            window.TrostMig?.endSession();
+            document.getElementById('sessionResult').innerHTML = 
+                `<div class="info">Session afsluttet</div>`;
+            log('Session ended');
+        }
+        
+        // Log mood
+        function logMood(score) {
+            window.TrostMig?.logMood(score, 'Test mood entry');
+            document.getElementById('moodResult').innerHTML = 
+                `<div class="success">✅ Mood registreret: ${score}/10</div>`;
+            log('Mood logged: ' + score, 'success');
+        }
+        
+        // Show stats - RETTET HER!
+        async function showStats() {
+            const userId = window.TrostMig?.userId || localStorage.getItem('trostmig_userId');
+            try {
+                const response = await fetch('/api/test-api.php?action=getUserStats&userId=' + userId);
+                const data = await response.json();
+                if (data.success) {
+                    const stats = data.data;
+                    
+                    // Check om recentMoods eksisterer og er et array
+                    const moodsList = (stats.recentMoods && Array.isArray(stats.recentMoods)) 
+                        ? stats.recentMoods.map(m => m.mood_score).join(', ')
+                        : 'Ingen moods endnu';
+                    
+                    document.getElementById('statsResult').innerHTML = `
+                        <div class="info">
+                            <strong>Dine Statistikker:</strong><br>
+                            Sessions: ${stats.sessions || 0}<br>
+                            Favoritter: ${stats.favorites || 0}<br>
+                            Gennemsnit mood: ${stats.avgMood || 'N/A'}/10<br>
+                            Seneste moods: ${moodsList}
+                        </div>
+                    `;
+                    log('Stats retrieved successfully', 'success');
+                }
+            } catch (error) {
+                document.getElementById('statsResult').innerHTML = 
+                    `<div class="error">❌ Kunne ikke hente statistik: ${error.message}</div>`;
+                log('Stats error: ' + error.message, 'error');
+            }
+        }
+        
+        // Auto-test on load
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded - TrøstMig Backend Test Ready');
+            testAPI();
+            showUserId();
+        });
+    </script>
+</body>
+</html>

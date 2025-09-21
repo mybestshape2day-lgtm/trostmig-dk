@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress - TrøstMig.dk</title>
+    
+    <!-- VIGTIG: Central TTS konfiguration -->
+    <script src="tts-config.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --stress-color: #f59e0b;
+            --calm-color: #10b981;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #9f7aea;
+            --accent-hover: #b794f4;
+            --border: #4a5568;
+            --stress-color: #fbbf24;
+            --calm-color: #34d399;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        .welcome-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .welcome-message {
+            max-width: 700px;
+            padding: 40px;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            animation: fadeIn 2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); background: var(--accent); }
+            50% { transform: scale(1.2); background: var(--calm-color); }
+        }
+
+        .skip-intro {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Main Selection Screen */
+        .main-selection {
+            display: none;
+            padding: 100px 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-selection.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .selection-card.urgent {
+            border-color: #ef4444;
+        }
+
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .selection-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .selection-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .time-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Script Display Screen */
+        .script-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 500;
+        }
+
+        .script-display.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .script-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .script-content {
+            max-width: 800px;
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--text-primary);
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Auto-play indicator */
+        .auto-play-status {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-secondary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--calm-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Breathing Visual */
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            margin: 30px auto;
+            display: none;
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        .breathing-circle.active {
+            display: block;
+        }
+
+        /* Controls */
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px var(--shadow);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.1);
+        }
+
+        .progress-indicator {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding: 0 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .selection-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .script-content {
+                font-size: 1.1rem;
+            }
+            
+            .welcome-message {
+                font-size: 1.2rem;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-message" id="welcomeText">
+            <!-- Welcome message will be inserted here -->
+        </div>
+        <button class="skip-intro" onclick="skipIntro()">Spring over</button>
+    </div>
+
+    <!-- Navigation Header -->
+    <div class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="back-link">← Tilbage til forsiden</a>
+            <div class="nav-controls">
+                <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
+                    <!-- Voices will be populated -->
+                </select>
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Selection Screen -->
+    <div class="main-selection" id="mainSelection">
+        <div class="selection-header">
+            <h1>Stress</h1>
+            <p>Lad os finde ro sammen - ét åndedrag ad gangen</p>
+        </div>
+
+        <div class="selection-grid">
+            <div class="selection-card urgent" onclick="startSection('akut')">
+                <div class="selection-icon">🆘</div>
+                <h2 class="selection-title">Akut stress-relief</h2>
+                <p class="selection-description">
+                    Øjeblikkelig hjælp når stress overvælder. Hurtige teknikker der virker nu.
+                </p>
+                <span class="time-badge">2-10 minutter</span>
+            </div>
+
+            <div class="selection-card" onclick="startSection('forstaa')">
+                <div class="selection-icon">🧠</div>
+                <h2 class="selection-title">Forstå din stress</h2>
+                <p class="selection-description">
+                    Lær hvordan stress påvirker krop og sind. Viden der giver kontrol.
+                </p>
+                <span class="time-badge">5-15 minutter</span>
+            </div>
+
+            <div class="selection-card" onclick="startSection('haandter')">
+                <div class="selection-icon">🛠️</div>
+                <h2 class="selection-title">Stress-håndtering</h2>
+                <p class="selection-description">
+                    Praktiske værktøjer og øvelser til at håndtere stress i hverdagen.
+                </p>
+                <span class="time-badge">5-20 minutter</span>
+            </div>
+
+            <div class="selection-card" onclick="startSection('oevelser')">
+                <div class="selection-icon">🧘</div>
+                <h2 class="selection-title">Guidede øvelser</h2>
+                <p class="selection-description">
+                    Afspænding, vejrtrækning og mindfulness. Følg min stemme.
+                </p>
+                <span class="time-badge">3-15 minutter</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Display Screen -->
+    <div class="script-display" id="scriptDisplay">
+        <button class="close-btn" onclick="closeScript()">Luk ✕</button>
+        
+        <!-- Auto-play status -->
+        <div class="auto-play-status">
+            <div class="status-dot"></div>
+            <span>Auto-play aktiv</span>
+        </div>
+
+        <!-- Breathing visual -->
+        <div class="breathing-circle" id="breathingCircle"></div>
+        
+        <div class="script-text">
+            <div class="script-content" id="scriptContent">
+                <!-- Script content will be displayed here -->
+            </div>
+        </div>
+        
+        <div class="controls-bar">
+            <button class="control-btn" onclick="previousScript()">◀</button>
+            <button class="control-btn" onclick="togglePlay()" id="playBtn">⏸</button>
+            <button class="control-btn" onclick="nextScript()">▶</button>
+            <span class="progress-indicator" id="progressIndicator">1 / 10</span>
+        </div>
+    </div>
+
+    <script>
+        // Welcome Messages
+        const welcomeMessages = [
+            "Hej med dig... Jeg kan mærke du har brug for ro. Lad os tage det stille og roligt sammen.",
+            "Velkommen. Øhm... stress er kroppens måde at sige 'det er for meget lige nu'. Lad os lytte til den besked sammen.",
+            "Hej... Du er her, og det er første skridt mod at få det bedre. Hmm, jeg er her for at guide dig.",
+            "Åh, måske føles alt kaotisk lige nu. Men vi starter med ét åndedrag. Bare ét.",
+            "Hej der. Din krop er i alarmberedskab. Det er helt normalt. Lad os sammen finde tilbage til ro."
+        ];
+
+        // Complete Scripts Database
+        const scriptsDatabase = {
+            akut: [
+                {
+                    title: "Stop og træk vejret",
+                    content: "Okay... lige nu, stop alt hvad du laver. Jeg ved det føles som om du ikke har tid, men... øh, giv mig bare 2 minutter. Luk øjnene hvis du kan. Læg en hånd på maven. Træk vejret dybt ind gennem næsen... hmm... mærk hvordan maven udvider sig. Hold vejret i 2 sekunder. Og slip langsomt ud gennem munden. Som om du blæser gennem et sugerør. Lad os gentage dette 5 gange sammen. Ind... hold... ud... Ja, sådan. Det er det eneste du behøver at gøre lige nu. Alt andet kan vente disse få minutter."
+                },
+                {
+                    title: "5-4-3-2-1 grounding",
+                    content: "Stress får alt til at køre for hurtigt, ikke? Lad os bremse op sammen. Find 5 ting du kan se lige nu. Sig dem højt eller i hovedet. Hmm... nu fire ting du kan røre ved - mærk deres tekstur. Tre lyde du kan høre - også de små. Øh... to ting du kan dufte - eller husk to dufte du elsker. Og én ting du kan smage. Dette bringer dig tilbage til nuet, hvor du faktisk er sikker, hvor alt faktisk er okay lige nu."
+                },
+                {
+                    title: "Spænd og slip",
+                    content: "Stress skaber spænding i hele kroppen. Lad os slippe den nu. Løft skuldrene helt op til ørerne. Spænd så hårdt du kan. Hold i 5 sekunder... 4... 3... 2... 1... Slip! Lad skuldrene falde helt ned. Mærk forskellen. Nu hænderne. Knyt dem hårdt... virkelig hårdt... hold... og slip. Lad hænderne åbne sig naturligt. Til sidst ansigtet. Rynk panden, spænd kæben, luk øjnene hårdt... hold alt spændt... og slip. Lad hele ansigtet blive blødt. Denne simple øvelse sender signal til nervesystemet: vi er sikre nu."
+                },
+                {
+                    title: "Tankestop-teknik",
+                    content: "Hmm, dine tanker kører i ring, ikke sandt? De samme bekymringer igen og igen. Lad os stoppe dem. Når du mærker tankespiralen, sig højt eller indeni: 'STOP!' Klap i hænderne hvis du kan. Skift så fokus øjeblikkeligt - tæl baglæns fra 100 med 7 ad gangen. 100... 93... 86... Dette er svært nok til at din hjerne må skifte spor. Efter et minut vil du mærke at intensiteten er faldet. Tankerne har mistet deres greb."
+                },
+                {
+                    title: "Kold vand reset",
+                    content: "Når stress er akut, har vi brug for hurtig hjælp. Gå til håndvasken. Tag koldt vand i hænderne og skyl ansigtet. Hold de kolde hænder mod kinderne. Dette aktiverer din vagusnerve - kroppens beroligelsesnerve. Hvis du ikke kan gå til en vask, tag en kold drik. Hold den mod pulsåren på håndleddet. Kulde sænker øjeblikkeligt dit alarmniveau. Det er ren biologi, og det virker hver gang."
+                },
+                {
+                    title: "Sikker base visualisering",
+                    content: "Luk øjnene et øjeblik. Forestil dig et sted hvor du er fuldstændig tryg og rolig. Måske et sted fra din barndom, måske et sted i naturen. Se alle detaljerne - farverne, lyset. Hør lydene - måske bølger, vind i træer, stilhed. Mærk temperaturen på din hud. Duftene omkring dig. Gå rundt på dette sted i dit sind. Du kan altid vende tilbage hertil når stress overvælder. Det er dit mentale fristed."
+                },
+                {
+                    title: "Akut stress er midlertidigt",
+                    content: "Lige nu føles det som om denne stress aldrig stopper. Men lyt til mig: Ingen stressreaktion varer evigt. Rent fysiologisk kan din krop ikke opretholde dette niveau. Kortisol og adrenalin vil falde. Det sker automatisk. Ligesom du ikke kan holde vejret for evigt, kan du ikke forblive på dette stressniveau. Giv det 20 minutter. Bare overlev de næste 20 minutter. Stress-bølgen vil toppe og så falde. Det gør den altid."
+                },
+                {
+                    title: "Én ting ad gangen",
+                    content: "Øh, stress kommer når alt skal ske på én gang. Men lyt: Du kan kun gøre én ting ad gangen alligevel. Hvad er DET MEST presserende lige nu? Ikke de næste 10 ting - kun den ene. Fokuser kun på den. Alt andet eksisterer ikke de næste 10 minutter. Skriv de andre ting ned hvis det hjælper - så glemmer du dem ikke. Men lige nu: Kun én ting. Når den er gjort, så vælger vi den næste. Én efter én. Sådan kommer du igennem."
+                },
+                {
+                    title: "Din krop prøver at hjælpe",
+                    content: "Hjertet hamrer, du sveder, maven vender sig. Det føles forfærdeligt, men... hmm... din krop prøver faktisk at hjælpe dig. Den forbereder dig på handling - fight or flight. Problemet er bare at moderne stress ikke kan løses ved at løbe eller slås. Sig til din krop: 'Tak for at du prøver at beskytte mig. Men jeg er ikke i fysisk fare.' Læg hånden på hjertet. 'Vi er sikre. Du kan slappe af nu.' Gentag det. Din krop lytter."
+                },
+                {
+                    title: "Stress-pause ritual",
+                    content: "Lad os lave en 3-minutters stress-pause. Stil en timer. De næste 3 minutter har du fri fra alle bekymringer. De venter på dig bagefter hvis du vil have dem tilbage. Men lige nu: Stå op. Ryst hele kroppen - som en hund der har været i vand. Slap af. Tag 5 dybe vejrtrækninger. Drik et glas vand langsomt. Kig ud af vinduet. Timer ringer. Du kan nu vælge: Vil du tage stressen tilbage, eller lade den ligge?"
+                }
+            ],
+            
+            forstaa: [
+                {
+                    title: "Hvad er stress egentlig?",
+                    content: "Okay, så... stress er faktisk ikke din fjende. Det er din krops måde at hjælpe dig på. Hmm... når du møder en udfordring - en deadline, en konflikt, øh, en trussel - så aktiverer din krop et urgammelt overlevelsessystem. Hypothalamus sender signal til binyrerne. Adrenalin og kortisol pumpes ud. Dit hjerte slår hurtigere for at sende blod til musklerne. Du bliver skarpere, hurtigere, stærkere. I stenalderen reddede dette system vores forfædres liv. Problemet i dag? Tja... systemet kan ikke skelne mellem en løve og en sur email. Det reagerer ens."
+                },
+                {
+                    title: "Kortisol - stresshormonet",
+                    content: "Kortisol kaldes stresshormonet, men det er faktisk livsnødvendigt. Om morgenen stiger dit kortisol naturligt - det vækker dig, giver energi til dagen. Ved stress stiger det ekstra for at mobilisere energi. Hmm, kortisol frigør sukker til blodet så du har brændstof. Det dæmper inflammation midlertidigt. Det skærper din hukommelse for vigtige detaljer. Problemet opstår når kortisol forbliver forhøjet. Så begynder det at nedbryde muskler for energi. Det svækker immunforsvaret. Det forstyrrer søvnen."
+                },
+                {
+                    title: "Fight, flight eller freeze",
+                    content: "Du kender måske 'fight or flight' - kamp eller flugt. Men der er faktisk tre reaktioner. Fight: Du bliver vred, konfronterende, kæmper imod. Flight: Du vil væk, undgår, flygter fra situationen. Freeze: Du fryser, kan ikke handle, bliver paralyseret. Alle tre er normale, evolutionære reaktioner. Ingen er 'forkerte'. Din krop vælger automatisk baseret på situationen og dine tidligere erfaringer. Hvis du ofte 'fryser', er det ikke svaghed - det er din krops måde at overleve på."
+                },
+                {
+                    title: "Hvorfor bliver jeg stresset af småting?",
+                    content: "Hmm, måske bliver du stresset af at vælge tøj, små beslutninger, eller når nogen ringer. Det virker urimeligt, ikke? Men din hjerne har en begrænset kapacitet for stress. Forestil dig et glas vand. Store stressorer fylder meget - arbejdspres, økonomi, relationer. Når glasset næsten er fyldt, er der kun plads til dråber. Så bliver selv små ting 'dråben der får bægeret til at flyde over'. Det er ikke småtingene der er problemet. Det er at glasset allerede var fyldt."
+                },
+                {
+                    title: "Stress og din hjerne",
+                    content: "Stress ændrer bogstaveligt din hjerne. Ved akut stress: Amygdala - alarmcentret - bliver hyperaktiv. Præfrontal cortex - den rationelle del - går offline. Derfor kan du ikke 'tænke klart' når du er stresset. Ved kronisk stress sker der fysiske ændringer: Hippocampus - hukommelsescentret - kan skrumpe. Forbindelser mellem hjerneceller svækkes. Men her er det fantastiske: Hjernen har neuroplasticitet. Den kan hele og gendanne sig."
+                },
+                {
+                    title: "Godt stress vs dårligt stress",
+                    content: "Ikke al stress er dårlig. 'Eustress' er positivt stress - den spænding du føler før noget godt. Et bryllup, en præsentation du glæder dig til, at starte nyt job. Dette stress giver energi og fokus. 'Distress' er negativt - når kravene overstiger dine ressourcer. Når du ikke får pauser. Når det føles meningsløst. Forskellen er ofte: Kontrol - har du indflydelse? Mening - giver det værdi? Tidsbegrænset - er der en ende?"
+                },
+                {
+                    title: "Stress-symptomer i kroppen",
+                    content: "Øh, stress viser sig overalt i kroppen, ikke kun i hovedet. Muskler: Spænding, især nakke, skuldre, kæbe. Mave: 'Sommerfugle', kvalme, fordøjelsesproblemer. Hjerte: Hjertebanken, brystsmerte - altid tjek med læge. Hud: Udbrud, eksem, psoriasis kan forværres. Immunsystem: Flere forkølelser, langsommere heling. Søvn: Insomni eller for meget søvn. Appetit: Spise for meget eller miste appetit."
+                },
+                {
+                    title: "Stress-sårbarheden",
+                    content: "Nogle er mere sårbare over for stress. Det er ikke svaghed - det er biologi og erfaring. Faktorer der øger sårbarhed: Genetik - 40% arveligt. Tidlige oplevelser - ustabil barndom. Temperament - højsensitiv. Tidligere traumer. Mangel på støtte. Dårlig søvn eller kost. Men sårbarhed er ikke skæbne. Du kan bygge resiliens: Stærke relationer beskytter. Mestringsstrategier læres. Fysisk sundhed hjælper."
+                },
+                {
+                    title: "Stress smitter",
+                    content: "Vidste du at stress kan smitte? Når du er omkring stressede mennesker, reagerer dit nervesystem. Spejlneuroner får dig til at 'spejle' andres tilstand. Kortisol kan måles højere efter at være sammen med stressede personer. Dette er evolutionært smart - hvis andre i flokken er alarmerede, er der måske fare. Men i moderne liv betyder det at åbent kontormiljø, stresset familie, eller bare sociale medier kan stresse dig."
+                },
+                {
+                    title: "Kvinder og mænd reagerer forskelligt",
+                    content: "Hmm, forskning viser kønsforskelle i stress-reaktioner. Mænd aktiverer oftere 'fight or flight'. Kvinder aktiverer ofte 'tend and befriend' - de søger sociale forbindelser, passer på andre. Hormonelt: Østrogen og oxytocin modererer stress hos kvinder. Testosteron kan forværre stress-aggression hos mænd. Socialt: Mænd lærer ofte at håndtere stress alene. Kvinder søger oftere støtte - hvilket faktisk er sundere."
+                }
+            ],
+            
+            haandter: [
+                {
+                    title: "Lav din stress-første-hjælps-kasse",
+                    content: "Lige som du har plaster og panodil derhjemme, skal du have en stress-første-hjælps-kasse. Find en lille taske eller æske. Put i: En lavendel-duft eller æterisk olie. Et foto der gør dig glad. En lille notesbog til tanke-dump. Ørepropper eller høretelefoner. En stressbold eller fidget-ting. Te-breve - kamille, passionsblomst. Et citat eller mantra der hjælper dig. Favoritmusik på telefonen. Placer kassen et let tilgængeligt sted."
+                },
+                {
+                    title: "Morgenrutine mod stress",
+                    content: "Hvordan du starter dagen sætter tonen. En stress-præventiv morgen: Vågn samme tid hver dag - også weekends. Undgå telefon første 30 min. Start med 5 dybe vejrtrækninger i sengen. Drik et glas vand før kaffe. 5 min let stræk eller yoga. Spis morgenmad uden multitasking. Sæt én intention for dagen - ikke 10. Dette tager måske 30 min ekstra, men sparer timer af stress."
+                },
+                {
+                    title: "Arbejdsdag stress-hacks",
+                    content: "Små tricks der gør stor forskel på arbejdet: Pomodoro: 25 min fokus, 5 min pause. Gentag. To-minut regel: Kan det gøres på 2 min? Gør det nu. Ellers planlæg det. Email-batching: Tjek mail 3 faste tidspunkter, ikke konstant. Walking meetings: Foreslå at gå mens I taler. Mikro-pauser: 30 sek øjenhvile hver time. Ingen perfektion: 80% er nok. Start med det sværeste når du har mest energi."
+                },
+                {
+                    title: "Nej er et komplet sætning",
+                    content: "At sige nej er en stress-superkraft. Men det er svært, ikke? Vi vil ikke skuffe, virke uhøflige, misse muligheder. Men hver gang du siger ja til noget, siger du nej til noget andet - ofte til dig selv. Øv dig: Start med små nej. 'Nej tak, jeg drikker ikke mere kaffe.' Brug sandwich-metoden: 'Det lyder spændende, men jeg kan desværre ikke, held og lykke med det.' Køb tid: 'Lad mig lige tjekke kalenderen og vende tilbage.'"
+                },
+                {
+                    title: "Stress-journaling der virker",
+                    content: "Skriv stress ud af systemet. Men ikke tilfældig ventilering - struktureret: Morgen: 3 sider stream-of-consciousness. Bare skriv uden at tænke. Få tankemylder ud. Middag: Quick check-in. Stress-niveau 1-10? Hvad triggede? Aften: 3 taknemmeligheder + 1 'win' fra dagen. Weekend: Ugens stress-mønstre. Hvad gentog sig? Hvad hjalp? Skriv i hånden hvis muligt - det processor dybere end typing."
+                },
+                {
+                    title: "Byg stress-buffere ind",
+                    content: "Stress forværres når alt er planlagt til sidste sekund. Byg buffere: Tid-buffere: 15 min mellem møder. 30 min margin til transport. Energi-buffere: Plan kun 80% af dagen. 20% til uventede. Mentale buffere: Pause mellem forskellige opgavetyper. Emotionelle buffere: Dekompressionstid mellem arbejde og hjem. Fysiske buffere: Snacks, vand, komfort-ting tilgængelige."
+                },
+                {
+                    title: "Delegér eller dø (næsten)",
+                    content: "Du prøver at gøre alt selv. Det er uholdbart. Lær at delegere: Identificer: Hvad KAN andre gøre? Mere end du tror. Hvad SKAL kun du gøre? Mindre end du tror. Match: Hvem er god til hvad? Hvem har tid? Hvem vil lære? Instruer klart: Hvad skal gøres? Hvornår? Hvilket resultat? Slip kontrollen: 80% godt nok er ofte fint. Perfektionisme er stress-gødning."
+                },
+                {
+                    title: "Weekend stress-detox",
+                    content: "Weekenden skal være restitution, ikke mere stress. Design din stress-detox: Fredag aften: Symbolsk 'luk arbejdet'. Sluk computer, læg telefon væk. Lørdag: Ingen alarm. Vågn naturligt. Gør noget kreativt/fysisk. Natur hvis muligt. Søndag: Forbered ugen UDEN stress. Tøj klar, madplan, kalender-overblik. Men også: Hygge-tid, ingen forpligtelser sidste timer."
+                },
+                {
+                    title: "Stress-kommunikation",
+                    content: "At tale om stress er svært men nødvendigt. Sådan gør du: Med chef: 'Jeg oplever højt stress-niveau. Kan vi prioritere mine opgaver?' Ikke: 'Jeg kan ikke klare det.' Med partner: 'Jeg er stresset og har brug for støtte.' Ikke: 'Du forstår mig aldrig.' Med dig selv: 'Dette er midlertidigt. Jeg finder løsninger.' Ikke: 'Jeg er en fiasko.' Vær specifik: Hvad stresser? Hvad hjælper?"
+                },
+                {
+                    title: "Teknologi-stress management",
+                    content: "Telefonen er både stress-kilde og potentiel hjælper. Gør den til allieret: Slå notifikationer fra - undtagen kritiske. Brug 'Do Not Disturb' aktivt. Slet apps der stresser - nyheder, sociale medier? Installer hjælpe-apps: Meditation, white noise, påmindelser om pauser. Lav telefon-fri zoner: Soveværelse, spisebord. Screen-time limits på tidssluger-apps."
+                }
+            ],
+            
+            oevelser: [
+                {
+                    title: "4-7-8 vejrtrækning komplet",
+                    content: "Lad os lave den kraftfulde 4-7-8 teknik sammen. Find en behagelig position. Sidder eller ligger, det er ligegyldigt. Hmm, luk øjnene hvis det føles trygt. Pust al luften ud gennem munden med en hvæsende lyd. [PAUSE 3 SEK] Luk munden. Træk nu vejret ind gennem næsen mens jeg tæller til 4... 1... 2... 3... 4. [PAUSE 4 SEK] Hold vejret mens jeg tæller til 7... 1... 2... 3... 4... 5... 6... 7. [PAUSE 7 SEK] Pust ud gennem munden med den hvæsende lyd mens jeg tæller til 8... 1... 2... 3... 4... 5... 6... 7... 8. [PAUSE 8 SEK] Godt klaret. Dette var én cyklus. Lad os lave 3 mere sammen. [GENTAG 3 GANGE MED SAMME TIMING]",
+                    type: "exercise",
+                    totalDuration: 240000 // 4 minutter total
+                },
+                {
+                    title: "Progressiv muskelafspænding fuld",
+                    content: "Vi skal igennem hele kroppen og slippe spændinger. Start med at ligge eller sidde godt. [PAUSE 3 SEK] Vi starter med fødderne. Krøl alle tæerne, spænd fødderne helt... [PAUSE 2 SEK] Hold spændingen... 3... 2... 1... [PAUSE 3 SEK] Slip! Lad fødderne blive helt tunge og afslappede. Mærk forskellen. [PAUSE 4 SEK] Nu benene. Spænd lægge og lår... virkelig spænd... [PAUSE 2 SEK] Hold... hold... [PAUSE 3 SEK] Og slip. Mærk hvordan benene synker ned. [PAUSE 4 SEK] Videre til maven. Spænd alle mavemuskler... som om nogen skulle slå dig... [PAUSE 2 SEK] Hold... [PAUSE 3 SEK] Og slip alt på én gang. Lad maven blive blød. [PAUSE 4 SEK] Nu hænderne. Knyt dem hårdt... virkelig hårdt... [PAUSE 2 SEK] Hold... [PAUSE 3 SEK] Og slip. Lad hænderne åbne sig naturligt. [PAUSE 4 SEK] Løft skuldrene op til ørerne... [PAUSE 2 SEK] Hold dem deroppe... [PAUSE 3 SEK] Og lad dem falde. Helt ned. [PAUSE 4 SEK] Til sidst ansigtet. Rynk panden, spænd kæben, luk øjnene hårdt... [PAUSE 2 SEK] Hold alt spændt... [PAUSE 3 SEK] Og slip. Lad hele ansigtet blive blødt. [PAUSE 5 SEK] Mærk nu hvordan hele kroppen hviler tungt og afslappet.",
+                    type: "exercise",
+                    totalDuration: 480000 // 8 minutter total
+                },
+                {
+                    title: "Body scan meditation",
+                    content: "Læg dig godt til rette. Vi skal på en rejse gennem din krop. [PAUSE 3 SEK] Start med at mærke kontakten til underlaget. Hvor rører din krop underlaget? [PAUSE 4 SEK] Vi begynder med venstre fod. Bring al din opmærksomhed til venstre fod. [PAUSE 3 SEK] Ikke for at ændre noget, bare mærke. Hvad mærker du? Varme? Kulde? Ingenting er også fint. [PAUSE 5 SEK] Bevæg opmærksomheden op gennem venstre ben... ankel... [PAUSE 3 SEK] læg... [PAUSE 3 SEK] knæ... [PAUSE 3 SEK] lår. [PAUSE 3 SEK] Bare observer. [PAUSE 4 SEK] Nu højre fod... samme opmærksomhed... [PAUSE 5 SEK] Op gennem højre ben. [PAUSE 5 SEK] Videre til bækkenet... [PAUSE 3 SEK] maven... kan du mærke maven bevæge sig med åndedrættet? [PAUSE 5 SEK] Brystkassen... hjertet banker måske... det er okay. [PAUSE 5 SEK] Venstre arm fra fingerspidser til skulder... [PAUSE 5 SEK] Højre arm... [PAUSE 5 SEK] Nakken... [PAUSE 3 SEK] Ansigtet... [PAUSE 3 SEK] Toppen af hovedet. [PAUSE 3 SEK] Nu mærk hele kroppen som helhed. Fra top til tå. En levende, åndende helhed. [PAUSE 10 SEK]",
+                    type: "exercise",
+                    totalDuration: 600000 // 10 minutter total
+                },
+                {
+                    title: "Stress-shake øvelse",
+                    content: "Dyr ryster stress af sig. Lad os gøre det samme. Stå op hvis du kan. [PAUSE 3 SEK] Fødderne hoftebredde fra hinanden. [PAUSE 2 SEK] Start med hænderne. Ryst dem løst... som om du ryster vand af dem. [PAUSE 5 SEK] Lad rystelsen brede sig til underarmene... [PAUSE 3 SEK] overarmene... [PAUSE 3 SEK] skuldrene begynder at hoppe med. [PAUSE 3 SEK] Nu overkroppen... lad hofterne komme med... [PAUSE 3 SEK] knæene bøjer og strækker... [PAUSE 3 SEK] hele kroppen ryster nu! [PAUSE 10 SEK] Forestil dig at al stress ryster løs og falder af dig. [PAUSE 10 SEK] 10 sekunder mere... ryst alt hvad du kan... [PAUSE 10 SEK] Og... STOP! [PAUSE 2 SEK] Stå helt stille. [PAUSE 5 SEK] Mærk efterdønningerne i kroppen. Vibration, varme, måske prikken. Dette er stress der forlader systemet. [PAUSE 10 SEK]",
+                    type: "exercise",
+                    totalDuration: 180000 // 3 minutter total
+                },
+                {
+                    title: "Tryg base visualisering",
+                    content: "Luk øjnene og tag tre dybe vejrtrækninger. [PAUSE 10 SEK] Forestil dig et sted hvor du føler dig fuldstændig tryg og rolig. [PAUSE 3 SEK] Det kan være et virkeligt sted eller fantasisted. [PAUSE 3 SEK] Se dig omkring på dette sted. Hvad ser du? [PAUSE 5 SEK] Hvilke farver? Er der træer, vand, bygninger? [PAUSE 5 SEK] Læg mærke til lyset. Er det sollys? Måneskin? Stearinlys? [PAUSE 5 SEK] Hvad hører du? Måske bølger, vind, fugle, eller fuldstændig stilhed. [PAUSE 5 SEK] Hvad kan du mærke? Varmen fra solen? En blid brise? Blødt græs under fødderne? [PAUSE 5 SEK] Er der dufte? Salt havluft? Blomster? Nybagte boller? [PAUSE 5 SEK] Gå rundt på dit trygge sted. [PAUSE 5 SEK] Find det perfekte sted at sidde eller ligge. [PAUSE 5 SEK] Mærk hvordan al spænding forlader din krop her. [PAUSE 10 SEK] Du kan altid vende tilbage til dette sted. Det er dit indre fristed. [PAUSE 5 SEK]",
+                    type: "exercise",
+                    totalDuration: 420000 // 7 minutter total
+                }
+            ]
+        };
+
+        // State
+        let currentSection = null;
+        let currentScriptIndex = 0;
+        let isPlaying = true;
+        let speechTimeout = null;
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPreferences();
+            showWelcomeMessage();
+            setupVoiceSelector();
+            
+            setTimeout(() => {
+                skipIntro();
+            }, 8000);
+        });
+
+        function skipIntro() {
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.stop();
+            }
+            clearTimeout(speechTimeout);
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('mainSelection').classList.add('active');
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+        }
+
+        function showWelcomeMessage() {
+            const randomIndex = Math.floor(Math.random() * welcomeMessages.length);
+            const messageEl = document.getElementById('welcomeText');
+            messageEl.textContent = welcomeMessages[randomIndex];
+            
+            if (window.TrøstMigTTS) {
+                setTimeout(() => {
+                    window.TrøstMigTTS.speak(welcomeMessages[randomIndex], {speed: 0.85});
+                }, 500);
+            }
+        }
+
+        function setupVoiceSelector() {
+            const selector = document.getElementById('voiceSelector');
+            if (window.TrøstMigTTS) {
+                const voices = window.TrøstMigTTS.getVoices();
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = voice.description;
+                    selector.appendChild(option);
+                });
+                selector.value = 1;
+            }
+        }
+
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelector');
+            const voiceIndex = parseInt(selector.value);
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.setVoice(voiceIndex);
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function startSection(section) {
+            currentSection = section;
+            currentScriptIndex = 0;
+            
+            document.getElementById('mainSelection').classList.remove('active');
+            document.getElementById('scriptDisplay').classList.add('active');
+            
+            // Show breathing circle for exercises
+            if (section === 'oevelser') {
+                document.getElementById('breathingCircle').classList.add('active');
+            }
+            
+            loadScript();
+        }
+
+        function loadScript() {
+            if (!currentSection) return;
+            
+            const scripts = scriptsDatabase[currentSection];
+            const script = scripts[currentScriptIndex];
+            
+            if (!script) return;
+            
+            clearTimeout(speechTimeout);
+            
+            document.getElementById('scriptContent').textContent = script.content;
+            document.getElementById('progressIndicator').textContent = 
+                `${currentScriptIndex + 1} / ${scripts.length}`;
+            
+            // Speak content
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.stop();
+                setTimeout(() => {
+                    window.TrøstMigTTS.speak(script.content, {speed: 0.85});
+                }, 100);
+            }
+            
+            // Auto-play timing based on content type
+            let duration;
+            if (script.type === 'exercise' && script.totalDuration) {
+                duration = script.totalDuration;
+            } else {
+                // Estimate based on text length + extra time
+                const wordsPerMinute = 120;
+                const wordCount = script.content.split(' ').length;
+                duration = (wordCount / wordsPerMinute) * 60000 + 5000; // Add 5 sec pause
+            }
+            
+            // Set timer for next script
+            speechTimeout = setTimeout(() => {
+                nextScript();
+            }, duration);
+        }
+
+        function nextScript() {
+            const scripts = scriptsDatabase[currentSection];
+            if (currentScriptIndex < scripts.length - 1) {
+                currentScriptIndex++;
+                loadScript();
+            } else {
+                // Loop back for exercises
+                if (currentSection === 'oevelser') {
+                    currentScriptIndex = 0;
+                    loadScript();
+                }
+            }
+        }
+
+        function previousScript() {
+            if (currentScriptIndex > 0) {
+                currentScriptIndex--;
+                loadScript();
+            }
+        }
+
+        function togglePlay() {
+            if (window.TrøstMigTTS) {
+                if (isPlaying) {
+                    window.TrøstMigTTS.pause();
+                    clearTimeout(speechTimeout);
+                    document.getElementById('playBtn').innerHTML = '▶';
+                } else {
+                    window.TrøstMigTTS.resume();
+                    // Resume timer
+                    document.getElementById('playBtn').innerHTML = '⏸';
+                }
+                isPlaying = !isPlaying;
+            }
+        }
+
+        function closeScript() {
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.stop();
+            }
+            
+            clearTimeout(speechTimeout);
+            
+            document.getElementById('scriptDisplay').classList.remove('active');
+            document.getElementById('mainSelection').classList.add('active');
+            document.getElementById('breathingCircle').classList.remove('active');
+            
+            currentSection = null;
+            currentScriptIndex = 0;
+        }
+    </script>
+</body>
+</html>

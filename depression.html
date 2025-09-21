@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depression - TrøstMig.dk</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #9f7aea;
+            --accent-hover: #b794f4;
+            --border: #4a5568;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        
+        .welcome-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .welcome-message {
+            max-width: 700px;
+            padding: 40px;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            animation: fadeIn 2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .skip-intro {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .emergency-notice {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 80px 20px 20px;
+            text-align: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        [data-theme="dark"] .emergency-notice {
+            background: rgba(254, 242, 242, 0.1);
+        }
+        
+        .emergency-notice a {
+            color: #dc2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .main-selection {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .main-selection.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .script-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 500;
+        }
+        
+        .script-display.active {
+            display: flex;
+            flex-direction: column;
+            padding-top: 70px;
+        }
+        
+        .script-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .script-content {
+            max-width: 800px;
+            font-size: 1.3rem;
+            line-height: 2;
+        }
+        
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px var(--shadow);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        .back-to-selection {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .selection-grid { grid-template-columns: 1fr; }
+            .script-content { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-message" id="welcomeText"></div>
+        <button class="skip-intro" onclick="skipIntro()">Spring over</button>
+    </div>
+    
+    <div class="nav-header">
+        <a href="index.html" class="back-link" id="backLink">← Tilbage til forsiden</a>
+        <div class="nav-controls">
+            <select class="voice-selector" id="voiceSelector" onchange="changeVoice()"></select>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+    
+    <div class="emergency-notice">
+        <strong>Hvis du har selvmordstanker:</strong> 
+        <a href="tel:70201201">Ring Livslinjen 70 20 12 01</a> eller 
+        <a href="tel:116123">Psykiatrifonden 116 123</a>. 
+        Du er ikke alene.
+    </div>
+    
+    <div class="main-selection" id="mainSelection">
+        <div class="selection-header">
+            <h1>Depression</h1>
+            <p>Du fortjener støtte. Lad os tage det ét skridt ad gangen.</p>
+        </div>
+        <div class="selection-grid">
+            <div class="selection-card" onclick="startSection('akut')">
+                <div class="selection-icon">💙</div>
+                <h2>Akut støtte</h2>
+                <p>Når alt føles håbløst og mørkt. Øjeblikkelig støtte og validering.</p>
+            </div>
+            <div class="selection-card" onclick="startSection('forstaa')">
+                <div class="selection-icon">🧠</div>
+                <h2>Forstå depression</h2>
+                <p>Videnskabelig forklaring på hvad der sker i krop og hjerne.</p>
+            </div>
+            <div class="selection-card" onclick="startSection('vejud')">
+                <div class="selection-icon">🌅</div>
+                <h2>Vej ud</h2>
+                <p>Evidensbaserede teknikker og små skridt mod bedring.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="script-display" id="scriptDisplay">
+        <div class="script-text">
+            <div class="script-content" id="scriptContent"></div>
+        </div>
+        <div class="controls-bar">
+            <button class="control-btn" onclick="previousScript()">◀</button>
+            <button class="control-btn" onclick="togglePlay()" id="playBtn">▶</button>
+            <button class="control-btn" onclick="nextScript()">▶</button>
+            <span id="progressIndicator">1 / 40</span>
+            <button class="back-to-selection" onclick="backToSelection()">← Tilbage</button>
+        </div>
+    </div>
+    
+    <!-- VIGTIG: Central TTS konfiguration -->
+    <script src="tts-config.js"></script>
+    
+    <script>
+        const welcomeMessages = [
+            "Det kræver styrke at være her. Selv når alt føles håbløst, tog du dette skridt.",
+            "Depression lyver for dig. Den siger du er alene, værdiløs, at det aldrig bliver bedre.",
+            "Lige nu føles alt tungt. Det er depressionens filter. Virkeligheden er at bedring er mulig.",
+            "Du behøver ikke føle håb. Du behøver bare at være her. Det er nok.",
+            "Tusinder har stået hvor du står nu. De troede heller ikke det kunne blive bedre. Men det blev det."
+        ];
+        
+        const scriptsDatabase = {
+            akut: [
+                "Det du føler lige nu er ægte og gyldigt. Depression er ikke dovenskab eller svaghed - det er en medicinsk tilstand som millioner kender til.",
+                "Din hjerne producerer måske ikke nok serotonin eller dopamin lige nu. Det er biokemi, ikke karakterbrist.",
+                "Depression fortæller dig løgne - at du er værdiløs, at det aldrig bliver bedre. Dette er sygdommens stemme, ikke sandheden.",
+                "Lige nu føles det som at være fanget under vand. Men du ånder stadig. Selv de mindste handlinger betyder noget.",
+                "Du behøver ikke smile eller late som om alt er fint. Det er okay at være ærlig om at du har det svært.",
+                "Dit hjertes værdi afhænger ikke af din produktivitet. Du er værdifuld, også når du hviler.",
+                "Depression stjæler din energi, men bevægelse skaber energi. Bare at skifte position er nok lige nu.",
+                "Solen behøver ikke at skinne indenfor for at skinne udenfor. Hvis du kan, åbn et gardin.",
+                "Din krop husker hvordan man fungerer, selv når sindet har glemt det.",
+                "Opgaver føles som bjerge, men du behøver ikke bestige hele bjerget. Bare røre ved foden af det.",
+                "Tanken 'jeg er værdiløs' er ikke et faktum. Det er et symptom på depression.",
+                "Depression får dig til at huske alle fiaskoer og glemme alle succeser. Dit sind narrer dig.",
+                "Du ser verden gennem depressive briller lige nu. Men brillerne kan tages af.",
+                "Forestil dig din bedste ven sagde disse ting om sig selv. Ville du være enig? Nej. Vær din egen ven nu.",
+                "Depression får fremtiden til at virke som fortiden. Men fremtiden er ukendt - den kan blive bedre.",
+                "Du fortjener kærlighed og omsorg, især når du har det sværest. Start med at give dig selv det.",
+                "Det er ikke din skyld at du har depression. Du valgte det ikke.",
+                "Healing er ikke lineær. Nogle dage er værre. Tilbagefald betyder ikke du starter forfra.",
+                "Du er ikke en byrde. De mennesker der elsker dig, ønsker at hjælpe.",
+                "Lige nu, i dette sekund, er du okay. Du ånder. Dit hjerte slår. Du er levende.",
+                "Læg mærke til tre ting omkring dig uden at dømme dem. Din bord. En lyd. Din vejrtrækning.",
+                "Depression lever i fortiden og fremtiden. Men lige nu eksisterer kun nutiden - og du klarer den.",
+                "Mærk tyngden af din krop. Jorden bærer dig. Du behøver ikke at bære alt selv.",
+                "Forestil dig dine tanker som tog der kører forbi. Du behøver ikke stige på hvert tog.",
+                "Du samler beviser mod depressionens løgne. Hver handling beviser at du ikke er hjælpeløs.",
+                "Det er okay at have brug for hjælp. Selv de stærkeste mennesker har brug for støtte.",
+                "Din smerte har mening. Den fortæller dig at noget skal ændres - og det kan det.",
+                "Du overlever 100% af dine værste dage indtil nu. Din track record er perfekt.",
+                "Depression er en del af din oplevelse lige nu, men den definerer ikke hvem du er.",
+                "Måske kan du ikke se lyset endnu. Men det betyder ikke det ikke er der.",
+                "Små skridt tæller. At være her er et skridt. At læse dette er et skridt.",
+                "Din følelse af håbløshed er midlertidig, selvom den føles permanent.",
+                "Du har værdi uanset hvad du præsterer. Du er menneske - det er nok.",
+                "Depression er vejr i sindet. Og vejret ændrer sig altid.",
+                "Du gør dit bedste med de ressourcer du har lige nu. Og det er godt nok.",
+                "Måske føler du dig isoleret, men du er forbundet til alle os andre der forstår denne smerte.",
+                "Din styrke vises ikke i at være lykkelig hele tiden, men i at fortsætte når det er svært.",
+                "Det er modigt at vågne hver dag når depression gør det så hårdt. Du ER modig.",
+                "Du behøver ikke at vide hvordan du kommer ud af dette. Bare tag næste lille skridt.",
+                "Depression kan føles som en tunnel uden ende. Men alle tunneler har en udgang."
+            ],
+            forstaa: [
+                "Depression er en complex hjernekemisk tilstand, ikke en karakterfejl eller valg du har taget.",
+                "Dit nervesystem er i overlevelsesmode. Fight-freeze-flight bliver til depression når det varer ved.",
+                "Forskning viser nedsat aktivitet i præfrontal cortex - derfor er beslutninger så hårde.",
+                "Hippocampus - dit hukommelsescenter - krymper ofte ved depression. Det påvirker hvordan du husker.",
+                "Serotonin, dopamin og noradrenalin er ude af balance. Det er biokemi, ikke manglende viljestyrke.",
+                "Din hjerne har neuroplasticitet - evnen til at ændre sig. Depression er ikke permanent hjernestruktur.",
+                "Inflammation i kroppen kan forårsage depression. Dit immunsystem og sind er forbundet.",
+                "Circadiske rytmer er forstyrret. Derfor er søvn og morgen-rutiner så vigtige.",
+                "Din amygdala (frygtcenter) er hyperaktiv. Derfor føles alt truende.",
+                "Thalamus filtrerer ikke information korrekt. Derfor virker alting overvældende.",
+                "HPA-aksen (stress-system) kører konstant. Din krop tror den er under angreb.",
+                "Neurotransmitter-receptorer bliver mindre følsomme. Det er derfor ting der plejede at glæde dig ikke gør det.",
+                "Genetik spiller en rolle - 40% arvelig. Men gener er ikke skæbne - miljø betyder også meget.",
+                "Depression ændrer faktisk hjernens struktur temporært. MRI scans viser fysiske forskelle.",
+                "Din Default Mode Network er overaktiv. Derfor er grubling så intenst.",
+                "Myelinering - de beskyttende lag på nerveceller - er påvirket. Det gør mental processing langsommere.",
+                "BDNF (Brain-Derived Neurotrophic Factor) er lavere. Det påvirker hjernens vækst og tilpasning.",
+                "Gut-brain axis er forstyrret. Din tarmflora påvirker dit humør mere end du tror.",
+                "Mitochondrier i hjerneceller producerer mindre energi. Det er derfor alt føles udmattende.",
+                "Oxytocin og andre sociale kemikalier er påvirket. Derfor føles forbindelse vanskelig.",
+                "Depression aktiverer de samme hjernedele som fysisk smerte. Din smerte ER reel.",
+                "Neurogenese - dannelse af nye neuroner - er nedsat men kan genstartes med behandling.",
+                "Cytokiner - inflammatoriske molekyler - er forhøjede. Depression har immunologiske komponenter.",
+                "Din circadianske ur-gene er muligvis muteret. Derfor er light therapy effektivt.",
+                "Glukokortikoid receptorer er desensitized fra kronisk stress. Din stressrespons er ødelagt.",
+                "Frontal lobe funktioner er nedsat. Executive function - planlægning, beslutninger - er kompromitteret.",
+                "Din belønningskreds (nucleus accumbens) responderer dårligt. Derfor er motivation væk.",
+                "GABA - den beroligende neurotransmitter - er ude af balance. Derfor er angst så common med depression.",
+                "Epigenetik betyder stress ændrer hvilke gener der udtrykkes. Men det kan også ændres tilbage.",
+                "Din vagus nerve tone er lav. Det påvirker alt fra fordøjelse til humør.",
+                "Ketone bodies fra specifikke diæter kan have antidepressive effekter via metaboliske pathways.",
+                "Din hypothalamus regulerer ikke korrekt. Derfor er appetit, libido og energi påvirket.",
+                "Neuroinflammation er nøglen. Mikroglia - hjernens immuneceller - er overaktive.",
+                "Oxidativ stress skader neuroner. Antioxidanter fra kost kan hjælpe.",
+                "Din circulate rhythm amplitude er flad. Derfor føles der ingen forskel mellem dag og nat.",
+                "Glutamat - excitatory neurotransmitter - kan være for højt. Det overeksiterer neuroner.",
+                "Default mode network connectivity er abnormal. Derfor er selvreference så negativ.",
+                "Stress hormoner som cortisol forbliver forhøjede. Din HPA-akse er dysreguleret.",
+                "Neuroplasticitet betyder behandling virker. SSRI'er, terapi og livsstil kan rewire hjernen.",
+                "Depression påvirker faktisk alle organsystemer - ikke kun hjernen. Det er en hele-krop tilstand."
+            ],
+            vejud: [
+                "Behavioral Activation virker bedre end du tror. Handling kommer FØR motivation. Start mikroskopisk.",
+                "5-4-3-2-1 grounding: Navngiv 5 ting du ser, 4 du mærker, 3 du hører, 2 du lugter, 1 du smager.",
+                "Box breathing: Indånd 4, hold 4, udånd 4, hold 4. Gentag i 2 minutter for at calm nervesystemet.",
+                "Morgensol i 20 minutter booster serotonin og resetter circadiansk rytme. Det er gratis medicin.",
+                "Kold eksponering (kolde brusere 30 sek) øger noradrenalin med 250%. Det hjælper på energi.",
+                "Fysisk aktivitet producerer BDNF - miracle gro for hjernen. Bare 10 minutters gåtur tæller.",
+                "Søvn-rutine er ikke-forhandlingsbar: Samme sengetid, mørkt rum, ingen skærme 1 time før.",
+                "Proteinrig morgenmad stabiliserer blodsukkeret og giver aminosyrer til neurotransmitter produktion.",
+                "Social kontakt - selv bare at sidde i samme rum som andre - aktiverer oxytocin.",
+                "Skriv 3 ting dagligt: Hvad jeg er taknemmelig for, hvad jeg opnåede, hvad jeg ser frem til.",
+                "Anti-inflammatorisk kost: Omega-3, grøntsager, undgå sukker. Inflammation driver depression.",
+                "Meditativ vejrtrækning 5 minutter dagligt ændrer brain structure efter 8 uger.",
+                "Eksponering for angst-udløsende situationer i små doser. Undgåelse vedligeholder depression.",
+                "Besvar depressive tanker: 'Hvor er beviset?' 'Ville jeg sige dette til en ven?'",
+                "Aktivitetsplanlægning: Planlæg aktiviteter baseret på værdier, ikke humør.",
+                "Progressive muskel-afspænding: Spænd og slip muskelgrupper for at release spænding.",
+                "Varm bad med magnesium (Epsom salt) afbalancerer nervesystemet og forbedrer søvn.",
+                "Journaling om negative tanker får dem ud af hovedet og på papir hvor de virker mindre overvældende.",
+                "Kognitive omstruktureringer: Når tanke opstår, identificer forvrængning (alt-eller-intet osv).",
+                "Hygge-aktiviteter uden mål: Læs for fornøjelse, lyt til musik, bare VÆR uden produktivitet.",
+                "Natur-eksponering 2 timer ugentligt reducerer cortisol og øger wellbeing markant.",
+                "Standup-desk eller arbejd stående 30 min dagligt. Prolonged sitting forværrer depression.",
+                "Alkohol og koffein moderering. Begge påvirker søvn og neurochemistry negativt.",
+                "Kreativ udtryk (tegning, musik, dans) aktiverer andre brain pathways end verbal processing.",
+                "Timer-trick: Giv dig selv kun 15 min til opgave. Often du fortsætter når du først er startet.",
+                "Lyn-rengøring 5 minutter. Clean space = mindre mental clutter.",
+                "Tech-fri time dagligt. Dopamin detox fra konstant stimulation.",
+                "Dybe samtaler over small talk. Meaningful connection healer.",
+                "Frivilligt arbejde aktiverer reward pathways og giver purpose.",
+                "Pet en kat/hund. Dyr sænker cortisol og øger oxytocin.",
+                "Humor og latter - selv tvungen - frigiver endorfiner.",
+                "Lær nyt skill i små bites. Mastery giver autonomi og purpose.",
+                "Energy følg: Track hvornår du har mest energi og planlæg vigtige ting da.",
+                "Grænser: Øv dig i at sige nej. Overcommitment dræner.",
+                "Selvmedfølelses-mantra: 'Dette er et øjeblik af lidelse. Lidelse er en del af livet. Må jeg være venlig mod mig selv.'",
+                "No zero days: Gør bare ÉN lille ting mod recovery hver dag.",
+                "Community - find din tribe. Online eller IRL, find dem der forstår.",
+                "Professional hjælp er ikke fiasko - det er styrke. Terapi + evt medicin redder liv.",
+                "Forestil dig din fremtidige recovered self. Hvad ville de sige til dig nu?",
+                "Husk: Du bygger recovery. Hver lille skridt er fundamentet. Fortsæt."
+            ]
+        };
+        
+        let availableVoices = [];
+        let selectedVoice = null;
+        let currentSection = null;
+        let currentScriptIndex = 0;
+        let isPlaying = false;
+        
+        // Voice management
+        function populateVoiceSelector() {
+            const selector = document.getElementById('voiceSelector');
+            if (!window.TrøstMigTTS) return;
+            
+            const voices = window.TrøstMigTTS.getVoices();
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = voice.description;
+                selector.appendChild(option);
+            });
+            
+            // Set recommended voice
+            selector.value = 9; // Despina by default
+        }
+        
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelector');
+            const voiceIndex = parseInt(selector.value);
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.setVoice(voiceIndex);
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            // Setup voice selector if TTS available
+            if (window.TrøstMigTTS) {
+                populateVoiceSelector();
+                // Set optimal voice
+                window.TrøstMigTTS.setVoice(9); // Despina by default
+            }
+            
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            
+            const randomMsg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+            document.getElementById('welcomeText').textContent = randomMsg;
+            setTimeout(skipIntro, 8000);
+        });
+        
+        function skipIntro() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('mainSelection').classList.add('active');
+        }
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        function startSection(section) {
+            currentSection = section;
+            currentScriptIndex = 0;
+            document.getElementById('mainSelection').classList.remove('active');
+            document.getElementById('scriptDisplay').classList.add('active');
+            document.getElementById('backLink').style.display = 'none';
+            loadScript();
+        }
+        
+        function backToSelection() {
+            speechSynthesis.cancel();
+            document.getElementById('scriptDisplay').classList.remove('active');
+            document.getElementById('mainSelection').classList.add('active');
+            document.getElementById('backLink').style.display = 'flex';
+            currentSection = null;
+            isPlaying = false;
+        }
+        
+        function loadScript() {
+            if (!currentSection) return;
+            const scripts = scriptsDatabase[currentSection];
+            const script = scripts[currentScriptIndex];
+            document.getElementById('scriptContent').textContent = script;
+            document.getElementById('progressIndicator').textContent = `${currentScriptIndex + 1} / ${scripts.length}`;
+            setTimeout(() => speakText(script), 500);
+        }
+        
+        function nextScript() {
+            const scripts = scriptsDatabase[currentSection];
+            if (currentScriptIndex < scripts.length - 1) {
+                currentScriptIndex++;
+                loadScript();
+            }
+        }
+        
+        function previousScript() {
+            if (currentScriptIndex > 0) {
+                currentScriptIndex--;
+                loadScript();
+            }
+        }
+        
+        function togglePlay() {
+            if (isPlaying) {
+                speechSynthesis.pause();
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+            } else {
+                if (speechSynthesis.paused) {
+                    speechSynthesis.resume();
+                } else {
+                    loadScript();
+                }
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            }
+        }
+        
+        function speakText(text) {
+            // Use TrøstMigTTS if available, otherwise fallback to browser TTS
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.speak(text);
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            } else {
+                // Fallback to native browser TTS
+                if (!('speechSynthesis' in window)) return;
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'da-DK';
+                utterance.rate = 0.9;
+                utterance.onstart = () => {
+                    isPlaying = true;
+                    document.getElementById('playBtn').textContent = '⏸';
+                };
+                utterance.onend = () => {
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶';
+                    setTimeout(() => nextScript(), 3000);
+                };
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('scriptDisplay').classList.contains('active')) return;
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowRight':
+                    nextScript();
+                    break;
+                case 'ArrowLeft':
+                    previousScript();
+                    break;
+                case 'Escape':
+                    backToSelection();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
