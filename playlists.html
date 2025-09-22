@@ -1,6 +1,256 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
+    <!-- Universal Navigation Header - Add to all pages -->
+<style>
+.nav-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 15px 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #7c3aed;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-link {
+    color: #2d3748;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link:hover {
+    background: #f7fafc;
+    color: #7c3aed;
+}
+
+.nav-link.primary {
+    background: #7c3aed;
+    color: white;
+}
+
+.nav-link.primary:hover {
+    background: #6d28d9;
+}
+
+.nav-link.crisis {
+    background: #ef4444;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.nav-link.crisis:hover {
+    background: #dc2626;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.voice-selector {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: none;
+    min-width: 200px;
+}
+
+.dropdown.show {
+    display: block;
+}
+
+.dropdown a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #2d3748;
+    border-radius: 4px;
+    margin: 2px 0;
+}
+
+.dropdown a:hover {
+    background: #f7fafc;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .nav-content {
+        flex-direction: column;
+        gap: 15px;
+        padding: 10px;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .nav-link {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Add top margin to body to account for fixed header */
+body {
+    margin-top: 80px;
+}
+</style>
+
+<nav class="nav-header">
+    <div class="nav-content">
+        <!-- Logo -->
+        <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+        
+        <!-- Main Navigation -->
+        <div class="nav-links">
+            <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
+            <a href="Dashboard.html" class="nav-link">📊 Dashboard</a>
+            <a href="playlists.html" class="nav-link">🎵 Playlister</a>
+            <a href="angst.html" class="nav-link">⚡ Angst</a>
+            <a href="depression.html" class="nav-link">🧠 Depression</a>
+        </div>
+        
+        <!-- User Area - Simplified -->
+        <div class="nav-user">
+            <a href="login.html" class="nav-link primary">🔐 Login</a>
+        </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Voice selector functionality
+document.getElementById('voice-selector').addEventListener('change', function(e) {
+    const selectedVoice = e.target.value;
+    localStorage.setItem('preferredVoice', selectedVoice);
+    
+    // Update TTS config if available
+    if (typeof TTS_CONFIG !== 'undefined') {
+        TTS_CONFIG.VOICE_SETTINGS.name = selectedVoice;
+    }
+    
+    console.log('Voice changed to:', selectedVoice);
+});
+
+// Load saved voice preference
+document.addEventListener('DOMContentLoaded', function() {
+    const savedVoice = localStorage.getItem('preferredVoice');
+    if (savedVoice) {
+        document.getElementById('voice-selector').value = savedVoice;
+    }
+});
+
+// User menu toggle
+function toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.user-menu')) {
+        document.getElementById('user-dropdown').classList.remove('show');
+    }
+});
+
+// Check authentication status (if Firebase is available)
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+        const userStatus = document.getElementById('user-status');
+        const guestMenu = document.getElementById('guest-menu');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (user) {
+            userStatus.textContent = user.displayName || user.email || 'Bruger';
+            guestMenu.style.display = 'none';
+            userMenu.style.display = 'block';
+        } else {
+            userStatus.textContent = '👤 Login';
+            guestMenu.style.display = 'block';
+            userMenu.style.display = 'none';
+        }
+    });
+}
+
+// Sign out function
+function signOut() {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().signOut().then(function() {
+            window.location.href = 'index.html';
+        });
+    }
+}
+
+console.log('🧭 Universal navigation loaded');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mine Playlister - TrøstMig.dk</title>
