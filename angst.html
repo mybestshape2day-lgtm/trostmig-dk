@@ -251,6 +251,101 @@ function signOut() {
 
 console.log('🧭 Universal navigation loaded');
 </script>
+<style>
+
+/* Add top margin to body to account for fixed header */
+body {
+    margin-top: 80px;
+}
+</style>
+
+<nav class="nav-header">
+    <div class="nav-content">
+        <!-- Logo -->
+        <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+        
+        <!-- Main Navigation -->
+        <div class="nav-links">
+            <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
+            <a href="Dashboard.html" class="nav-link">📊 Dashboard</a>
+            <a href="playlists.html" class="nav-link">🎵 Playlister</a>
+            <a href="angst.html" class="nav-link">⚡ Angst</a>
+            <a href="depression.html" class="nav-link">🧠 Depression</a>
+        </div>
+        
+        <!-- User Area - Simplified -->
+        <div class="nav-user">
+            <a href="login.html" class="nav-link primary">🔐 Login</a>
+        </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Voice selector functionality
+document.getElementById('voice-selector').addEventListener('change', function(e) {
+    const selectedVoice = e.target.value;
+    localStorage.setItem('preferredVoice', selectedVoice);
+    
+    // Update TTS config if available
+    if (typeof TTS_CONFIG !== 'undefined') {
+        TTS_CONFIG.VOICE_SETTINGS.name = selectedVoice;
+    }
+    
+    console.log('Voice changed to:', selectedVoice);
+});
+
+// Load saved voice preference
+document.addEventListener('DOMContentLoaded', function() {
+    const savedVoice = localStorage.getItem('preferredVoice');
+    if (savedVoice) {
+        document.getElementById('voice-selector').value = savedVoice;
+    }
+});
+
+// User menu toggle
+function toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.user-menu')) {
+        document.getElementById('user-dropdown').classList.remove('show');
+    }
+});
+
+// Check authentication status (if Firebase is available)
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+        const userStatus = document.getElementById('user-status');
+        const guestMenu = document.getElementById('guest-menu');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (user) {
+            userStatus.textContent = user.displayName || user.email || 'Bruger';
+            guestMenu.style.display = 'none';
+            userMenu.style.display = 'block';
+        } else {
+            userStatus.textContent = '👤 Login';
+            guestMenu.style.display = 'block';
+            userMenu.style.display = 'none';
+        }
+    });
+}
+
+// Sign out function
+function signOut() {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().signOut().then(function() {
+            window.location.href = 'index.html';
+        });
+    }
+}
+
+console.log('🧭 Universal navigation loaded');
+</script>
 /* Add top margin to body to account for fixed header */
 body {
     margin-top: 80px;
