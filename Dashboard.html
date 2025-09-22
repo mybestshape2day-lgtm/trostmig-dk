@@ -14,7 +14,6 @@
         :root {
             --bg-primary: #f8f9fa;
             --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
             --text-primary: #2d3748;
             --text-secondary: #718096;
             --accent: #7c3aed;
@@ -23,16 +22,6 @@
             --danger: #ef4444;
             --border: #e2e8f0;
             --shadow: rgba(0,0,0,0.1);
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --bg-card: #2d3748;
-            --text-primary: #f7fafc;
-            --text-secondary: #a0aec0;
-            --border: #4a5568;
-            --shadow: rgba(0,0,0,0.3);
         }
 
         body {
@@ -68,6 +57,26 @@
             opacity: 0.9;
         }
 
+        .info-link {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-link p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .info-link a {
+            color: white;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -76,7 +85,7 @@
         }
 
         .card {
-            background: var(--bg-card);
+            background: var(--bg-secondary);
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 4px 20px var(--shadow);
@@ -111,7 +120,6 @@
             color: var(--text-primary);
         }
 
-        /* PHQ-2 Depression Screener */
         .phq-question {
             margin-bottom: 20px;
         }
@@ -152,7 +160,6 @@
             border-color: var(--accent);
         }
 
-        /* Mood Scale */
         .mood-scale {
             display: flex;
             justify-content: space-between;
@@ -184,7 +191,6 @@
             border-color: var(--success);
         }
 
-        /* Activity Tracking */
         .activity-list {
             display: grid;
             gap: 15px;
@@ -217,7 +223,6 @@
             color: white;
         }
 
-        /* Progress Charts */
         .progress-chart {
             height: 150px;
             background: var(--bg-primary);
@@ -242,7 +247,6 @@
             opacity: 1;
         }
 
-        /* Buttons */
         .btn {
             background: var(--accent);
             color: white;
@@ -262,23 +266,17 @@
             transform: translateY(-1px);
         }
 
-        .btn-secondary {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 2px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent);
-        }
-
-        /* Results */
         .result {
             background: var(--bg-primary);
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
             border-left: 4px solid var(--accent);
+            display: none;
+        }
+
+        .result.show {
+            display: block;
         }
 
         .result.warning {
@@ -291,7 +289,6 @@
             background: #fee2e2;
         }
 
-        /* Crisis notice */
         .crisis-notice {
             background: #fee2e2;
             border: 2px solid #fca5a5;
@@ -349,36 +346,9 @@
             <h1>🧠 Mental Sundhed Dashboard</h1>
             <p>Evidensbaseret tracking af dit mentale velbefindende</p>
             
-            <!-- User Authentication Status -->
-            <div id="user-status" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; backdrop-filter: blur(10px);">
-                <!-- Not Logged In -->
-                <div id="not-logged-in" style="display: none;">
-                    <p style="margin: 0 0 10px 0; font-size: 0.95rem; opacity: 0.9;">
-                        👤 Du bruger anonym tilstand - data gemmes kun lokalt
-                    </p>
-                    <a href="login.html" class="btn-auth" style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.4);">
-                        🔐 Log ind for sky-sync
-                    </a>
-                </div>
-                
-                <!-- Logged In -->
-                <div id="logged-in" style="display: none;">
-                    <p style="margin: 0 0 10px 0; font-size: 0.95rem; opacity: 0.9;">
-                        ✅ Logget ind som: <span id="user-name" style="font-weight: 600;">Loading...</span>
-                    </p>
-                    <button onclick="signOut()" class="btn-auth" style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; font-weight: 600; font-size: 0.9rem;">
-                        🚪 Log ud
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Optional Learn More -->
-            <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.15); border-radius: 10px; backdrop-filter: blur(10px);">
-                <p style="margin: 0; font-size: 0.95rem; opacity: 0.9;">
-                    💡 Ny til mental health tracking? 
-                    <a href="tracking-intro.html" style="color: white; text-decoration: underline; font-weight: 600;">
-                        Lær hvorfor det virker (2 min)
-                    </a>
+            <div class="info-link">
+                <p>💡 Ny til mental health tracking? 
+                    <a href="tracking-intro.html">Lær hvorfor det virker (2 min)</a>
                 </p>
             </div>
         </header>
@@ -412,7 +382,7 @@
                     </div>
                 </div>
 
-                <div id="phq-result" class="result" style="display: none;"></div>
+                <div id="phq-result" class="result"></div>
                 <button class="btn" onclick="calculatePHQ2()">Beregn Depression Score</button>
             </div>
 
@@ -443,7 +413,7 @@
                     </div>
                 </div>
 
-                <div id="gad-result" class="result" style="display: none;"></div>
+                <div id="gad-result" class="result"></div>
                 <button class="btn" onclick="calculateGAD2()">Beregn Angst Score</button>
             </div>
 
@@ -478,7 +448,7 @@
                 <button class="btn" onclick="saveMood()">Gem Dagens Humør</button>
             </div>
 
-            <!-- Activity Tracking (Behavioral Activation) -->
+            <!-- Activity Tracking -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon activity-icon">📈</div>
@@ -519,7 +489,7 @@
             </div>
         </div>
 
-        <!-- Crisis Resources (Always Visible) -->
+        <!-- Crisis Resources -->
         <div class="crisis-notice">
             <h3>🚨 Akut Hjælp</h3>
             <p>Har du selvmordstanker eller er i akut krise?</p>
@@ -529,138 +499,6 @@
     </div>
 
     <script>
-        // Firebase integration
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { 
-            getAuth,
-            onAuthStateChanged,
-            signOut as firebaseSignOut
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { 
-            getFirestore,
-            doc,
-            setDoc,
-            getDoc,
-            serverTimestamp 
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCXsc50f5PF8_g47S0Q7wyH36dmOtmLo8Y",
-            authDomain: "newagent-b33f9.firebaseapp.com",
-            projectId: "newagent-b33f9",
-            storageBucket: "newagent-b33f9.appspot.com",
-            messagingSenderId: "861717699185",
-            appId: "1:861717699185:web:9f1c1d8d8ce1be122f59d0"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Current user
-        let currentUser = null;
-
-        // Monitor auth state
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            updateAuthUI();
-            if (user) {
-                loadUserData();
-            }
-        });
-
-        // Update authentication UI
-        function updateAuthUI() {
-            const notLoggedIn = document.getElementById('not-logged-in');
-            const loggedIn = document.getElementById('logged-in');
-            const userName = document.getElementById('user-name');
-            
-            if (currentUser) {
-                notLoggedIn.style.display = 'none';
-                loggedIn.style.display = 'block';
-                userName.textContent = currentUser.displayName || currentUser.email || 'Anonym Bruger';
-            } else {
-                notLoggedIn.style.display = 'block';
-                loggedIn.style.display = 'none';
-            }
-        }
-
-        // Sign out function
-        window.signOut = async function() {
-            try {
-                await firebaseSignOut(auth);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Sign out error:', error);
-                alert('Fejl ved logout. Prøv igen.');
-            }
-        };
-
-        // Load user data from Firestore
-        async function loadUserData() {
-            if (!currentUser) return;
-            
-            try {
-                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    
-                    // Load assessment history if exists
-                    if (userData.assessmentHistory && userData.assessmentHistory.length > 0) {
-                        const lastAssessment = userData.assessmentHistory[userData.assessmentHistory.length - 1];
-                        
-                        // Pre-fill last assessment scores
-                        if (lastAssessment.phq2) {
-                            assessmentData.phq2 = lastAssessment.phq2;
-                        }
-                        if (lastAssessment.gad2) {
-                            assessmentData.gad2 = lastAssessment.gad2;
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-            }
-        }
-
-        // Save assessment data to Firestore
-        async function saveAssessmentToFirestore(data) {
-            if (!currentUser) return;
-            
-            try {
-                const userDocRef = doc(db, 'users', currentUser.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                let assessmentHistory = [];
-                if (userDoc.exists()) {
-                    assessmentHistory = userDoc.data().assessmentHistory || [];
-                }
-                
-                // Add new assessment
-                assessmentHistory.push({
-                    date: new Date().toISOString().split('T')[0],
-                    timestamp: serverTimestamp(),
-                    ...data
-                });
-                
-                // Keep only last 30 assessments
-                if (assessmentHistory.length > 30) {
-                    assessmentHistory = assessmentHistory.slice(-30);
-                }
-                
-                await setDoc(userDocRef, {
-                    assessmentHistory: assessmentHistory,
-                    lastUpdated: serverTimestamp()
-                }, { merge: true });
-                
-                console.log('✅ Assessment saved to Firestore');
-            } catch (error) {
-                console.error('❌ Error saving assessment:', error);
-            }
-        }
-
         // Data storage
         let assessmentData = {
             phq2: [null, null],
@@ -680,14 +518,9 @@
             updateActivityProgress();
         }
 
-        // Save data (both localStorage and Firestore)
+        // Save data
         function saveData() {
             localStorage.setItem('mentalHealthData', JSON.stringify(assessmentData));
-            
-            // Also save to Firestore if user is logged in
-            if (currentUser) {
-                saveAssessmentToFirestore(assessmentData);
-            }
         }
 
         // Rating scale selection
@@ -754,59 +587,55 @@
 
         // Calculate PHQ-2 score
         function calculatePHQ2() {
-            const score = assessmentData.phq2[0] + assessmentData.phq2[1];
-            const resultDiv = document.getElementById('phq-result');
-            
             if (assessmentData.phq2.includes(null)) {
-                resultDiv.innerHTML = '<strong>Besvar venligst begge spørgsmål først.</strong>';
-                resultDiv.style.display = 'block';
+                alert('Besvar venligst begge spørgsmål først.');
                 return;
             }
+            
+            const score = assessmentData.phq2[0] + assessmentData.phq2[1];
+            const resultDiv = document.getElementById('phq-result');
             
             let result = `<strong>Din PHQ-2 score: ${score}/6</strong><br><br>`;
             
             if (score <= 2) {
-                result += '<span style="color: var(--success);">✅ Minimal depression</span><br>Fortsæt med at passe på dig selv og søg hjælp hvis symptomerne forværres.';
-                resultDiv.className = 'result';
+                result += '<span style="color: var(--success);">✅ Minimal depression</span><br>Fortsæt med at passe på dig selv.';
+                resultDiv.className = 'result show';
             } else if (score <= 4) {
-                result += '<span style="color: var(--warning);">⚠️ Mild depression</span><br>Overvej at tale med en læge eller terapeut. Du kan også bruge vores selvhjælps-værktøjer.';
-                resultDiv.className = 'result warning';
+                result += '<span style="color: var(--warning);">⚠️ Mild depression</span><br>Overvej at tale med en læge eller terapeut.';
+                resultDiv.className = 'result show warning';
             } else {
-                result += '<span style="color: var(--danger);">🚨 Moderat til svær depression</span><br>Det anbefales stærkt at søge professionel hjælp. Kontakt din læge eller en mental sundhedsprofessionel.';
-                resultDiv.className = 'result danger';
+                result += '<span style="color: var(--danger);">🚨 Moderat til svær depression</span><br>Søg professionel hjælp.';
+                resultDiv.className = 'result show danger';
             }
             
             resultDiv.innerHTML = result;
-            resultDiv.style.display = 'block';
             saveData();
         }
 
         // Calculate GAD-2 score
         function calculateGAD2() {
-            const score = assessmentData.gad2[0] + assessmentData.gad2[1];
-            const resultDiv = document.getElementById('gad-result');
-            
             if (assessmentData.gad2.includes(null)) {
-                resultDiv.innerHTML = '<strong>Besvar venligst begge spørgsmål først.</strong>';
-                resultDiv.style.display = 'block';
+                alert('Besvar venligst begge spørgsmål først.');
                 return;
             }
+            
+            const score = assessmentData.gad2[0] + assessmentData.gad2[1];
+            const resultDiv = document.getElementById('gad-result');
             
             let result = `<strong>Din GAD-2 score: ${score}/6</strong><br><br>`;
             
             if (score <= 2) {
-                result += '<span style="color: var(--success);">✅ Minimal angst</span><br>Du håndterer angst godt. Fortsæt med sunde coping strategier.';
-                resultDiv.className = 'result';
+                result += '<span style="color: var(--success);">✅ Minimal angst</span><br>Du håndterer angst godt.';
+                resultDiv.className = 'result show';
             } else if (score <= 4) {
-                result += '<span style="color: var(--warning);">⚠️ Mild angst</span><br>Overvej angst-håndteringsteknikker og tal eventuelt med en professionel.';
-                resultDiv.className = 'result warning';
+                result += '<span style="color: var(--warning);">⚠️ Mild angst</span><br>Overvej angst-håndteringsteknikker.';
+                resultDiv.className = 'result show warning';
             } else {
-                result += '<span style="color: var(--danger);">🚨 Moderat til svær angst</span><br>Søg professionel hjælp for angst-håndtering. Du fortjener støtte.';
-                resultDiv.className = 'result danger';
+                result += '<span style="color: var(--danger);">🚨 Moderat til svær angst</span><br>Søg professionel hjælp for angst.';
+                resultDiv.className = 'result show danger';
             }
             
             resultDiv.innerHTML = result;
-            resultDiv.style.display = 'block';
             saveData();
         }
 
@@ -818,7 +647,7 @@
                 moods[today] = assessmentData.currentMood;
                 localStorage.setItem('moodHistory', JSON.stringify(moods));
                 updateMoodChart();
-                alert('Dagens humør gemt! 📊');
+                alert('Dagens humør gemt!');
             } else {
                 alert('Vælg venligst dit humør først.');
             }
@@ -854,7 +683,7 @@
             activities[today] = { ...assessmentData.activities };
             localStorage.setItem('activityHistory', JSON.stringify(activities));
             updateActivityProgress();
-            alert('Dagens aktiviteter gemt! 🎯');
+            alert('Dagens aktiviteter gemt!');
         }
 
         // Update activity progress
@@ -874,7 +703,7 @@
             `;
         }
 
-        // Initialize on load
+        // Initialize
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
