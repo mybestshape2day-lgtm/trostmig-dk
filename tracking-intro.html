@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hvorfor Mental Health Tracking Virker - TrøstMig.dk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --success: #10b981;
+            --info: #3b82f6;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --shadow: rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .question {
+            background: var(--bg-primary);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .question h3 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.1);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: #f3f4ff;
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: #ecfdf5;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .option-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .explanation {
+            background: #ecfdf5;
+            border: 2px solid var(--success);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation h4 {
+            color: var(--success);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation p {
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .benefit-highlight {
+            background: linear-gradient(135deg, #fef3c7, #fcd34d);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .research-note {
+            background: #dbeafe;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+            color: #1e40af;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .results {
+            text-align: center;
+            background: linear-gradient(135deg, #ecfdf5, #a7f3d0);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+
+        .results h2 {
+            font-size: 2.2rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .intro-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .intro-section h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧠 Mental Health Tracking</h1>
+            <p>Hvorfor tracker millioner af mennesker deres mentale sundhed?</p>
+        </div>
+
+        <!-- Intro Section -->
+        <div class="intro-section" id="intro">
+            <h2>Lær hvorfor tracking virker</h2>
+            <p>Tag denne korte quiz og opdag de videnskabeligt dokumenterede fordele ved at tracke dit mentale velbefindende. Du får praktisk viden du kan bruge med det samme!</p>
+            <button class="btn btn-primary" onclick="startQuiz()">
+                🚀 Start Quiz (2 minutter)
+            </button>
+        </div>
+
+        <!-- Quiz Questions -->
+        <div class="quiz-container" id="question1">
+            <div class="question">
+                <h3>🧠 Spørgsmål 1: Hvad sker der i hjernen når du tracker dine følelser?</h3>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, false)">
+                        <div class="option-icon">A</div>
+                        <span>Ingenting særligt - det er bare en dagbog</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, true)">
+                        <div class="option-icon">B</div>
+                        <span>Præfrontal cortex aktiveres og du får større selvkontrol</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, false)">
+                        <div class="option-icon">C</div>
+                        <span>Det skaber mere stress ved at fokusere på problemer</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation" id="explanation1">
+                <h4>✅ Korrekt! Sådan virker det i hjernen:</h4>
+                <p>Når du bevidst observerer og navngiver dine følelser, aktiverer du præfrontal cortex (tænkehjernen) og dæmper amygdala (frygtcenteret). Dette fænomen kaldes "affect labeling" og er videnskabeligt dokumenteret.</p>
+                
+                <div class="benefit-highlight">
+                    💡 <strong>Praktisk fordel:</strong> Du får buchstaveligt talt mere kontrol over dine følelser ved at sætte ord på dem!
+                </div>
+                
+                <div class="research-note">
+                    📚 Forskning viser 50% reduktion i amygdala-aktivitet når vi navngiver negative følelser (UCLA studie, 2007)
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="nextQuestion(2)" disabled id="next1">Næste Spørgsmål →</button>
+            </div>
+        </div>
+
+        <div class="quiz-container" id="question2">
+            <div class="question">
+                <h3>📊 Spørgsmål 2: Hvad kan du opdage ved at tracke dine mønstre?</h3>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, false)">
+                        <div class="option-icon">A</div>
+                        <span>Kun hvornår du har det dårligt</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, false)">
+                        <div class="option-icon">B</div>
+                        <span>Dine problemer er tilfældige og uforudsigelige</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, true)">
+                        <div class="option-icon">C</div>
+                        <span>Triggere, cyklusser og hvad der faktisk hjælper dig</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation" id="explanation2">
+                <h4>✅ Præcis! Du bliver din egen data-analytiker:</h4>
+                <p>Mental health tracking afslører mønstre du ikke kunne se før. Du opdager at mandag morgen er svært, at motion virker bedre end du troede, eller at dårlig søvn påvirker dig mere end stress.</p>
+                
+                <div class="benefit-highlight">
+                    💡 <strong>Praktisk fordel:</strong> Du kan ændre hvad der kan ændres og acceptere hvad der ikke kan!
+                </div>
+                
+                <div class="research-note">
+                    📚 85% af mennesker der tracker i 3 uger identificerer mindst én ny sammenhæng i deres mentale sundhed
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="nextQuestion(3)" disabled id="next2">Næste Spørgsmål →</button>
+            </div>
+        </div>
+
+        <div class="quiz-container" id="question3">
+            <div class="question">
+                <h3>🎯 Spørgsmål 3: Hvad er den største fordel ved Behavioral Activation tracking?</h3>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, false)">
+                        <div class="option-icon">A</div>
+                        <span>Du kan bevise overfor andre at du prøver</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, true)">
+                        <div class="option-icon">B</div>
+                        <span>Små aktiviteter opbygger momentum og selvfølelse</span>
+                    </div>
+                    <div class="option" onclick="selectOption(this, false)">
+                        <div class="option-icon">C</div>
+                        <span>Du kan sammenligne dig med andre</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation" id="explanation3">
+                <h4>✅ Det er nøglen til at bryde depressions-spiralen!</h4>
+                <p>Behavioral Activation bygger på en simpel sandhed: Handling skaber motivation, ikke omvendt. Ved at tracke små aktiviteter, ser du bevis for at du kan handle, selvom du ikke har lyst.</p>
+                
+                <div class="benefit-highlight">
+                    💡 <strong>Praktisk fordel:</strong> Hver lille afkrydsning bliver til bevis for din styrke og evne til at komme igennem!
+                </div>
+                
+                <div class="research-note">
+                    📚 Behavioral Activation er lige så effektivt som antidepressiva ved mild-moderat depression (studie med 241 patienter, 2006)
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="showResults()" disabled id="next3">Se Resultater →</button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="quiz-container" id="results">
+            <div class="results">
+                <h2>🎉 Flot klaret!</h2>
+                <div class="score-circle" id="scoreCircle">3/3</div>
+                <p style="font-size: 1.2rem; margin-bottom: 30px;">Du forstår nu videnskaben bag mental health tracking!</p>
+            </div>
+
+            <div style="background: white; padding: 30px; border-radius: 15px; margin: 20px 0; border: 2px solid var(--success);">
+                <h3 style="color: var(--success); margin-bottom: 20px; font-size: 1.5rem;">🌟 Dine Tracking Fordele:</h3>
+                
+                <div style="display: grid; gap: 20px;">
+                    <div style="padding: 20px; background: #f0f9ff; border-left: 4px solid var(--info); border-radius: 0 10px 10px 0;">
+                        <strong>🧠 Neuroplasticitet:</strong> Tracker ændrer bogstaveligt talt dit hjernes struktur og giver dig større følelsesmæssig regulering.
+                    </div>
+                    
+                    <div style="padding: 20px; background: #ecfdf5; border-left: 4px solid var(--success); border-radius: 0 10px 10px 0;">
+                        <strong>📈 Objektiv Progress:</strong> Du kan se fremgang selvom følelserne lyver og siger du ikke bliver bedre.
+                    </div>
+                    
+                    <div style="padding: 20px; background: #fef3c7; border-left: 4px solid var(--warning); border-radius: 0 10px 10px 0;">
+                        <strong>🎯 Personaliseret Behandling:</strong> Du opdager hvad DER virker for DIG - ikke generelle råd.
+                    </div>
+                    
+                    <div style="padding: 20px; background: #fdf2f8; border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0;">
+                        <strong>💪 Øget Selvfølelse:</strong> Hver registrering er et bevis på at du tager ansvar og arbejder på dit velbefindende.
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <a href="Dashboard.html" class="btn btn-primary">
+                    🚀 Prøv Tracking Dashboard
+                </a>
+                <button class="btn btn-secondary" onclick="restartQuiz()">
+                    🔄 Tag Quizzen Igen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScore = 0;
+        let questionsAnswered = 0;
+
+        function startQuiz() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('question1').classList.add('active');
+        }
+
+        function selectOption(option, isCorrect) {
+            // Disable all options in this question
+            const allOptions = option.parentNode.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === option) {
+                    opt.classList.add('selected');
+                }
+            });
+
+            // Show correct/incorrect
+            setTimeout(() => {
+                allOptions.forEach(opt => {
+                    if (opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                    } else if (opt.classList.contains('selected') && !isCorrect) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+
+                // Update score
+                if (isCorrect) {
+                    currentScore++;
+                }
+                questionsAnswered++;
+
+                // Show explanation
+                const currentQuestion = document.querySelector('.quiz-container.active');
+                const questionNum = currentQuestion.id.replace('question', '');
+                const explanation = document.getElementById('explanation' + questionNum);
+                const nextBtn = document.getElementById('next' + questionNum);
+                
+                explanation.classList.add('show');
+                nextBtn.disabled = false;
+            }, 500);
+        }
+
+        function nextQuestion(questionNum) {
+            const currentQuestion = document.querySelector('.quiz-container.active');
+            currentQuestion.classList.remove('active');
+            
+            setTimeout(() => {
+                document.getElementById('question' + questionNum).classList.add('active');
+            }, 200);
+        }
+
+        function showResults() {
+            const currentQuestion = document.querySelector('.quiz-container.active');
+            currentQuestion.classList.remove('active');
+            
+            setTimeout(() => {
+                document.getElementById('results').classList.add('active');
+                document.getElementById('scoreCircle').textContent = currentScore + '/' + questionsAnswered;
+            }, 200);
+        }
+
+        function restartQuiz() {
+            // Reset variables
+            currentScore = 0;
+            questionsAnswered = 0;
+            
+            // Reset all questions
+            document.querySelectorAll('.quiz-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // Reset all options
+            document.querySelectorAll('.option').forEach(option => {
+                option.style.pointerEvents = 'auto';
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Hide all explanations
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.classList.remove('show');
+            });
+            
+            // Disable next buttons
+            document.querySelectorAll('[id^="next"]').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            // Show intro
+            document.getElementById('intro').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
