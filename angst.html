@@ -251,6 +251,78 @@ function signOut() {
 
 console.log('🧭 Universal navigation loaded');
 </script>
+/* Add top margin to body to account for fixed header */
+body {
+    margin-top: 80px;
+}
+</style>
+
+
+<script>
+// Voice selector functionality
+document.getElementById('voice-selector').addEventListener('change', function(e) {
+    const selectedVoice = e.target.value;
+    localStorage.setItem('preferredVoice', selectedVoice);
+    
+    // Update TTS config if available
+    if (typeof TTS_CONFIG !== 'undefined') {
+        TTS_CONFIG.VOICE_SETTINGS.name = selectedVoice;
+    }
+    
+    console.log('Voice changed to:', selectedVoice);
+});
+
+// Load saved voice preference
+document.addEventListener('DOMContentLoaded', function() {
+    const savedVoice = localStorage.getItem('preferredVoice');
+    if (savedVoice) {
+        document.getElementById('voice-selector').value = savedVoice;
+    }
+});
+
+// User menu toggle
+function toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.user-menu')) {
+        document.getElementById('user-dropdown').classList.remove('show');
+    }
+});
+
+// Check authentication status (if Firebase is available)
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+        const userStatus = document.getElementById('user-status');
+        const guestMenu = document.getElementById('guest-menu');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (user) {
+            userStatus.textContent = user.displayName || user.email || 'Bruger';
+            guestMenu.style.display = 'none';
+            userMenu.style.display = 'block';
+        } else {
+            userStatus.textContent = '👤 Login';
+            guestMenu.style.display = 'block';
+            userMenu.style.display = 'none';
+        }
+    });
+}
+
+// Sign out function
+function signOut() {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().signOut().then(function() {
+            window.location.href = 'index.html';
+        });
+    }
+}
+
+console.log('🧭 Universal navigation loaded');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Angst - TrøstMig.dk</title>
