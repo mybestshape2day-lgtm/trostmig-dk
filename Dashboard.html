@@ -349,8 +349,31 @@
             <h1>🧠 Mental Sundhed Dashboard</h1>
             <p>Evidensbaseret tracking af dit mentale velbefindende</p>
             
+            <!-- User Authentication Status -->
+            <div id="user-status" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; backdrop-filter: blur(10px);">
+                <!-- Not Logged In -->
+                <div id="not-logged-in" style="display: none;">
+                    <p style="margin: 0 0 10px 0; font-size: 0.95rem; opacity: 0.9;">
+                        👤 Du bruger anonym tilstand - data gemmes kun lokalt
+                    </p>
+                    <a href="login.html" class="btn-auth" style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.4);">
+                        🔐 Log ind for sky-sync
+                    </a>
+                </div>
+                
+                <!-- Logged In -->
+                <div id="logged-in" style="display: none;">
+                    <p style="margin: 0 0 10px 0; font-size: 0.95rem; opacity: 0.9;">
+                        ✅ Logget ind som: <span id="user-name" style="font-weight: 600;">Loading...</span>
+                    </p>
+                    <button onclick="signOut()" class="btn-auth" style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                        🚪 Log ud
+                    </button>
+                </div>
+            </div>
+            
             <!-- Optional Learn More -->
-            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; backdrop-filter: blur(10px);">
+            <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.15); border-radius: 10px; backdrop-filter: blur(10px);">
                 <p style="margin: 0; font-size: 0.95rem; opacity: 0.9;">
                     💡 Ny til mental health tracking? 
                     <a href="tracking-intro.html" style="color: white; text-decoration: underline; font-weight: 600;">
@@ -506,6 +529,138 @@
     </div>
 
     <script>
+        // Firebase integration
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth,
+            onAuthStateChanged,
+            signOut as firebaseSignOut
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore,
+            doc,
+            setDoc,
+            getDoc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXsc50f5PF8_g47S0Q7wyH36dmOtmLo8Y",
+            authDomain: "newagent-b33f9.firebaseapp.com",
+            projectId: "newagent-b33f9",
+            storageBucket: "newagent-b33f9.appspot.com",
+            messagingSenderId: "861717699185",
+            appId: "1:861717699185:web:9f1c1d8d8ce1be122f59d0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Current user
+        let currentUser = null;
+
+        // Monitor auth state
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            updateAuthUI();
+            if (user) {
+                loadUserData();
+            }
+        });
+
+        // Update authentication UI
+        function updateAuthUI() {
+            const notLoggedIn = document.getElementById('not-logged-in');
+            const loggedIn = document.getElementById('logged-in');
+            const userName = document.getElementById('user-name');
+            
+            if (currentUser) {
+                notLoggedIn.style.display = 'none';
+                loggedIn.style.display = 'block';
+                userName.textContent = currentUser.displayName || currentUser.email || 'Anonym Bruger';
+            } else {
+                notLoggedIn.style.display = 'block';
+                loggedIn.style.display = 'none';
+            }
+        }
+
+        // Sign out function
+        window.signOut = async function() {
+            try {
+                await firebaseSignOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Fejl ved logout. Prøv igen.');
+            }
+        };
+
+        // Load user data from Firestore
+        async function loadUserData() {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    
+                    // Load assessment history if exists
+                    if (userData.assessmentHistory && userData.assessmentHistory.length > 0) {
+                        const lastAssessment = userData.assessmentHistory[userData.assessmentHistory.length - 1];
+                        
+                        // Pre-fill last assessment scores
+                        if (lastAssessment.phq2) {
+                            assessmentData.phq2 = lastAssessment.phq2;
+                        }
+                        if (lastAssessment.gad2) {
+                            assessmentData.gad2 = lastAssessment.gad2;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Save assessment data to Firestore
+        async function saveAssessmentToFirestore(data) {
+            if (!currentUser) return;
+            
+            try {
+                const userDocRef = doc(db, 'users', currentUser.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                let assessmentHistory = [];
+                if (userDoc.exists()) {
+                    assessmentHistory = userDoc.data().assessmentHistory || [];
+                }
+                
+                // Add new assessment
+                assessmentHistory.push({
+                    date: new Date().toISOString().split('T')[0],
+                    timestamp: serverTimestamp(),
+                    ...data
+                });
+                
+                // Keep only last 30 assessments
+                if (assessmentHistory.length > 30) {
+                    assessmentHistory = assessmentHistory.slice(-30);
+                }
+                
+                await setDoc(userDocRef, {
+                    assessmentHistory: assessmentHistory,
+                    lastUpdated: serverTimestamp()
+                }, { merge: true });
+                
+                console.log('✅ Assessment saved to Firestore');
+            } catch (error) {
+                console.error('❌ Error saving assessment:', error);
+            }
+        }
+
         // Data storage
         let assessmentData = {
             phq2: [null, null],
@@ -525,9 +680,14 @@
             updateActivityProgress();
         }
 
-        // Save data to localStorage
+        // Save data (both localStorage and Firestore)
         function saveData() {
             localStorage.setItem('mentalHealthData', JSON.stringify(assessmentData));
+            
+            // Also save to Firestore if user is logged in
+            if (currentUser) {
+                saveAssessmentToFirestore(assessmentData);
+            }
         }
 
         // Rating scale selection
