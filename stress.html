@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
+    <!DOCTYPE html>
+<html lang="da">
+<head>
     <!-- Universal Navigation Header - Add to all pages -->
 <style>
 .nav-header {
@@ -250,6 +253,759 @@ function signOut() {
 }
 
 console.log('🧭 Universal navigation loaded');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine Playlister - TrøstMig.dk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --shadow: rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--accent) 0%, #9333ea 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .nav-btn {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            background: white;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .playlist-item {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .playlist-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #6d28d9;
+            transform: translateY(-1px);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        .recommendation-card {
+            border-left: 4px solid var(--success);
+            background: #f0f9ff;
+        }
+
+        .crisis-card {
+            border-left: 4px solid var(--danger);
+            background: #fef2f2;
+        }
+
+        .script-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .script-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .script-item:last-child {
+            border-bottom: none;
+        }
+
+        .script-info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .script-info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .assessment-prompt {
+            background: linear-gradient(135deg, #fef3c7, #fcd34d);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .play-controls {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            bottom: 20px;
+            display: none;
+        }
+
+        .play-controls.active {
+            display: block;
+        }
+
+        .now-playing {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: var(--bg-primary);
+            height: 8px;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--accent);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: #6d28d9;
+            transform: scale(1.05);
+        }
+
+        .control-btn.play-pause {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-bar {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎵 Mine Playlister</h1>
+            <p>Personaliserede lydsamlinger baseret på din mentale sundhed</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-bar">
+            <a href="Dashboard.html" class="nav-btn">📊 Dashboard</a>
+            <a href="playlists.html" class="nav-btn active">🎵 Playlister</a>
+            <a href="index.html" class="nav-btn">🏠 Hjem</a>
+            <div style="margin-left: auto;">
+                <button id="generate-playlist-btn" class="btn btn-small">✨ Generer Playlist</button>
+            </div>
+        </nav>
+
+        <!-- Assessment Prompt -->
+        <div id="assessment-prompt" class="assessment-prompt">
+            <h3>📋 Få personaliserede anbefalinger</h3>
+            <p>Udfyld din mentale sundhedsvurdering for at få skræddersyede playlister</p>
+            <a href="Dashboard.html" class="btn" style="margin-top: 10px;">Gå til Assessment</a>
+        </div>
+
+        <!-- Playlists Grid -->
+        <div class="grid" id="playlists-grid">
+            <!-- Generated Playlists -->
+            <div class="card recommendation-card" id="recommended-playlist" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">✨ Anbefalet for dig</h2>
+                    <button class="btn btn-small" onclick="playPlaylist('recommended')">▶ Afspil</button>
+                </div>
+                <div id="recommended-content"></div>
+            </div>
+
+            <!-- Crisis Playlist -->
+            <div class="card crisis-card">
+                <div class="card-header">
+                    <h2 class="card-title">🚨 Akut Hjælp</h2>
+                    <button class="btn btn-small" onclick="playPlaylist('crisis')">▶ Afspil</button>
+                </div>
+                <p>Øjeblikkelig støtte i krise-situationer</p>
+                <div class="script-list">
+                    <div class="script-item">
+                        <div class="script-info">
+                            <h4>Du er ikke alene - akut krisehjælp</h4>
+                            <p>3 min • Rolig mandsstemme</p>
+                        </div>
+                        <button class="btn btn-small" onclick="playScript('crisis-1')">▶</button>
+                    </div>
+                    <div class="script-item">
+                        <div class="script-info">
+                            <h4>5-4-3-2-1 Grounding Teknik</h4>
+                            <p>4 min • Guidet øvelse</p>
+                        </div>
+                        <button class="btn btn-small" onclick="playScript('crisis-2')">▶</button>
+                    </div>
+                    <div class="script-item">
+                        <div class="script-info">
+                            <h4>Ring til hjælp nu</h4>
+                            <p>2 min • Praktisk guidance</p>
+                        </div>
+                        <button class="btn btn-small" onclick="playScript('crisis-3')">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favorites -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">❤️ Mine Favoritter</h2>
+                    <button class="btn btn-small" onclick="playPlaylist('favorites')">▶ Afspil</button>
+                </div>
+                <div id="favorites-list">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        Ingen favoritter endnu. Tilføj scripts fra andre sider.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Recent Playlists -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🕒 Seneste</h2>
+                </div>
+                <div id="recent-playlists">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        Ingen seneste playlister endnu.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Play Controls -->
+        <div class="play-controls" id="play-controls">
+            <div class="now-playing">
+                <div>
+                    <h4 id="current-title">Loading...</h4>
+                    <p id="current-info">0:00 / 0:00</p>
+                </div>
+                <button class="btn btn-small" onclick="closePlayer()">✕</button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="control-buttons">
+                <button class="control-btn" onclick="previousTrack()">⏮</button>
+                <button class="control-btn play-pause" id="play-pause-btn" onclick="togglePlayPause()">▶</button>
+                <button class="control-btn" onclick="nextTrack()">⏭</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase integration
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth,
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXsc50f5PF8_g47S0Q7wyH36dmOtmLo8Y",
+            authDomain: "newagent-b33f9.firebaseapp.com",
+            projectId: "newagent-b33f9",
+            storageBucket: "newagent-b33f9.appspot.com",
+            messagingSenderId: "861717699185",
+            appId: "1:861717699185:web:9f1c1d8d8ce1be122f59d0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let currentPlaylist = null;
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+        // Monitor auth state
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            loadUserPlaylists();
+        });
+
+        // Sample scripts database
+        const scriptsDatabase = {
+            'crisis-1': {
+                title: 'Du er ikke alene - akut krisehjælp',
+                duration: '3:00',
+                voice: 'da-DK-Chirp3-HD-Charon',
+                category: 'crisis',
+                content: 'Hvis du hører dette, befinder du dig i en svær situation. Det første jeg vil have dig til at vide er: Du er ikke alene...'
+            },
+            'crisis-2': {
+                title: '5-4-3-2-1 Grounding Teknik',
+                duration: '4:00',
+                voice: 'da-DK-Chirp3-HD-Vindemiatrix',
+                category: 'crisis',
+                content: 'Lad os sammen bringe dig tilbage til nuet. Jeg vil guide dig gennem en teknik der hedder 5-4-3-2-1...'
+            },
+            'crisis-3': {
+                title: 'Ring til hjælp nu',
+                duration: '2:00',
+                voice: 'da-DK-Chirp3-HD-Sulafat',
+                category: 'crisis',
+                content: 'Der er professionel hjælp tilgængelig lige nu. Livslinjen har telefon døgnet rundt: 70 20 12 01...'
+            },
+            'depression-1': {
+                title: 'Behavioral Activation - start mikroskopisk',
+                duration: '6:00',
+                voice: 'da-DK-Chirp3-HD-Sulafat',
+                category: 'depression',
+                content: 'Depression stjæler motivation. Men hemmeligheden er: Handling kommer FØR motivation, ikke omvendt...'
+            },
+            'anxiety-1': {
+                title: 'Panikangst - stop panikspiralen nu',
+                duration: '5:00',
+                voice: 'da-DK-Chirp3-HD-Erriapus',
+                category: 'anxiety',
+                content: 'Dit hjerte banker, du kan ikke få luft, alt føles uvirkeligt. Du er i en panikspiral, men du er sikker...'
+            }
+        };
+
+        // Generate personalized playlist based on assessment
+        async function generatePersonalizedPlaylist() {
+            // Get assessment data from localStorage or Firestore
+            const assessmentData = getAssessmentData();
+            
+            if (!assessmentData.phq2 || !assessmentData.gad2) {
+                alert('Udfyld først din mentale sundhedsvurdering for at få personaliserede anbefalinger.');
+                window.location.href = 'Dashboard.html';
+                return;
+            }
+
+            const playlist = createPlaylistFromAssessment(assessmentData);
+            displayRecommendedPlaylist(playlist);
+            
+            // Save to user profile if logged in
+            if (currentUser) {
+                await savePlaylistToFirestore(playlist);
+            }
+        }
+
+        // Get assessment data
+        function getAssessmentData() {
+            const localData = localStorage.getItem('mentalHealthData');
+            if (localData) {
+                return JSON.parse(localData);
+            }
+            return { phq2: [null, null], gad2: [null, null] };
+        }
+
+        // Create playlist from assessment scores
+        function createPlaylistFromAssessment(assessment) {
+            const phq2Score = (assessment.phq2[0] || 0) + (assessment.phq2[1] || 0);
+            const gad2Score = (assessment.gad2[0] || 0) + (assessment.gad2[1] || 0);
+            const mood = assessment.currentMood || 5;
+
+            let recommendedScripts = [];
+            let title = 'Din personlige playlist';
+            let reasoning = '';
+
+            // Crisis detection
+            if (phq2Score >= 5 || gad2Score >= 5 || mood <= 3) {
+                recommendedScripts = ['crisis-1', 'crisis-2', 'crisis-3'];
+                title = 'Akut støtte playlist';
+                reasoning = 'Baseret på dine svar har jeg prioriteret øjeblikkelig krisehjælp og stabiliserende teknikker.';
+            }
+            // Depression focus
+            else if (phq2Score >= 3) {
+                recommendedScripts = ['depression-1', 'crisis-2'];
+                title = 'Depression recovery playlist';
+                reasoning = 'Fokuserer på behavioral activation og praktiske værktøjer til at håndtere depression.';
+            }
+            // Anxiety focus  
+            else if (gad2Score >= 3) {
+                recommendedScripts = ['anxiety-1', 'crisis-2'];
+                title = 'Angst-lindrende playlist';
+                reasoning = 'Indeholder teknikker til at håndtere angst og panik-symptomer.';
+            }
+            // Wellness
+            else {
+                recommendedScripts = ['depression-1', 'anxiety-1'];
+                title = 'Velbefindende playlist';
+                reasoning = 'En blandet samling af værktøjer til at vedligeholde din mentale sundhed.';
+            }
+
+            return {
+                id: 'recommended-' + Date.now(),
+                title: title,
+                type: 'generated',
+                scripts: recommendedScripts,
+                reasoning: reasoning,
+                createdAt: new Date(),
+                assessmentScores: { phq2Score, gad2Score, mood }
+            };
+        }
+
+        // Display recommended playlist
+        function displayRecommendedPlaylist(playlist) {
+            const card = document.getElementById('recommended-playlist');
+            const content = document.getElementById('recommended-content');
+            
+            let html = `
+                <p style="margin-bottom: 15px; font-style: italic;">${playlist.reasoning}</p>
+                <div class="script-list">
+            `;
+            
+            playlist.scripts.forEach(scriptId => {
+                const script = scriptsDatabase[scriptId];
+                if (script) {
+                    html += `
+                        <div class="script-item">
+                            <div class="script-info">
+                                <h4>${script.title}</h4>
+                                <p>${script.duration} • ${script.category}</p>
+                            </div>
+                            <button class="btn btn-small" onclick="playScript('${scriptId}')">▶</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            html += '</div>';
+            content.innerHTML = html;
+            card.style.display = 'block';
+            
+            // Hide assessment prompt
+            document.getElementById('assessment-prompt').style.display = 'none';
+        }
+
+        // Play functions
+        window.playPlaylist = function(playlistType) {
+            const playControls = document.getElementById('play-controls');
+            const titleEl = document.getElementById('current-title');
+            
+            if (playlistType === 'crisis') {
+                currentPlaylist = ['crisis-1', 'crisis-2', 'crisis-3'];
+                titleEl.textContent = 'Akut Hjælp Playlist';
+            }
+            
+            currentTrackIndex = 0;
+            playCurrentTrack();
+            playControls.classList.add('active');
+        };
+
+        window.playScript = function(scriptId) {
+            const script = scriptsDatabase[scriptId];
+            if (!script) return;
+            
+            // In a real implementation, this would integrate with your TTS system
+            const playControls = document.getElementById('play-controls');
+            const titleEl = document.getElementById('current-title');
+            const infoEl = document.getElementById('current-info');
+            
+            titleEl.textContent = script.title;
+            infoEl.textContent = `0:00 / ${script.duration}`;
+            
+            playControls.classList.add('active');
+            isPlaying = true;
+            updatePlayPauseButton();
+            
+            // Simulate playback progress
+            simulatePlayback();
+        };
+
+        function playCurrentTrack() {
+            if (!currentPlaylist || currentTrackIndex >= currentPlaylist.length) return;
+            
+            const scriptId = currentPlaylist[currentTrackIndex];
+            playScript(scriptId);
+        }
+
+        window.togglePlayPause = function() {
+            isPlaying = !isPlaying;
+            updatePlayPauseButton();
+        };
+
+        window.nextTrack = function() {
+            if (currentPlaylist && currentTrackIndex < currentPlaylist.length - 1) {
+                currentTrackIndex++;
+                playCurrentTrack();
+            }
+        };
+
+        window.previousTrack = function() {
+            if (currentPlaylist && currentTrackIndex > 0) {
+                currentTrackIndex--;
+                playCurrentTrack();
+            }
+        };
+
+        window.closePlayer = function() {
+            document.getElementById('play-controls').classList.remove('active');
+            isPlaying = false;
+            updatePlayPauseButton();
+        };
+
+        function updatePlayPauseButton() {
+            const btn = document.getElementById('play-pause-btn');
+            btn.textContent = isPlaying ? '⏸' : '▶';
+        }
+
+        function simulatePlayback() {
+            let progress = 0;
+            const progressBar = document.getElementById('progress-fill');
+            
+            const interval = setInterval(() => {
+                if (!isPlaying) return;
+                
+                progress += 0.5;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    nextTrack();
+                }
+            }, 100);
+        }
+
+        // Load user playlists
+        async function loadUserPlaylists() {
+            // Load favorites from localStorage
+            const favorites = JSON.parse(localStorage.getItem('favoriteScripts') || '[]');
+            updateFavoritesList(favorites);
+            
+            // Check if user has assessment data
+            const assessmentData = getAssessmentData();
+            if (assessmentData.phq2[0] !== null) {
+                document.getElementById('assessment-prompt').style.display = 'none';
+            }
+        }
+
+        function updateFavoritesList(favorites) {
+            const container = document.getElementById('favorites-list');
+            
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        Ingen favoritter endnu. Tilføj scripts fra andre sider.
+                    </p>
+                `;
+                return;
+            }
+            
+            let html = '<div class="script-list">';
+            favorites.forEach(scriptId => {
+                const script = scriptsDatabase[scriptId];
+                if (script) {
+                    html += `
+                        <div class="script-item">
+                            <div class="script-info">
+                                <h4>${script.title}</h4>
+                                <p>${script.duration} • ${script.category}</p>
+                            </div>
+                            <button class="btn btn-small" onclick="playScript('${scriptId}')">▶</button>
+                        </div>
+                    `;
+                }
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Generate playlist button
+        document.getElementById('generate-playlist-btn').addEventListener('click', generatePersonalizedPlaylist);
+
+        // Initialize
+        loadUserPlaylists();
+
+        console.log('🎵 Playlist system initialized');
+    </script>
+</body>
+</html>
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
