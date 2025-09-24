@@ -287,43 +287,13 @@
         <button class="skip-intro" onclick="skipIntro()">Spring over</button>
     </div>
     
-    <!-- Auto-Hide Navigation -->
-    <nav class="nav-header" id="mainNav">
-        <div class="nav-content">
-            <!-- Logo -->
-            <a href="index.html" class="nav-logo">TrøstMig.dk</a>
-            <!-- Main Navigation -->
-            <div class="nav-links">
-                <a href="login.html" class="nav-link primary">Log ind</a>
-                <a href="index.html" class="nav-link">Hovedmenu</a>
-                <a href="Dashboard.html" class="nav-link">Dashboard</a>
-                <a href="playlists.html" class="nav-link">Playlister</a>
-            </div>
-            <!-- User Controls -->
-            <div class="nav-user">
-                <!-- Voice Selector -->
-                <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
-                    <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
-                    <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
-                    <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
-                    <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
-                    <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
-                    <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
-                    <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
-                    <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
-                    <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
-                    <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
-                    <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
-                    <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
-                    <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
-                </select>
-                <!-- Theme Toggle -->
-                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
-            </div>
+    <div class="nav-header">
+        <a href="index.html" class="back-link" id="backLink">← Tilbage til forsiden</a>
+        <div class="nav-controls">
+            <select class="voice-selector" id="voiceSelector" onchange="changeVoice()"></select>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
         </div>
-    </nav>
-    <!-- Optional: Show indicator when nav is hidden -->
-    <div class="nav-show-indicator" id="navIndicator">Ryk mus for at vise menu</div>
+    </div>
     
     <div class="emergency-notice">
         <strong>🆘 AKUT HJÆLP:</strong><br>
@@ -369,100 +339,6 @@
         </div>
     </div>
     
-    <script>
-        // Auto-hide navigation functionality (fra angst.html)
-        let navTimer;
-        let isNavHidden = false;
-        const nav = document.getElementById('mainNav');
-        const indicator = document.getElementById('navIndicator');
-        const HIDE_DELAY = 6000;
-        function showNav() {
-            if (isNavHidden) {
-                nav.style.transform = 'translateY(0)';
-                nav.style.opacity = '1';
-                indicator.classList.remove('show');
-                isNavHidden = false;
-            }
-        }
-        function hideNav() {
-            nav.style.transform = 'translateY(-100%)';
-            nav.style.opacity = '0';
-            indicator.classList.add('show');
-            isNavHidden = true;
-        }
-        function resetNavTimer() {
-            clearTimeout(navTimer);
-            showNav();
-            navTimer = setTimeout(hideNav, HIDE_DELAY);
-        }
-        function preventHide() {
-            clearTimeout(navTimer);
-            showNav();
-        }
-        function resumeTimer() {
-            setTimeout(resetNavTimer, 500);
-        }
-        document.addEventListener('mousemove', resetNavTimer);
-        document.addEventListener('touchstart', resetNavTimer);
-        document.addEventListener('touchmove', resetNavTimer);
-        document.addEventListener('scroll', resetNavTimer);
-        document.addEventListener('keydown', resetNavTimer);
-        nav.addEventListener('mouseenter', preventHide);
-        nav.addEventListener('mouseleave', resumeTimer);
-        nav.addEventListener('focusin', preventHide);
-        nav.addEventListener('focusout', resumeTimer);
-        function changeVoice() {
-            const selector = document.getElementById('voiceSelector');
-            const selectedVoice = selector.value;
-            localStorage.setItem('preferredVoice', selectedVoice);
-            if (typeof TTS_CONFIG !== 'undefined') {
-                TTS_CONFIG.VOICE_SETTINGS.name = selectedVoice;
-            }
-            if (window.TrøstMigTTS && typeof window.TrøstMigTTS.setVoiceByName === 'function') {
-                window.TrøstMigTTS.setVoiceByName(selectedVoice);
-            }
-            resetNavTimer();
-        }
-        function toggleTheme() {
-            const html = document.documentElement;
-            const toggleBtn = document.getElementById('themeToggle');
-            if (html.getAttribute('data-theme') === 'dark') {
-                html.setAttribute('data-theme', 'light');
-                toggleBtn.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                toggleBtn.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            }
-            resetNavTimer();
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('themeToggle').textContent = '☀️';
-            }
-            const savedVoice = localStorage.getItem('preferredVoice');
-            if (savedVoice) {
-                const voiceSelector = document.getElementById('voiceSelector');
-                voiceSelector.value = savedVoice;
-                if (typeof TTS_CONFIG !== 'undefined') {
-                    TTS_CONFIG.VOICE_SETTINGS.name = savedVoice;
-                }
-            }
-            resetNavTimer();
-        });
-        window.NavigationUtils = {
-            changeVoice,
-            toggleTheme,
-            showNav,
-            hideNav,
-            resetNavTimer,
-            getCurrentVoice: () => localStorage.getItem('preferredVoice'),
-            getCurrentTheme: () => localStorage.getItem('theme') || 'light'
-        };
-    </script>
     <script>
         const welcomeMessages = [
             "Hvis du læser dette, er du stærk. At søge hjælp er modigt. Du er ikke alene.",
