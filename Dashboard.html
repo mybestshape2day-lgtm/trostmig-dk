@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mental Sundhed Dashboard - TrøstMig.dk</title>
-    <s        * {
+    <style>
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -77,19 +78,6 @@
         }
 
         .grid {
-
-            changeVoice,
-            toggleTheme,
-            showNav,
-            hideNav,
-            resetNavTimer,
-            getCurrentVoice: () => localStorage.getItem('preferredVoice'),
-            getCurrentTheme: () => localStorage.getItem('theme') || 'light'
-        };
-
-        console.log('Auto-Hide Navigation loaded - fade efter 3 sekunder');
-    </script>
-    <!-- ...resten af Dashboard.html... -->
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 25px;
