@@ -589,97 +589,174 @@ body {
 }
 </style>
 
-<nav class="nav-header">
+
+<!-- Auto-Hide Navigation (from angst.html) -->
+<nav class="nav-header" id="mainNav">
     <div class="nav-content">
         <!-- Logo -->
         <a href="index.html" class="nav-logo">TrøstMig.dk</a>
         
         <!-- Main Navigation -->
         <div class="nav-links">
-            <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
-            <a href="Dashboard.html" class="nav-link">📊 Dashboard</a>
-            <a href="playlists.html" class="nav-link">🎵 Playlister</a>
-            <a href="angst.html" class="nav-link">⚡ Angst</a>
-            <a href="depression.html" class="nav-link">🧠 Depression</a>
+            <a href="login.html" class="nav-link primary">Log ind</a>
+            <a href="index.html" class="nav-link">Hovedmenu</a>
+            <a href="Dashboard.html" class="nav-link">Dashboard</a>
+            <a href="playlists.html" class="nav-link">Playlister</a>
         </div>
         
-        <!-- User Area - Simplified -->
+        <!-- User Controls -->
         <div class="nav-user">
-            <a href="login.html" class="nav-link primary">🔐 Login</a>
-        </div>
+            <!-- Voice Selector -->
+            <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
+                <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
+                <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
+                <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
+                <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
+                <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
+                <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
+                <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
+                <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
+                <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
+                <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
+                <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
+                <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
+                <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
+            </select>
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
         </div>
     </div>
 </nav>
 
+<!-- Optional: Show indicator when nav is hidden (for auto-hide) -->
+<div class="nav-show-indicator" id="navIndicator">Ryk mus for at vise menu</div>
+
+
 <script>
+// Auto-hide navigation functionality (from angst.html)
+let navTimer;
+let isNavHidden = false;
+const nav = document.getElementById('mainNav');
+const indicator = document.getElementById('navIndicator');
+const HIDE_DELAY = 6000; // 6 seconds (doubled from 3 seconds)
+
+function showNav() {
+    if (isNavHidden) {
+        nav.style.transform = 'translateY(0)';
+        nav.style.opacity = '1';
+        indicator.classList.remove('show');
+        isNavHidden = false;
+    }
+}
+
+function hideNav() {
+    nav.style.transform = 'translateY(-100%)';
+    nav.style.opacity = '0';
+    indicator.classList.add('show');
+    isNavHidden = true;
+}
+
+function resetNavTimer() {
+    clearTimeout(navTimer);
+    showNav();
+    navTimer = setTimeout(hideNav, HIDE_DELAY);
+}
+
+// Prevent hide when using navigation
+function preventHide() {
+    clearTimeout(navTimer);
+    showNav();
+}
+
+// Resume timer after navigation interaction
+function resumeTimer() {
+    setTimeout(resetNavTimer, 500);
+}
+
+// Event listeners for showing navigation
+document.addEventListener('mousemove', resetNavTimer);
+document.addEventListener('touchstart', resetNavTimer);
+document.addEventListener('touchmove', resetNavTimer);
+document.addEventListener('scroll', resetNavTimer);
+document.addEventListener('keydown', resetNavTimer);
+
+// Prevent hiding when hovering over navigation
+nav.addEventListener('mouseenter', preventHide);
+nav.addEventListener('mouseleave', resumeTimer);
+nav.addEventListener('focusin', preventHide);
+nav.addEventListener('focusout', resumeTimer);
+
 // Voice selector functionality
-document.getElementById('voice-selector').addEventListener('change', function(e) {
-    const selectedVoice = e.target.value;
+function changeVoice() {
+    const selector = document.getElementById('voiceSelector');
+    const selectedVoice = selector.value;
     localStorage.setItem('preferredVoice', selectedVoice);
-    
-    // Update TTS config if available
     if (typeof TTS_CONFIG !== 'undefined') {
         TTS_CONFIG.VOICE_SETTINGS.name = selectedVoice;
+        console.log('Stemme skiftet til:', selectedVoice);
     }
-    
-    console.log('Voice changed to:', selectedVoice);
-});
+    if (window.TrøstMigTTS && typeof window.TrøstMigTTS.setVoiceByName === 'function') {
+        window.TrøstMigTTS.setVoiceByName(selectedVoice);
+    }
+    console.log('Global voice changed to:', selectedVoice);
+    resetNavTimer();
+}
 
-// Load saved voice preference
+// Theme toggle functionality
+function toggleTheme() {
+    const html = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
+    if (html.getAttribute('data-theme') === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        toggleBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    } else {
+        html.setAttribute('data-theme', 'dark');
+        toggleBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    }
+    resetNavTimer();
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').textContent = '☀️';
+    }
+    // Load saved voice preference
     const savedVoice = localStorage.getItem('preferredVoice');
     if (savedVoice) {
-        document.getElementById('voice-selector').value = savedVoice;
-    }
-});
-
-// User menu toggle
-function toggleUserMenu() {
-    const dropdown = document.getElementById('user-dropdown');
-    dropdown.classList.toggle('show');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.user-menu')) {
-        document.getElementById('user-dropdown').classList.remove('show');
-    }
-});
-
-// Check authentication status (if Firebase is available)
-if (typeof firebase !== 'undefined' && firebase.auth) {
-    firebase.auth().onAuthStateChanged(function(user) {
-        const userStatus = document.getElementById('user-status');
-        const guestMenu = document.getElementById('guest-menu');
-        const userMenu = document.getElementById('user-menu');
-        
-        if (user) {
-            userStatus.textContent = user.displayName || user.email || 'Bruger';
-            guestMenu.style.display = 'none';
-            userMenu.style.display = 'block';
-        } else {
-            userStatus.textContent = '👤 Login';
-            guestMenu.style.display = 'block';
-            userMenu.style.display = 'none';
+        const voiceSelector = document.getElementById('voiceSelector');
+        voiceSelector.value = savedVoice;
+        if (typeof TTS_CONFIG !== 'undefined') {
+            TTS_CONFIG.VOICE_SETTINGS.name = savedVoice;
         }
-    });
-}
-
-// Sign out function
-function signOut() {
-    if (typeof firebase !== 'undefined' && firebase.auth) {
-        firebase.auth().signOut().then(function() {
-            window.location.href = 'index.html';
-        });
     }
-}
+    // Start auto-hide timer
+    resetNavTimer();
+    console.log('Auto-Hide Navigation System loaded');
+});
 
-console.log('🧭 Universal navigation loaded');
+// Export functions for global use
+window.NavigationUtils = {
+    changeVoice,
+    toggleTheme,
+    showNav,
+    hideNav,
+    resetNavTimer,
+    getCurrentVoice: () => localStorage.getItem('preferredVoice'),
+    getCurrentTheme: () => localStorage.getItem('theme') || 'light'
+};
+
+console.log('Auto-Hide Navigation loaded - fade efter 3 sekunder');
 </script>
     <div class="container">
         <header>
             <div class="logo">TrøstMig.dk</div>
-            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <!-- Theme-toggle fjernet herfra, kun i navigationen nu -->
         </header>
 
         <!-- Hero Section with Central SOS -->
