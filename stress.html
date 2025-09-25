@@ -1,6 +1,715 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
+ <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRØSTMIG.DK - Auto-Hide Navigation</title>
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --crisis-red: #dc2626;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --border: #4a5568;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --accent: #9f7aea;
+            --accent-hover: #b794f4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* Auto-Hide Navigation */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 6px 15px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow);
+            backdrop-filter: blur(10px);
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Logo */
+        .nav-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent-hover);
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-primary);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.primary {
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-link.primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        /* User Controls */
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Voice Selector */
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            min-width: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .voice-selector:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+        }
+
+        .voice-selector:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px 0;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .nav-user {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .voice-selector {
+                min-width: 140px;
+                font-size: 0.8rem;
+            }
+
+            .nav-link {
+                padding: 5px 10px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-link {
+                padding: 4px 8px;
+                font-size: 0.8rem;
+            }
+
+            .voice-selector {
+                min-width: 130px;
+                font-size: 0.75rem;
+            }
+
+            .nav-content {
+                gap: 5px;
+            }
+        }
+
+        /* Show indicator (optional) */
+        .nav-show-indicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .nav-show-indicator.show {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Auto-Hide Navigation -->
+    <nav class="nav-header" id="mainNav">
+        <div class="nav-content">
+            <!-- Logo -->
+            <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+            
+            <!-- Main Navigation -->
+            <div class="nav-links">
+                <a href="login.html" class="nav-link primary">Log ind</a>
+                <a href="index.html" class="nav-link">Hovedmenu</a>
+                <a href="Dashboard.html" class="nav-link">Dashboard</a>
+                <a href="playlists.html" class="nav-link">Playlister</a>
+            </div>
+            
+            <!-- User Controls -->
+            <div class="nav-user">
+                <!-- Voice Selector -->
+                <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
+                    <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
+                    <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
+                    <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
+                    <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
+                    <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
+                    <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
+                    <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
+                    <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
+                    <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
+                    <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
+                    <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
+                    <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
+                    <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
+                </select>
+                
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Optional: Show indicator when nav is hidden -->
+    <div class="nav-show-indicator" id="navIndicator">
+        Ryk mus for at vise menu
+    </div>
+
+    <script>
+        // Auto-hide navigation functionality
+        let navTimer;
+        let isNavHidden = false;
+        const nav = document.getElementById('mainNav');
+        const indicator = document.getElementById('navIndicator');
+        const HIDE_DELAY = 3000; // 3 seconds
+
+        function showNav() {
+            if (isNavHidden) {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                indicator.classList.remove('show');
+                isNavHidden = false;
+            }
+        }
+
+        function hideNav() {
+            nav.style.transform = 'translateY(-100%)';
+            nav.style.opacity = '0';
+            indicator.classList.add('show');
+            isNavHidden = true;
+        }
+
+        function resetNavTimer() {
+            clearTimeout(navTimer);
+            showNav();
+            navTimer = setTimeout(hideNav, HIDE_DELAY);
+        }
+
+        // Prevent hide when using navigation
+        function preventHide() {
+            clearTimeout(navTimer);
+            showNav();
+        }
+
+        // Resume timer after navigation interaction
+        function resumeTimer() {
+            setTimeout(resetNavTimer, 500);
+        }
+
+        // Event listeners for showing navigation
+        document.addEventListener('mousemove', resetNavTimer);
+        document.addEventListener('touchstart', resetNavTimer);
+        document.addEventListener('touchmove', resetNavTimer);
+        document.addEventListener('scroll', resetNavTimer);
+        document.addEventListener('keydown', resetNavTimer);
+
+        // Prevent hiding when hovering over navigation
+        nav.addEventListener('mouseenter', preventHide);
+        nav.addEventListener('mouseleave', resumeTimer);
+        nav.addEventListener('focusin', preventHide);
+        nav.addEventListener('focusout', resumeTimer);
+
+        // Voice selector functionality
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelector');
+            const selectedVoice = selector.value;
+            
+            localStorage.setItem('preferredVoice', selectedVoice);
+            
+            if (typeof TTS_CONFIG !== 'undefined') {
+                TTS_CONFIG.VOICE_SETTINGS.name = selectedVoice;
+                console.log('Stemme skiftet til:', selectedVoice);
+            }
+            
+            if (window.TrøstMigTTS && typeof window.TrøstMigTTS.setVoiceByName === 'function') {
+                window.TrøstMigTTS.setVoiceByName(selectedVoice);
+            }
+            
+            console.log('Global voice changed to:', selectedVoice);
+            
+            // Reset timer after interaction
+            resetNavTimer();
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const toggleBtn = document.getElementById('themeToggle');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                toggleBtn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                toggleBtn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+            
+            // Reset timer after interaction
+            resetNavTimer();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggle').textContent = '☀️';
+            }
+            
+            // Load saved voice preference
+            const savedVoice = localStorage.getItem('preferredVoice');
+            if (savedVoice) {
+                const voiceSelector = document.getElementById('voiceSelector');
+                voiceSelector.value = savedVoice;
+                
+                if (typeof TTS_CONFIG !== 'undefined') {
+                    TTS_CONFIG.VOICE_SETTINGS.name = savedVoice;
+                }
+            }
+            
+            // Start auto-hide timer
+            resetNavTimer();
+            
+            console.log('Auto-Hide Navigation System loaded');
+        });
+
+        // Export functions for global use
+        window.NavigationUtils = {
+            changeVoice,
+            toggleTheme,
+            showNav,
+            hideNav,
+            resetNavTimer,
+            getCurrentVoice: () => localStorage.getItem('preferredVoice'),
+            getCurrentTheme: () => localStorage.getItem('theme') || 'light'
+        };
+
+        console.log('Auto-Hide Navigation loaded - fade efter 3 sekunder');
+    </script>
+</body>
+</html>
+    </script>
+</body>
+</html>
+    </script>
+</body>
+</html>   
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angst - TrøstMig.dk</title>
+    
+    <!-- VIGTIG: Central TTS konfiguration -->
+    <script src="tts-config.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #9f7aea;
+            --accent-hover: #b794f4;
+            --border: #4a5568;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            margin-top: 80px;
+        }
+        
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        
+        .welcome-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .welcome-message {
+            max-width: 700px;
+            padding: 40px;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            animation: fadeIn 2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .skip-intro {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .emergency-notice {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 80px 20px 20px;
+            text-align: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        [data-theme="dark"] .emergency-notice {
+            background: rgba(254, 242, 242, 0.1);
+        }
+        
+        .emergency-notice a {
+            color: #dc2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .main-selection {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .main-selection.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .script-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 500;
+        }
+        
+        .script-display.active {
+            display: flex;
+            flex-direction: column;
+            padding-top: 70px;
+        }
+        
+        .script-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .script-content {
+            max-width: 800px;
+            font-size: 1.3rem;
+            line-height: 2;
+        }
+        
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px var(--shadow);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        .back-to-selection {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .selection-grid { grid-template-columns: 1fr; }
+            .script-content { font-size: 1.1rem; }
+        }
+    </style>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stress - TrøstMig.dk</title>
@@ -12,7 +721,7 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box;kan du fjerne den gamle navigation
         }
 
         :root {
@@ -387,18 +1096,6 @@
         <button class="skip-intro" onclick="skipIntro()">Spring over</button>
     </div>
 
-    <!-- Navigation Header -->
-    <div class="nav-header">
-        <div class="nav-content">
-            <a href="index.html" class="back-link">← Tilbage til forsiden</a>
-            <div class="nav-controls">
-                <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
-                    <!-- Voices will be populated -->
-                </select>
-                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Main Selection Screen -->
     <div class="main-selection" id="mainSelection">
