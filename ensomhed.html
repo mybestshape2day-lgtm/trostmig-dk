@@ -3,1213 +3,1026 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ensomhed - TrøstMig.dk</title>
+    <title>TrøstMig.dk - Video Baggrund Player</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #ffffff;
-            --text-primary: #2d3748;
-            --text-secondary: #718096;
-            --accent: #7c3aed;
-            --accent-hover: #6d28d9;
-            --border: #e2e8f0;
-            --shadow: rgba(0, 0, 0, 0.1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
         }
 
-        [data-theme="dark"] {
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --text-primary: #f7fafc;
-            --text-secondary: #cbd5e0;
-            --accent: #9f7aea;
-            --accent-hover: #b794f4;
-            --border: #4a5568;
-            --shadow: rgba(0, 0, 0, 0.3);
+        :root {
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --bg-overlay: rgba(0, 0, 0, 0.4);
+            --accent: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-primary);
+            font-family: system-ui, -apple-system, sans-serif;
             color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
             min-height: 100vh;
-            transition: all 0.3s ease;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* VIDEO BACKGROUND SYSTEM */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
         }
 
-        /* Header */
-        header {
+        .video-background video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.6;
+            transition: opacity 2s ease;
+            /* Mobile optimization */
+            will-change: transform;
+            transform: translate3d(-50%, -50%, 0);
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, 
+                rgba(30, 58, 138, 0.3) 0%,
+                rgba(79, 70, 229, 0.2) 50%,
+                rgba(124, 58, 237, 0.3) 100%);
+            backdrop-filter: blur(1px);
+        }
+
+        /* FOG OVERLAY ANIMATION */
+        .fog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 120%;
+            height: 120%;
+            z-index: -1;
+            opacity: 0.3;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            animation: fogDrift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes fogDrift {
+            0% { transform: translate(0%, 0%) rotate(0deg); }
+            100% { transform: translate(-10%, -5%) rotate(2deg); }
+        }
+
+        /* MOBILE SCROLL FIX */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            background: transparent;
+            /* iOS viewport fix */
+            min-height: 100dvh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        /* HEADER */
+        .header {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            margin-bottom: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .theme-toggle {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            border-radius: 50px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s;
-        }
-
-        /* Welcome Screen */
-        .welcome-screen {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
-
-        .welcome-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .welcome-message {
-            max-width: 700px;
-            padding: 40px;
-            text-align: center;
-            font-size: 1.4rem;
-            line-height: 1.8;
-        }
-
-        .skip-intro {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .skip-intro:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Main Selection */
-        .main-selection {
-            display: none;
-        }
-
-        .main-selection.active {
-            display: block;
-        }
-
-        .selection-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .selection-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .selection-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .selection-card {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .selection-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px var(--shadow);
-            border-color: var(--accent);
-        }
-
-        .selection-card.urgent {
-            border-color: #ef4444;
-        }
-
-        .selection-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .selection-title {
             font-size: 1.5rem;
-            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .selection-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .time-badge {
-            background: var(--accent);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        /* Script Display */
-        .script-display {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-primary);
-            z-index: 500;
-        }
-
-        .script-display.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .script-text {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-        }
-
-        .script-content {
-            max-width: 800px;
-            font-size: 1.3rem;
-            line-height: 2;
-            white-space: pre-line;
-        }
-
-        .controls-bar {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-secondary);
-            padding: 15px 30px;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px var(--shadow);
+        .controls {
             display: flex;
             gap: 15px;
             align-items: center;
         }
 
-        .control-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: all 0.3s;
+        .voice-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary); /* Hvid tekst */
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
         }
 
-        .control-btn:hover {
-            background: var(--accent-hover);
-            transform: scale(1.1);
+        /* Dropdown options styling */
+        .voice-selector option {
+            background: rgba(0, 0, 0, 0.9); /* Mørk baggrund */
+            color: white; /* Hvid tekst på optioner */
+            padding: 8px;
+        }
+
+        .favorites-counter {
+            background: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* SCRIPT SELECTION */
+        .script-section {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .script-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .script-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .script-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .script-card:hover::before {
+            left: 100%;
+        }
+
+        .script-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .script-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .favorite-btn:hover,
+        .favorite-btn.active {
+            opacity: 1;
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px #fbbf24);
+        }
+
+        .script-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .script-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .script-duration {
+            background: rgba(124, 58, 237, 0.3);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* PLAYER INTERFACE */
+        .player-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .player-modal.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .player-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-title {
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
         .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            padding: 10px 20px;
-            border-radius: 25px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        .player-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .text-display {
+            max-width: 800px;
+            font-size: 1.6rem;
+            line-height: 2;
+            text-align: center;
+            position: relative;
+        }
+
+        .typing-text {
+            border-right: 3px solid var(--accent);
+            animation: cursor-blink 1s step-end infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { border-color: var(--accent); }
+            51%, 100% { border-color: transparent; }
+        }
+
+        .player-controls {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+        }
+
+        .control-btn.primary {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .control-btn.primary:hover {
+            background: #6d28d9;
+        }
+
+        /* FAVORITES PANEL */
+        .favorites-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .favorites-panel.open {
+            right: 0;
+        }
+
+        .favorites-header {
+            padding: 20px;
+            background: rgba(124, 58, 237, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .favorites-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .favorite-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+        }
+
+        .favorite-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .favorite-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .remove-favorite {
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .remove-favorite:hover {
+            opacity: 1;
+        }
+
+        /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
-            .selection-grid { grid-template-columns: 1fr; }
-            .script-content { font-size: 1.1rem; }
-            .welcome-message { font-size: 1.2rem; padding: 20px; }
+            .favorites-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .script-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .text-display {
+                font-size: 1.3rem;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Loading and animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    
-    <!-- Welcome Screen -->
-    <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-message" id="welcomeText">
-            Ensomhed er en af de mest universelle menneskelige oplevelser. Du er ikke alene med at føle dig ensom.
-        </div>
-        <button class="skip-intro" onclick="skipIntro()">Spring over</button>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline id="bgVideo">
+            <source src="https://cdn.midjourney.com/video/1b3f6c67-fbfd-47fd-8540-e96adad0376e/0.mp4" type="video/mp4">
+            <!-- Skift URL ovenfor til din egen video -->
+            <!-- Eksempel andre videoer:
+            <source src="https://cdn.midjourney.com/video/1b3f6c67-fbfd-47fd-8540-e96adad0376e/0.mp4" type="video/mp4">
+            <source src="/videos/taaet-landskab.mp4" type="video/mp4">
+            -->
+        </video>
     </div>
+    
+    <div class="video-overlay"></div>
+    <div class="fog-overlay"></div>
 
-    <div class="container">
+    <div class="main-container">
         <!-- Header -->
-        <header>
-            <div class="logo">
-                <a href="index.html">TrøstMig.dk</a>
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">🎵 TrøstMig.dk</div>
+                <div class="controls">
+                    <select class="voice-selector" id="voiceSelector">
+                        <option value="da-DK-Chirp3-HD-Sulafat">Anna - Varm kvinde</option>
+                        <option value="da-DK-Chirp3-HD-Charon">Simon - Rolig mand</option>
+                        <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Rolig kvinde</option>
+                        <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Blød kvinde</option>
+                    </select>
+                    <button onclick="toggleFavorites()" class="favorites-counter" id="favoritesBtn">
+                        ⭐ <span id="favoritesCount">0</span>
+                    </button>
+                </div>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
         </header>
 
-        <!-- Main Selection Screen -->
-        <div class="main-selection" id="mainSelection">
-            <div class="selection-header">
-                <h1>Ensomhed</h1>
-                <p>Vælg hvad du har brug for lige nu</p>
+        <!-- Main Content -->
+        <main class="script-section">
+            <h1 class="section-title">Ensomhed Scripts</h1>
+            
+            <div class="script-grid">
+                <div class="script-card" data-script="akut-ensomhed" onclick="playScript('akut-ensomhed')">
+                    <div class="card-header">
+                        <div>
+                            <div class="script-icon">🆘</div>
+                            <h3 class="script-title">Stop ensomhedsspiralen</h3>
+                        </div>
+                        <button class="favorite-btn" onclick="toggleFavorite(event, 'akut-ensomhed')">⭐</button>
+                    </div>
+                    <p class="script-description">Du lytter til dette fordi ensomheden føles overvældende lige nu. Lad os bruge 5-4-3-2-1 grounding til at bringe dig tilbage.</p>
+                    <span class="script-duration">4-6 min</span>
+                </div>
+
+                <div class="script-card" data-script="forstaa-ensomhed" onclick="playScript('forstaa-ensomhed')">
+                    <div class="card-header">
+                        <div>
+                            <div class="script-icon">🧠</div>
+                            <h3 class="script-title">Ensomhedens neurobiologi</h3>
+                        </div>
+                        <button class="favorite-btn" onclick="toggleFavorite(event, 'forstaa-ensomhed')">⭐</button>
+                    </div>
+                    <p class="script-description">Ensomhed er et biologisk alarmsystem. Her er hvad der sker i din hjerne, og hvorfor du ikke skal skamme dig.</p>
+                    <span class="script-duration">8-10 min</span>
+                </div>
+
+                <div class="script-card" data-script="haandter-ensomhed" onclick="playScript('haandter-ensomhed')">
+                    <div class="card-header">
+                        <div>
+                            <div class="script-icon">🎯</div>
+                            <h3 class="script-title">Mikro-forbindelser</h3>
+                        </div>
+                        <button class="favorite-btn" onclick="toggleFavorite(event, 'haandter-ensomhed')">⭐</button>
+                    </div>
+                    <p class="script-description">Du behøver ikke en bedste ven i morgen. Start med små, gentagne sociale udvekslinger der virker.</p>
+                    <span class="script-duration">6-8 min</span>
+                </div>
+
+                <div class="script-card" data-script="nattens-ensomhed" onclick="playScript('nattens-ensomhed')">
+                    <div class="card-header">
+                        <div>
+                            <div class="script-icon">🌙</div>
+                            <h3 class="script-title">Når natten er værst</h3>
+                        </div>
+                        <button class="favorite-btn" onclick="toggleFavorite(event, 'nattens-ensomhed')">⭐</button>
+                    </div>
+                    <p class="script-description">Natlig ensomhed aktiverer samme hjerneområder som fysisk smerte. Lad os dæmpe alarmen sammen.</p>
+                    <span class="script-duration">5-7 min</span>
+                </div>
             </div>
+        </main>
+    </div>
 
-            <div class="selection-grid">
-                <div class="selection-card urgent" onclick="startSection('akut')">
-                    <div class="selection-icon">🆘</div>
-                    <h2 class="selection-title">Akut ensomhed</h2>
-                    <p class="selection-description">
-                        Øjeblikkelig hjælp når ensomheden føles overvældende. 
-                        Guidede øvelser med realistiske pauser.
-                    </p>
-                    <span class="time-badge">3-6 minutter</span>
-                </div>
-
-                <div class="selection-card" onclick="startSection('forståelse')">
-                    <div class="selection-icon">🧠</div>
-                    <h2 class="selection-title">Forstå ensomhed</h2>
-                    <p class="selection-description">
-                        Lær hvorfor ensomhed opstår og hvad der sker i kroppen. 
-                        Videnskabsbaserede forklaringer.
-                    </p>
-                    <span class="time-badge">7-10 minutter</span>
-                </div>
-
-                <div class="selection-card" onclick="startSection('håndtering')">
-                    <div class="selection-icon">🎯</div>
-                    <h2 class="selection-title">Håndter ensomhed</h2>
-                    <p class="selection-description">
-                        Langsigtede strategier for at bygge forbindelse. 
-                        Praktiske værktøjer der virker.
-                    </p>
-                    <span class="time-badge">8-12 minutter</span>
-                </div>
+    <!-- Player Modal -->
+    <div class="player-modal" id="playerModal">
+        <div class="player-header">
+            <h2 class="player-title" id="playerTitle">Loading...</h2>
+            <button class="close-btn" onclick="closePlayer()">✕ Luk</button>
+        </div>
+        
+        <div class="player-content">
+            <div class="text-display" id="textDisplay">
+                Forbereder audio...
             </div>
         </div>
+        
+        <div class="player-controls">
+            <button class="control-btn" onclick="previousSentence()">⏮</button>
+            <button class="control-btn primary" onclick="togglePlayback()" id="playButton">▶</button>
+            <button class="control-btn" onclick="nextSentence()">⏭</button>
+            <button class="control-btn" onclick="stopPlayback()">⏹</button>
+        </div>
+    </div>
 
-        <!-- Script Display Screen -->
-        <div class="script-display" id="scriptDisplay">
-            <button class="close-btn" onclick="closeScript()">Luk ✕</button>
-            <div class="script-text">
-                <div class="script-content" id="scriptContent"></div>
-            </div>
-            <div class="controls-bar">
-                <button class="control-btn" onclick="previousScript()">◀</button>
-                <button class="control-btn" onclick="togglePlay()" id="playBtn">⏸</button>
-                <button class="control-btn" onclick="nextScript()">▶</button>
-                <span style="color: var(--text-secondary); padding: 0 15px;" id="progressIndicator">1 / 5</span>
-            </div>
+    <!-- Favorites Panel -->
+    <div class="favorites-panel" id="favoritesPanel">
+        <div class="favorites-header">
+            <h3>Mine Favoritter</h3>
+            <button class="close-btn" onclick="toggleFavorites()" style="float: right;">✕</button>
+        </div>
+        <div class="favorites-list" id="favoritesList">
+            <p style="text-align: center; color: var(--text-secondary); margin-top: 50px;">
+                Ingen favoritter endnu.<br>Tryk ⭐ på scripts for at gemme dem.
+            </p>
         </div>
     </div>
 
     <script>
-        // Scripts database
+        // ========== SCRIPT DATABASE ==========
         const scriptsDatabase = {
-            akut: [
-                {
-                    title: "Stop ensomhedsspiralen - Guidet 5-4-3-2-1 Grounding",
-                    content: `Okay. Jeg kan høre du har brug for hjælp lige nu.
-
-Ensomheden føles måske overvældende. Som en tung sten i brystet.
-
-Lad mig fortælle dig hvad vi skal gøre - og hvorfor det virker.
-
-Vi skal bruge en teknik der hedder fem-fire-tre-to-et grounding. Det er ikke bare en distraktionsteknik. Forskning fra Yale University viser at denne øvelse aktiverer din præfrontale korteks. Det er den del af hjernen der regulerer følelser.
-
-Når du fokuserer på sanserne, bringer du dig selv tilbage til nuet. Væk fra tankespiralen.
-
-Du kan pause når som helst - bare tryk space. Okay. Lad os begynde.
-
-Se dig omkring lige nu. Find fem ting du kan se. Sig dem højt hvis du kan. Eller bare i dit hoved.
-
-Jeg venter mens du finder dem. Tag din tid.
-
-[Tag 20 sekunder til at finde fem ting]
-
-Godt. Måske så du et billede på væggen. Dine hænder. En dør. En skærm. Et vindue. Det er perfekt.
-
-Nu. Fire ting du kan røre ved. Mærk dem. Virkelig mærk dem. Er de glatte? Ru? Varme? Kolde?
-
-Jeg venter.
-
-[Tag 15 sekunder til at mærke fire ting]
-
-Sådan. Måske mærkede du stolen under dig. Dine tøj. Dit hår. Jorden under fødderne.
-
-Tre lyde du kan høre lige nu. Lyt. Virkelig lyt. Selv stille lyde tæller.
-
-[Tag 12 sekunder til at høre tre lyde]
-
-Perfekt. Din egen vejrtrækning. Måske trafik udenfor. En summen. Stilheden.
-
-To ting du kan lugte. Eller forestil dig to dufte du kan lide.
-
-[Tag 10 sekunder]
-
-Godt klaret.
-
-Og endelig. Én ting du kan smage. Måske kaffe. Din egen mund. Ingenting er også et svar.
-
-Fantastisk.
-
-Nu. Mærk efter.
-
-Er ensomheden stadig lige så overvældende? Måske lidt mindre?
-
-Det du lige gjorde var at aktivere dit parasympatiske nervesystem. Det er dit rolighedssystem. Du fortalte din hjerne: Jeg er her. Jeg er sikker. Jeg er til stede.
-
-Ensomheden er stadig der. Men nu har du plads til at ånde ved siden af den.
-
-Du kan lave denne øvelse når som helst. Hvor som helst. Altid.
-
-Du klarede det godt.`
-                },
-                {
-                    title: "Åndedrætsøvelse mod akut ensomhed",
-                    content: `Luk øjnene hvis du kan. Eller sænk blikket.
-
-Læg en hånd på dit hjerte. Mærk det banke. Dette er beviset på at du lever. At du er her.
-
-Vi skal nu ånde sammen. Med en teknik der hedder fire-fire-seks vejrtrækning.
-
-Forskning fra Stanford University viser at denne rytme aktiverer nervus vagus. Det er den nerve der forbinder din hjerne med dit hjerte. Når du ånder sådan her, sender du signal til dit nervesystem: Jeg er tryg.
-
-Lad mig guide dig. Følg med.
-
-Ind gennem næsen i fire. Et. To. Tre. Fire.
-
-Hold i fire. Et. To. Tre. Fire.
-
-Ud gennem munden i seks. Et. To. Tre. Fire. Fem. Seks.
-
-Godt. Lad os gøre det igen.
-
-Ind to tre fire. Hold to tre fire. Ud to tre fire fem seks.
-
-Perfekt. Fortsæt i dit eget tempo nu. Jeg venter.
-
-[Ånd i denne rytme i 30 sekunder]
-
-Sådan. Mærk efter. Er dit hjerte lidt mere roligt? Dine skuldre lidt mindre spændte?
-
-Hver gang du ånder ud, forestil dig at du slipper lidt af ensomheden. Det betyder ikke den forsvinder. Men du giver dig selv plads til at ånde ved siden af den.
-
-Hvis ensomheden bliver overvældende igen i nat. Eller i morgen. Eller når som helst. Husk denne vejrtrækning.
-
-Fire ind. Fire hold. Seks ud.
-
-Det er dit værktøj. Altid tilgængeligt. Altid effektivt.
-
-Du klarer dette.`
-                },
-                {
-                    title: "Når natten er værst",
-                    content: `Natten kan forstærke ensomheden. Når alle andre sover. Når mørket lukker sig om dig. Og tankerne bliver højere.
-
-Hvis du lytter til dette om natten, ved jeg du kæmper.
-
-Så lad mig sige det: Det er okay at være vågen. Det er okay at kæmpe.
-
-Forskning fra University of Pennsylvania viser at natlig ensomhed aktiverer de samme hjerneområder som fysisk smerte. Dit nervesystem er i højeste alarmberedskab. Det er ikke din skyld.
-
-Men vi kan dæmpe alarmen. Sammen.
-
-Først. Lys. Tænd et blidt lys. Ikke det skarpe loftlys. Noget varmt. En lampe. Din telefon på laveste lysstyrke. Mørket forstærker ensomheden.
-
-Lyset fortæller din hjerne: Det er okay. Vi er trygge.
-
-Nu. Varme. Lav en kop te hvis du kan. Kamille. Lavendel. Varm mælk. Noget der varmer hænderne.
-
-Hvis ikke, pak dig ind i et tæppe. Klem det tæt.
-
-Varme aktiverer dit comfort-system. Det er de samme receptorer der blev aktiveret da du var barn og blev holdt.
-
-Og endelig. Fokuser på komforten i disse små ting. Varmen i koppen. Blødhed i tæppet. Lyset der skubber mørket væk.
-
-Husk: Natten slutter. Lyset kommer altid tilbage.
-
-Statistisk set er der lige nu tusinder af andre der også er vågne. Der også føler sig ensomme. Du er omgivet af usynlige kammerater.
-
-Hvis du har brug for en stemme, ring til Livslinjen. 70 20 12 01. De er vågne. De venter.
-
-Men lige nu. I dette øjeblik. Fokuser på dit lys. Din varme. Din vejrtrækning.
-
-Du overlever denne nat.`
-                },
-                {
-                    title: "5 øjeblikkelige strategier",
-                    content: `Lige nu føles det måske som om ensomheden aldrig går væk.
-
-Men jeg vil give dig fem akutværktøjer. Researchen bag dem er solid. De virker.
-
-Klar? Lad os gå gennem dem. Én ad gangen.
-
-Første: Ring til nogen. Hvem som helst. Din mor. En gammel ven. En hotline. Selv en kort samtale på to minutter kan bryde isolationen.
-
-Forskning fra University of Chicago viser at bare lyden af en menneskestemme reducerer kortisolniveauer. Dit stresssystem dæmpes.
-
-Anden: Gå udenfor. Bare fem minutter. Frisk luft. Sollys hvis muligt. Nattelys hvis det er aften.
-
-Naturen aktiverer dit parasympatiske nervesystem. Selv en kort gåtur reducerer ensomhedsfølelser med op til tredive procent.
-
-Tredje: Skriv dine følelser ned. Helt ufilteret. Det du føler lige nu.
-
-Ekspressiv skrivning flytter følelser fra din amygdala til din præfrontale korteks. Fra panik til forståelse.
-
-Fjerde: Lyt til noget du elsker. Musik. En podcast. En lydbog. Noget der fylder stilheden.
-
-Lyd skaber illusion af selskab. Dit nervesystem registrerer stemmer og musik som social forbindelse.
-
-Femte: Hjælp nogen. Send en besked til en du ikke har hørt fra længe. Spørg hvordan de har det.
-
-Paradoksalt hjælper det os selv når vi hjælper andre. Forskning kalder det helper's high.
-
-Okay. Du har nu fem værktøjer. Vælg ét. Bare ét. Inden for de næste ti minutter.
-
-Gør det nu. Jeg venter.
-
-[Tag 10 sekunder til at vælge]
-
-Hvilket valgte du? Uanset hvad, er det det rigtige valg.
-
-Du tager handling. Det er det vigtigste.`
-                },
-                {
-                    title: "Du er ikke alene - Statistisk validering",
-                    content: `Hør godt efter. Dette er vigtigt.
-
-Du er ikke alene med at føle dig ensom.
-
-Lad mig give dig tallene. Fra solid forskning.
-
-En undersøgelse fra Cigna i 2020 viste at 61 procent af alle voksne oplever kronisk ensomhed.
-
-Det betyder at hvis du sidder på en café med hundrede mennesker, er der mindst tres andre der kæmper med præcis det samme som dig lige nu.
-
-I Danmark viser tal fra Sundhedsstyrelsen at hver tredje dansker føler sig ensom mindst én gang om ugen.
-
-Det er ikke dit personlige nederlag. Det er en folkesundhedskrise.
-
-Samfundet er designet på måder der fremmer isolation. Vi arbejder mere. Flytter oftere. Har færre fællesskaber. Sociale medier lover forbindelse men leverer ensomhed.
-
-Det er ikke din skyld at du føler dig ensom.
-
-Men her er det vigtigste: Det kan ændre sig.
-
-Forskning fra University of Amsterdam viser at ensomhed er plastisk. Det betyder den kan formes. Ændres. Lindres.
-
-Det kræver tid. Indsats. Tålmodighed.
-
-Men tusinder har fundet vej ud. Statistisk set vil du også.
-
-Lige nu. I dette øjeblik. Giv dig selv lov til at føle det.
-
-Du har lov til at føle dig ensom. Du har også lov til at søge hjælp.
-
-Disse to ting kan eksistere samtidig.
-
-Ensomheden er ikke permanent. Følelsen er reel. Men den er ikke din skæbne.
-
-Husk det.`
-                }
-            ],
-            
-            forståelse: [
-                {
-                    title: "Ensomhedens neurobiologi",
-                    content: `Ensomhed er ikke bare en følelse. Det er et komplekst biologisk alarmsystem.
-
-Lad mig forklare hvad der bogstaveligt talt sker i din hjerne lige nu.
-
-Når du føler dig ensom, aktiveres et område der hedder anterior cingulate cortex. Det er den samme region der aktiveres ved fysisk smerte.
-
-Det forklarer hvorfor ensomhed kan gøre ondt. Bogstaveligt talt. Din hjerne behandler social smerte og fysisk smerte næsten identisk.
-
-Næste sker dette: Din amygdala, dit frygtcenter, går i overdrive. Den scanner konstant for trusler. Social isolation blev tolket som livsfarligt af vores forfædre. Den der blev udstødt fra stammen overlevede sjældent.
-
-Så din amygdala skriger: Fare! Find stammen!
-
-Samtidig falder produktionen af oxytocin. Det er dit bonding-hormon. Det der normalt gør dig rolig i nærvær af andre.
-
-Uden oxytocin stiger kortisol. Dit stresshormon. Over tid påvirker kronisk forhøjet kortisol dit immunforsvar, dit hjerte, din søvn.
-
-Men her er det vigtige: Ved at forstå at ensomhed er et biologisk signal, kan vi stoppe med at skamme os.
-
-Der er ikke noget galt med dig. Din hjerne gør præcis hvad den skal. Den beskytter dig.
-
-Problemet er at systemet er blevet overaktivt. Vi lever i et samfund der udløser konstant social alarm.
-
-Men hvis det er biologi, betyder det også det kan påvirkes.
-
-Meditation, motion, social kontakt - selv småt - kan genoprette dine systemer.
-
-Din hjerne er plastisk. Den kan lære igen.
-
-Ensomheden er ikke din identitet. Det er et signal. Og signaler kan ændres.`
-                },
-                {
-                    title: "Alene versus ensom",
-                    content: `Dette er en af de vigtigste distinktioner du kan forstå.
-
-At være alene og at føle sig ensom er to fundamentalt forskellige ting.
-
-Du kan sidde i et fyldt rum. Omgivet af mennesker. Familie. Venner. Kolleger. Og føle dig dybt, intenst ensom.
-
-Og du kan være fysisk alene. I dit hjem. På en vandring. Og føle dig fuldstændig forbundet.
-
-Hvorfor? Fordi ensomhed ikke handler om hvor mange mennesker der er omkring dig. Det handler om kvaliteten af forbindelse.
-
-Forskning fra University of California viser at ensomhed opstår når der er et gab. Mellem den forbindelse du ønsker og den du oplever.
-
-Det er diskrepansen der skaber smerten.
-
-Du kan have hundrede Facebook-venner og føle dig ensom. Eller ét dybt venskab og føle dig forbundet.
-
-Studier viser faktisk at det er bedre at have få dybe relationer end mange overfladiske.
-
-Kvalitet slår kvantitet. Altid.
-
-Nogle mennesker trives i ensomhed. De kalder det solitude. En villet, nærende alenetid. De genoplader. Reflekterer. Skaber.
-
-Andre lider i ensomhed. De oplever det som isolation. Frakobling. Tomhed.
-
-Begge dele er valide. Der er ikke noget rigtigt eller forkert.
-
-Nøglen er at forstå dit eget behov for forbindelse.
-
-Hvor meget social kontakt har du brug for? Hvilken type? Hvor dyb?
-
-Der er ingen universal standard. Introvert, ekstrovert - det er spektre.
-
-Find din egen balance. Og vær god ved dig selv mens du leder.
-
-Ensomhed er ikke en karakter-fejl. Det er information om dine behov.
-
-Lyt til informationen.`
-                },
-                {
-                    title: "Samfundets rolle i ensomhed",
-                    content: `Vi lever i den mest forbundne tid i menneskehedens historie.
-
-Og samtidig den mest ensomme.
-
-Det er ikke et paradoks. Det er et symptom.
-
-Lad mig forklare de systemiske årsager til ensomheds-epidemien.
-
-Først: Sociale medier. De lover forbindelse. Men leverer isolation.
-
-En meta-analyse fra University of Pennsylvania undersøgte 5000 studier. Konklusion: Jo mere tid vi bruger på sociale medier, jo mere ensomme føler vi os.
-
-Hvorfor? Sammenligning. FOMO. Overfladiskhed. Vi ser alle andres highlight reel. Vi oplever vores egen backstage.
-
-Resultat: Følelse af utilstrækkelighed. Isolation.
-
-Andet: Mobilitet. Vi flytter oftere end nogensinde. For job. For uddannelse. For kærlighed.
-
-Tidligere var mennesker indlejret i dybe, langvarige netværk. Storfamilie. Lokalmiljø. Kirke eller forening.
-
-Nu er vi ofte kun to. Eller én. Og når vi flytter, starter vi forfra.
-
-Tredje: Arbejdskultur. Vi arbejder mere. Længere. Mere isoleret.
-
-Hjemmearbejde. Gig-økonomi. Færre fælles pauser. Færre dybe arbejdsrelationer.
-
-Fjerde: Atomisering af familien. Kernefamilien erstattede storfamilien. Nu erstattes kernefamilien af single-husholdninger.
-
-I København bor over halvdelen af indbyggerne alene.
-
-Og endelig: Svækkede fællesskaber. Færre går i kirke. Færre er med i foreninger. Færre har faste naboer.
-
-De strukturer der historisk skabte forbindelse er eroderet.
-
-Nu skal vi selv skabe det. Og mange ved ikke hvordan.
-
-Det er ikke din skyld at du føler dig ensom. Samfundet er designet på måder der fremmer isolation.
-
-Men ved at forstå dette kan du begynde at søge bevidst forbindelse.
-
-Du kæmper ikke bare mod dig selv. Du kæmper mod systemiske kræfter.
-
-Det gør det sværere. Men det gør det også mindre personligt.
-
-Det er ikke dig. Det er strukturerne.
-
-Og strukturer kan ændres. En person ad gangen.`
-                },
-                {
-                    title: "Det evolutionære perspektiv",
-                    content: `Dette lyder måske mærkeligt mens du kæmper.
-
-Men ensomhed tjener faktisk en vigtig evolutionær funktion.
-
-Ligesom smerte får os til at trække hånden væk fra en varm plade, får ensomhed os til at søge forbindelse.
-
-Det er et biologisk alarmsystem designet til at beskytte os.
-
-Vores forfædre der blev isoleret fra stammen havde drastisk reducerede chancer for at overleve. Ingen til at hjælpe med mad. Ingen til at advare om rovdyr. Ingen til at pleje sygdom.
-
-Så de individer hvis hjerne gjorde ensomhed smertefuld - og dermed motiverede til at genoprette forbindelse - de overlevede.
-
-Du har arvet det system.
-
-Ensomhed er din hjernes måde at sige: Du har brug for forbindelse. Søg stammen.
-
-Problemet i dag er at systemet er blevet overaktivt.
-
-Vi er socialt sultne i et samfund med følelsesmæssig junk food.
-
-Masser af overfladisk kontakt. Lidt dybde.
-
-Dit alarmsystem skriger selvom du ikke er i livsfare.
-
-Men hvis vi forstår ensomhed som et signal - ikke en fejl - kan vi arbejde med det.
-
-Spørg: Hvad fortæller min ensomhed mig om mine behov?
-
-Måske har jeg brug for dybere samtaler. Måske mere fysisk nærvær. Måske kontinuitet med de samme mennesker over tid.
-
-Ensomhed peger. Lyt til hvor den peger.
-
-Og vær tålmodig. Evolutionære systemer ændres langsomt.
-
-Din ensomhed forsøger at hjælpe dig. Den er bare ikke kalibreret til moderne liv.
-
-Med tid kan du lære at tolke signalet. Og handle på det.
-
-På den måde bliver ensomhed ikke længere fjenden.
-
-Den bliver guiden.`
-                },
-                {
-                    title: "Kronisk ensomhed som sundhedsproblem",
-                    content: `Alle føler sig ensomme sommetider. Det er normalt. Menneskelig.
-
-Men hvornår bliver det et problem?
-
-Når ensomheden varer ved. Når den påvirker dit liv dagligt. Når du har følt dig ensom i mere end seks måneder.
-
-Da er det blevet kronisk.
-
-Og kronisk ensomhed er forbundet med alvorlige helbredskonsekvenser.
-
-Lad mig give dig de hårde facts. Fra peer-reviewed forskning.
-
-En meta-analyse fra Brigham Young University analyserede data fra 3,4 millioner mennesker. Konklusion: Kronisk ensomhed øger risikoen for tidlig død med 26 procent.
-
-Det er sammenligneligt med at ryge femten cigaretter om dagen.
-
-Hvorfor? Kronisk ensomhed påvirker:
-
-Dit immunforsvar. Langvarig isolation reducerer white blood cell produktion. Du bliver mere modtagelig for sygdom.
-
-Dit hjerte. Ensomhed øger risikoen for hjertesygdom med 29 procent og slagtilfælde med 32 procent.
-
-Din søvn. Ensomme mennesker har mere fragmenteret søvn. Mindre REM. Mindre restitution.
-
-Dit sind. Ensomhed er en af de stærkeste prædiktorer for depression og angst.
-
-Men lad mig være klar: Dette er ikke for at skræmme dig.
-
-Det er for at validere alvoren af din oplevelse.
-
-Ensomhed er ikke et kosmetisk problem. Det er ikke svaghed. Det er ikke noget du bare skal komme over.
-
-Det er et reelt, alvorligt sundhedsproblem.
-
-Og det fortjener at blive taget alvorligt.
-
-Hvis du har følt dig dybt ensom i mere end seks måneder, overvej at tale med en professionel. En psykolog. En læge. En terapeut.
-
-Der er hjælp. Evidensbaseret behandling. Cognitive Behavioral Therapy for ensomhed virker.
-
-Du fortjener support. Du fortjener at blive taget alvorligt.
-
-Ensomheden er ikke din skyld. Men helbredelse er din ret.
-
-Søg hjælp. Du er det værd.`
-                }
-            ],
-            
-            håndtering: [
-                {
-                    title: "Byg mikro-forbindelser",
-                    content: `Du behøver ikke en bedste ven i morgen for at bekæmpe ensomhed.
-
-Start med mikro-forbindelser. Små, gentagne sociale udvekslinger.
-
-Forskning fra University of British Columbia viser noget fascinerende: Selv fem minutters small talk med en fremmed kan forbedre humør og reducere ensomhedsfølelser.
-
-Hvorfor? Fordi disse små udvekslinger aktiverer de samme hjerneregioner som dybe samtaler. Bare i mindre grad.
-
-Det er som mini-doser af forbindelse.
-
-Så hvad er mikro-forbindelser?
-
-Sig godmorgen til buschaufføren. Smile til baristaen. Small talk med naboen i elevatoren.
-
-To minutters samtale med kassemedarbejderen. Et nik til folk du passerer på din gåtur.
-
-Det lyder måske ubetydelig. Men forskningen er klar: Det virker.
-
-En undersøgelse fra University of Chicago bad folk interagere med fremmede i toget. De fleste forventede det ville være akavet. Ubehageligt.
-
-Resultat? 100 procent rapporterede forbedret humør. Følelse af forbindelse.
-
-Vi undervurderer hvor meget små interaktioner betyder.
-
-Her er din strategiske plan:
-
-Trin et: Vælg tre steder du kommer regelmæssigt. Din lokale butik. Din foretrukne café. Din park.
-
-Trin to: Vær konsistent. Gå de samme steder. Samme tid hvis muligt. Genkendelse skaber trygheden.
-
-Trin tre: Start småt. Bare et hej. Et smil. Lad det bygge over tid.
-
-Trin fire: Vær tålmodig. De første gange føles det måske akavet. Det er normalt. Fortsæt.
-
-Forskning viser det tager cirka elleve interaktioner før fremmede begynder at føle familiarity.
-
-Men når det sker, starter noget smukt.
-
-Du bliver en del af deres rutine. De bliver en del af din.
-
-Og pludselig. En dag. Indser du.
-
-Du har et fællesskab. Lille. Men reelt.
-
-Mikro-forbindelser over tid bygger makro-tilhørsforhold.
-
-Start i dag. Bare ét smil. Ét hej.
-
-Det er nok.`
-                },
-                {
-                    title: "Kvalitet over kvantitet i relationer",
-                    content: `En dyb forbindelse med ét menneske er bedre end overfladisk kontakt med hundrede.
-
-Men hvordan bygger man dybde? Særligt hvis du føler dig ensom?
-
-Svaret er sårbarhed.
-
-Forskning af Brené Brown viser at ægte forbindelse kræver mod til at vise sig.
-
-Men ikke på den måde du tror.
-
-Sårbarhed handler ikke om at dumpe alle dine problemer på folk første gang du mødes.
-
-Det handler om gradvis, gensidig afsløring.
-
-Psykolog Arthur Aron udviklede en metode: De Seksogtredive Spørgsmål.
-
-Idéen: Par der gradvist deler mere og mere personlige ting skaber intimitet eksponentielt hurtigere.
-
-Du kan bruge samme princip.
-
-Start småt. Del noget lidt personligt.
-
-Hvis du føler dig ensom, sig det. Men gør det specifikt.
-
-Ikke: Jeg har det dårligt.
-
-Men: Jeg har faktisk følt mig lidt isoleret den sidste måned. Savner dybere samtaler.
-
-Se hvad der sker.
-
-Ofte vil du opdage at andre også lider. Og pludselig føler I jer begge mindre ensomme.
-
-Sårbarhed er smitsom. I den gode forstand.
-
-Her er en praktisk øvelse:
-
-Næste gang nogen spørger hvordan du har det, giv et ærligt svar. Ikke hele historien. Bare lidt mere end fint.
-
-Eksempel: Faktisk lidt træt. Har haft svært ved at sove. Hvordan med dig?
-
-Det åbner døren. Uden at vælte den.
-
-Og dybde bygges gennem gentagelse.
-
-Forskning viser det tager cirka:
-
-Halvtreds timer sammen før vi føler casual venskab.
-
-Hundrede timer for rigtigt venskab.
-
-To hundrede timer for tæt venskab.
-
-Så vær tålmodig. Investér tid med de samme mennesker.
-
-Ikke spredt. Koncentreret.
-
-Bedre at se ét menneske ti gange end ti mennesker én gang.
-
-Kontinuitet skaber tryghed. Tryghed skaber dybde.
-
-Og dybde kurerer ensomhed.
-
-Start. Vælg én person. Investér.
-
-Du fortjener dybde.`
-                },
-                {
-                    title: "Find dit fællesskab",
-                    content: `Ensomhed lindres bedst gennem fælles aktivitet.
-
-Ikke face-to-face samtale. Men side-by-side oplevelse.
-
-Psykolog Jeffrey Hall kalder det shared reality.
-
-Når du gør noget sammen med andre, skabes forbindelse næsten automatisk.
-
-Hvorfor? Fordi presset for at performe er væk. I fokuserer på aktiviteten. Ikke hinanden.
-
-Det fjerner akavetheden.
-
-Find noget du interesserer dig for. Eller bare er lidt nysgerrig på.
-
-Bogklub. Løbegruppe. Brætspilscafe. Frivilligt arbejde. Kor. Dansehold. Keramikværksted.
-
-Det vigtigste er ikke hvad. Det vigtigste er regelmæssighed.
-
-Forskning er klar: Du skal møde de samme mennesker gentagne gange.
-
-Genkendelse skaber tryghed. Tryghed skaber åbenhed.
-
-En undersøgelse fra University of Kansas viser det tager cirka:
-
-Halvtreds timer sammen før casual venskab.
-
-Nitti timer før rigtigt venskab.
-
-To hundrede timer før tæt venskab.
-
-Så vælg noget ugentligt. Ikke månedligt.
-
-Og giv det seks måneder. Minimum.
-
-De første gange føles det måske svært. Det er okay.
-
-Alle andre føler det samme. De gemmer det bare.
-
-Her er konkrete steder at starte:
-
-Meetup dot com. Søg din by. Find interesser.
-
-Lokale foreninger. Check din kommunes hjemmeside.
-
-Biblioteker. De fleste har bogklubber, foredrag, aktiviteter.
-
-Kirker eller spirituelle fællesskaber. Selv hvis du ikke er religiøs, er mange åbne.
-
-Frivilligt arbejde. Fødevarebankener, dyreinternat, genbrugsbutikker.
-
-Din lokale café. Gå samme sted. Samme tid. Bliv stamgæst.
-
-Nøglen er: Mød op. Konsistent. Selv når du ikke har lyst.
-
-Især når du ikke har lyst.
-
-Ensomhed lyver. Den siger alle andre har det nemmere. At du er udenfor.
-
-Men alle i rummet kæmper med det samme.
-
-Bare mød op. Regelmæssigt.
-
-Resten ordner sig.`
-                },
-                {
-                    title: "Digital detox strategi",
-                    content: `Sociale medier lover forbindelse. Men leverer ofte isolation.
-
-En meta-analyse fra University of Pennsylvania undersøgte 5000 studier.
-
-Klar konklusion: Jo mere tid vi bruger på sociale medier, jo mere ensomme føler vi os.
-
-Hvorfor dette paradoks?
-
-Tre mekanismer:
-
-Et: Sammenligning. Vi ser alle andres highlight reel. Vi sammenligner med vores backstage. Resultat: Utilstrækkelighed.
-
-To: FOMO. Fear Of Missing Out. Alle andre har det sjovere. Resultat: Isolation.
-
-Tre: Overfladiskhed. Hundrede likes erstatter ikke ét dybt øjenkontakt. Kvantitet dræber kvalitet.
-
-Men sociale medier er ikke enten eller.
-
-Det handler om bevidst brug.
-
-Her er en pragmatisk digital detox plan:
-
-Trin et: Identificer dit største tidsspilde. Instagram? TikTok? Facebook? LinkedIn doom-scrolling?
-
-Vær ærlig.
-
-Trin to: Sæt en timer. Brug din telefons screen time funktion.
-
-Maksimalt tredive minutter dagligt på sociale medier. Total.
-
-Trin tre: Erstat tiden med noget aktivt. Ring til nogen. Gå en tur. Mød en ven. Læs en bog.
-
-Det handler ikke om at slette alt. Det handler om balance.
-
-Spørg dig selv efter hver session: Føler jeg mig mere eller mindre forbundet nu?
-
-Hvis mindre: Det er et problem.
-
-Forskning fra University of British Columbia viser at passiv scrolling øger ensomhed.
-
-Aktiv interaktion - reelle samtaler i DMs, videokald - reducerer den.
-
-Så hvis sociale medier: Vær aktiv. Ikke passiv.
-
-Skriv til folk direkte. Ikke bare like.
-
-Video-kald. Ikke bare tekst.
-
-Og vigtigst: Prioriter offline over online.
-
-Ét ansigt til ansigt møde slår hundrede online interaktioner.
-
-Hver gang.
-
-Prøv dette: Én uge uden sociale medier. Bare én.
-
-Se hvad der sker.
-
-Mange rapporterer de ikke går tilbage til samme niveau.
-
-Fordi de indser hvor meget tid de spildte.
-
-Og hvor lidt det gav.
-
-Dit liv er her. Ikke på skærmen.
-
-Lev det.`
-                },
-                {
-                    title: "Ensomhed som vækstmulighed",
-                    content: `Dette er kontroversielt mens du kæmper.
-
-Men ensomhed kan være en dør. Ikke noget du ønsker. Men noget der kan lære dig noget.
-
-Mange af historiens største tænkere, kunstnere, og ledere har brugt perioder med ensomhed til dyb selvrefleksion.
-
-Thoreau ved Walden Pond. Virginia Woolf. Nelson Mandela i fængslet.
-
-De brugte ensomheden.
-
-Det betyder ikke du skal elske din ensomhed. Eller romantisere den. Men du kan spørge: Hvad prøver den at lære mig?
-
-Måske om dine behov. Om hvad der virkelig betyder noget for dig. Om hvem du er når ingen ser på.
-
-Ensomhed tvinger selvrefleksion. I stilheden hører du dine egne tanker klarest.
-
-Spørg dig selv: Hvad fortæller min ensomhed mig om mine behov? Hvad har jeg lært om mig selv i denne svære tid? Hvordan vil jeg leve anderledes når ensomheden aftager?
-
-Brug en journal. Skriv dagligt. Giv stemme til oplevelsen.
-
-Måske finder du at ensomheden, så smertefuld den er, også kan være en lærer.
-
-En katalysator for dybere, mere autentiske relationer.
-
-En påmindelse om hvad der virkelig betyder noget.
-
-Det gør den ikke mindre svær. But det gør den måske lidt mere meningsfuld.
-
-Din ensomhed har en stemme. Lyt til den.`
-                }
-            ]
+            'akut-ensomhed': {
+                title: 'Stop ensomhedsspiralen',
+                sentences: [
+                    "Du lytter til dette fordi du har brug for hjælp lige nu.",
+                    "Ensomheden føles måske som en tung sten i brystet.",
+                    "Vi skal bruge grounding. Fem-fire-tre-to-et teknikken.",
+                    "Find fem ting du kan se omkring dig. Tag din tid.",
+                    "Nu fire ting du kan røre ved. Mærk teksturen.",
+                    "Tre lyde du kan høre lige nu. Lyt virkelig.",
+                    "To ting du kan lugte. Eller forestil dig to dufte.",
+                    "Og endelig. Én ting du kan smage.",
+                    "Mærk efter nu. Er ensomheden stadig lige så overvældende?",
+                    "Du aktiverede dit rolighedssystem. Du fortalte din hjerne: Jeg er tryg.",
+                    "Denne øvelse kan du altid bruge. Hvor som helst."
+                ]
+            },
+            'forstaa-ensomhed': {
+                title: 'Ensomhedens neurobiologi',
+                sentences: [
+                    "Ensomhed er ikke bare en følelse. Det er et biologisk alarmsystem.",
+                    "Din anterior cingulate cortex aktiveres. Det samme område som ved fysisk smerte.",
+                    "Det forklarer hvorfor ensomhed kan gøre ondt. Bogstaveligt talt.",
+                    "Din amygdala, dit frygtcenter, går i overdrive.",
+                    "Social isolation blev tolket som livsfarligt af vores forfædre.",
+                    "Så din hjerne skriger: Fare! Find stammen!",
+                    "Samtidig falder produktionen af oxytocin. Dit bonding-hormon.",
+                    "Uden oxytocin stiger kortisol. Dit stresshormon.",
+                    "Men ved at forstå dette kan vi stoppe med at skamme os.",
+                    "Der er ikke noget galt med dig. Din hjerne beskytter dig.",
+                    "Og hvis det er biologi, kan det også påvirkes.",
+                    "Din hjerne er plastisk. Den kan lære igen."
+                ]
+            },
+            'haandter-ensomhed': {
+                title: 'Mikro-forbindelser',
+                sentences: [
+                    "Du behøver ikke en bedste ven i morgen for at bekæmpe ensomhed.",
+                    "Start med mikro-forbindelser. Små, gentagne sociale udvekslinger.",
+                    "Selv fem minutters small talk kan forbedre humør og reducere ensomhed.",
+                    "Sig godmorgen til buschaufføren. Smile til baristaen.",
+                    "To minutters samtale med kassemedarbejderen.",
+                    "Det lyder måske ubetydelig. Men forskningen er klar: Det virker.",
+                    "Vælg tre steder du kommer regelmæssigt.",
+                    "Vær konsistent. Gå de samme steder. Samme tid hvis muligt.",
+                    "Start småt. Bare et hej. Et smil.",
+                    "Det tager cirka elleve interaktioner før folk føler genkendelighed.",
+                    "Men når det sker, starter noget smukt.",
+                    "Du bliver en del af deres rutine. De bliver en del af din.",
+                    "Mikro-forbindelser over tid bygger makro-tilhørsforhold."
+                ]
+            },
+            'nattens-ensomhed': {
+                title: 'Når natten er værst',
+                sentences: [
+                    "Natten kan forstærke ensomheden. Når alle andre sover.",
+                    "Når mørket lukker sig om dig. Og tankerne bliver højere.",
+                    "Du lytter til dette om natten. Jeg ved du kæmper.",
+                    "Så lad mig sige det: Det er okay at være vågen. Det er okay at kæmpe.",
+                    "Natlig ensomhed aktiverer de samme hjerneområder som fysisk smerte.",
+                    "Dit nervesystem er i højeste alarmberedskab. Det er ikke din skyld.",
+                    "Men vi kan dæmpe alarmen. Sammen.",
+                    "Først. Lys. Tænd et blidt lys. Ikke det skarpe loftlys.",
+                    "Lyset fortæller din hjerne: Det er okay. Vi er trygge.",
+                    "Nu. Varme. Lav en kop te hvis du kan. Pak dig ind i et tæppe.",
+                    "Varme aktiverer dit comfort-system. De samme receptorer fra da du var barn.",
+                    "Husk: Natten slutter. Lyset kommer altid tilbage.",
+                    "Lige nu er der tusinder af andre der også er vågne. Du er omgivet af usynlige kammerater."
+                ]
+            }
         };
 
-        // State
-        let currentSection = null;
-        let currentScriptIndex = 0;
-        let isPlaying = false;
-
-        // Functions
-        function skipIntro() {
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            const mainSelection = document.getElementById('mainSelection');
-            
-            welcomeScreen.classList.add('hidden');
-            mainSelection.classList.add('active');
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const btn = document.querySelector('.theme-toggle');
-            
-            if (html.getAttribute('data-theme') === 'dark') {
-                html.removeAttribute('data-theme');
-                btn.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                btn.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
+        // ========== TTS SYSTEM ==========
+        class TTSEngine {
+            constructor() {
+                this.apiKey = 'AIzaSyCKQO9FZXRtRtv6k_XymPXHJHp7hrvjEqk';
+                this.currentVoice = 'da-DK-Chirp3-HD-Sulafat';
+                this.currentAudio = null;
+                this.audioCache = new Map();
             }
-        }
 
-        function startSection(section) {
-            currentSection = section;
-            currentScriptIndex = 0;
-            
-            document.getElementById('mainSelection').style.display = 'none';
-            document.getElementById('scriptDisplay').classList.add('active');
-            
-            loadScript();
-        }
-
-        function loadScript() {
-            const scripts = scriptsDatabase[currentSection];
-            const script = scripts[currentScriptIndex];
-            
-            document.getElementById('scriptContent').textContent = script.content;
-            document.getElementById('progressIndicator').textContent = 
-                `${currentScriptIndex + 1} / ${scripts.length}`;
-            
-            // Auto-play with browser TTS
-            setTimeout(() => {
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance(script.content);
-                    utterance.lang = 'da-DK';
-                    utterance.rate = 0.9;
-                    speechSynthesis.speak(utterance);
-                    
-                    utterance.onend = () => {
-                        isPlaying = false;
-                        document.getElementById('playBtn').innerHTML = '▶';
-                        setTimeout(() => nextScript(), 3000);
-                    };
-                    
-                    isPlaying = true;
-                    document.getElementById('playBtn').innerHTML = '⏸';
+            async generateTTS(text) {
+                const cacheKey = `${text}-${this.currentVoice}`;
+                if (this.audioCache.has(cacheKey)) {
+                    return this.audioCache.get(cacheKey);
                 }
-            }, 500);
-        }
 
-        function nextScript() {
-            const scripts = scriptsDatabase[currentSection];
-            if (currentScriptIndex < scripts.length - 1) {
-                currentScriptIndex++;
-                loadScript();
-            }
-        }
+                try {
+                    const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${this.apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            input: { text: text },
+                            voice: {
+                                languageCode: 'da-DK',
+                                name: this.currentVoice,
+                                ssmlGender: this.currentVoice.includes('Sulafat') ? 'FEMALE' : 'MALE'
+                            },
+                            audioConfig: {
+                                audioEncoding: 'MP3',
+                                speakingRate: 0.9
+                            }
+                        })
+                    });
 
-        function previousScript() {
-            if (currentScriptIndex > 0) {
-                currentScriptIndex--;
-                loadScript();
-            }
-        }
-
-        function closeScript() {
-            speechSynthesis.cancel();
-            document.getElementById('scriptDisplay').classList.remove('active');
-            document.getElementById('mainSelection').style.display = 'block';
-            currentSection = null;
-            currentScriptIndex = 0;
-        }
-
-        function togglePlay() {
-            if (isPlaying) {
-                speechSynthesis.pause();
-                isPlaying = false;
-                document.getElementById('playBtn').innerHTML = '▶';
-            } else {
-                speechSynthesis.resume();
-                isPlaying = true;
-                document.getElementById('playBtn').innerHTML = '⏸';
-            }
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load theme
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                document.querySelector('.theme-toggle').textContent = '☀️';
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.audioCache.set(cacheKey, data.audioContent);
+                        return data.audioContent;
+                    }
+                } catch (error) {
+                    console.error('TTS Error:', error);
+                }
+                return null;
             }
 
-            // Show random welcome message
-            const welcomeMessages = [
-                "Ensomhed er en af de mest universelle menneskelige oplevelser. Du er ikke alene med at føle dig ensom.",
-                "Det kræver mod at anerkende sin ensomhed. Du har taget det første skridt ved at være her.",
-                "Ensomhed er ikke et tegn på svaghed - det er et signal om at du har brug for forbindelse."
-            ];
-            
-            const randomIndex = Math.floor(Math.random() * welcomeMessages.length);
-            document.getElementById('welcomeText').textContent = welcomeMessages[randomIndex];
+            async playAudio(base64Audio) {
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                }
 
-            // Auto-hide welcome after 8 seconds
-            setTimeout(() => skipIntro(), 8000);
-        });
+                return new Promise((resolve, reject) => {
+                    const audio = new Audio(`data:audio/mp3;base64,${base64Audio}`);
+                    this.currentAudio = audio;
+                    
+                    audio.onended = resolve;
+                    audio.onerror = reject;
+                    audio.play();
+                });
+            }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (document.getElementById('scriptDisplay').classList.contains('active')) {
-                switch(e.key) {
-                    case ' ':
-                        e.preventDefault();
-                        togglePlay();
-                        break;
-                    case 'ArrowRight':
-                        nextScript();
-                        break;
-                    case 'ArrowLeft':
-                        previousScript();
-                        break;
-                    case 'Escape':
-                        closeScript();
-                        break;
+            stop() {
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                    this.currentAudio = null;
                 }
             }
+        }
+
+        // ========== FAVORITES SYSTEM ==========
+        class FavoritesManager {
+            constructor() {
+                this.favorites = JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
+                this.updateUI();
+            }
+
+            add(scriptId) {
+                if (!this.favorites.includes(scriptId)) {
+                    this.favorites.push(scriptId);
+                    this.save();
+                    this.updateUI();
+                    return true;
+                }
+                return false;
+            }
+
+            remove(scriptId) {
+                const index = this.favorites.indexOf(scriptId);
+                if (index > -1) {
+                    this.favorites.splice(index, 1);
+                    this.save();
+                    this.updateUI();
+                    return true;
+                }
+                return false;
+            }
+
+            has(scriptId) {
+                return this.favorites.includes(scriptId);
+            }
+
+            save() {
+                localStorage.setItem('trostmig_favorites', JSON.stringify(this.favorites));
+            }
+
+            updateUI() {
+                // Update counter
+                document.getElementById('favoritesCount').textContent = this.favorites.length;
+                
+                // Update favorite buttons
+                document.querySelectorAll('.favorite-btn').forEach(btn => {
+                    const card = btn.closest('.script-card');
+                    const scriptId = card?.dataset.script;
+                    if (scriptId) {
+                        btn.classList.toggle('active', this.has(scriptId));
+                    }
+                });
+
+                // Update favorites panel
+                this.updateFavoritesPanel();
+            }
+
+            updateFavoritesPanel() {
+                const favoritesList = document.getElementById('favoritesList');
+                
+                if (this.favorites.length === 0) {
+                    favoritesList.innerHTML = `
+                        <p style="text-align: center; color: var(--text-secondary); margin-top: 50px;">
+                            Ingen favoritter endnu.<br>Tryk ⭐ på scripts for at gemme dem.
+                        </p>
+                    `;
+                    return;
+                }
+
+                favoritesList.innerHTML = this.favorites.map(scriptId => {
+                    const script = scriptsDatabase[scriptId];
+                    if (!script) return '';
+                    
+                    return `
+                        <div class="favorite-item" onclick="playScript('${scriptId}')">
+                            <div class="favorite-info">
+                                <h4>${script.title}</h4>
+                                <p>${script.sentences.length} afsnit</p>
+                            </div>
+                            <span class="remove-favorite" onclick="removeFavorite(event, '${scriptId}')">×</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // ========== SCRIPT PLAYER ==========
+        class ScriptPlayer {
+            constructor() {
+                this.tts = new TTSEngine();
+                this.currentScript = null;
+                this.currentSentence = 0;
+                this.isPlaying = false;
+            }
+
+            async playScript(scriptId) {
+                this.currentScript = scriptsDatabase[scriptId];
+                if (!this.currentScript) return;
+
+                this.currentSentence = 0;
+                
+                // Show player
+                document.getElementById('playerModal').classList.add('active');
+                document.getElementById('playerTitle').textContent = this.currentScript.title;
+                
+                // Start playing
+                await this.playSentence();
+            }
+
+            async playSentence() {
+                if (!this.currentScript || this.currentSentence >= this.currentScript.sentences.length) {
+                    this.isPlaying = false;
+                    document.getElementById('playButton').textContent = '▶';
+                    return;
+                }
+
+                const sentence = this.currentScript.sentences[this.currentSentence];
+                
+                // Show typing animation
+                await this.typeText(sentence);
+                
+                // Generate and play TTS
+                const audioContent = await this.tts.generateTTS(sentence);
+                if (audioContent) {
+                    this.isPlaying = true;
+                    document.getElementById('playButton').textContent = '⏸';
+                    
+                    try {
+                        await this.tts.playAudio(audioContent);
+                        
+                        // Auto advance
+                        if (this.isPlaying) {
+                            setTimeout(() => {
+                                this.currentSentence++;
+                                this.playSentence();
+                            }, 1500);
+                        }
+                    } catch (error) {
+                        console.error('Playback error:', error);
+                        this.isPlaying = false;
+                        document.getElementById('playButton').textContent = '▶';
+                    }
+                }
+            }
+
+            async typeText(text) {
+                const textDisplay = document.getElementById('textDisplay');
+                textDisplay.innerHTML = '';
+                textDisplay.classList.add('typing-text');
+
+                for (let i = 0; i <= text.length; i++) {
+                    textDisplay.textContent = text.slice(0, i);
+                    await new Promise(resolve => setTimeout(resolve, 30));
+                }
+
+                setTimeout(() => {
+                    textDisplay.classList.remove('typing-text');
+                }, 1000);
+            }
+
+            togglePlayback() {
+                if (this.isPlaying) {
+                    this.tts.stop();
+                    this.isPlaying = false;
+                    document.getElementById('playButton').textContent = '▶';
+                } else {
+                    this.playSentence();
+                }
+            }
+
+            previousSentence() {
+                if (this.currentSentence > 0) {
+                    this.currentSentence--;
+                    this.tts.stop();
+                    this.playSentence();
+                }
+            }
+
+            nextSentence() {
+                if (this.currentSentence < this.currentScript.sentences.length - 1) {
+                    this.currentSentence++;
+                    this.tts.stop();
+                    this.playSentence();
+                }
+            }
+
+            stop() {
+                this.tts.stop();
+                this.isPlaying = false;
+                document.getElementById('playButton').textContent = '▶';
+            }
+
+            close() {
+                this.stop();
+                document.getElementById('playerModal').classList.remove('active');
+            }
+        }
+
+        // ========== GLOBAL INSTANCES ==========
+        const favoritesManager = new FavoritesManager();
+        const scriptPlayer = new ScriptPlayer();
+
+        // ========== GLOBAL FUNCTIONS ==========
+        function toggleFavorite(event, scriptId) {
+            event.stopPropagation();
+            
+            if (favoritesManager.has(scriptId)) {
+                favoritesManager.remove(scriptId);
+            } else {
+                favoritesManager.add(scriptId);
+            }
+        }
+
+        function removeFavorite(event, scriptId) {
+            event.stopPropagation();
+            favoritesManager.remove(scriptId);
+        }
+
+        function toggleFavorites() {
+            const panel = document.getElementById('favoritesPanel');
+            panel.classList.toggle('open');
+        }
+
+        function playScript(scriptId) {
+            scriptPlayer.playScript(scriptId);
+        }
+
+        function togglePlayback() {
+            scriptPlayer.togglePlayback();
+        }
+
+        function previousSentence() {
+            scriptPlayer.previousSentence();
+        }
+
+        function nextSentence() {
+            scriptPlayer.nextSentence();
+        }
+
+        function stopPlayback() {
+            scriptPlayer.stop();
+        }
+
+        function closePlayer() {
+            scriptPlayer.close();
+        }
+
+        // Voice selector
+        document.getElementById('voiceSelector').addEventListener('change', (e) => {
+            scriptPlayer.tts.currentVoice = e.target.value;
+            console.log('Voice changed to:', e.target.value);
         });
+
+        // Video background error handling
+        document.getElementById('bgVideo').addEventListener('error', function() {
+            console.log('Video failed to load, using CSS fallback');
+            document.querySelector('.video-background').style.background = 
+                'linear-gradient(45deg, #1e3a8a, #3730a3, #7c2d12)';
+        });
+
+        console.log('🎵 Video Background Player with Favorites System loaded');
     </script>
 </body>
 </html>

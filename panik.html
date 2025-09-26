@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panik Angst - Fuldskærm Video Player</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .start-screen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #222;
+      z-index: 10;
+    }
+    .start-btn {
+      font-size: 2rem;
+      padding: 2rem 4rem;
+      border-radius: 2rem;
+      border: none;
+      background: #fff;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      cursor: pointer;
+      margin-top: 2rem;
+    }
+    .countdown {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      color: #222;
+    }
+    .fullscreen-video {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      object-fit: cover;
+      z-index: 1;
+      background: #fff;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      z-index: 2;
+      pointer-events: none;
+    }
+    .script-text {
+      position: fixed;
+      bottom: 12vh;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.85);
+      color: #222;
+      border-radius: 1.5rem;
+      padding: 2rem 2.5rem;
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-align: center;
+      max-width: 90vw;
+      min-width: 320px;
+      z-index: 3;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+      transition: background 0.3s;
+    }
+    .player-controls {
+      position: fixed;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2rem;
+      z-index: 4;
+    }
+    .player-btn {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+      transition: background 0.2s;
+    }
+    .player-btn.active {
+      color: #e74c3c;
+    }
+    @media (max-width: 600px) {
+      .script-text { font-size: 1.1rem; padding: 1.2rem 1rem; }
+      .player-btn { width: 44px; height: 44px; font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation og stemmevælger fra angst.html -->
+  <nav class="nav-header" id="mainNav">
+    <div class="nav-content">
+      <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+      <div class="nav-links">
+        <a href="login.html" class="nav-link primary">Log ind</a>
+        <a href="index.html" class="nav-link">Hovedmenu</a>
+        <a href="Dashboard.html" class="nav-link">Dashboard</a>
+        <a href="playlists.html" class="nav-link">Playlister</a>
+      </div>
+      <div class="nav-user" style="display:none;"></div>
+    </div>
+  </nav>
+  <div class="nav-show-indicator" id="navIndicator">Ryk mus for at vise menu</div>
+
+  <div class="start-screen" id="startScreen">
+    <h1>Panik Angst</h1>
+    <div style="margin-top:2rem;">
+      <button class="start-btn" id="startBtn">Start</button>
+    </div>
+  </div>
+  <video class="fullscreen-video" id="bgVideo" src="din-video.mp4" preload="auto" muted></video>
+  <div class="overlay"></div>
+  <div class="script-text" id="scriptText" style="display:none;"></div>
+  <div class="player-controls" id="playerControls" style="display:none;">
+    <button class="player-btn" id="stopBtn" title="Stop">⏹️</button>
+    <button class="player-btn" id="pauseBtn" title="Pause">⏸️</button>
+    <button class="player-btn" id="favBtn" title="Favorit">⭐</button>
+    <select class="voice-selector" id="voiceSelector" style="min-width:160px;max-width:220px;font-size:1rem;padding:8px 12px;border-radius:12px;background:#fff;color:#222;border:1px solid #eee;outline:none;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
+      <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
+      <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
+      <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
+      <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
+      <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
+      <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
+      <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
+      <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
+      <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
+      <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
+      <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
+      <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
+    </select>
+  </div>
+  <audio id="audioTrack" src="audio1.mp3" preload="auto"></audio>
+  <script src="tts-config.js"></script>
+  <script>
+    // --- Emner/scripts ---
+    const scripts = [
+      {
+        id: 'panik-angst',
+        title: 'Panik Angst',
+        video: 'din-video.mp4',
+        audio: 'audio1.mp3',
+        steps: [
+          "Velkommen til din panik-angst øvelse. Sæt dig godt til rette og træk vejret dybt.",
+          "Fokuser på din vejrtrækning. Mærk hvordan luften fylder dine lunger og forlader dem igen.",
+          "Hvis du mærker panikken, så prøv at acceptere følelsen uden at kæmpe imod.",
+          "Du er ikke alene. Panik-angst er ubehageligt, men det går over igen.",
+          "Når du er klar, kan du åbne øjnene og vende tilbage til din dag."
+        ]
+      },
+      {
+        id: 'ro-og-tryghed',
+        title: 'Ro og Tryghed',
+        video: 'din-video.mp4',
+        audio: 'audio1.mp3',
+        steps: [
+          "Lad os finde ro sammen. Sæt dig godt til rette og luk øjnene.",
+          "Træk vejret ind gennem næsen og ud gennem munden. Mærk roen brede sig.",
+          "Forestil dig et trygt sted, hvor du føler dig sikker og afslappet.",
+          "Bliv i dette øjeblik, så længe du har brug for det."
+        ]
+      }
+    ];
+    let currentScript = scripts[0];
+    let currentStep = 0;
+    let isPaused = false;
+    let ttsUtterance = null;
+    let ttsActive = false;
+    let scriptTimeout = null;
+    const startScreen = document.getElementById('startScreen');
+    const startBtn = document.getElementById('startBtn');
+    const bgVideo = document.getElementById('bgVideo');
+    const scriptText = document.getElementById('scriptText');
+    const playerControls = document.getElementById('playerControls');
+    const stopBtn = document.getElementById('stopBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const favBtn = document.getElementById('favBtn');
+    const audioTrack = document.getElementById('audioTrack');
+    const voiceSelector = document.getElementById('voiceSelector');
+
+    // --- Favorit system (fælles localStorage) ---
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
+    }
+    function setFavorite(id) {
+      let favs = getFavorites();
+      if (!favs.includes(id)) favs.push(id);
+      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
+      favBtn.classList.add('active');
+    }
+    function removeFavorite(id) {
+      let favs = getFavorites();
+      favs = favs.filter(f => f !== id);
+      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
+      favBtn.classList.remove('active');
+    }
+    function updateFavBtn() {
+      const favs = getFavorites();
+      favBtn.classList.toggle('active', favs.includes(currentScript.id));
+    }
+    favBtn.onclick = () => {
+      const favs = getFavorites();
+      if (favs.includes(currentScript.id)) removeFavorite(currentScript.id);
+      else setFavorite(currentScript.id);
+    };
+
+    // --- Fuldskærm og start flow ---
+    startBtn.onclick = async () => {
+      if (document.documentElement.requestFullscreen) {
+        try { await document.documentElement.requestFullscreen(); } catch(e){}
+      }
+      startScreen.style.display = 'none';
+      countdownAndStart();
+    };
+    function countdownAndStart() {
+      const cd = document.createElement('div');
+      cd.className = 'countdown';
+      cd.textContent = '3';
+      startScreen.parentNode.appendChild(cd);
+      let count = 3;
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) cd.textContent = count;
+        else {
+          clearInterval(interval);
+          cd.remove();
+          startPlayer();
+        }
+      }, 1000);
+    }
+
+    // --- Player logic ---
+    function startPlayer() {
+      bgVideo.src = currentScript.video;
+      audioTrack.src = currentScript.audio;
+      bgVideo.currentTime = 0;
+      audioTrack.currentTime = 0;
+      bgVideo.play();
+      audioTrack.play();
+      scriptText.style.display = 'block';
+      playerControls.style.display = 'flex';
+      currentStep = 0;
+      showStep(currentStep);
+      updateFavBtn();
+    }
+    function showStep(idx) {
+      scriptText.textContent = currentScript.steps[idx];
+      playTTS(currentScript.steps[idx]);
+      // Auto-advance hvis ikke paused
+      if (scriptTimeout) clearTimeout(scriptTimeout);
+      if (!isPaused && idx < currentScript.steps.length - 1) {
+        scriptTimeout = setTimeout(() => {
+          if (!isPaused) {
+            currentStep++;
+            showStep(currentStep);
+          }
+        }, 6000);
+      }
+    }
+    function playTTS(text) {
+      stopTTS();
+      ttsUtterance = new SpeechSynthesisUtterance(text);
+      ttsUtterance.lang = 'da-DK';
+      ttsUtterance.voice = Array.from(window.speechSynthesis.getVoices()).find(v => v.name === voiceSelector.value) || null;
+      ttsActive = true;
+      window.speechSynthesis.speak(ttsUtterance);
+      ttsUtterance.onend = () => { ttsActive = false; };
+    }
+    function stopTTS() {
+      window.speechSynthesis.cancel();
+      ttsUtterance = null;
+      ttsActive = false;
+    }
+
+    // --- Controls ---
+    stopBtn.onclick = () => {
+      stopAll();
+      if (document.fullscreenElement) document.exitFullscreen();
+      startScreen.style.display = 'flex';
+      scriptText.style.display = 'none';
+      playerControls.style.display = 'none';
+    };
+    pauseBtn.onclick = () => {
+      if (!isPaused) {
+        bgVideo.pause();
+        audioTrack.pause();
+        window.speechSynthesis.pause();
+        pauseBtn.textContent = '▶️';
+        isPaused = true;
+        if (scriptTimeout) clearTimeout(scriptTimeout);
+      } else {
+        bgVideo.play();
+        audioTrack.play();
+        window.speechSynthesis.resume();
+        pauseBtn.textContent = '⏸️';
+        isPaused = false;
+        showStep(currentStep);
+      }
+    };
+    voiceSelector.onchange = () => {
+      localStorage.setItem('preferredVoice', voiceSelector.value);
+      playTTS(currentScript.steps[currentStep]);
+    };
+
+    // --- Skift emne (eksempel: klik på titel for at skifte) ---
+    scriptText.onclick = () => {
+      // Skift emne for demo (kun 2 emner)
+      currentScript = currentScript.id === 'panik-angst' ? scripts[1] : scripts[0];
+      startPlayer();
+    };
+
+    // --- Stop alt hvis man forlader siden/emnet ---
+    function stopAll() {
+      bgVideo.pause();
+      audioTrack.pause();
+      stopTTS();
+      isPaused = false;
+      if (scriptTimeout) clearTimeout(scriptTimeout);
+      pauseBtn.textContent = '⏸️';
+    }
+    window.addEventListener('beforeunload', stopAll);
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) stopAll();
+    });
+
+    // --- Favorit-knap init og stemmevalg init ---
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedVoice = localStorage.getItem('preferredVoice');
+      if (savedVoice) voiceSelector.value = savedVoice;
+      updateFavBtn();
+    });
+  </script>
+</body>
+</html>
