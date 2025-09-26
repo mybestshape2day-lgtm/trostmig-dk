@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panikangst - TrøstMig.dk</title>
     
-    <!-- VIGTIG: Central TTS konfiguration -->
-    <script src="tts-config.js"></script>
-    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -23,7 +20,8 @@
             --accent-hover: #b91c1c;
             --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.1);
-            --crisis-red: #dc2626;
+            --purple: #7c3aed;
+            --purple-hover: #6d28d9;
         }
         
         [data-theme="dark"] {
@@ -34,20 +32,20 @@
             --accent: #ef4444;
             --accent-hover: #dc2626;
             --border: #4a5568;
+            --purple: #9f7aea;
+            --purple-hover: #805ad5;
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            margin-top: 70px;
             transition: all 0.3s ease;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin-top: 70px; /* For fixed nav */
         }
         
-        /* Navigation Header */
+        /* Navigation */
         .nav-header {
             position: fixed;
             top: 0;
@@ -57,7 +55,6 @@
             border-bottom: 1px solid var(--border);
             padding: 15px 20px;
             z-index: 1000;
-            box-shadow: 0 2px 10px var(--shadow);
             backdrop-filter: blur(10px);
         }
         
@@ -99,12 +96,6 @@
         .nav-link.crisis {
             background: var(--accent);
             color: white;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
         }
         
         .nav-user {
@@ -113,13 +104,13 @@
             gap: 15px;
         }
         
-        .voice-selector {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 12px;
-            color: var(--text-primary);
-            cursor: pointer;
+        .favorite-count {
+            background: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
         
         .theme-toggle {
@@ -133,32 +124,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            transform: rotate(180deg);
-        }
-        
-        /* Emergency Notice */
-        .emergency-notice {
-            background: #fef2f2;
-            border: 2px solid #fca5a5;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px auto;
-            text-align: center;
-            max-width: 1200px;
-        }
-        
-        [data-theme="dark"] .emergency-notice {
-            background: rgba(254, 242, 242, 0.1);
-        }
-        
-        .emergency-notice a {
-            color: #dc2626;
-            font-weight: bold;
-            text-decoration: none;
         }
         
         /* Main Selection */
@@ -176,15 +141,16 @@
         .selection-header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            background: linear-gradient(135deg, #dc2626, #ef4444);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
         .selection-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
         }
         
         .selection-card {
@@ -203,12 +169,22 @@
             border-color: var(--accent);
         }
         
+        .selection-card.filosofi {
+            border-color: var(--purple);
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(124, 58, 237, 0.05));
+        }
+        
+        .selection-card.filosofi:hover {
+            border-color: var(--purple-hover);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+        }
+        
         .selection-icon {
             font-size: 3rem;
             margin-bottom: 20px;
         }
         
-        /* Session Display with Video Background */
+        /* Session Display */
         .session-display {
             display: none;
             position: fixed;
@@ -223,7 +199,6 @@
             display: block;
         }
         
-        /* Video Background */
         .video-background {
             position: fixed;
             top: 50%;
@@ -247,7 +222,6 @@
             z-index: -1;
         }
         
-        /* Content Container */
         .session-content {
             position: relative;
             width: 100vw;
@@ -260,36 +234,25 @@
             padding: 40px;
         }
         
-        /* Module Indicator */
         .module-indicator {
             position: absolute;
             top: 40px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            backdrop-filter: blur(30px);
             padding: 10px 24px;
             border-radius: 100px;
             font-size: 14px;
-            font-weight: 500;
             color: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
-        .module-indicator::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: #ef4444;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
+        .module-indicator.filosofi {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: rgba(124, 58, 237, 0.3);
         }
         
-        /* Session Text */
         .session-text {
             max-width: 900px;
             text-align: center;
@@ -326,23 +289,21 @@
             align-items: center;
             justify-content: center;
             z-index: 3000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
         
         .choice-modal.active {
             display: flex;
-            opacity: 1;
         }
         
         .choice-container {
             background: rgba(28, 28, 30, 0.95);
             backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
             border-radius: 24px;
             padding: 40px;
-            max-width: 800px;
+            max-width: 900px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -393,7 +354,7 @@
             flex-shrink: 0;
         }
         
-        /* Controls Bar */
+        /* Controls */
         .controls-bar {
             position: fixed;
             bottom: 30px;
@@ -401,11 +362,10 @@
             transform: translateX(-50%);
             background: rgba(28, 28, 30, 0.95);
             backdrop-filter: blur(30px);
-            padding: 20px 30px;
+            padding: 15px 20px;
             border-radius: 50px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             display: flex;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             z-index: 20;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -415,68 +375,57 @@
             background: rgba(255, 255, 255, 0.1);
             border: none;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         .control-btn:hover {
             background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.05);
         }
         
-        .control-btn.primary {
-            background: #ef4444;
-        }
-        
-        .control-btn.primary:hover {
-            background: #dc2626;
-        }
-        
-        .back-to-selection {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
+        .favorite-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
             cursor: pointer;
-            font-weight: 500;
+            transition: transform 0.3s ease;
+            color: white;
+        }
+        
+        .favorite-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .favorite-btn.active {
+            color: #ef4444;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 3500;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
         
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
-        }
-        
-        @media (max-width: 768px) {
-            .nav-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .selection-grid { 
-                grid-template-columns: 1fr; 
-            }
-            
-            .session-content-text { 
-                font-size: 1.1rem; 
-            }
-            
-            .choice-container { 
-                padding: 20px; 
-            }
-            
-            .controls-bar { 
-                bottom: 20px;
-                padding: 15px 20px;
-                flex-wrap: wrap;
-            }
         }
     </style>
 </head>
@@ -489,151 +438,178 @@
             <div class="nav-links">
                 <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
                 <a href="Dashboard.html" class="nav-link">📊 Dashboard</a>
-                <a href="angst.html" class="nav-link">⚡ Angst</a>
-                <a href="depression.html" class="nav-link">🧠 Depression</a>
+                <a href="playlists.html" class="nav-link">
+                    🎵 Playlister 
+                    <span class="favorite-count" id="favCount">0</span>
+                </a>
             </div>
             
             <div class="nav-user">
-                <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
-                    <option value="0">Charon - Dyb mand</option>
-                    <option value="1">Sulafat - Varm kvinde</option>
-                    <option value="2">Vindemiatrix - Rolig kvinde</option>
-                    <option value="3">Enceladus - Naturlig mand</option>
-                    <option value="4">Erriapus - Blød kvinde</option>
-                </select>
                 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
             </div>
         </div>
     </nav>
     
-    <!-- Emergency Notice -->
-    <div class="emergency-notice">
-        <strong>Akut hjælp:</strong> 
-        Ring <a href="tel:70201201">Livslinjen 70 20 12 01</a> eller 
-        <a href="tel:112">112</a> hvis du er i fare. 
-        Du er ikke alene.
-    </div>
-    
     <!-- Main Selection -->
     <div class="main-selection" id="mainSelection">
         <div class="selection-header">
             <h1>Panikangst</h1>
-            <p>Få kontrol tilbage. Du kommer igennem dette.</p>
+            <p>Alt du har brug for at vide om panikangst</p>
         </div>
         
         <div class="selection-grid">
-            <div class="selection-card" onclick="showChoiceModal()">
+            <div class="selection-card" onclick="startCategory('akut')">
                 <div class="selection-icon">🆘</div>
-                <h2>Akut panik</h2>
-                <p>Stop panikken lige nu. Øjeblikkelig lindring og grounding.</p>
+                <h2>Akut hjælp</h2>
+                <p>Stop panikken lige nu</p>
             </div>
             
-            <div class="selection-card" onclick="showChoiceModal()">
+            <div class="selection-card" onclick="startCategory('viden')">
                 <div class="selection-icon">🧠</div>
                 <h2>Forstå panik</h2>
-                <p>Hvad sker der i din krop? Viden giver kontrol.</p>
+                <p>Viden om hvad der sker</p>
             </div>
             
-            <div class="selection-card" onclick="showChoiceModal()">
+            <div class="selection-card" onclick="startCategory('teknikker')">
                 <div class="selection-icon">🛠️</div>
-                <h2>Værktøjer</h2>
-                <p>Lær teknikker til at håndtere og forebygge panikangst.</p>
+                <h2>Teknikker</h2>
+                <p>Værktøjer og øvelser</p>
+            </div>
+            
+            <div class="selection-card" onclick="startCategory('forebyggelse')">
+                <div class="selection-icon">🛡️</div>
+                <h2>Forebyggelse</h2>
+                <p>Undgå fremtidige anfald</p>
+            </div>
+        </div>
+        
+        <!-- Filosofens Ord Section -->
+        <div style="text-align: center; margin-top: 60px;">
+            <h2 style="margin-bottom: 30px;">Dybere Perspektiver</h2>
+            <div class="selection-card filosofi" onclick="playFilosof()" style="max-width: 600px; margin: 0 auto;">
+                <div class="selection-icon">🧘</div>
+                <h2>Filosofens Ord</h2>
+                <p>Eksistentielle perspektiver på angst og panik</p>
             </div>
         </div>
     </div>
     
     <!-- Session Display -->
     <div class="session-display" id="sessionDisplay">
-        <!-- Video Background -->
         <video class="video-background" autoplay muted loop playsinline>
-            <source src="https://cdn.pixabay.com/vimeo/328940142/nature-24930.mp4" type="video/mp4">
-            <!-- Fallback video URL - erstat med din egen -->
+            <source src="video/din-video.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
         
-        <!-- Session Content -->
         <div class="session-content">
-            <!-- Module Indicator -->
-            <div class="module-indicator" id="moduleIndicator">
-                Afspiller...
-            </div>
+            <div class="module-indicator" id="moduleIndicator">Afspiller...</div>
             
-            <!-- Text Display -->
             <div class="session-text">
-                <h2 class="session-title" id="sessionTitle">Psykologens Ord</h2>
-                <div class="session-content-text" id="sessionText">
-                    Lytter...
-                </div>
+                <h2 class="session-title" id="sessionTitle">Lytter...</h2>
+                <div class="session-content-text" id="sessionText">Forbereder...</div>
             </div>
         </div>
         
-        <!-- Controls -->
         <div class="controls-bar">
-            <button class="control-btn primary" onclick="togglePlay()" id="playBtn">⏸</button>
-            <span id="progressIndicator" style="color: white; font-size: 0.9rem;">Afspiller...</span>
-            <button class="back-to-selection" onclick="backToSelection()">← Tilbage</button>
+            <button class="control-btn" onclick="togglePlay()" id="playBtn">⏸</button>
+            <button class="favorite-btn" onclick="toggleFavorite()" id="favBtn">🤍</button>
+            <span style="color: white; font-size: 0.9rem;" id="progressIndicator">Afspiller...</span>
+            <button class="control-btn" onclick="backToSelection()">← Menu</button>
         </div>
     </div>
     
     <!-- Choice Modal -->
     <div class="choice-modal" id="choiceModal">
         <div class="choice-container">
-            <h3 class="choice-question" id="choiceQuestion">Hvad oplever du mest lige nu?</h3>
-            <div class="choice-options" id="choiceOptions">
-                <button class="choice-btn" onclick="playPsychologistAudio('hjerte')">
-                    <span class="choice-letter">A</span>
-                    <span>Mit hjerte banker vildt</span>
-                </button>
-                <button class="choice-btn" onclick="playPsychologistAudio('aande')">
-                    <span class="choice-letter">B</span>
-                    <span>Jeg kan ikke få luft</span>
-                </button>
-                <button class="choice-btn" onclick="playPsychologistAudio('uvirkeligt')">
-                    <span class="choice-letter">C</span>
-                    <span>Alt føles uvirkeligt</span>
-                </button>
-                <button class="choice-btn" onclick="playPsychologistAudio('dodsangst')">
-                    <span class="choice-letter">D</span>
-                    <span>Jeg tror jeg dør</span>
-                </button>
-            </div>
+            <h3 class="choice-question" id="choiceQuestion">Vælg det der passer bedst:</h3>
+            <div class="choice-options" id="choiceOptions"></div>
         </div>
     </div>
     
     <!-- Audio element -->
     <audio id="audioPlayer" preload="auto"></audio>
     
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
     <script>
-        // Audio configuration
+        // Audio configuration - NU med forskellige emner, ikke versioner
         const audioFiles = {
-            hjerte: [
-                'audio/psyk_hjerte_1.mp3',
-                'audio/psyk_hjerte_2.mp3',
-                'audio/psyk_hjerte_3.mp3',
-                'audio/psyk_hjerte_4.mp3'
+            akut: [
+                { file: 'audio/psyk_panik_stop_nu.mp3', title: 'Stop panikken NU' },
+                { file: 'audio/psyk_panik_grounding.mp3', title: '5-4-3-2-1 grounding' },
+                { file: 'audio/psyk_panik_sikker.mp3', title: 'Du er sikker' },
+                { file: 'audio/psyk_panik_midlertidigt.mp3', title: 'Dette går over' }
             ],
-            aande: [
-                'audio/psyk_aande_1.mp3',
-                'audio/psyk_aande_2.mp3',
-                'audio/psyk_aande_3.mp3',
-                'audio/psyk_aande_4.mp3'
+            viden: [
+                { file: 'audio/psyk_panik_hvad_er.mp3', title: 'Hvad er panikangst?' },
+                { file: 'audio/psyk_panik_fight_flight.mp3', title: 'Fight-or-flight forklaret' },
+                { file: 'audio/psyk_panik_ikke_farligt.mp3', title: 'Hvorfor det ikke er farligt' },
+                { file: 'audio/psyk_panik_normale_symptomer.mp3', title: 'Normale symptomer' }
             ],
-            uvirkeligt: [
-                'audio/psyk_derealisering_1.mp3',
-                'audio/psyk_derealisering_2.mp3',
-                'audio/psyk_derealisering_3.mp3',
-                'audio/psyk_derealisering_4.mp3'
+            teknikker: [
+                { file: 'audio/psyk_panik_vejrtraekning.mp3', title: '4-7-8 vejrtrækning' },
+                { file: 'audio/psyk_panik_muskelafspending.mp3', title: 'Progressiv muskelafspænding' },
+                { file: 'audio/psyk_panik_tankearbejde.mp3', title: 'Kognitive teknikker' },
+                { file: 'audio/psyk_panik_accept.mp3', title: 'Accept og surfing' }
             ],
-            dodsangst: [
-                'audio/psyk_dodsangst_1.mp3',
-                'audio/psyk_dodsangst_2.mp3',
-                'audio/psyk_dodsangst_3.mp3',
-                'audio/psyk_dodsangst_4.mp3'
+            forebyggelse: [
+                { file: 'audio/psyk_panik_triggers.mp3', title: 'Identificer dine triggere' },
+                { file: 'audio/psyk_panik_livssstil.mp3', title: 'Livsstilsændringer' },
+                { file: 'audio/psyk_panik_eksponering.mp3', title: 'Gradvis eksponering' },
+                { file: 'audio/psyk_panik_vedligeholdelse.mp3', title: 'Langsigtet strategi' }
             ]
         };
         
+        // Filosof audio - RETTET STI!
+        const filosofAudio = {
+            file: 'audio/filo_panikangst.mp3',  // Rettet fra audio/ til audio/
+            title: 'Angstens eksistentielle mening',
+            description: 'Fra Kierkegaard til moderne eksistentialisme'
+        };
+        
+        // State
+        let currentCategory = null;
         let currentAudio = null;
+        let currentAudioId = null;
         let isPlaying = false;
+        
+        // Favorite System
+        const FavoriteSystem = {
+            favorites: JSON.parse(localStorage.getItem('trostmig_favorites') || '[]'),
+            
+            toggle() {
+                if (!currentAudioId) return;
+                
+                const index = this.favorites.indexOf(currentAudioId);
+                if (index > -1) {
+                    this.favorites.splice(index, 1);
+                    showToast('Fjernet fra favoritter');
+                } else {
+                    this.favorites.push(currentAudioId);
+                    showToast('Tilføjet til favoritter ❤️');
+                }
+                
+                localStorage.setItem('trostmig_favorites', JSON.stringify(this.favorites));
+                this.updateButton();
+                this.updateCount();
+            },
+            
+            updateButton() {
+                const btn = document.getElementById('favBtn');
+                if (this.favorites.includes(currentAudioId)) {
+                    btn.textContent = '❤️';
+                    btn.classList.add('active');
+                } else {
+                    btn.textContent = '🤍';
+                    btn.classList.remove('active');
+                }
+            },
+            
+            updateCount() {
+                document.getElementById('favCount').textContent = this.favorites.length;
+            }
+        };
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -642,6 +618,7 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
                 document.querySelector('.theme-toggle').textContent = '☀️';
             }
+            FavoriteSystem.updateCount();
         });
         
         function toggleTheme() {
@@ -658,19 +635,30 @@
             }
         }
         
-        function changeVoice() {
-            const selector = document.getElementById('voiceSelector');
-            const voiceIndex = parseInt(selector.value);
-            if (window.TrøstMigTTS) {
-                window.TrøstMigTTS.setVoice(voiceIndex);
-            }
+        function startCategory(category) {
+            currentCategory = category;
+            
+            // Show choice modal
+            const modal = document.getElementById('choiceModal');
+            const optionsEl = document.getElementById('choiceOptions');
+            
+            // Build options from the specific category
+            const categoryAudio = audioFiles[category];
+            
+            optionsEl.innerHTML = categoryAudio.map((audio, i) => `
+                <button class="choice-btn" onclick="playAudio('${category}', ${i})">
+                    <span class="choice-letter">${i + 1}</span>
+                    <span>${audio.title}</span>
+                </button>
+            `).join('');
+            
+            modal.classList.add('active');
         }
         
-        function showChoiceModal() {
-            document.getElementById('choiceModal').classList.add('active');
-        }
-        
-        function playPsychologistAudio(type) {
+        function playAudio(category, index) {
+            const audioData = audioFiles[category][index];
+            currentAudioId = audioData.file.replace('audio/', '').replace('.mp3', '');
+            
             // Close modal
             document.getElementById('choiceModal').classList.remove('active');
             
@@ -680,40 +668,75 @@
             // Show session display
             document.getElementById('sessionDisplay').classList.add('active');
             
-            // Choose random version (1-4)
-            const randomVersion = Math.floor(Math.random() * 4);
-            const audioFile = audioFiles[type][randomVersion];
-            
             // Update UI
-            const typeNames = {
-                hjerte: 'Hjertesymptomer',
-                aande: 'Åndedræt',
-                uvirkeligt: 'Uvirkelighedsfølelse',
-                dodsangst: 'Dødsangst'
-            };
+            document.getElementById('moduleIndicator').textContent = 'Psykologens Ord';
+            document.getElementById('sessionTitle').textContent = audioData.title;
+            document.getElementById('sessionText').textContent = 'Baseret på evidens fra CBT og DBT';
             
-            document.getElementById('moduleIndicator').textContent = typeNames[type];
-            document.getElementById('sessionTitle').textContent = 'Psykologens forklaring';
-            document.getElementById('sessionText').textContent = `Version ${randomVersion + 1} af 4`;
+            // Update favorite button
+            FavoriteSystem.updateButton();
             
             // Play audio
             const audio = document.getElementById('audioPlayer');
-            audio.src = audioFile;
+            audio.src = audioData.file;
             
             audio.play().then(() => {
                 isPlaying = true;
                 document.getElementById('playBtn').textContent = '⏸';
-                console.log('Afspiller:', audioFile);
+                console.log('Afspiller:', audioData.file);
             }).catch(error => {
                 console.error('Fejl ved afspilning:', error);
-                document.getElementById('sessionText').textContent = 'Fejl ved afspilning. Prøv igen.';
+                showToast('Kunne ikke afspille lydfil');
             });
             
-            // Handle audio end
             audio.onended = () => {
-                document.getElementById('sessionText').textContent = 'Afsluttet. Du klarede det godt.';
-                document.getElementById('playBtn').textContent = '▶';
                 isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+                showToast('Godt klaret! 💪');
+            };
+            
+            currentAudio = audio;
+        }
+        
+        function playFilosof() {
+            currentAudioId = 'filo_panikangst';
+            
+            // Hide main selection
+            document.getElementById('mainSelection').style.display = 'none';
+            
+            // Show session display
+            document.getElementById('sessionDisplay').classList.add('active');
+            
+            // Update UI with filosofi theme
+            const indicator = document.getElementById('moduleIndicator');
+            indicator.textContent = 'Filosofens Ord';
+            indicator.classList.add('filosofi');
+            
+            document.getElementById('sessionTitle').textContent = filosofAudio.title;
+            document.getElementById('sessionText').textContent = filosofAudio.description;
+            
+            // Update favorite button
+            FavoriteSystem.updateButton();
+            
+            // Play audio
+            const audio = document.getElementById('audioPlayer');
+            audio.src = filosofAudio.file;
+            
+            console.log('Forsøger at afspille:', filosofAudio.file);
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+                console.log('Filosofens Ord afspiller nu');
+            }).catch(error => {
+                console.error('Fejl ved afspilning af filosof audio:', error);
+                showToast('Kunne ikke afspille Filosofens Ord');
+            });
+            
+            audio.onended = () => {
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+                showToast('Tak for at lytte 🙏');
             };
             
             currentAudio = audio;
@@ -733,6 +756,17 @@
             }
         }
         
+        function toggleFavorite() {
+            FavoriteSystem.toggle();
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
         function backToSelection() {
             if (currentAudio) {
                 currentAudio.pause();
@@ -742,7 +776,10 @@
             document.getElementById('sessionDisplay').classList.remove('active');
             document.getElementById('mainSelection').style.display = 'block';
             document.getElementById('choiceModal').classList.remove('active');
+            document.getElementById('moduleIndicator').classList.remove('filosofi');
             isPlaying = false;
+            currentCategory = null;
+            currentAudioId = null;
         }
         
         // Keyboard shortcuts
@@ -756,6 +793,9 @@
                     break;
                 case 'Escape':
                     backToSelection();
+                    break;
+                case 'f':
+                    toggleFavorite();
                     break;
             }
         });

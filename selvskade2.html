@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selvskade – Trøst Mig</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="tts-config.js"></script>
+  <style>
+    body, html { height: 100%; margin: 0; }
+    .bg-video { position: fixed; top:0; left:0; width:100vw; height:100vh; object-fit:cover; z-index:-1; }
+    .main-selection { display: flex; flex-direction: column; align-items: center; margin-top: 3rem; }
+    .selection-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 30px; width: 100%; max-width: 900px; }
+    .selection-card { background: rgba(255,255,255,0.85); border-radius: 18px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 2rem 1.5rem; cursor: pointer; transition: box-shadow .2s; }
+    .selection-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.13); }
+    .selection-icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .script-text { margin: 2rem auto; max-width: 600px; font-size: 1.2rem; background: rgba(255,255,255,0.92); border-radius: 16px; padding: 2rem; min-height: 120px; }
+    .choices { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .choice-btn { font-size: 1.1rem; padding: 0.7rem 1.2rem; border-radius: 12px; border: none; background: #e0e7ef; cursor: pointer; transition: background .2s; }
+    .choice-btn:hover { background: #c7d2e5; }
+    #playerControls { display: flex; gap: 1.5rem; justify-content: center; margin: 2rem 0; }
+    #favBtn.active { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <video id="bgVideo" class="bg-video" src="din-video.mp4" autoplay loop muted playsinline></video>
+  <audio id="audioTrack" src="audio1.mp3" loop></audio>
+  <nav id="mainNav">
+    <span id="navIndicator"></span>
+    <button id="themeToggle">🌙</button>
+    <select id="navVoiceSelector"></select>
+    <a href="index.html">Hjem</a>
+    <a href="playlists.html">Favoritter</a>
+  </nav>
+  <div class="main-selection" id="mainSelection">
+    <div class="selection-header">
+      <h1>Selvskade</h1>
+      <p>Vælg et fokusområde, eller tag hele rejsen.</p>
+    </div>
+    <div class="selection-grid">
+      <div class="selection-card" data-category="forsta">
+        <div class="selection-icon">🧠</div>
+        <h2>Forståelse</h2>
+        <p>Hvorfor opstår selvskade? Få viden og indsigt.</p>
+      </div>
+      <div class="selection-card" data-category="strategier">
+        <div class="selection-icon">🛠️</div>
+        <h2>Strategier</h2>
+        <p>Praktiske metoder til at håndtere trangen.</p>
+      </div>
+      <div class="selection-card" data-category="refleksion">
+        <div class="selection-icon">💬</div>
+        <h2>Refleksion</h2>
+        <p>Udforsk dine følelser og situationer med guidede spørgsmål.</p>
+      </div>
+    </div>
+  </div>
+  <div class="script-text" id="scriptText" style="display:none;"></div>
+  <div id="playerControls" style="display:none;">
+    <button id="pauseBtn">⏸️</button>
+    <button id="stopBtn">⏹️</button>
+    <button id="favBtn">★</button>
+    <select id="voiceSelector"></select>
+  </div>
+  <button id="backToCategoriesBtn" style="display:none;position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:10;padding:10px 24px;border-radius:16px;background:#fff;color:#222;font-size:1rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;">← Tilbage til kategorier</button>
+  <script>
+    // --- Modulært spørgesystem ---
+    const categoryModules = {
+      forsta: [
+        { id: 'f1', text: "Hvad tror du selvskade handler om for dig?", choices: [
+          { label: "At få kontrol", next: 'f2' },
+          { label: "At slippe for følelser", next: 'f3' },
+          { label: "Noget andet", next: 'f4' }
+        ] },
+        { id: 'f2', text: "Mange oplever at selvskade giver en følelse af kontrol. Hvad kunne du gøre i stedet for at opnå kontrol?", choices: [
+          { label: "Tale med nogen", next: 'f5' },
+          { label: "Skrive tanker ned", next: 'f5' }
+        ] },
+        { id: 'f3', text: "At slippe for følelser kan føles som en lettelse. Kan du finde andre måder at give dig selv ro på?", next: 'f5' },
+        { id: 'f4', text: "Det er vigtigt at være nysgerrig på dine egne grunde. Vil du prøve at skrive dem ned?", next: 'f5' },
+        { id: 'f5', text: "Tak fordi du deler. Husk, du er ikke alene. Vil du prøve en strategi?", next: null }
+      ],
+      strategier: [
+        { id: 's1', text: "Når trangen opstår, hvad vil du helst prøve?", choices: [
+          { label: "Aflede mig selv", next: 's2' },
+          { label: "Trække vejret dybt", next: 's3' },
+          { label: "Skrive tanker ned", next: 's4' }
+        ] },
+        { id: 's2', text: "Afledning kan være at gå en tur, høre musik eller ringe til en ven. Hvad vil du vælge?", next: 's5' },
+        { id: 's3', text: "Prøv at tage 5 dybe vejrtrækninger. Hvordan føles det bagefter?", next: 's5' },
+        { id: 's4', text: "At skrive tanker ned kan give overblik. Vil du prøve det næste gang?", next: 's5' },
+        { id: 's5', text: "Godt gået! Hver gang du vælger omsorg, styrker du dig selv.", next: null }
+      ],
+      refleksion: [
+        { id: 'r1', text: "Hvilken følelse fylder mest, når du får trang?", choices: [
+          { label: "Overvældelse", next: 'r2' },
+          { label: "Tomhed", next: 'r3' },
+          { label: "Skyld/skam", next: 'r4' }
+        ] },
+        { id: 'r2', text: "Når du er overvældet, kan det hjælpe at sætte ord på følelsen. Vil du prøve at skrive ned, hvad der sker i dig?", next: 'r5' },
+        { id: 'r3', text: "Tomhed kan være svær. Prøv at lave noget sanseligt: lyt til musik, tag et bad, gå en tur.", next: 'r5' },
+        { id: 'r4', text: "Skyld og skam er tunge følelser. Husk: Du fortjener omsorg. Prøv at tale til dig selv som til en ven.", next: 'r5' },
+        { id: 'r5', text: "Du er i gang med en proces. Hver gang du øver, skaber du nye forbindelser i hjernen.", next: null }
+      ]
+    };
+    let currentCategory = null;
+    let currentModule = null;
+    let isPaused = false;
+    let ttsUtterance = null;
+    let ttsActive = false;
+    let moduleTimeout = null;
+    // DOM elements
+    const bgVideo = document.getElementById('bgVideo');
+    const scriptText = document.getElementById('scriptText');
+    const playerControls = document.getElementById('playerControls');
+    const stopBtn = document.getElementById('stopBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const favBtn = document.getElementById('favBtn');
+    const audioTrack = document.getElementById('audioTrack');
+    const voiceSelector = document.getElementById('voiceSelector');
+    // --- Favorit system ---
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
+    }
+    function setFavorite(id) {
+      let favs = getFavorites();
+      if (!favs.includes(id)) favs.push(id);
+      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
+      favBtn.classList.add('active');
+    }
+    function removeFavorite(id) {
+      let favs = getFavorites();
+      favs = favs.filter(f => f !== id);
+      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
+      favBtn.classList.remove('active');
+    }
+    function updateFavBtn() {
+      const favs = getFavorites();
+      favBtn.classList.toggle('active', favs.includes('selvskade'));
+    }
+    favBtn.onclick = () => {
+      const favs = getFavorites();
+      if (favs.includes('selvskade')) removeFavorite('selvskade');
+      else setFavorite('selvskade');
+    };
+    // --- Kategori-menu klik ---
+    document.querySelectorAll('.selection-card').forEach(card => {
+      card.onclick = function() {
+        startCategory(this.getAttribute('data-category'));
+      };
+    });
+    function startCategory(category) {
+      currentCategory = category;
+      document.getElementById('mainSelection').style.display = 'none';
+      scriptText.style.display = 'block';
+      playerControls.style.display = 'flex';
+      document.getElementById('backToCategoriesBtn').style.display = 'block';
+      showModule(categoryModules[category][0]);
+      updateFavBtn();
+    }
+    document.getElementById('backToCategoriesBtn').onclick = function() {
+      scriptText.style.display = 'none';
+      playerControls.style.display = 'none';
+      this.style.display = 'none';
+      document.getElementById('mainSelection').style.display = 'block';
+      stopAll();
+    };
+    function showModule(module) {
+      currentModule = module;
+      scriptText.innerHTML = module.text;
+      // Remove any previous choices
+      const oldChoices = scriptText.querySelector('.choices');
+      if (oldChoices) oldChoices.remove();
+      // Play TTS and only show choices or advance after TTS is done
+      playTTS(module.text, () => {
+        if (module.choices) {
+          const choicesDiv = document.createElement('div');
+          choicesDiv.className = 'choices';
+          module.choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = choice.label;
+            btn.onclick = (e) => {
+              e.stopPropagation();
+              showModule(categoryModules[currentCategory].find(m => m.id === choice.next));
+            };
+            choicesDiv.appendChild(btn);
+          });
+          scriptText.appendChild(choicesDiv);
+        } else if (module.next && !isPaused) {
+          showModule(categoryModules[currentCategory].find(m => m.id === module.next));
+        }
+      });
+    }
+    function playTTS(text, onEnd) {
+      stopTTS();
+      let voiceName = voiceSelector.value;
+      if (window.TrøstMigTTS && typeof window.TrøstMigTTS.speak === 'function') {
+        ttsActive = true;
+        window.TrøstMigTTS.speak(text, {
+          voice: voiceName,
+          lang: 'da-DK',
+          onend: () => {
+            ttsActive = false;
+            if (typeof onEnd === 'function') onEnd();
+          }
+        });
+      } else if ('speechSynthesis' in window) {
+        ttsUtterance = new SpeechSynthesisUtterance(text);
+        ttsUtterance.lang = 'da-DK';
+        ttsUtterance.voice = Array.from(window.speechSynthesis.getVoices()).find(v => v.name === voiceName) || null;
+        ttsActive = true;
+        ttsUtterance.onend = () => {
+          ttsActive = false;
+          if (typeof onEnd === 'function') onEnd();
+        };
+        window.speechSynthesis.speak(ttsUtterance);
+      } else {
+        if (typeof onEnd === 'function') onEnd();
+      }
+    }
+    function stopTTS() {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      ttsUtterance = null;
+      ttsActive = false;
+    }
+    // --- Controls ---
+    stopBtn.onclick = () => {
+      stopAll();
+      scriptText.style.display = 'none';
+      playerControls.style.display = 'none';
+      document.getElementById('mainSelection').style.display = 'block';
+      document.getElementById('backToCategoriesBtn').style.display = 'none';
+    };
+    pauseBtn.onclick = () => {
+      if (!isPaused) {
+        bgVideo.pause();
+        audioTrack.pause();
+        if ('speechSynthesis' in window) window.speechSynthesis.pause();
+        pauseBtn.textContent = '▶️';
+        isPaused = true;
+        if (moduleTimeout) clearTimeout(moduleTimeout);
+      } else {
+        bgVideo.play();
+        audioTrack.play();
+        if ('speechSynthesis' in window) window.speechSynthesis.resume();
+        pauseBtn.textContent = '⏸️';
+        isPaused = false;
+        if (currentModule && currentModule.next) showModule(currentModule);
+      }
+    };
+    // --- Voice selector init ---
+    function populateVoices() {
+      let voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+      [voiceSelector, document.getElementById('navVoiceSelector')].forEach(sel => {
+        if (!sel) return;
+        sel.innerHTML = '';
+        voices.forEach(v => {
+          if (v.lang.startsWith('da')) {
+            let opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name;
+            sel.appendChild(opt);
+          }
+        });
+      });
+      let savedVoice = localStorage.getItem('preferredVoice');
+      if (savedVoice) {
+        if (voiceSelector) voiceSelector.value = savedVoice;
+        if (document.getElementById('navVoiceSelector')) document.getElementById('navVoiceSelector').value = savedVoice;
+      }
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = populateVoices;
+      populateVoices();
+    }
+    [voiceSelector, document.getElementById('navVoiceSelector')].forEach(sel => {
+      if (!sel) return;
+      sel.onchange = function() {
+        localStorage.setItem('preferredVoice', this.value);
+        playTTS(currentModule ? currentModule.text : '');
+      };
+    });
+    // --- Favorit og theme init ---
+    updateFavBtn();
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.getElementById('themeToggle').textContent = '☀️';
+    }
+    document.getElementById('themeToggle').onclick = function() {
+      const html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        this.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        this.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    };
+    // --- Stop alt hvis man forlader siden ---
+    function stopAll() {
+      bgVideo.pause();
+      audioTrack.pause();
+      stopTTS();
+      isPaused = false;
+      if (moduleTimeout) clearTimeout(moduleTimeout);
+      pauseBtn.textContent = '⏸️';
+    }
+    window.addEventListener('beforeunload', stopAll);
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) stopAll();
+    });
+  </script>
+</body>
+</html>

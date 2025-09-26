@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selvskade - Interaktiv Session</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; background: #000; overflow: hidden; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    .start-screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; color: #222; z-index: 10; }
+    .start-btn { font-size: 2rem; padding: 2rem 4rem; border-radius: 2rem; border: none; background: #fff; box-shadow: 0 2px 16px rgba(0,0,0,0.08); cursor: pointer; margin-top: 2rem; }
+    .countdown { font-size: 3rem; margin-bottom: 2rem; color: #222; }
+    .fullscreen-video { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 1; background: #fff; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.25); z-index: 2; pointer-events: none; }
+    .script-text { position: fixed; bottom: 14vh; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.90); color: #222; border-radius: 1.5rem; padding: 2rem 2.5rem; font-size: 1.3rem; font-weight: 500; text-align: center; max-width: 90vw; min-width: 320px; z-index: 3; box-shadow: 0 4px 32px rgba(0,0,0,0.10); transition: background 0.3s; }
+    .choices { margin-top: 2rem; display: flex; gap: 1.5rem; justify-content: center; }
+    .choice-btn { background: #fff; color: #222; border: none; border-radius: 1.2rem; padding: 1rem 2rem; font-size: 1.1rem; font-weight: 500; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.10); transition: background 0.2s; }
+    .choice-btn:hover { background: #ececec; }
+    .player-controls { position: fixed; bottom: 4vh; left: 50%; transform: translateX(-50%); display: flex; gap: 2rem; z-index: 4; }
+    .player-btn { background: #fff; color: #222; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 2rem; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.10); transition: background 0.2s; }
+    .player-btn.active { color: #e74c3c; }
+    .voice-selector { min-width:160px; max-width:220px; font-size:1rem; padding:8px 12px; border-radius:12px; background:#fff; color:#222; border:1px solid #eee; outline:none; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+    @media (max-width: 600px) { .script-text { font-size: 1.05rem; padding: 1.2rem 1rem; } .player-btn { width: 44px; height: 44px; font-size: 1.3rem; } }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation fra angst.html (fuld markup, stemmevælger, theme-toggle, auto-hide) -->
+  <nav class="nav-header" id="mainNav">
+    <div class="nav-content">
+      <!-- Logo -->
+      <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+      <!-- Main Navigation -->
+      <div class="nav-links">
+        <a href="login.html" class="nav-link primary">Log ind</a>
+        <a href="index.html" class="nav-link">Hovedmenu</a>
+        <a href="Dashboard.html" class="nav-link">Dashboard</a>
+        <a href="playlists.html" class="nav-link">Playlister</a>
+      </div>
+      <!-- User Controls -->
+      <div class="nav-user">
+        <!-- Voice Selector (nav) -->
+        <select class="voice-selector" id="navVoiceSelector" onchange="changeVoice()">
+          <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
+          <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
+          <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
+          <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
+          <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
+          <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
+          <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
+          <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
+          <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
+          <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
+          <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
+          <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
+          <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
+        </select>
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+  <!-- Optional: Show indicator when nav is hidden -->
+  <div class="nav-show-indicator" id="navIndicator">Ryk mus for at vise menu</div>
+
+  <div class="start-screen" id="startScreen">
+    <h1>Selvskade</h1>
+    <div style="margin-top:2rem;">
+      <button class="start-btn" id="startBtn">Start</button>
+    </div>
+  </div>
+  <div class="main-selection" id="mainSelection" style="display:none;">
+    <div class="selection-header">
+      <h1>Selvskade</h1>
+      <p>Vælg et fokusområde, eller tag hele rejsen.</p>
+    </div>
+    <div class="selection-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px;">
+      <div class="selection-card" onclick="startCategory('forsta')">
+        <div class="selection-icon">🧠</div>
+        <h2>Forståelse</h2>
+        <p>Hvorfor opstår selvskade? Få viden og indsigt.</p>
+      </div>
+      <div class="selection-card" onclick="startCategory('strategier')">
+        <div class="selection-icon">🛠️</div>
+        <h2>Strategier</h2>
+        <p>Praktiske metoder til at håndtere trangen.</p>
+      </div>
+      <div class="selection-card" onclick="startCategory('refleksion')">
+        <div class="selection-icon">💬</div>
+        <h2>Refleksion</h2>
+        <p>Udforsk dine følelser og situationer med guidede spørgsmål.</p>
+      </div>
+    </div>
+  </div>
+  <video class="fullscreen-video" id="bgVideo" src="din-video.mp4" preload="auto" muted></video>
+  <div class="overlay"></div>
+  <div class="script-text" id="scriptText" style="display:none;"></div>
+  <button id="backToCategoriesBtn" style="display:none;position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:10;padding:10px 24px;border-radius:16px;background:#fff;color:#222;font-size:1rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;">← Tilbage til kategorier</button>
+  <div class="player-controls" id="playerControls" style="display:none;gap:1.2rem;">
+    <button class="player-btn soft-ui" id="stopBtn" title="Stop">⏹️</button>
+    <button class="player-btn soft-ui" id="pauseBtn" title="Pause">⏸️</button>
+    <button class="player-btn soft-ui" id="favBtn" title="Favorit">⭐</button>
+    <select class="voice-selector soft-ui" id="voiceSelector" style="width:120px;min-width:100px;max-width:160px;font-size:0.95rem;padding:6px 8px;border-radius:10px;background:#f8f9fa;color:#222;border:1px solid #e2e8f0;outline:none;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <option value="da-DK-Chirp3-HD-Charon">Simon</option>
+      <option value="da-DK-Chirp3-HD-Sulafat">Anna</option>
+      <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria</option>
+      <option value="da-DK-Chirp3-HD-Erriapus">Sofie</option>
+      <option value="da-DK-Chirp3-HD-Enceladus">Lars</option>
+      <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel</option>
+      <option value="da-DK-Chirp3-HD-Sadachbia">Peter</option>
+      <option value="da-DK-Chirp3-HD-Schedar">Thomas</option>
+      <option value="da-DK-Chirp3-HD-Callirrhoe">Line</option>
+      <option value="da-DK-Chirp3-HD-Despina">Camilla</option>
+      <option value="da-DK-Chirp3-HD-Umbriel">Henrik</option>
+      <option value="da-DK-Chirp3-HD-Sadaltager">Morten</option>
+      <option value="da-DK-Chirp3-HD-Zephyr">Emma</option>
+    </select>
+  </div>
+  <audio id="audioTrack" src="audio1.mp3" preload="auto"></audio>
+  <script src="tts-config.js"></script>
+  <style>
+    .soft-ui {
+      background: #f8f9fa;
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 2px 8px #e2e8f0, 0 1.5px 0 #fff inset;
+      transition: box-shadow 0.2s, background 0.2s;
+    }
+    .soft-ui:active, .soft-ui:focus {
+      box-shadow: 0 1px 4px #d1d5db, 0 1.5px 0 #fff inset;
+      background: #f3f4f6;
+    }
+    .player-btn.soft-ui { width: 44px; height: 44px; font-size: 1.3rem; border-radius: 16px; }
+    .voice-selector.soft-ui { border-radius: 10px; }
+  </style>
+  <script>
+    // --- Modulært script med valg ---
+    // Kategorier og flows
+    const categoryModules = {
+      forsta: [
+        { id: 'forsta1', text: "Selvskade opstår ofte som en måde at håndtere svære følelser på. Det kan give en midlertidig lettelse, men løser ikke det bagvedliggende problem.", next: 'forsta2' },
+        { id: 'forsta2', text: "Forskning viser, at der findes andre, mere hjælpsomme strategier. Du er ikke alene om at opleve dette.", next: 'forsta3' },
+        { id: 'forsta3', text: "Det er vigtigt at forstå, at selvskade ikke er et tegn på svaghed, men et signal om, at du har brug for omsorg og støtte.", next: null }
+      ],
+      strategier: [
+        { id: 'strategi1', text: "Når trangen opstår, kan du prøve at aflede dig selv: Hold is i hånden, skriv dine tanker ned, eller ring til en ven.", next: 'strategi2' },
+        { id: 'strategi2', text: "Mindfulness og vejrtrækning kan hjælpe. Prøv at fokusere på din vejrtrækning i 1 minut.", next: 'strategi3' },
+        { id: 'strategi3', text: "Lav en liste over ting, der tidligere har hjulpet dig, og hav den klar til næste gang trangen opstår.", next: null }
+      ],
+      refleksion: [
+        { id: 'refleksion1', text: "Hvilken situation genkender du mest?", choices: [
+          { label: "Når jeg føler mig overvældet", next: 'overvaeldet' },
+          { label: "Når jeg føler mig tom/uden følelser", next: 'tomhed' },
+          { label: "Når jeg føler skyld/skam", next: 'skyld' }
+        ] },
+        { id: 'overvaeldet', text: "Når du er overvældet, kan det hjælpe at sætte ord på følelsen. Prøv at skrive ned, hvad der sker i dig lige nu. Husk, følelser er som bølger – de vokser, men de aftager også igen.", next: 'refleksion2' },
+        { id: 'tomhed', text: "Følelsen af tomhed kan være svær. Prøv at lave noget sanseligt: Lyt til musik, tag et varmt bad, eller gå en tur. Det kan hjælpe dig tilbage i kroppen.", next: 'refleksion2' },
+        { id: 'skyld', text: "Skyld og skam er tunge følelser. Husk: Du er ikke forkert, og du fortjener omsorg. Prøv at tale til dig selv, som du ville tale til en ven.", next: 'refleksion2' },
+        { id: 'refleksion2', text: "Forskning viser, at mennesker der øver nye strategier, får det bedre over tid. Små skridt tæller. Hver gang du vælger omsorg frem for selvskade, styrker du din hjerne.", next: 'refleksion3' },
+        { id: 'refleksion3', text: "Du er i gang med en proces. Hver gang du øver, skaber du nye forbindelser i hjernen. Vil du prøve en lille øvelse, hvor du skriver eller siger højt, hvad du ville gøre, hvis trangen kom igen? Tak fordi du tog dig tid til dig selv.", next: null }
+      ]
+    };
+    let currentCategory = null;
+    let currentModule = null;
+    let isPaused = false;
+    let ttsUtterance = null;
+    let ttsActive = false;
+    let moduleTimeout = null;
+    const startScreen = document.getElementById('startScreen');
+    const startBtn = document.getElementById('startBtn');
+    const bgVideo = document.getElementById('bgVideo');
+    const scriptText = document.getElementById('scriptText');
+    const playerControls = document.getElementById('playerControls');
+    const stopBtn = document.getElementById('stopBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const favBtn = document.getElementById('favBtn');
+    const audioTrack = document.getElementById('audioTrack');
+    const voiceSelector = document.getElementById('voiceSelector');
+
+    // --- Favorit system (fælles localStorage) ---
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
+    }
+    function setFavorite(id) {
+      let favs = getFavorites();
+      if (!favs.includes(id)) favs.push(id);
+      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
+      favBtn.classList.add('active');
+    }
+    function removeFavorite(id) {
+      let favs = getFavorites();
+      favs = favs.filter(f => f !== id);
+      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
+      favBtn.classList.remove('active');
+    }
+    function updateFavBtn() {
+      const favs = getFavorites();
+      favBtn.classList.toggle('active', favs.includes('selvskade'));
+    }
+    favBtn.onclick = () => {
+      const favs = getFavorites();
+      if (favs.includes('selvskade')) removeFavorite('selvskade');
+      else setFavorite('selvskade');
+    };
+
+    // --- Fuldskærm og start flow ---
+    startBtn.onclick = async () => {
+      if (document.documentElement.requestFullscreen) {
+        try { await document.documentElement.requestFullscreen(); } catch(e){}
+      }
+      startScreen.style.display = 'none';
+      countdownAndShowSelection();
+    };
+    function countdownAndShowSelection() {
+      const cd = document.createElement('div');
+      cd.className = 'countdown';
+      cd.textContent = '3';
+      startScreen.parentNode.appendChild(cd);
+      let count = 3;
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) cd.textContent = count;
+        else {
+          clearInterval(interval);
+          cd.remove();
+          showCategorySelection();
+        }
+      }, 1000);
+    }
+    function showCategorySelection() {
+      document.getElementById('mainSelection').style.display = 'block';
+      bgVideo.currentTime = 0;
+      audioTrack.currentTime = 0;
+      bgVideo.play();
+      audioTrack.play();
+      scriptText.style.display = 'none';
+      playerControls.style.display = 'none';
+    }
+    function startCategory(category) {
+      currentCategory = category;
+      document.getElementById('mainSelection').style.display = 'none';
+      scriptText.style.display = 'block';
+      playerControls.style.display = 'flex';
+      document.getElementById('backToCategoriesBtn').style.display = 'block';
+      showModule(categoryModules[category][0]);
+      updateFavBtn();
+    }
+
+    // Tilbage til kategorier
+    document.getElementById('backToCategoriesBtn').onclick = function() {
+      scriptText.style.display = 'none';
+      playerControls.style.display = 'none';
+      this.style.display = 'none';
+      document.getElementById('mainSelection').style.display = 'block';
+      stopAll();
+    };
+    function showModule(module) {
+      currentModule = module;
+      scriptText.innerHTML = module.text;
+      // Remove any previous choices
+      const oldChoices = scriptText.querySelector('.choices');
+      if (oldChoices) oldChoices.remove();
+      // Play TTS and only show choices or advance after TTS is done
+      playTTS(module.text, () => {
+        if (module.choices) {
+          const choicesDiv = document.createElement('div');
+          choicesDiv.className = 'choices';
+          module.choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = choice.label;
+            btn.onclick = (e) => {
+              e.stopPropagation();
+              showModule(categoryModules[currentCategory].find(m => m.id === choice.next));
+            };
+            choicesDiv.appendChild(btn);
+          });
+          scriptText.appendChild(choicesDiv);
+        } else if (module.next && !isPaused) {
+          showModule(categoryModules[currentCategory].find(m => m.id === module.next));
+        }
+      });
+    }
+    // Google TTS via tts-config.js (hvis tilgængelig)
+    function playTTS(text, onEnd) {
+      stopTTS();
+      let voiceName = voiceSelector.value;
+      if (window.TrøstMigTTS && typeof window.TrøstMigTTS.speak === 'function') {
+        ttsActive = true;
+        window.TrøstMigTTS.speak(text, {
+          voice: voiceName,
+          lang: 'da-DK',
+          onend: () => {
+            ttsActive = false;
+            if (typeof onEnd === 'function') onEnd();
+          }
+        });
+      } else {
+        ttsUtterance = new SpeechSynthesisUtterance(text);
+        ttsUtterance.lang = 'da-DK';
+        ttsUtterance.voice = Array.from(window.speechSynthesis.getVoices()).find(v => v.name === voiceName) || null;
+        ttsActive = true;
+        ttsUtterance.onend = () => {
+          ttsActive = false;
+          if (typeof onEnd === 'function') onEnd();
+        };
+        window.speechSynthesis.speak(ttsUtterance);
+      }
+    }
+    function stopTTS() {
+      window.speechSynthesis.cancel();
+      ttsUtterance = null;
+      ttsActive = false;
+    }
+
+    // --- Controls ---
+    stopBtn.onclick = () => {
+      stopAll();
+      if (document.fullscreenElement) document.exitFullscreen();
+      startScreen.style.display = 'flex';
+      scriptText.style.display = 'none';
+      playerControls.style.display = 'none';
+    };
+    pauseBtn.onclick = () => {
+      if (!isPaused) {
+        bgVideo.pause();
+        audioTrack.pause();
+        window.speechSynthesis.pause();
+        pauseBtn.textContent = '▶️';
+        isPaused = true;
+        if (moduleTimeout) clearTimeout(moduleTimeout);
+      } else {
+        bgVideo.play();
+        audioTrack.play();
+        window.speechSynthesis.resume();
+        pauseBtn.textContent = '⏸️';
+        isPaused = false;
+        if (currentModule.next) showModule(currentModule);
+      }
+    };
+    // Synkroniser stemmevalg mellem navigation og controls
+    function syncVoiceSelectors(val) {
+      document.getElementById('navVoiceSelector').value = val;
+      document.getElementById('voiceSelector').value = val;
+    }
+    document.getElementById('voiceSelector').onchange = function() {
+      localStorage.setItem('preferredVoice', this.value);
+      syncVoiceSelectors(this.value);
+      playTTS(currentModule.text);
+    };
+    document.getElementById('navVoiceSelector').onchange = function() {
+      localStorage.setItem('preferredVoice', this.value);
+      syncVoiceSelectors(this.value);
+      playTTS(currentModule.text);
+    };
+
+    // --- Stop alt hvis man forlader siden/emnet ---
+    function stopAll() {
+      bgVideo.pause();
+      audioTrack.pause();
+      stopTTS();
+      isPaused = false;
+      if (moduleTimeout) clearTimeout(moduleTimeout);
+      pauseBtn.textContent = '⏸️';
+    }
+    window.addEventListener('beforeunload', stopAll);
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) stopAll();
+    });
+
+    // --- Favorit-knap init og stemmevalg init ---
+    // Navigation auto-hide og theme-toggle fra angst.html
+    let navTimer;
+    let isNavHidden = false;
+    const nav = document.getElementById('mainNav');
+    const indicator = document.getElementById('navIndicator');
+    const HIDE_DELAY = 3000;
+    function showNav() {
+      if (isNavHidden) {
+        nav.style.transform = 'translateY(0)';
+        nav.style.opacity = '1';
+        indicator.classList.remove('show');
+        isNavHidden = false;
+      }
+    }
+    function hideNav() {
+      nav.style.transform = 'translateY(-100%)';
+      nav.style.opacity = '0';
+      indicator.classList.add('show');
+      isNavHidden = true;
+    }
+    function resetNavTimer() {
+      clearTimeout(navTimer);
+      showNav();
+      navTimer = setTimeout(hideNav, HIDE_DELAY);
+    }
+    function preventHide() { clearTimeout(navTimer); showNav(); }
+    function resumeTimer() { setTimeout(resetNavTimer, 500); }
+    document.addEventListener('mousemove', resetNavTimer);
+    document.addEventListener('touchstart', resetNavTimer);
+    document.addEventListener('touchmove', resetNavTimer);
+    document.addEventListener('scroll', resetNavTimer);
+    document.addEventListener('keydown', resetNavTimer);
+    nav.addEventListener('mouseenter', preventHide);
+    nav.addEventListener('mouseleave', resumeTimer);
+    nav.addEventListener('focusin', preventHide);
+    nav.addEventListener('focusout', resumeTimer);
+    function changeVoice() {
+      const selector = document.getElementById('navVoiceSelector');
+      const selectedVoice = selector.value;
+      localStorage.setItem('preferredVoice', selectedVoice);
+      syncVoiceSelectors(selectedVoice);
+      playTTS(currentModule.text);
+    }
+    function toggleTheme() {
+      const html = document.documentElement;
+      const toggleBtn = document.getElementById('themeToggle');
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        toggleBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        toggleBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+      resetNavTimer();
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      // Robust: ensure both selectors exist before sync
+      const savedVoice = localStorage.getItem('preferredVoice');
+      if (savedVoice) {
+        if (document.getElementById('navVoiceSelector')) document.getElementById('navVoiceSelector').value = savedVoice;
+        if (document.getElementById('voiceSelector')) document.getElementById('voiceSelector').value = savedVoice;
+      }
+      updateFavBtn();
+      // Theme
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').textContent = '☀️';
+      }
+      resetNavTimer();
+    });
+  </script>
+</body>
+</html>

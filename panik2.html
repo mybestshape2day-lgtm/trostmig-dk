@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panikangst - TrøstMig.dk</title>
+    
+    <!-- VIGTIG: Central TTS konfiguration -->
+    <script src="tts-config.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #dc2626;
+            --accent-hover: #b91c1c;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --crisis-red: #dc2626;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --border: #4a5568;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        
+        .welcome-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .welcome-message {
+            max-width: 800px;
+            padding: 60px;
+            text-align: center;
+            color: white;
+        }
+        
+        .welcome-message h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .welcome-message p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .skip-intro {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .skip-intro:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* Navigation Header */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+        
+        /* Emergency Notice */
+        .emergency-notice {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 80px 20px 20px;
+            text-align: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        [data-theme="dark"] .emergency-notice {
+            background: rgba(254, 242, 242, 0.1);
+        }
+        
+        .emergency-notice a {
+            color: #dc2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        /* Main Selection Grid */
+        .main-selection {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .main-selection.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Session Display with Video Background */
+        .session-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 500;
+        }
+        
+        .session-display.active {
+            display: block;
+        }
+        
+        /* Video Background */
+        .video-background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%) scale(1.02);
+            z-index: -2;
+            filter: brightness(0.3);
+        }
+        
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+            z-index: -1;
+        }
+        
+        /* Content Container */
+        .session-content {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            padding: 40px;
+        }
+        
+        /* Module Indicator */
+        .module-indicator {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .module-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Session Text */
+        .session-text {
+            max-width: 900px;
+            text-align: center;
+            color: white;
+        }
+        
+        .session-title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .session-content-text {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.3s forwards;
+        }
+        
+        /* Choice Modal */
+        .choice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .choice-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .choice-container {
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .choice-question {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .choice-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .choice-letter {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        /* Breathing Visual */
+        .breathing-visual {
+            position: fixed;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.3), transparent);
+            border: 3px solid rgba(239, 68, 68, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 500;
+            color: white;
+            transition: all 4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .breathing-visual.active {
+            display: flex;
+        }
+        
+        .breathing-visual.inhale {
+            transform: translateY(-50%) scale(1.3);
+            background: radial-gradient(circle, rgba(52, 199, 89, 0.3), transparent);
+            border-color: rgba(52, 199, 89, 0.6);
+        }
+        
+        .breathing-visual.hold {
+            background: radial-gradient(circle, rgba(123, 104, 238, 0.3), transparent);
+            border-color: rgba(123, 104, 238, 0.6);
+        }
+        
+        .breathing-visual.exhale {
+            transform: translateY(-50%) scale(0.8);
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.3), transparent);
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+        
+        /* Controls Bar */
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(30px);
+            padding: 20px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .control-btn.primary {
+            background: #ef4444;
+        }
+        
+        .control-btn.primary:hover {
+            background: #dc2626;
+        }
+        
+        .back-to-selection {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .selection-grid { grid-template-columns: 1fr; }
+            .session-content-text { font-size: 1.1rem; }
+            .choice-container { padding: 20px; }
+            .controls-bar { 
+                bottom: 20px;
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-message">
+            <h1>Panikangst</h1>
+            <p id="welcomeText">Dit hjerte banker. Du kan ikke få luft. Alt føles uvirkeligt. Men du er ikke ved at dø - dette er panikangst, og jeg kan hjælpe dig igennem det.</p>
+        </div>
+        <button class="skip-intro" onclick="skipIntro()">Spring over</button>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav-header" id="navHeader">
+        <a href="index.html" class="back-link">← Tilbage</a>
+        <div class="nav-controls">
+            <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
+                <option value="0">Charon - Dyb mand</option>
+                <option value="1">Sulafat - Varm kvinde</option>
+                <option value="2">Vindemiatrix - Rolig kvinde</option>
+                <option value="3">Enceladus - Naturlig mand</option>
+                <option value="4">Erriapus - Blød kvinde</option>
+            </select>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </nav>
+    
+    <!-- Emergency Notice -->
+    <div class="emergency-notice">
+        <strong>Akut hjælp:</strong> 
+        Ring <a href="tel:70201201">Livslinjen 70 20 12 01</a> eller 
+        <a href="tel:112">112</a> hvis du er i fare. 
+        Du er ikke alene.
+    </div>
+    
+    <!-- Main Selection -->
+    <div class="main-selection" id="mainSelection">
+        <div class="selection-header">
+            <h1>Panikangst</h1>
+            <p>Få kontrol tilbage. Du kommer igennem dette.</p>
+        </div>
+        
+        <div class="selection-grid">
+            <div class="selection-card" onclick="startSection('akut')">
+                <div class="selection-icon">🆘</div>
+                <h2>Akut panik</h2>
+                <p>Stop panikken lige nu. Øjeblikkelig lindring og grounding.</p>
+            </div>
+            
+            <div class="selection-card" onclick="startSection('forstaa')">
+                <div class="selection-icon">🧠</div>
+                <h2>Forstå panik</h2>
+                <p>Hvad sker der i din krop? Viden giver kontrol.</p>
+            </div>
+            
+            <div class="selection-card" onclick="startSection('vaerktoej')">
+                <div class="selection-icon">🛠️</div>
+                <h2>Værktøjer</h2>
+                <p>Lær teknikker til at håndtere og forebygge panikangst.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Session Display -->
+    <div class="session-display" id="sessionDisplay">
+        <!-- Video Background -->
+        <video class="video-background" autoplay muted loop playsinline>
+            <source src="din-video.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+        
+        <!-- Session Content -->
+        <div class="session-content">
+            <!-- Module Indicator -->
+            <div class="module-indicator" id="moduleIndicator">
+                Indlæser...
+            </div>
+            
+            <!-- Text Display -->
+            <div class="session-text">
+                <h2 class="session-title" id="sessionTitle">Panikangst Session</h2>
+                <div class="session-content-text" id="sessionText">
+                    Forbinder...
+                </div>
+            </div>
+            
+            <!-- Breathing Visual -->
+            <div class="breathing-visual" id="breathingVisual">
+                <span id="breathingText">Indånd</span>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls-bar">
+            <button class="control-btn" onclick="previousSegment()">◀</button>
+            <button class="control-btn primary" onclick="togglePlay()" id="playBtn">▶</button>
+            <button class="control-btn" onclick="nextSegment()">▶</button>
+            <span id="progressIndicator" style="color: white; font-size: 0.9rem;">1 / 10</span>
+            <button class="back-to-selection" onclick="backToSelection()">← Tilbage</button>
+        </div>
+    </div>
+    
+    <!-- Choice Modal -->
+    <div class="choice-modal" id="choiceModal">
+        <div class="choice-container">
+            <h3 class="choice-question" id="choiceQuestion">Hvad har du mest brug for lige nu?</h3>
+            <div class="choice-options" id="choiceOptions">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio -->
+    <audio id="audioPlayer" preload="auto">
+        <source src="1audiopanik.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // Welcome messages pool
+        const welcomeMessages = [
+            "Dit hjerte banker. Du kan ikke få luft. Alt føles uvirkeligt. Men du er ikke ved at dø - dette er panikangst, og jeg kan hjælpe dig igennem det.",
+            "Panikken føles som en tsunami, men alle bølger falder til ro igen. Lad mig guide dig tilbage til land.",
+            "Din krop tror der er fare, men der er ingen løve. Det er en falsk alarm, og vi kan slukke den sammen.",
+            "Lige nu føles alt kaotisk. Men om få minutter vil du have kontrol igen. Jeg viser dig hvordan.",
+            "Panikangst er kroppens overdrevne beskyttelse. Den kan ikke skade dig - kun skræmme dig."
+        ];
+        
+        // Script Database with Interactive Choices
+        const scriptsDatabase = {
+            akut: {
+                title: "🆘 Akut Panik Lindring",
+                intro: {
+                    segments: [
+                        "Okay. Jeg er her. Du er sikker.",
+                        "Vi stopper panikken sammen, lige nu.",
+                        "Først - du kommer IKKE til at dø. Dette er panikangst."
+                    ],
+                    choice: {
+                        question: "Hvad oplever du mest lige nu?",
+                        options: [
+                            { id: 'hjerte', text: 'Mit hjerte banker vildt' },
+                            { id: 'aande', text: 'Jeg kan ikke få luft' },
+                            { id: 'uvirkeligt', text: 'Alt føles uvirkeligt' },
+                            { id: 'dodsangst', text: 'Jeg tror jeg dør' }
+                        ]
+                    }
+                },
+                paths: {
+                    hjerte: [
+                        "Dit hjerte er stærkt. Det kan sagtens klare dette.",
+                        "En maratonløber har højere puls end dig lige nu.",
+                        "Læg hånden på hjertet. Mærk det arbejde for dig.",
+                        "Nu skal vi berolige det sammen..."
+                    ],
+                    aande: [
+                        "Du FÅR luft - ellers kunne du ikke tænke denne tanke.",
+                        "Du hyperventilerer. Vi skal have din vejrtrækning ned.",
+                        "Følg min rytme: Ind gennem næsen... ud gennem munden...",
+                        "Godt. Fortsæt. Du klarer det fantastisk."
+                    ],
+                    uvirkeligt: [
+                        "Dette hedder derealisering. Det er ufarligt.",
+                        "Din hjerne beskytter sig selv ved at 'zoome ud'.",
+                        "Find 5 røde ting i rummet. Det bringer dig tilbage.",
+                        "Se? Du er her. Du er virkelig. Du er sikker."
+                    ],
+                    dodsangst: [
+                        "Ingen er NOGENSINDE død af panikangst. Ingen.",
+                        "Dette topper om 10 minutter - måske er du allerede halvvejs.",
+                        "Din krop ved hvordan den skal overleve. Stol på den.",
+                        "Du har overlevet 100% af dine panikangfald. Dette går også over."
+                    ]
+                },
+                techniques: {
+                    question: "Hvilken teknik vil du prøve nu?",
+                    options: [
+                        { id: 'grounding', text: '5-4-3-2-1 Grounding' },
+                        { id: 'breathing478', text: '4-7-8 Vejrtrækning' },
+                        { id: 'ice', text: 'Kulde-teknik' },
+                        { id: 'accept', text: 'Rid på bølgen' }
+                    ]
+                }
+            },
+            forstaa: {
+                title: "🧠 Forstå Din Panik",
+                intro: {
+                    segments: [
+                        "Lad mig forklare præcis hvad der sker i din krop.",
+                        "Når du forstår panikken, mister den sin magt over dig.",
+                        "Dette er videnskab, ikke mystik."
+                    ],
+                    choice: {
+                        question: "Hvad vil du vide mest om?",
+                        options: [
+                            { id: 'hvorfor', text: 'Hvorfor sker det for mig?' },
+                            { id: 'krop', text: 'Hvad sker der i kroppen?' },
+                            { id: 'hjerne', text: 'Hvad sker der i hjernen?' },
+                            { id: 'farligt', text: 'Er det farligt?' }
+                        ]
+                    }
+                },
+                paths: {
+                    hvorfor: [
+                        "Panikangst rammer ofte sensitive, intelligente mennesker.",
+                        "Din hjerne er ekstra årvågen - det er en styrke der er gået i overdrev.",
+                        "Stress, traumer eller bare tilfældigheder kan udløse det.",
+                        "Det vigtige er: Det kan behandles. 70% bliver helt raske."
+                    ],
+                    krop: [
+                        "Adrenalin pumper ud. Hjertet banker for at sende blod til musklerne.",
+                        "Du hyperventilerer. CO2 falder. Derfor svimmelhed og prikken.",
+                        "Musklerne spænder for at flygte. Derfor gør brystet ondt.",
+                        "Alt dette er NORMALT ved panik. Ubehageligt men ufarligt."
+                    ],
+                    hjerne: [
+                        "Amygdala - din alarmcentral - har slået falsk alarm.",
+                        "Præfrontal cortex - din rationelle hjerne - går offline.",
+                        "Fight-flight-freeze aktiveres. Du er klar til en løve der ikke er der.",
+                        "Heldigvis kan du træne hjernen til at slå mindre alarm."
+                    ],
+                    farligt: [
+                        "NEJ. Panikangst er 100% ufarlig.",
+                        "Dit hjerte kan klare MEGET mere. Tænk på atleter.",
+                        "Du kan ikke besvime af panik - blodtrykket stiger, falder ikke.",
+                        "Du bliver ikke sindssyg. Panik er IKKE psykose."
+                    ]
+                }
+            },
+            vaerktoej: {
+                title: "🛠️ Værktøjer & Teknikker",
+                intro: {
+                    segments: [
+                        "Nu lærer du teknikker der virker.",
+                        "Disse er evidensbaserede og brugt af tusindvis.",
+                        "Øv dem når du IKKE har panik - så virker de bedre i storm."
+                    ],
+                    choice: {
+                        question: "Hvilken type værktøj vil du lære?",
+                        options: [
+                            { id: 'akutte', text: 'Akutte stop-teknikker' },
+                            { id: 'forebyggende', text: 'Forebyggende øvelser' },
+                            { id: 'tankearbejde', text: 'Kognitivt arbejde' },
+                            { id: 'kropslige', text: 'Kropslige teknikker' }
+                        ]
+                    }
+                },
+                paths: {
+                    akutte: [
+                        "KULDE: Isterninger i hænderne, koldt vand i ansigtet.",
+                        "GROUNDING: 5 ting du ser, 4 du hører, 3 du mærker, 2 du lugter, 1 du smager.",
+                        "MATEMATIK: Tæl baglæns fra 100 i 7'ere. Optager din hjerne.",
+                        "BEVÆGELSE: Hop, løb på stedet. Forbrænder adrenalin."
+                    ],
+                    forebyggende: [
+                        "Daglig meditation - bare 10 minutter reducerer angst markant.",
+                        "Regelmæssig motion - det bedste angstmiddel der findes.",
+                        "Søvn prioritering - dårlig søvn = mere angst.",
+                        "Koffein reduktion - det trigger ofte panik."
+                    ],
+                    tankearbejde: [
+                        "Identificer katastrofetanker: 'Jeg dør' → 'Jeg har det ubehageligt'.",
+                        "Reality testing: Hvor ofte er dine værste tanker blevet til virkelighed?",
+                        "Worst case scenario: Hvad er det VÆRSTE? Kan du leve med det?",
+                        "Defusion: Du ER ikke dine tanker. Du HAR tanker."
+                    ],
+                    kropslige: [
+                        "4-7-8 vejrtrækning: Ind 4, hold 7, ud 8. Aktiverer parasympatisk.",
+                        "Progressive muskelafslapning: Spænd og slip hver muskelgruppe.",
+                        "Vagusnerve stimulation: Kold vand, synge, gabe.",
+                        "Bilateral stimulation: Kryds arme og bank skiftevis på skuldre."
+                    ]
+                }
+            }
+        };
+        
+        // State variables
+        let currentSection = null;
+        let currentPath = null;
+        let currentSegmentIndex = 0;
+        let isPlaying = false;
+        let currentSegments = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set random welcome message
+            const randomMsg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+            document.getElementById('welcomeText').textContent = randomMsg;
+            
+            // Load theme
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            
+            // Auto skip intro after 8 seconds
+            setTimeout(skipIntro, 8000);
+        });
+        
+        function skipIntro() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('mainSelection').classList.add('active');
+        }
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelector');
+            const voiceIndex = parseInt(selector.value);
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.setVoice(voiceIndex);
+            }
+        }
+        
+        function startSection(section) {
+            currentSection = section;
+            currentPath = 'intro';
+            currentSegmentIndex = 0;
+            
+            document.getElementById('mainSelection').classList.remove('active');
+            document.getElementById('sessionDisplay').classList.add('active');
+            document.getElementById('navHeader').style.display = 'none';
+            
+            const sectionData = scriptsDatabase[section];
+            document.getElementById('moduleIndicator').textContent = sectionData.title;
+            document.getElementById('sessionTitle').textContent = sectionData.title;
+            
+            // Load intro segments
+            currentSegments = sectionData.intro.segments;
+            displayCurrentSegment();
+            
+            // Set up first choice after intro
+            setTimeout(() => {
+                if (sectionData.intro.choice) {
+                    showChoiceModal(sectionData.intro.choice);
+                }
+            }, currentSegments.length * 4000); // Show after intro segments
+        }
+        
+        function displayCurrentSegment() {
+            if (currentSegmentIndex < currentSegments.length) {
+                const text = currentSegments[currentSegmentIndex];
+                document.getElementById('sessionText').textContent = text;
+                
+                // Speak if TTS available
+                if (window.TrøstMigTTS && isPlaying) {
+                    window.TrøstMigTTS.speak(text);
+                }
+                
+                updateProgress();
+            }
+        }
+        
+        function showChoiceModal(choiceData) {
+            const modal = document.getElementById('choiceModal');
+            const question = document.getElementById('choiceQuestion');
+            const options = document.getElementById('choiceOptions');
+            
+            question.textContent = choiceData.question;
+            
+            options.innerHTML = choiceData.options.map((opt, i) => `
+                <button class="choice-btn" onclick="selectChoice('${opt.id}')">
+                    <span class="choice-letter">${String.fromCharCode(65 + i)}</span>
+                    <span>${opt.text}</span>
+                </button>
+            `).join('');
+            
+            modal.classList.add('active');
+            pauseSession();
+        }
+        
+        function selectChoice(choiceId) {
+            document.getElementById('choiceModal').classList.remove('active');
+            
+            const sectionData = scriptsDatabase[currentSection];
+            
+            // Check if this is a path choice or technique choice
+            if (sectionData.paths && sectionData.paths[choiceId]) {
+                currentPath = choiceId;
+                currentSegments = sectionData.paths[choiceId];
+                currentSegmentIndex = 0;
+                displayCurrentSegment();
+                
+                // After path segments, show technique choices if available
+                if (sectionData.techniques) {
+                    setTimeout(() => {
+                        showChoiceModal(sectionData.techniques);
+                    }, currentSegments.length * 4000);
+                }
+            } else if (choiceId === 'grounding') {
+                startGroundingExercise();
+            } else if (choiceId === 'breathing478') {
+                start478Breathing();
+            } else if (choiceId === 'ice') {
+                startIceTechnique();
+            } else if (choiceId === 'accept') {
+                startAcceptanceTechnique();
+            }
+            
+            resumeSession();
+        }
+        
+        function startGroundingExercise() {
+            currentSegments = [
+                "Find 5 ting du kan SE. Sig dem højt eller i dit hoved.",
+                "Find 4 ting du kan HØRE lige nu. Lyt efter dem.",
+                "Find 3 ting du kan MÆRKE. Tøjet, stolen, luften.",
+                "Find 2 ting du kan LUGTE. Eller husk 2 yndlingsdufte.",
+                "Find 1 ting du kan SMAGE. Eller husk din yndlingssmag.",
+                "Godt klaret. Du er tilbage i nuet. Du er sikker."
+            ];
+            currentSegmentIndex = 0;
+            displayCurrentSegment();
+        }
+        
+        function start478Breathing() {
+            currentSegments = [
+                "Sæt dig komfortabelt. Skuldre afslappede.",
+                "Pust al luften ud først.",
+                "Nu: Indånd gennem næsen og tæl til 4...",
+                "Hold vejret og tæl til 7...",
+                "Udånd gennem munden og tæl til 8...",
+                "Igen: Ind 4... Hold 7... Ud 8...",
+                "En gang til: Ind 4... Hold 7... Ud 8...",
+                "Perfekt. Dit nervesystem er nu roligere."
+            ];
+            currentSegmentIndex = 0;
+            displayCurrentSegment();
+            showBreathing();
+        }
+        
+        function startIceTechnique() {
+            currentSegments = [
+                "Kulde aktiverer din vagusnerve og stopper panik.",
+                "Find noget koldt - isterninger, koldt vand, en kold genstand.",
+                "Hold det mod dine håndled eller pande.",
+                "Eller splash koldt vand i ansigtet.",
+                "Mærk hvordan kulden 'vækker' dig fra panikken.",
+                "Dette er en gammel overlevelses-refleks der virker."
+            ];
+            currentSegmentIndex = 0;
+            displayCurrentSegment();
+        }
+        
+        function startAcceptanceTechnique() {
+            currentSegments = [
+                "I stedet for at kæmpe - inviter panikken indenfor.",
+                "Sig: 'Hej panik. Jeg ser dig. Du må gerne være her.'",
+                "Forestil dig panikken som en bølge.",
+                "Du kan ikke stoppe bølgen, men du kan surfe på den.",
+                "Læg mærke til hvor i kroppen panikken sidder.",
+                "Giv den plads. Den topper og falder af sig selv.",
+                "Du er ikke panikken. Du er himlen - panikken er bare en sky.",
+                "Skyerne kommer og går. Himlen forbliver."
+            ];
+            currentSegmentIndex = 0;
+            displayCurrentSegment();
+        }
+        
+        function showBreathing() {
+            const visual = document.getElementById('breathingVisual');
+            const text = document.getElementById('breathingText');
+            
+            visual.classList.add('active');
+            
+            // Breathing cycle
+            const cycle = [
+                { phase: 'inhale', text: 'Indånd', duration: 4000 },
+                { phase: 'hold', text: 'Hold', duration: 7000 },
+                { phase: 'exhale', text: 'Udånd', duration: 8000 }
+            ];
+            
+            let currentPhase = 0;
+            
+            function nextPhase() {
+                if (currentPhase >= cycle.length) currentPhase = 0;
+                
+                const phase = cycle[currentPhase];
+                visual.className = 'breathing-visual active ' + phase.phase;
+                text.textContent = phase.text;
+                
+                currentPhase++;
+                
+                if (currentPhase < cycle.length * 3) { // 3 cycles
+                    setTimeout(nextPhase, phase.duration);
+                } else {
+                    setTimeout(() => {
+                        visual.classList.remove('active');
+                    }, 2000);
+                }
+            }
+            
+            nextPhase();
+        }
+        
+        function togglePlay() {
+            if (isPlaying) {
+                pauseSession();
+            } else {
+                resumeSession();
+            }
+        }
+        
+        function pauseSession() {
+            isPlaying = false;
+            document.getElementById('playBtn').textContent = '▶';
+            if (window.speechSynthesis) speechSynthesis.pause();
+            if (window.TrøstMigTTS) window.TrøstMigTTS.pause();
+        }
+        
+        function resumeSession() {
+            isPlaying = true;
+            document.getElementById('playBtn').textContent = '⏸';
+            if (window.speechSynthesis) speechSynthesis.resume();
+            if (window.TrøstMigTTS) window.TrøstMigTTS.resume();
+            
+            // Auto advance segments
+            if (currentSegmentIndex < currentSegments.length) {
+                displayCurrentSegment();
+                setTimeout(() => {
+                    if (isPlaying) nextSegment();
+                }, 4000);
+            }
+        }
+        
+        function nextSegment() {
+            if (currentSegmentIndex < currentSegments.length - 1) {
+                currentSegmentIndex++;
+                displayCurrentSegment();
+                if (isPlaying) {
+                    setTimeout(() => nextSegment(), 4000);
+                }
+            }
+        }
+        
+        function previousSegment() {
+            if (currentSegmentIndex > 0) {
+                currentSegmentIndex--;
+                displayCurrentSegment();
+            }
+        }
+        
+        function updateProgress() {
+            const indicator = document.getElementById('progressIndicator');
+            indicator.textContent = `${currentSegmentIndex + 1} / ${currentSegments.length}`;
+        }
+        
+        function backToSelection() {
+            if (window.speechSynthesis) speechSynthesis.cancel();
+            if (window.TrøstMigTTS) window.TrøstMigTTS.stop();
+            
+            document.getElementById('sessionDisplay').classList.remove('active');
+            document.getElementById('mainSelection').classList.add('active');
+            document.getElementById('navHeader').style.display = 'flex';
+            document.getElementById('choiceModal').classList.remove('active');
+            
+            isPlaying = false;
+            currentSection = null;
+            currentSegmentIndex = 0;
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('sessionDisplay').classList.contains('active')) return;
+            
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowRight':
+                    nextSegment();
+                    break;
+                case 'ArrowLeft':
+                    previousSegment();
+                    break;
+                case 'Escape':
+                    backToSelection();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

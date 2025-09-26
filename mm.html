@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Recording Tool - TrøstMig.dk</title>
+    
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --primary-dark: #357abd;
+            --secondary: #7b68ee;
+            --success: #10b981;
+            --danger: #f56565;
+            --warning: #f59e0b;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --bg-primary: #f7fafc;
+            --bg-secondary: #edf2f7;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --border: #4a5568;
+            --shadow: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-panel {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin: 15px 0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e0;
+        }
+
+        .status-indicator.recording {
+            background: var(--danger);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.ready {
+            background: var(--success);
+        }
+
+        .status-indicator.processing {
+            background: var(--warning);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .recordings-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .recording-item {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            gap: 15px;
+        }
+
+        .recording-info {
+            flex: 1;
+        }
+
+        .recording-info h4 {
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .recording-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .recording-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .api-status {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .api-status.connected {
+            border-left-color: var(--success);
+        }
+
+        .api-status.error {
+            border-left-color: var(--danger);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .batch-section {
+            grid-column: 1 / -1;
+        }
+
+        .script-template {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+        }
+
+        .script-template h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .script-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .log-panel {
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .btn-group {
+                justify-content: center;
+            }
+            
+            .recording-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .recording-controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎤 TTS Recording Studio</h1>
+            <p>Optag og download professionelle danske TTS stemmer til TrøstMig.dk</p>
+        </div>
+
+        <!-- API Status -->
+        <div id="api-status" class="api-status">
+            <strong>API Status:</strong> <span id="api-status-text">Tjekker forbindelse...</span>
+        </div>
+
+        <div class="main-grid">
+            <!-- Recording Panel -->
+            <div class="panel">
+                <h2>🎙️ Enkelt Optagelse</h2>
+                
+                <div class="form-group">
+                    <label for="script-text">Script Tekst</label>
+                    <textarea 
+                        id="script-text" 
+                        class="form-control" 
+                        placeholder="Indtast den tekst du vil have omsat til tale..."
+                        maxlength="5000"
+                    ></textarea>
+                    <div style="text-align: right; font-size: 0.8rem; color: var(--text-secondary);">
+                        <span id="char-count">0</span>/5000 tegn
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="voice-select">Vælg Stemme</label>
+                    <select id="voice-select" class="form-control">
+                        <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
+                        <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
+                        <option value="da-DK-Chirp3-HD-Vindemiatrix" selected>Maria - Kvinde, rolig</option>
+                        <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
+                        <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
+                        <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
+                        <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
+                        <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
+                        <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
+                        <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
+                        <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
+                        <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
+                        <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="speed-slider">Hastighed: <span id="speed-value">0.9</span>x</label>
+                    <input 
+                        type="range" 
+                        id="speed-slider" 
+                        min="0.25" 
+                        max="2.0" 
+                        step="0.05" 
+                        value="0.9"
+                        class="form-control"
+                        style="height: 8px;"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="filename">Filnavn (uden .mp3)</label>
+                    <input 
+                        id="filename" 
+                        class="form-control" 
+                        placeholder="f.eks: akut-hjaelp-01"
+                        pattern="[a-zA-Z0-9-_]+"
+                        title="Kun bogstaver, tal, bindestreg og underscore"
+                    >
+                </div>
+
+                <div class="btn-group">
+                    <button id="play-btn" class="btn" onclick="playPreview()">
+                        ▶ Afspil Preview
+                    </button>
+                    <button id="record-btn" class="btn btn-success" onclick="recordAudio()">
+                        🎤 Optag TTS
+                    </button>
+                </div>
+
+                <div class="status-panel">
+                    <div class="status-item">
+                        <span>TTS API</span>
+                        <div class="status-indicator" id="api-indicator"></div>
+                    </div>
+                    <div class="status-item">
+                        <span>Optagelse</span>
+                        <div class="status-indicator" id="record-indicator"></div>
+                    </div>
+                    <div class="status-item">
+                        <span>Download</span>
+                        <div class="status-indicator" id="download-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recordings Panel -->
+            <div class="panel">
+                <h2>💾 Mine Optagelser</h2>
+                
+                <div class="btn-group">
+                    <button class="btn btn-warning" onclick="clearAllRecordings()">
+                        🗑️ Ryd Alt
+                    </button>
+                    <button class="btn" onclick="exportManifest()">
+                        📋 Export Manifest
+                    </button>
+                </div>
+
+                <div id="recordings-list" class="recordings-list">
+                    <p style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                        Ingen optagelser endnu. Start med at optage!
+                    </p>
+                </div>
+
+                <!-- Log Panel -->
+                <div class="form-group">
+                    <label>System Log</label>
+                    <div id="log-panel" class="log-panel"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batch Processing -->
+        <div class="panel batch-section">
+            <h2>⚡ Batch Processing</h2>
+            <p>Optag flere scripts på én gang fra TrøstMig scripts database</p>
+
+            <div class="form-group">
+                <label>Panik Scripts</label>
+                <div id="panik-scripts" class="script-templates">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="batchRecordCategory('panik')">
+                    🎤 Optag Alle Panik Scripts
+                </button>
+                <button class="btn" onclick="loadCustomScripts()">
+                    📁 Load Custom Scripts
+                </button>
+            </div>
+
+            <div class="progress-bar" id="batch-progress" style="display: none;">
+                <div class="progress-fill" id="batch-progress-fill"></div>
+            </div>
+            <div id="batch-status" style="text-align: center; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // TTS Configuration - SKAL SÆTTES AF BRUGEREN
+        const API_KEY = 'AIzaSyCKQO9FZXRtRtv6k_XymPXHJHp7hrvjEqk';
+        
+        // State
+        let recordings = JSON.parse(localStorage.getItem('tts-recordings') || '[]');
+        let isRecording = false;
+        let currentAudio = null;
+
+        // Panik scripts database (kopieret fra panik.html)
+        const panikScripts = {
+            akut: [
+                {
+                    title: "At finde ro i stormen",
+                    text: `Kære dig, der sidder eller står med et hamrende hjerte. Jeg ser dig. Jeg hører den storm der raser i dig lige nu.
+
+Du er ikke i fare, selvom hver fiber i din krop skriger det modsatte. Det du oplever har et navn - det er panik. Og panik kan ikke skade dig.
+
+Igennem mine mange år som psykolog har jeg siddet med tusindvis af mennesker i netop din situation. Hver eneste en af dem overlevede. Du vil også.
+
+Det du føler nu - det hamrende hjerte, den korte vejrtrækning, sveddråberne - det er din hjernes miskommunikation med din krop. Som når røgalarmen går af, selvom du bare brænder toast.
+
+Lad os sammen finde tilbage til roen. Læg din hånd på dit hjerte. Mærk det banke. Det banker fordi det elsker dig. Det vil holde dig i live.
+
+Nu skal vi ånde sammen. Forestil dig at du indånder ro og udånder frygt. Fire sekunder ind. Hold i fire. Seks sekunder ud. Dette er din livline tilbage til dig selv.
+
+Gentag efter mig, højt hvis du kan: 'Jeg er sikker. Dette går over. Jeg har overlevet før, og jeg overlever nu.'
+
+Panik føles evig når du er i den. Men sandheden er, at din krop ikke kan opretholde dette alarmniveau. Fysiologisk umuligt. Som et fyrværkeri der brænder ud.
+
+Du kæmper ikke alene. Millioner før dig har stået her og fundet vejen tilbage til roen. Du har den samme styrke i dig.`,
+                    duration: 420000
+                }
+            ]
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            checkApiConnection();
+            populateRecordings();
+            populateScriptTemplates();
+            setupEventListeners();
+            logMessage('TTS Recording Studio startet');
+        });
+
+        // Theme
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // API Connection
+        async function checkApiConnection() {
+            const statusEl = document.getElementById('api-status');
+            const statusText = document.getElementById('api-status-text');
+            const indicator = document.getElementById('api-indicator');
+
+            if (API_KEY === 'AIzaSyCKQO9FZXRtRtv6k_XymPXHJHp7hrvjEqk') {
+                statusEl.className = 'api-status error';
+                statusText.textContent = 'API nøgle ikke konfigureret - Rediger API_KEY i scriptet';
+                indicator.className = 'status-indicator';
+                logMessage('FEJL: API nøgle ikke konfigureret', 'error');
+                return;
+            }
+
+            try {
+                // Test API med minimal request
+                const response = await fetch(`https://texttospeech.googleapis.com/v1/voices?key=${API_KEY}&languageCode=da`);
+                
+                if (response.ok) {
+                    statusEl.className = 'api-status connected';
+                    statusText.textContent = 'Google Cloud TTS forbundet og klar';
+                    indicator.className = 'status-indicator ready';
+                    logMessage('Google Cloud TTS API forbundet succesfuldt', 'success');
+                } else {
+                    throw new Error(`API fejl: ${response.status}`);
+                }
+            } catch (error) {
+                statusEl.className = 'api-status error';
+                statusText.textContent = `API fejl: ${error.message}`;
+                indicator.className = 'status-indicator';
+                logMessage(`API fejl: ${error.message}`, 'error');
+            }
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Character counter
+            const textArea = document.getElementById('script-text');
+            const charCount = document.getElementById('char-count');
+            textArea.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+            });
+
+            // Speed slider
+            const speedSlider = document.getElementById('speed-slider');
+            const speedValue = document.getElementById('speed-value');
+            speedSlider.addEventListener('input', function() {
+                speedValue.textContent = this.value;
+            });
+
+            // Auto-generate filename
+            textArea.addEventListener('input', function() {
+                const filenameInput = document.getElementById('filename');
+                if (!filenameInput.value) {
+                    const words = this.value.trim().split(' ').slice(0, 3);
+                    const filename = words.join('-').toLowerCase()
+                        .replace(/[^a-z0-9-]/g, '')
+                        .substring(0, 20);
+                    filenameInput.value = filename || 'optag-' + Date.now();
+                }
+            });
+        }
+
+        // Preview playback
+        async function playPreview() {
+            const text = document.getElementById('script-text').value.trim();
+            if (!text) {
+                alert('Indtast tekst først');
+                return;
+            }
+
+            const playBtn = document.getElementById('play-btn');
+            playBtn.disabled = true;
+            playBtn.innerHTML = '⏳ Indlæser...';
+
+            try {
+                const audioContent = await synthesizeSpeech(text, false);
+                if (audioContent) {
+                    await playAudioContent(audioContent);
+                    logMessage('Preview afspillet succesfuldt', 'success');
+                }
+            } catch (error) {
+                logMessage(`Preview fejl: ${error.message}`, 'error');
+            } finally {
+                playBtn.disabled = false;
+                playBtn.innerHTML = '▶ Afspil Preview';
+            }
+        }
+
+        // Main recording function
+        async function recordAudio() {
+            const text = document.getElementById('script-text').value.trim();
+            const filename = document.getElementById('filename').value.trim();
+
+            if (!text) {
+                alert('Indtast tekst først');
+                return;
+            }
+
+            if (!filename) {
+                alert('Indtast filnavn');
+                return;
+            }
+
+            const recordBtn = document.getElementById('record-btn');
+            const recordIndicator = document.getElementById('record-indicator');
+
+            recordBtn.disabled = true;
+            recordBtn.innerHTML = '🎤 Optager...';
+            recordIndicator.className = 'status-indicator recording';
+            isRecording = true;
+
+            try {
+                logMessage(`Starter optagelse: ${filename}`, 'info');
+                const audioContent = await synthesizeSpeech(text, true);
+                
+                if (audioContent) {
+                    const recording = {
+                        id: Date.now(),
+                        filename: filename + '.mp3',
+                        text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+                        voice: document.getElementById('voice-select').value,
+                        speed: document.getElementById('speed-slider').value,
+                        audioContent: audioContent,
+                        timestamp: new Date().toISOString(),
+                        size: Math.round(audioContent.length * 0.75) // Rough Base64 size estimate
+                    };
+
+                    recordings.unshift(recording);
+                    localStorage.setItem('tts-recordings', JSON.stringify(recordings));
+                    
+                    populateRecordings();
+                    logMessage(`Optagelse gemt: ${filename}.mp3`, 'success');
+                    
+                    // Clear form
+                    document.getElementById('script-text').value = '';
+                    document.getElementById('filename').value = '';
+                    document.getElementById('char-count').textContent = '0';
+
+                    recordIndicator.className = 'status-indicator ready';
+                }
+                
+            } catch (error) {
+                logMessage(`Optagelse fejl: ${error.message}`, 'error');
+                recordIndicator.className = 'status-indicator';
+            } finally {
+                recordBtn.disabled = false;
+                recordBtn.innerHTML = '🎤 Optag TTS';
+                isRecording = false;
+            }
+        }
+
+        // Synthesize speech with Google Cloud TTS
+        async function synthesizeSpeech(text, isRecording = false) {
+            const voice = document.getElementById('voice-select').value;
+            const speed = parseFloat(document.getElementById('speed-slider').value);
+
+            const requestBody = {
+                input: { text: text },
+                voice: {
+                    languageCode: 'da-DK',
+                    name: voice,
+                    ssmlGender: voice.includes('HD-Charon') || voice.includes('HD-Enceladus') || 
+                               voice.includes('HD-Rasalgethi') || voice.includes('HD-Sadachbia') || 
+                               voice.includes('HD-Schedar') || voice.includes('HD-Umbriel') || 
+                               voice.includes('HD-Sadaltager') ? 'MALE' : 'FEMALE'
+                },
+                audioConfig: {
+                    audioEncoding: 'MP3',
+                    speakingRate: speed
+                }
+            };
+
+            if (isRecording) {
+                document.getElementById('record-indicator').className = 'status-indicator processing';
+            }
+
+            const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`TTS API fejl: ${response.status} - ${errorData}`);
+            }
+
+            const data = await response.json();
+            return data.audioContent;
+        }
+
+        // Play audio content
+        function playAudioContent(base64Audio) {
+            return new Promise((resolve, reject) => {
+                if (currentAudio) {
+                    currentAudio.pause();
+                }
+
+                const audio = new Audio(`data:audio/mp3;base64,${base64Audio}`);
+                currentAudio = audio;
+
+                audio.onended = resolve;
+                audio.onerror = reject;
+                audio.play();
+            });
+        }
+
+        // Populate recordings list
+        function populateRecordings() {
+            const container = document.getElementById('recordings-list');
+            
+            if (recordings.length === 0) {
+                container.innerHTML = `
+                    <p style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                        Ingen optagelser endnu. Start med at optage!
+                    </p>
+                `;
+                return;
+            }
+
+            let html = '';
+            recordings.forEach((recording, index) => {
+                const sizeKB = Math.round(recording.size / 1024);
+                const date = new Date(recording.timestamp).toLocaleString('da-DK');
+                
+                html += `
+                    <div class="recording-item">
+                        <div class="recording-info">
+                            <h4>${recording.filename}</h4>
+                            <p>${recording.text}</p>
+                            <p><small>Stemme: ${getVoiceName(recording.voice)} | Hastighed: ${recording.speed}x | ${sizeKB} KB | ${date}</small></p>
+                        </div>
+                        <div class="recording-controls">
+                            <button class="btn" onclick="playRecording(${index})" style="padding: 6px 12px;">▶</button>
+                            <button class="btn btn-success" onclick="downloadRecording(${index})" style="padding: 6px 12px;">📥</button>
+                            <button class="btn btn-danger" onclick="deleteRecording(${index})" style="padding: 6px 12px;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Helper functions
+        function getVoiceName(voiceId) {
+            const select = document.getElementById('voice-select');
+            const option = select.querySelector(`option[value="${voiceId}"]`);
+            return option ? option.textContent : voiceId;
+        }
+
+        function playRecording(index) {
+            const recording = recordings[index];
+            playAudioContent(recording.audioContent);
+            logMessage(`Afspiller: ${recording.filename}`, 'info');
+        }
+
+        function downloadRecording(index) {
+            const recording = recordings[index];
+            const blob = base64ToBlob(recording.audioContent, 'audio/mp3');
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = recording.filename;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            logMessage(`Downloaded: ${recording.filename}`, 'success');
+            
+            document.getElementById('download-indicator').className = 'status-indicator ready';
+        }
+
+        function deleteRecording(index) {
+            if (confirm('Slet denne optagelse?')) {
+                const filename = recordings[index].filename;
+                recordings.splice(index, 1);
+                localStorage.setItem('tts-recordings', JSON.stringify(recordings));
+                populateRecordings();
+                logMessage(`Slettet: ${filename}`, 'info');
+            }
+        }
+
+        function clearAllRecordings() {
+            if (confirm('Slet ALLE optagelser? Dette kan ikke fortrydes.')) {
+                recordings = [];
+                localStorage.removeItem('tts-recordings');
+                populateRecordings();
+                logMessage('Alle optagelser slettet', 'info');
+            }
+        }
+
+        // Utility functions
+        function base64ToBlob(base64, mimeType) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: mimeType });
+        }
+
+        // Logging
+        function logMessage(message, type = 'info') {
+            const logPanel = document.getElementById('log-panel');
+            const timestamp = new Date().toLocaleTimeString('da-DK');
+            const color = type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : '#00ff00';
+            
+            logPanel.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        // Populate script templates
+        function populateScriptTemplates() {
+            const container = document.getElementById('panik-scripts');
+            let html = '';
+            
+            panikScripts.akut.forEach((script, index) => {
+                html += `
+                    <div class="script-template">
+                        <h4>${script.title}</h4>
+                        <p>${script.text.substring(0, 150)}...</p>
+                        <div class="script-controls">
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                                ~${Math.round(script.text.length / 10)} sek | ${script.text.length} tegn
+                            </span>
+                            <button class="btn" onclick="loadScriptToEditor(${index})" style="padding: 4px 12px;">
+                                📝 Load til Editor
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function loadScriptToEditor(index) {
+            const script = panikScripts.akut[index];
+            document.getElementById('script-text').value = script.text;
+            document.getElementById('filename').value = script.title.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, '-')
+                .substring(0, 30);
+            document.getElementById('char-count').textContent = script.text.length;
+            logMessage(`Script loaded: ${script.title}`, 'info');
+        }
+
+        // Batch processing
+        async function batchRecordCategory(category) {
+            if (category !== 'panik') return;
+            
+            const progressBar = document.getElementById('batch-progress');
+            const progressFill = document.getElementById('batch-progress-fill');
+            const statusEl = document.getElementById('batch-status');
+            const scripts = panikScripts.akut;
+            
+            progressBar.style.display = 'block';
+            let completed = 0;
+            
+            for (let i = 0; i < scripts.length; i++) {
+                const script = scripts[i];
+                statusEl.textContent = `Optager ${i + 1} af ${scripts.length}: ${script.title}`;
+                
+                try {
+                    const audioContent = await synthesizeSpeech(script.text, true);
+                    if (audioContent) {
+                        const filename = script.title.toLowerCase()
+                            .replace(/[^a-z0-9\s]/g, '')
+                            .replace(/\s+/g, '-')
+                            .substring(0, 30);
+                            
+                        const recording = {
+                            id: Date.now() + i,
+                            filename: filename + '.mp3',
+                            text: script.text.substring(0, 100) + '...',
+                            voice: document.getElementById('voice-select').value,
+                            speed: document.getElementById('speed-slider').value,
+                            audioContent: audioContent,
+                            timestamp: new Date().toISOString(),
+                            size: Math.round(audioContent.length * 0.75)
+                        };
+                        
+                        recordings.unshift(recording);
+                        completed++;
+                        logMessage(`Batch: ${filename}.mp3 optaget`, 'success');
+                    }
+                } catch (error) {
+                    logMessage(`Batch fejl ved ${script.title}: ${error.message}`, 'error');
+                }
+                
+                // Update progress
+                const progress = ((i + 1) / scripts.length) * 100;
+                progressFill.style.width = progress + '%';
+                
+                // Small delay to prevent API rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            localStorage.setItem('tts-recordings', JSON.stringify(recordings));
+            populateRecordings();
+            
+            statusEl.textContent = `Batch færdig: ${completed} af ${scripts.length} scripts optaget`;
+            progressBar.style.display = 'none';
+            logMessage(`Batch processing færdig: ${completed}/${scripts.length} optaget`, 'success');
+        }
+
+        // Export manifest
+        function exportManifest() {
+            const manifest = recordings.map(r => ({
+                filename: r.filename,
+                text: r.text,
+                voice: r.voice,
+                speed: r.speed,
+                timestamp: r.timestamp,
+                size: r.size
+            }));
+            
+            const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tts-recordings-manifest.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            logMessage('Manifest exporteret', 'success');
+        }
+
+        console.log('🎤 TTS Recording Studio initialiseret');
+        console.log('VIGTIG: Husk at sætte din Google Cloud TTS API nøgle i variablen API_KEY');
+    </script>
+</body>
+</html>
