@@ -1,359 +1,764 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panik Angst - Fuldskærm Video Player</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      overflow: hidden;
-    }
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .start-screen {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      color: #222;
-      z-index: 10;
-    }
-    .start-btn {
-      font-size: 2rem;
-      padding: 2rem 4rem;
-      border-radius: 2rem;
-      border: none;
-      background: #fff;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      cursor: pointer;
-      margin-top: 2rem;
-    }
-    .countdown {
-      font-size: 3rem;
-      margin-bottom: 2rem;
-      color: #222;
-    }
-    .fullscreen-video {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      object-fit: cover;
-      z-index: 1;
-      background: #fff;
-    }
-    .overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.25);
-      z-index: 2;
-      pointer-events: none;
-    }
-    .script-text {
-      position: fixed;
-      bottom: 12vh;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255,255,255,0.85);
-      color: #222;
-      border-radius: 1.5rem;
-      padding: 2rem 2.5rem;
-      font-size: 1.5rem;
-      font-weight: 500;
-      text-align: center;
-      max-width: 90vw;
-      min-width: 320px;
-      z-index: 3;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
-      transition: background 0.3s;
-    }
-    .player-controls {
-      position: fixed;
-      bottom: 4vh;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 2rem;
-      z-index: 4;
-    }
-    .player-btn {
-      background: #fff;
-      color: #222;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 2rem;
-      cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-      transition: background 0.2s;
-    }
-    .player-btn.active {
-      color: #e74c3c;
-    }
-    @media (max-width: 600px) {
-      .script-text { font-size: 1.1rem; padding: 1.2rem 1rem; }
-      .player-btn { width: 44px; height: 44px; font-size: 1.3rem; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panikangst - TrøstMig.dk</title>
+    
+    <!-- VIGTIG: Central TTS konfiguration -->
+    <script src="tts-config.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #dc2626;
+            --accent-hover: #b91c1c;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --crisis-red: #dc2626;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --border: #4a5568;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin-top: 70px; /* For fixed nav */
+        }
+        
+        /* Navigation Header */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            background: var(--bg-primary);
+            color: var(--accent);
+        }
+        
+        .nav-link.crisis {
+            background: var(--accent);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .voice-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+        
+        /* Emergency Notice */
+        .emergency-notice {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            text-align: center;
+            max-width: 1200px;
+        }
+        
+        [data-theme="dark"] .emergency-notice {
+            background: rgba(254, 242, 242, 0.1);
+        }
+        
+        .emergency-notice a {
+            color: #dc2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        /* Main Selection */
+        .main-selection {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Session Display with Video Background */
+        .session-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+        }
+        
+        .session-display.active {
+            display: block;
+        }
+        
+        /* Video Background */
+        .video-background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%) scale(1.02);
+            z-index: -2;
+            filter: brightness(0.3);
+        }
+        
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+            z-index: -1;
+        }
+        
+        /* Content Container */
+        .session-content {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            padding: 40px;
+        }
+        
+        /* Module Indicator */
+        .module-indicator {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .module-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Session Text */
+        .session-text {
+            max-width: 900px;
+            text-align: center;
+            color: white;
+        }
+        
+        .session-title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .session-content-text {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.3s forwards;
+        }
+        
+        /* Choice Modal */
+        .choice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .choice-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .choice-container {
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .choice-question {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .choice-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .choice-letter {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        /* Controls Bar */
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(30px);
+            padding: 20px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .control-btn.primary {
+            background: #ef4444;
+        }
+        
+        .control-btn.primary:hover {
+            background: #dc2626;
+        }
+        
+        .back-to-selection {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .selection-grid { 
+                grid-template-columns: 1fr; 
+            }
+            
+            .session-content-text { 
+                font-size: 1.1rem; 
+            }
+            
+            .choice-container { 
+                padding: 20px; 
+            }
+            
+            .controls-bar { 
+                bottom: 20px;
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Navigation og stemmevælger fra angst.html -->
-  <nav class="nav-header" id="mainNav">
-    <div class="nav-content">
-      <a href="index.html" class="nav-logo">TrøstMig.dk</a>
-      <div class="nav-links">
-        <a href="login.html" class="nav-link primary">Log ind</a>
-        <a href="index.html" class="nav-link">Hovedmenu</a>
-        <a href="Dashboard.html" class="nav-link">Dashboard</a>
-        <a href="playlists.html" class="nav-link">Playlister</a>
-      </div>
-      <div class="nav-user" style="display:none;"></div>
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+            
+            <div class="nav-links">
+                <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
+                <a href="Dashboard.html" class="nav-link">📊 Dashboard</a>
+                <a href="angst.html" class="nav-link">⚡ Angst</a>
+                <a href="depression.html" class="nav-link">🧠 Depression</a>
+            </div>
+            
+            <div class="nav-user">
+                <select class="voice-selector" id="voiceSelector" onchange="changeVoice()">
+                    <option value="0">Charon - Dyb mand</option>
+                    <option value="1">Sulafat - Varm kvinde</option>
+                    <option value="2">Vindemiatrix - Rolig kvinde</option>
+                    <option value="3">Enceladus - Naturlig mand</option>
+                    <option value="4">Erriapus - Blød kvinde</option>
+                </select>
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Emergency Notice -->
+    <div class="emergency-notice">
+        <strong>Akut hjælp:</strong> 
+        Ring <a href="tel:70201201">Livslinjen 70 20 12 01</a> eller 
+        <a href="tel:112">112</a> hvis du er i fare. 
+        Du er ikke alene.
     </div>
-  </nav>
-  <div class="nav-show-indicator" id="navIndicator">Ryk mus for at vise menu</div>
-
-  <div class="start-screen" id="startScreen">
-    <h1>Panik Angst</h1>
-    <div style="margin-top:2rem;">
-      <button class="start-btn" id="startBtn">Start</button>
+    
+    <!-- Main Selection -->
+    <div class="main-selection" id="mainSelection">
+        <div class="selection-header">
+            <h1>Panikangst</h1>
+            <p>Få kontrol tilbage. Du kommer igennem dette.</p>
+        </div>
+        
+        <div class="selection-grid">
+            <div class="selection-card" onclick="showChoiceModal()">
+                <div class="selection-icon">🆘</div>
+                <h2>Akut panik</h2>
+                <p>Stop panikken lige nu. Øjeblikkelig lindring og grounding.</p>
+            </div>
+            
+            <div class="selection-card" onclick="showChoiceModal()">
+                <div class="selection-icon">🧠</div>
+                <h2>Forstå panik</h2>
+                <p>Hvad sker der i din krop? Viden giver kontrol.</p>
+            </div>
+            
+            <div class="selection-card" onclick="showChoiceModal()">
+                <div class="selection-icon">🛠️</div>
+                <h2>Værktøjer</h2>
+                <p>Lær teknikker til at håndtere og forebygge panikangst.</p>
+            </div>
+        </div>
     </div>
-  </div>
-  <video class="fullscreen-video" id="bgVideo" src="din-video.mp4" preload="auto" muted></video>
-  <div class="overlay"></div>
-  <div class="script-text" id="scriptText" style="display:none;"></div>
-  <div class="player-controls" id="playerControls" style="display:none;">
-    <button class="player-btn" id="stopBtn" title="Stop">⏹️</button>
-    <button class="player-btn" id="pauseBtn" title="Pause">⏸️</button>
-    <button class="player-btn" id="favBtn" title="Favorit">⭐</button>
-    <select class="voice-selector" id="voiceSelector" style="min-width:160px;max-width:220px;font-size:1rem;padding:8px 12px;border-radius:12px;background:#fff;color:#222;border:1px solid #eee;outline:none;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-      <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
-      <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
-      <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
-      <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
-      <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
-      <option value="da-DK-Chirp3-HD-Rasalgethi">Mikkel - Mand, neutral</option>
-      <option value="da-DK-Chirp3-HD-Sadachbia">Peter - Mand, rolig</option>
-      <option value="da-DK-Chirp3-HD-Schedar">Thomas - Mand, klassisk</option>
-      <option value="da-DK-Chirp3-HD-Callirrhoe">Line - Kvinde, klar</option>
-      <option value="da-DK-Chirp3-HD-Despina">Camilla - Kvinde, lys</option>
-      <option value="da-DK-Chirp3-HD-Umbriel">Henrik - Mand, kraftfuld</option>
-      <option value="da-DK-Chirp3-HD-Sadaltager">Morten - Mand, seriøs</option>
-      <option value="da-DK-Chirp3-HD-Zephyr">Emma - Kvinde, let</option>
-    </select>
-  </div>
-  <audio id="audioTrack" src="audio1.mp3" preload="auto"></audio>
-  <script src="tts-config.js"></script>
-  <script>
-    // --- Emner/scripts ---
-    const scripts = [
-      {
-        id: 'panik-angst',
-        title: 'Panik Angst',
-        video: 'din-video.mp4',
-        audio: 'audio1.mp3',
-        steps: [
-          "Velkommen til din panik-angst øvelse. Sæt dig godt til rette og træk vejret dybt.",
-          "Fokuser på din vejrtrækning. Mærk hvordan luften fylder dine lunger og forlader dem igen.",
-          "Hvis du mærker panikken, så prøv at acceptere følelsen uden at kæmpe imod.",
-          "Du er ikke alene. Panik-angst er ubehageligt, men det går over igen.",
-          "Når du er klar, kan du åbne øjnene og vende tilbage til din dag."
-        ]
-      },
-      {
-        id: 'ro-og-tryghed',
-        title: 'Ro og Tryghed',
-        video: 'din-video.mp4',
-        audio: 'audio1.mp3',
-        steps: [
-          "Lad os finde ro sammen. Sæt dig godt til rette og luk øjnene.",
-          "Træk vejret ind gennem næsen og ud gennem munden. Mærk roen brede sig.",
-          "Forestil dig et trygt sted, hvor du føler dig sikker og afslappet.",
-          "Bliv i dette øjeblik, så længe du har brug for det."
-        ]
-      }
-    ];
-    let currentScript = scripts[0];
-    let currentStep = 0;
-    let isPaused = false;
-    let ttsUtterance = null;
-    let ttsActive = false;
-    let scriptTimeout = null;
-    const startScreen = document.getElementById('startScreen');
-    const startBtn = document.getElementById('startBtn');
-    const bgVideo = document.getElementById('bgVideo');
-    const scriptText = document.getElementById('scriptText');
-    const playerControls = document.getElementById('playerControls');
-    const stopBtn = document.getElementById('stopBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const favBtn = document.getElementById('favBtn');
-    const audioTrack = document.getElementById('audioTrack');
-    const voiceSelector = document.getElementById('voiceSelector');
-
-    // --- Favorit system (fælles localStorage) ---
-    function getFavorites() {
-      return JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
-    }
-    function setFavorite(id) {
-      let favs = getFavorites();
-      if (!favs.includes(id)) favs.push(id);
-      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
-      favBtn.classList.add('active');
-    }
-    function removeFavorite(id) {
-      let favs = getFavorites();
-      favs = favs.filter(f => f !== id);
-      localStorage.setItem('trostmig_favorites', JSON.stringify(favs));
-      favBtn.classList.remove('active');
-    }
-    function updateFavBtn() {
-      const favs = getFavorites();
-      favBtn.classList.toggle('active', favs.includes(currentScript.id));
-    }
-    favBtn.onclick = () => {
-      const favs = getFavorites();
-      if (favs.includes(currentScript.id)) removeFavorite(currentScript.id);
-      else setFavorite(currentScript.id);
-    };
-
-    // --- Fuldskærm og start flow ---
-    startBtn.onclick = async () => {
-      if (document.documentElement.requestFullscreen) {
-        try { await document.documentElement.requestFullscreen(); } catch(e){}
-      }
-      startScreen.style.display = 'none';
-      countdownAndStart();
-    };
-    function countdownAndStart() {
-      const cd = document.createElement('div');
-      cd.className = 'countdown';
-      cd.textContent = '3';
-      startScreen.parentNode.appendChild(cd);
-      let count = 3;
-      const interval = setInterval(() => {
-        count--;
-        if (count > 0) cd.textContent = count;
-        else {
-          clearInterval(interval);
-          cd.remove();
-          startPlayer();
+    
+    <!-- Session Display -->
+    <div class="session-display" id="sessionDisplay">
+        <!-- Video Background -->
+        <video class="video-background" autoplay muted loop playsinline>
+            <source src="https://cdn.pixabay.com/vimeo/328940142/nature-24930.mp4" type="video/mp4">
+            <!-- Fallback video URL - erstat med din egen -->
+        </video>
+        <div class="video-overlay"></div>
+        
+        <!-- Session Content -->
+        <div class="session-content">
+            <!-- Module Indicator -->
+            <div class="module-indicator" id="moduleIndicator">
+                Afspiller...
+            </div>
+            
+            <!-- Text Display -->
+            <div class="session-text">
+                <h2 class="session-title" id="sessionTitle">Psykologens Ord</h2>
+                <div class="session-content-text" id="sessionText">
+                    Lytter...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls-bar">
+            <button class="control-btn primary" onclick="togglePlay()" id="playBtn">⏸</button>
+            <span id="progressIndicator" style="color: white; font-size: 0.9rem;">Afspiller...</span>
+            <button class="back-to-selection" onclick="backToSelection()">← Tilbage</button>
+        </div>
+    </div>
+    
+    <!-- Choice Modal -->
+    <div class="choice-modal" id="choiceModal">
+        <div class="choice-container">
+            <h3 class="choice-question" id="choiceQuestion">Hvad oplever du mest lige nu?</h3>
+            <div class="choice-options" id="choiceOptions">
+                <button class="choice-btn" onclick="playPsychologistAudio('hjerte')">
+                    <span class="choice-letter">A</span>
+                    <span>Mit hjerte banker vildt</span>
+                </button>
+                <button class="choice-btn" onclick="playPsychologistAudio('aande')">
+                    <span class="choice-letter">B</span>
+                    <span>Jeg kan ikke få luft</span>
+                </button>
+                <button class="choice-btn" onclick="playPsychologistAudio('uvirkeligt')">
+                    <span class="choice-letter">C</span>
+                    <span>Alt føles uvirkeligt</span>
+                </button>
+                <button class="choice-btn" onclick="playPsychologistAudio('dodsangst')">
+                    <span class="choice-letter">D</span>
+                    <span>Jeg tror jeg dør</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio element -->
+    <audio id="audioPlayer" preload="auto"></audio>
+    
+    <script>
+        // Audio configuration
+        const audioFiles = {
+            hjerte: [
+                'audio/psyk_hjerte_1.mp3',
+                'audio/psyk_hjerte_2.mp3',
+                'audio/psyk_hjerte_3.mp3',
+                'audio/psyk_hjerte_4.mp3'
+            ],
+            aande: [
+                'audio/psyk_aande_1.mp3',
+                'audio/psyk_aande_2.mp3',
+                'audio/psyk_aande_3.mp3',
+                'audio/psyk_aande_4.mp3'
+            ],
+            uvirkeligt: [
+                'audio/psyk_derealisering_1.mp3',
+                'audio/psyk_derealisering_2.mp3',
+                'audio/psyk_derealisering_3.mp3',
+                'audio/psyk_derealisering_4.mp3'
+            ],
+            dodsangst: [
+                'audio/psyk_dodsangst_1.mp3',
+                'audio/psyk_dodsangst_2.mp3',
+                'audio/psyk_dodsangst_3.mp3',
+                'audio/psyk_dodsangst_4.mp3'
+            ]
+        };
+        
+        let currentAudio = null;
+        let isPlaying = false;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+        });
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
         }
-      }, 1000);
-    }
-
-    // --- Player logic ---
-    function startPlayer() {
-      bgVideo.src = currentScript.video;
-      audioTrack.src = currentScript.audio;
-      bgVideo.currentTime = 0;
-      audioTrack.currentTime = 0;
-      bgVideo.play();
-      audioTrack.play();
-      scriptText.style.display = 'block';
-      playerControls.style.display = 'flex';
-      currentStep = 0;
-      showStep(currentStep);
-      updateFavBtn();
-    }
-    function showStep(idx) {
-      scriptText.textContent = currentScript.steps[idx];
-      playTTS(currentScript.steps[idx]);
-      // Auto-advance hvis ikke paused
-      if (scriptTimeout) clearTimeout(scriptTimeout);
-      if (!isPaused && idx < currentScript.steps.length - 1) {
-        scriptTimeout = setTimeout(() => {
-          if (!isPaused) {
-            currentStep++;
-            showStep(currentStep);
-          }
-        }, 6000);
-      }
-    }
-    function playTTS(text) {
-      stopTTS();
-      ttsUtterance = new SpeechSynthesisUtterance(text);
-      ttsUtterance.lang = 'da-DK';
-      ttsUtterance.voice = Array.from(window.speechSynthesis.getVoices()).find(v => v.name === voiceSelector.value) || null;
-      ttsActive = true;
-      window.speechSynthesis.speak(ttsUtterance);
-      ttsUtterance.onend = () => { ttsActive = false; };
-    }
-    function stopTTS() {
-      window.speechSynthesis.cancel();
-      ttsUtterance = null;
-      ttsActive = false;
-    }
-
-    // --- Controls ---
-    stopBtn.onclick = () => {
-      stopAll();
-      if (document.fullscreenElement) document.exitFullscreen();
-      startScreen.style.display = 'flex';
-      scriptText.style.display = 'none';
-      playerControls.style.display = 'none';
-    };
-    pauseBtn.onclick = () => {
-      if (!isPaused) {
-        bgVideo.pause();
-        audioTrack.pause();
-        window.speechSynthesis.pause();
-        pauseBtn.textContent = '▶️';
-        isPaused = true;
-        if (scriptTimeout) clearTimeout(scriptTimeout);
-      } else {
-        bgVideo.play();
-        audioTrack.play();
-        window.speechSynthesis.resume();
-        pauseBtn.textContent = '⏸️';
-        isPaused = false;
-        showStep(currentStep);
-      }
-    };
-    voiceSelector.onchange = () => {
-      localStorage.setItem('preferredVoice', voiceSelector.value);
-      playTTS(currentScript.steps[currentStep]);
-    };
-
-    // --- Skift emne (eksempel: klik på titel for at skifte) ---
-    scriptText.onclick = () => {
-      // Skift emne for demo (kun 2 emner)
-      currentScript = currentScript.id === 'panik-angst' ? scripts[1] : scripts[0];
-      startPlayer();
-    };
-
-    // --- Stop alt hvis man forlader siden/emnet ---
-    function stopAll() {
-      bgVideo.pause();
-      audioTrack.pause();
-      stopTTS();
-      isPaused = false;
-      if (scriptTimeout) clearTimeout(scriptTimeout);
-      pauseBtn.textContent = '⏸️';
-    }
-    window.addEventListener('beforeunload', stopAll);
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) stopAll();
-    });
-
-    // --- Favorit-knap init og stemmevalg init ---
-    document.addEventListener('DOMContentLoaded', function() {
-      const savedVoice = localStorage.getItem('preferredVoice');
-      if (savedVoice) voiceSelector.value = savedVoice;
-      updateFavBtn();
-    });
-  </script>
+        
+        function changeVoice() {
+            const selector = document.getElementById('voiceSelector');
+            const voiceIndex = parseInt(selector.value);
+            if (window.TrøstMigTTS) {
+                window.TrøstMigTTS.setVoice(voiceIndex);
+            }
+        }
+        
+        function showChoiceModal() {
+            document.getElementById('choiceModal').classList.add('active');
+        }
+        
+        function playPsychologistAudio(type) {
+            // Close modal
+            document.getElementById('choiceModal').classList.remove('active');
+            
+            // Hide main selection
+            document.getElementById('mainSelection').style.display = 'none';
+            
+            // Show session display
+            document.getElementById('sessionDisplay').classList.add('active');
+            
+            // Choose random version (1-4)
+            const randomVersion = Math.floor(Math.random() * 4);
+            const audioFile = audioFiles[type][randomVersion];
+            
+            // Update UI
+            const typeNames = {
+                hjerte: 'Hjertesymptomer',
+                aande: 'Åndedræt',
+                uvirkeligt: 'Uvirkelighedsfølelse',
+                dodsangst: 'Dødsangst'
+            };
+            
+            document.getElementById('moduleIndicator').textContent = typeNames[type];
+            document.getElementById('sessionTitle').textContent = 'Psykologens forklaring';
+            document.getElementById('sessionText').textContent = `Version ${randomVersion + 1} af 4`;
+            
+            // Play audio
+            const audio = document.getElementById('audioPlayer');
+            audio.src = audioFile;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+                console.log('Afspiller:', audioFile);
+            }).catch(error => {
+                console.error('Fejl ved afspilning:', error);
+                document.getElementById('sessionText').textContent = 'Fejl ved afspilning. Prøv igen.';
+            });
+            
+            // Handle audio end
+            audio.onended = () => {
+                document.getElementById('sessionText').textContent = 'Afsluttet. Du klarede det godt.';
+                document.getElementById('playBtn').textContent = '▶';
+                isPlaying = false;
+            };
+            
+            currentAudio = audio;
+        }
+        
+        function togglePlay() {
+            if (!currentAudio) return;
+            
+            if (isPlaying) {
+                currentAudio.pause();
+                document.getElementById('playBtn').textContent = '▶';
+                isPlaying = false;
+            } else {
+                currentAudio.play();
+                document.getElementById('playBtn').textContent = '⏸';
+                isPlaying = true;
+            }
+        }
+        
+        function backToSelection() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            
+            document.getElementById('sessionDisplay').classList.remove('active');
+            document.getElementById('mainSelection').style.display = 'block';
+            document.getElementById('choiceModal').classList.remove('active');
+            isPlaying = false;
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('sessionDisplay').classList.contains('active')) return;
+            
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'Escape':
+                    backToSelection();
+                    break;
+            }
+        });
+    </script>
 </body>
 </html>
