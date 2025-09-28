@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simpel TTS Batch Recorder</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            background: #4a90e2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-add {
+            background: #10b981;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+        }
+
+        .btn-run {
+            background: #f59e0b;
+        }
+
+        .btn-run:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .queue-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .queue-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .queue-item.processing {
+            border-left-color: #f59e0b;
+            background: #fef3c7;
+        }
+
+        .queue-item.completed {
+            border-left-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .queue-item.error {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .item-status {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e5e5;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a90e2, #10b981);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-success {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-info {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .empty-queue {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .download-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎤 Simpel TTS Batch Recorder</h1>
+
+    <!-- Input Section -->
+    <div class="input-section">
+        <h2>Tilføj ny lydfil:</h2>
+        
+        <div class="form-group">
+            <label for="filename">Filnavn (uden .mp3):</label>
+            <input type="text" id="filename" placeholder="f.eks: panik_stop_nu">
+        </div>
+
+        <div class="form-group">
+            <label for="text">Tekst:</label>
+            <textarea id="text" placeholder="Indtast den tekst der skal læses op..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="voice">Stemme:</label>
+            <select id="voice">
+                <option value="da-DK-Chirp3-HD-Vindemiatrix">Maria - Kvinde, rolig</option>
+                <option value="da-DK-Chirp3-HD-Sulafat">Anna - Kvinde, varm</option>
+                <option value="da-DK-Chirp3-HD-Erriapus">Sofie - Kvinde, blød</option>
+                <option value="da-DK-Chirp3-HD-Charon">Simon - Mand, rolig</option>
+                <option value="da-DK-Chirp3-HD-Enceladus">Lars - Mand, naturlig</option>
+            </select>
+        </div>
+
+        <div>
+            <button class="btn-add" onclick="addToQueue()">➕ Tilføj til kø</button>
+            <button onclick="clearInputs()">🔄 Ryd felter</button>
+        </div>
+    </div>
+
+    <!-- Queue Section -->
+    <div class="queue-section">
+        <div class="queue-header">
+            <h2>Kø (<span id="queue-count">0</span> filer)</h2>
+            <div>
+                <button class="btn-run" onclick="startBatch()" id="start-btn">
+                    ▶️ Kør Batch
+                </button>
+                <button class="btn-danger" onclick="clearQueue()">🗑️ Ryd kø</button>
+            </div>
+        </div>
+
+        <div class="progress-bar" id="progress-container" style="display: none;">
+            <div class="progress-fill" id="progress-fill">
+                <span id="progress-text">0%</span>
+            </div>
+        </div>
+
+        <div id="status-message"></div>
+
+        <div id="queue-list">
+            <div class="empty-queue">
+                Ingen filer i køen. Tilføj nogle filer ovenfor!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // VIGTIG: Indsæt din egen API nøgle her!
+ const API_KEY = 'AIzaSyCKQO9FZXRtRtv6k_XymPXHJHp7hrvjEqk';        
+        let queue = [];
+        let isProcessing = false;
+
+        // Tilføj til kø
+        function addToQueue() {
+            const filename = document.getElementById('filename').value.trim();
+            const text = document.getElementById('text').value.trim();
+            const voice = document.getElementById('voice').value;
+
+            if (!filename) {
+                alert('Indtast filnavn!');
+                return;
+            }
+
+            if (!text) {
+                alert('Indtast tekst!');
+                return;
+            }
+
+            // Tilføj til kø
+            queue.push({
+                id: Date.now(),
+                filename: filename.replace(/[^a-z0-9_-]/gi, '_'),
+                text: text,
+                voice: voice,
+                status: 'waiting'
+            });
+
+            clearInputs();
+            updateQueueDisplay();
+            showStatus('Fil tilføjet til kø!', 'success');
+        }
+
+        // Ryd input felter
+        function clearInputs() {
+            document.getElementById('filename').value = '';
+            document.getElementById('text').value = '';
+        }
+
+        // Opdater kø visning
+        function updateQueueDisplay() {
+            const queueList = document.getElementById('queue-list');
+            const queueCount = document.getElementById('queue-count');
+            
+            queueCount.textContent = queue.length;
+
+            if (queue.length === 0) {
+                queueList.innerHTML = '<div class="empty-queue">Ingen filer i køen. Tilføj nogle filer ovenfor!</div>';
+                return;
+            }
+
+            let html = '';
+            queue.forEach((item, index) => {
+                const statusText = item.status === 'waiting' ? '⏸️ Venter' :
+                                  item.status === 'processing' ? '⚡ Optager...' :
+                                  item.status === 'completed' ? '✅ Færdig' :
+                                  item.status === 'error' ? '❌ Fejl' : '';
+
+                const textPreview = item.text.substring(0, 60) + (item.text.length > 60 ? '...' : '');
+
+                html += `
+                    <div class="queue-item ${item.status}">
+                        <div class="item-info">
+                            <div class="item-title">${item.filename}.mp3</div>
+                            <div class="item-text">"${textPreview}"</div>
+                        </div>
+                        <div class="item-status">
+                            ${statusText}
+                            ${item.status === 'completed' && item.audioData ? 
+                                `<button class="download-btn" onclick="downloadFile(${index})">📥 Download</button>` : 
+                                ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            queueList.innerHTML = html;
+        }
+
+        // Start batch processing
+        async function startBatch() {
+            if (queue.length === 0) {
+                alert('Køen er tom! Tilføj nogle filer først.');
+                return;
+            }
+
+            if (isProcessing) {
+                alert('Batch kører allerede!');
+                return;
+            }
+
+            if (API_KEY === 'DIN_GOOGLE_CLOUD_TTS_API_KEY_HER') {
+                alert('Du skal først indtaste din Google Cloud TTS API nøgle i koden!');
+                return;
+            }
+
+            isProcessing = true;
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('progress-container').style.display = 'block';
+            
+            let completed = 0;
+
+            for (let i = 0; i < queue.length; i++) {
+                const item = queue[i];
+                
+                if (item.status === 'completed') {
+                    completed++;
+                    continue;
+                }
+
+                item.status = 'processing';
+                updateQueueDisplay();
+                showStatus(`Optager ${item.filename}.mp3...`, 'info');
+
+                try {
+                    // Kald Google TTS API
+                    const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            input: { text: item.text },
+                            voice: {
+                                languageCode: 'da-DK',
+                                name: item.voice
+                            },
+                            audioConfig: {
+                                audioEncoding: 'MP3',
+                                speakingRate: 0.9
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API fejl: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    item.audioData = data.audioContent;
+                    item.status = 'completed';
+                    completed++;
+
+                } catch (error) {
+                    console.error('Fejl:', error);
+                    item.status = 'error';
+                    item.error = error.message;
+                }
+
+                updateQueueDisplay();
+                updateProgress(completed, queue.length);
+
+                // Vent lidt mellem hver request (rate limiting)
+                if (i < queue.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+
+            isProcessing = false;
+            document.getElementById('start-btn').disabled = false;
+            
+            const successCount = queue.filter(item => item.status === 'completed').length;
+            const errorCount = queue.filter(item => item.status === 'error').length;
+            
+            showStatus(`Batch færdig! ${successCount} succes, ${errorCount} fejl`, 
+                      errorCount > 0 ? 'error' : 'success');
+
+            // Tilbyd at downloade alle
+            if (successCount > 0) {
+                if (confirm(`${successCount} filer er klar. Vil du downloade dem alle nu?`)) {
+                    downloadAll();
+                }
+            }
+        }
+
+        // Download enkelt fil
+        function downloadFile(index) {
+            const item = queue[index];
+            if (!item.audioData) return;
+
+            const blob = base64ToBlob(item.audioData, 'audio/mp3');
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = item.filename + '.mp3';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // Download alle færdige filer
+        function downloadAll() {
+            queue.forEach((item, index) => {
+                if (item.status === 'completed' && item.audioData) {
+                    setTimeout(() => downloadFile(index), index * 200);
+                }
+            });
+        }
+
+        // Opdater progress bar
+        function updateProgress(completed, total) {
+            const percent = Math.round((completed / total) * 100);
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            
+            progressFill.style.width = percent + '%';
+            progressText.textContent = `${percent}% (${completed}/${total})`;
+        }
+
+        // Vis status besked
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.className = 'status-message status-' + type;
+            statusEl.textContent = message;
+            
+            setTimeout(() => {
+                statusEl.textContent = '';
+                statusEl.className = '';
+            }, 3000);
+        }
+
+        // Ryd kø
+        function clearQueue() {
+            if (isProcessing) {
+                alert('Kan ikke rydde kø mens batch kører!');
+                return;
+            }
+
+            if (confirm('Vil du slette alle filer i køen?')) {
+                queue = [];
+                updateQueueDisplay();
+                document.getElementById('progress-container').style.display = 'none';
+                showStatus('Kø ryddet', 'info');
+            }
+        }
+
+        // Base64 til Blob
+        function base64ToBlob(base64, mimeType) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: mimeType });
+        }
+
+        // Initial check
+        if (API_KEY === 'DIN_GOOGLE_CLOUD_TTS_API_KEY_HER') {
+            showStatus('⚠️ Husk at indtaste din Google Cloud TTS API nøgle i koden!', 'error');
+        }
+    </script>
+</body>
+</html>

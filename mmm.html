@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avanceret TTS Studio - Med SSML Support</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #e5e7eb;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-add {
+            background: #10b981;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .voice-option {
+            padding: 12px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .voice-option:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .voice-option.selected {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-color: #667eea;
+        }
+
+        .voice-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .voice-desc {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .queue-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .queue-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .queue-item.processing {
+            border-left-color: #f59e0b;
+            background: #fef3c7;
+        }
+
+        .queue-item.completed {
+            border-left-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .queue-item.error {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .example-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .example-box h4 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+
+        .example-box pre {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .breathing-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .breathing-preset {
+            padding: 10px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .breathing-preset:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .breathing-preset.selected {
+            background: #ede9fe;
+            border-color: #667eea;
+        }
+
+        .multi-speaker-config {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .speaker-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 200px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .info-alert {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-alert h3 {
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .processing-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #f59e0b;
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Avanceret TTS Studio</h1>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('simple')">📝 Simpel TTS</button>
+            <button class="tab" onclick="switchTab('breathing')">🫁 Åndedrætsøvelser</button>
+            <button class="tab" onclick="switchTab('dialogue')">👥 Dialog (Multi-speaker)</button>
+            <button class="tab" onclick="switchTab('advanced')">🔧 Avanceret SSML</button>
+        </div>
+
+        <!-- Simple TTS Tab -->
+        <div id="simple-tab" class="tab-content active">
+            <div class="input-section">
+                <h2>Simpel TTS Optagelse</h2>
+                
+                <div class="form-group">
+                    <label for="simple-filename">Filnavn (uden .mp3):</label>
+                    <input type="text" id="simple-filename" placeholder="f.eks: panik_stop_nu">
+                </div>
+
+                <div class="form-group">
+                    <label for="simple-text">Tekst:</label>
+                    <textarea id="simple-text" placeholder="Indtast den tekst der skal læses op..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Vælg Stemme:</label>
+                    <div class="voice-grid">
+                        <div class="voice-option selected" data-voice="da-DK-Chirp3-HD-Vindemiatrix">
+                            <div class="voice-name">Maria</div>
+                            <div class="voice-desc">Kvinde, rolig</div>
+                        </div>
+                        <div class="voice-option" data-voice="da-DK-Chirp3-HD-Sulafat">
+                            <div class="voice-name">Anna</div>
+                            <div class="voice-desc">Kvinde, varm</div>
+                        </div>
+                        <div class="voice-option" data-voice="da-DK-Chirp3-HD-Erriapus">
+                            <div class="voice-name">Sofie</div>
+                            <div class="voice-desc">Kvinde, blød</div>
+                        </div>
+                        <div class="voice-option" data-voice="da-DK-Chirp3-HD-Charon">
+                            <div class="voice-name">Simon</div>
+                            <div class="voice-desc">Mand, rolig</div>
+                        </div>
+                        <div class="voice-option" data-voice="da-DK-Standard-C">
+                            <div class="voice-name">Standard C</div>
+                            <div class="voice-desc">Mand, neutral</div>
+                        </div>
+                        <div class="voice-option" data-voice="da-DK-Standard-D">
+                            <div class="voice-name">Standard D</div>
+                            <div class="voice-desc">Kvinde, klar</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-add" onclick="addSimpleToQueue()">➕ Tilføj til kø</button>
+                <button class="btn-secondary" onclick="clearSimpleInputs()">🔄 Ryd felter</button>
+            </div>
+        </div>
+
+        <!-- Breathing Exercises Tab -->
+        <div id="breathing-tab" class="tab-content">
+            <div class="input-section">
+                <h2>🫁 Åndedrætsøvelser</h2>
+                
+                <div class="info-alert">
+                    <h3>Guide til åndedrætsøvelser:</h3>
+                    <p>Vælg en skabelon nedenfor eller design din egen. Systemet indsætter automatisk pauser mellem tællinger.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="breathing-filename">Filnavn:</label>
+                    <input type="text" id="breathing-filename" placeholder="f.eks: 4-7-8-breathing">
+                </div>
+
+                <div class="form-group">
+                    <label>Vælg øvelse:</label>
+                    <div class="breathing-controls">
+                        <div class="breathing-preset" onclick="loadBreathingPreset('4-7-8')">
+                            <strong>4-7-8</strong><br>
+                            <small>Beroligende</small>
+                        </div>
+                        <div class="breathing-preset" onclick="loadBreathingPreset('box')">
+                            <strong>Box Breathing</strong><br>
+                            <small>4-4-4-4</small>
+                        </div>
+                        <div class="breathing-preset" onclick="loadBreathingPreset('calm')">
+                            <strong>Rolig</strong><br>
+                            <small>5-5</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="breathing-text">SSML Script (med pauser):</label>
+                    <textarea id="breathing-text" rows="10" placeholder="SSML kode genereres automatisk..."></textarea>
+                </div>
+
+                <button class="btn-add" onclick="addBreathingToQueue()">➕ Tilføj åndedrætsøvelse</button>
+            </div>
+        </div>
+
+        <!-- Dialogue Tab -->
+        <div id="dialogue-tab" class="tab-content">
+            <div class="input-section">
+                <h2>👥 Multi-Speaker Dialog</h2>
+                
+                <div class="info-alert">
+                    <h3>OBS: Eksperimentel Feature</h3>
+                    <p>Multi-speaker er en ny feature i Google Cloud TTS. Den understøtter kun engelske stemmer (en-US-Studio-MultiSpeaker).</p>
+                    <p>For danske dialoger: Optag hver karakter separat og kombiner i et lydprogram.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="dialogue-filename">Filnavn:</label>
+                    <input type="text" id="dialogue-filename" placeholder="f.eks: terapi_dialog">
+                </div>
+
+                <div class="multi-speaker-config">
+                    <h4>Dialog Opsætning:</h4>
+                    <div class="speaker-row">
+                        <label>Person A:</label>
+                        <input type="text" id="speaker-a-name" placeholder="Navn (f.eks: Terapeut)" value="Terapeut">
+                        <select id="speaker-a-voice">
+                            <option value="R">R - Rolig kvinde</option>
+                            <option value="S">S - Energisk mand</option>
+                        </select>
+                    </div>
+                    <div class="speaker-row">
+                        <label>Person B:</label>
+                        <input type="text" id="speaker-b-name" placeholder="Navn (f.eks: Klient)" value="Klient">
+                        <select id="speaker-b-voice">
+                            <option value="S">S - Energisk mand</option>
+                            <option value="R">R - Rolig kvinde</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dialogue-text">Dialog (format: "Navn: Tekst" på hver linje):</label>
+                    <textarea id="dialogue-text" rows="10" placeholder="Terapeut: Hvordan har du det i dag?
+Klient: Jeg har det faktisk meget bedre...
+Terapeut: Det er dejligt at høre!"></textarea>
+                </div>
+
+                <button class="btn-add" onclick="addDialogueToQueue()">➕ Tilføj dialog</button>
+            </div>
+        </div>
+
+        <!-- Advanced SSML Tab -->
+        <div id="advanced-tab" class="tab-content">
+            <div class="input-section">
+                <h2>🔧 Avanceret SSML</h2>
+                
+                <div class="example-box">
+                    <h4>SSML Eksempler:</h4>
+                    <pre>&lt;speak&gt;
+  &lt;s&gt;Tag en dyb indånding.&lt;/s&gt;
+  &lt;break time="3s"/&gt;
+  &lt;s&gt;Hold vejret.&lt;/s&gt;
+  &lt;break time="4s"/&gt;
+  &lt;s&gt;Pust langsomt ud.&lt;/s&gt;
+  &lt;prosody rate="slow"&gt;Meget langsomt&lt;/prosody&gt;
+  &lt;emphasis level="strong"&gt;Vigtigt!&lt;/emphasis&gt;
+&lt;/speak&gt;</pre>
+                </div>
+
+                <div class="form-group">
+                    <label for="ssml-filename">Filnavn:</label>
+                    <input type="text" id="ssml-filename" placeholder="f.eks: advanced_meditation">
+                </div>
+
+                <div class="form-group">
+                    <label for="ssml-text">SSML Kode:</label>
+                    <textarea id="ssml-text" rows="15" placeholder="&lt;speak&gt;
+  Din SSML kode her...
+&lt;/speak&gt;"></textarea>
+                </div>
+
+                <button class="btn-add" onclick="addSSMLToQueue()">➕ Tilføj SSML</button>
+            </div>
+        </div>
+
+        <!-- Queue Section -->
+        <div class="queue-section">
+            <div class="queue-header">
+                <h2>📋 Kø (<span id="queue-count">0</span> filer)</h2>
+                <div>
+                    <button onclick="startBatch()" id="start-btn">▶️ Start Batch</button>
+                    <button class="btn-danger" onclick="clearQueue()">🗑️ Ryd kø</button>
+                </div>
+            </div>
+
+            <div class="progress-bar" id="progress-container" style="display: none;">
+                <div class="progress-fill" id="progress-fill">
+                    <span id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <div id="queue-list">
+                <p style="text-align: center; color: #6b7280; padding: 40px;">
+                    Ingen filer i køen. Tilføj nogle filer fra fanerne ovenfor!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // VIGTIG: Indsæt din API nøgle her
+                      const API_KEY = 'AIzaSyCKQO9FZXRtRtv6k_XymPXHJHp7hrvjEqk';        
+        let queue = [];
+        let isProcessing = false;
+        let selectedVoice = 'da-DK-Chirp3-HD-Vindemiatrix';
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + '-tab').classList.add('active');
+        }
+
+        // Voice selection
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.voice-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.voice-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedVoice = this.dataset.voice;
+                });
+            });
+        });
+
+        // Simple TTS
+        function addSimpleToQueue() {
+            const filename = document.getElementById('simple-filename').value.trim();
+            const text = document.getElementById('simple-text').value.trim();
+
+            if (!filename || !text) {
+                alert('Udfyld både filnavn og tekst!');
+                return;
+            }
+
+            queue.push({
+                id: Date.now(),
+                type: 'simple',
+                filename: filename.replace(/[^a-z0-9_-]/gi, '_'),
+                text: text,
+                voice: selectedVoice,
+                status: 'waiting'
+            });
+
+            clearSimpleInputs();
+            updateQueueDisplay();
+        }
+
+        function clearSimpleInputs() {
+            document.getElementById('simple-filename').value = '';
+            document.getElementById('simple-text').value = '';
+        }
+
+        // Breathing exercises
+        function loadBreathingPreset(type) {
+            const filename = document.getElementById('breathing-filename');
+            const text = document.getElementById('breathing-text');
+
+            switch(type) {
+                case '4-7-8':
+                    filename.value = 'breathing_4-7-8';
+                    text.value = `<speak>
+  <s>Velkommen til 4-7-8 åndedrætsøvelsen.</s>
+  <break time="2s"/>
+  
+  <s>Lad os starte.</s>
+  <break time="1s"/>
+  
+  <s>Træk vejret ind gennem næsen i 4 sekunder.</s>
+  <break time="1s"/>
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  
+  <s>Hold vejret i 7 sekunder.</s>
+  <break time="1s"/>
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  <s>5</s><break time="1s"/>
+  <s>6</s><break time="1s"/>
+  <s>7</s><break time="1s"/>
+  
+  <s>Pust ud gennem munden i 8 sekunder.</s>
+  <break time="1s"/>
+  <prosody rate="slow">
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  <s>5</s><break time="1s"/>
+  <s>6</s><break time="1s"/>
+  <s>7</s><break time="1s"/>
+  <s>8</s>
+  </prosody>
+  
+  <break time="2s"/>
+  <s>Godt gået. Gentag øvelsen efter behov.</s>
+</speak>`;
+                    break;
+                    
+                case 'box':
+                    filename.value = 'box_breathing';
+                    text.value = `<speak>
+  <s>Box breathing øvelse.</s>
+  <break time="2s"/>
+  
+  <s>Ind i 4.</s>
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  
+  <s>Hold i 4.</s>
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  
+  <s>Ud i 4.</s>
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  
+  <s>Hold i 4.</s>
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="2s"/>
+  
+  <s>Perfekt. Fortsæt i dit eget tempo.</s>
+</speak>`;
+                    break;
+                    
+                case 'calm':
+                    filename.value = 'calm_breathing';
+                    text.value = `<speak>
+  <s>Simpel beroligende vejrtrækning.</s>
+  <break time="2s"/>
+  
+  <s>Træk vejret dybt ind.</s>
+  <prosody rate="slow">
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  <s>5</s>
+  </prosody>
+  
+  <break time="1s"/>
+  
+  <s>Og pust roligt ud.</s>
+  <prosody rate="slow">
+  <s>1</s><break time="1s"/>
+  <s>2</s><break time="1s"/>
+  <s>3</s><break time="1s"/>
+  <s>4</s><break time="1s"/>
+  <s>5</s>
+  </prosody>
+  
+  <break time="2s"/>
+  <s>Fortsæt i dit eget tempo.</s>
+</speak>`;
+                    break;
+            }
+        }
+
+        function addBreathingToQueue() {
+            const filename = document.getElementById('breathing-filename').value.trim();
+            const ssml = document.getElementById('breathing-text').value.trim();
+
+            if (!filename || !ssml) {
+                alert('Udfyld både filnavn og SSML tekst!');
+                return;
+            }
+
+            queue.push({
+                id: Date.now(),
+                type: 'ssml',
+                filename: filename.replace(/[^a-z0-9_-]/gi, '_'),
+                ssml: ssml,
+                voice: selectedVoice,
+                status: 'waiting'
+            });
+
+            document.getElementById('breathing-filename').value = '';
+            document.getElementById('breathing-text').value = '';
+            updateQueueDisplay();
+        }
+
+        // Dialogue (Multi-speaker)
+        function addDialogueToQueue() {
+            const filename = document.getElementById('dialogue-filename').value.trim();
+            const dialogueText = document.getElementById('dialogue-text').value.trim();
+
+            if (!filename || !dialogueText) {
+                alert('Udfyld både filnavn og dialog!');
+                return;
+            }
+
+            // Parse dialogue
+            const lines = dialogueText.split('\n');
+            const turns = [];
+            
+            lines.forEach(line => {
+                const match = line.match(/^(.+?):\s*(.+)$/);
+                if (match) {
+                    const speaker = match[1].trim();
+                    const text = match[2].trim();
+                    turns.push({ speaker, text });
+                }
+            });
+
+            if (turns.length === 0) {
+                alert('Ingen gyldig dialog fundet. Brug formatet "Navn: Tekst"');
+                return;
+            }
+
+            // Note: Multi-speaker er eksperimentel og kræver speciel håndtering
+            queue.push({
+                id: Date.now(),
+                type: 'dialogue',
+                filename: filename.replace(/[^a-z0-9_-]/gi, '_'),
+                turns: turns,
+                voice: 'en-US-Studio-MultiSpeaker',
+                status: 'waiting'
+            });
+
+            document.getElementById('dialogue-filename').value = '';
+            document.getElementById('dialogue-text').value = '';
+            updateQueueDisplay();
+        }
+
+        // Advanced SSML
+        function addSSMLToQueue() {
+            const filename = document.getElementById('ssml-filename').value.trim();
+            const ssml = document.getElementById('ssml-text').value.trim();
+
+            if (!filename || !ssml) {
+                alert('Udfyld både filnavn og SSML!');
+                return;
+            }
+
+            queue.push({
+                id: Date.now(),
+                type: 'ssml',
+                filename: filename.replace(/[^a-z0-9_-]/gi, '_'),
+                ssml: ssml,
+                voice: selectedVoice,
+                status: 'waiting'
+            });
+
+            document.getElementById('ssml-filename').value = '';
+            document.getElementById('ssml-text').value = '';
+            updateQueueDisplay();
+        }
+
+        // Queue management
+        function updateQueueDisplay() {
+            const queueList = document.getElementById('queue-list');
+            const queueCount = document.getElementById('queue-count');
+            
+            queueCount.textContent = queue.length;
+
+            if (queue.length === 0) {
+                queueList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">Ingen filer i køen. Tilføj nogle filer fra fanerne ovenfor!</p>';
+                return;
+            }
+
+            let html = '';
+            queue.forEach((item, index) => {
+                const statusIcon = item.status === 'waiting' ? '⏸️' :
+                                  item.status === 'processing' ? '⚡' :
+                                  item.status === 'completed' ? '✅' : '❌';
+
+                const typeLabel = item.type === 'dialogue' ? '👥 Dialog' :
+                                 item.type === 'ssml' ? '🔧 SSML' : '📝 Tekst';
+
+                html += `
+                    <div class="queue-item ${item.status}">
+                        <div>
+                            <strong>${statusIcon} ${item.filename}.mp3</strong><br>
+                            <small>${typeLabel} | Stemme: ${item.voice}</small>
+                        </div>
+                        <div>
+                            ${item.status === 'completed' && item.audioData ? 
+                                `<button onclick="downloadFile(${index})" style="padding: 6px 12px; font-size: 14px;">📥 Download</button>` : 
+                                ''}
+                            ${item.status === 'processing' ? '<span class="processing-dot"></span>' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            queueList.innerHTML = html;
+        }
+
+        // Batch processing
+        async function startBatch() {
+            if (queue.length === 0) {
+                alert('Køen er tom!');
+                return;
+            }
+
+            if (API_KEY === 'DIN_GOOGLE_CLOUD_TTS_API_KEY_HER') {
+                alert('Du skal først indtaste din Google Cloud TTS API nøgle i koden!');
+                return;
+            }
+
+            isProcessing = true;
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('progress-container').style.display = 'block';
+            
+            let completed = 0;
+
+            for (let i = 0; i < queue.length; i++) {
+                const item = queue[i];
+                
+                if (item.status === 'completed') {
+                    completed++;
+                    continue;
+                }
+
+                item.status = 'processing';
+                updateQueueDisplay();
+
+                try {
+                    let requestBody;
+                    
+                    if (item.type === 'simple') {
+                        requestBody = {
+                            input: { text: item.text },
+                            voice: {
+                                languageCode: item.voice.startsWith('da-DK') ? 'da-DK' : 'en-US',
+                                name: item.voice
+                            },
+                            audioConfig: {
+                                audioEncoding: 'MP3',
+                                speakingRate: 0.9
+                            }
+                        };
+                    } else if (item.type === 'ssml') {
+                        requestBody = {
+                            input: { ssml: item.ssml },
+                            voice: {
+                                languageCode: item.voice.startsWith('da-DK') ? 'da-DK' : 'en-US',
+                                name: item.voice
+                            },
+                            audioConfig: {
+                                audioEncoding: 'MP3'
+                            }
+                        };
+                    } else if (item.type === 'dialogue') {
+                        // Note: Multi-speaker kræver speciel API endpoint
+                        alert('Multi-speaker dialog kræver speciel opsætning. Optag hver stemme separat i stedet.');
+                        item.status = 'error';
+                        continue;
+                    }
+
+                    const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API fejl: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    item.audioData = data.audioContent;
+                    item.status = 'completed';
+                    completed++;
+
+                } catch (error) {
+                    console.error('Fejl:', error);
+                    item.status = 'error';
+                    item.error = error.message;
+                }
+
+                updateQueueDisplay();
+                updateProgress(completed, queue.length);
+
+                if (i < queue.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+
+            isProcessing = false;
+            document.getElementById('start-btn').disabled = false;
+            
+            const successCount = queue.filter(item => item.status === 'completed').length;
+            if (successCount > 0) {
+                if (confirm(`${successCount} filer er klar. Vil du downloade dem alle?`)) {
+                    downloadAll();
+                }
+            }
+        }
+
+        function downloadFile(index) {
+            const item = queue[index];
+            if (!item.audioData) return;
+
+            const blob = base64ToBlob(item.audioData, 'audio/mp3');
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = item.filename + '.mp3';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadAll() {
+            queue.forEach((item, index) => {
+                if (item.status === 'completed' && item.audioData) {
+                    setTimeout(() => downloadFile(index), index * 200);
+                }
+            });
+        }
+
+        function updateProgress(completed, total) {
+            const percent = Math.round((completed / total) * 100);
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            
+            progressFill.style.width = percent + '%';
+            progressText.textContent = `${percent}% (${completed}/${total})`;
+        }
+
+        function clearQueue() {
+            if (isProcessing) {
+                alert('Kan ikke rydde kø mens batch kører!');
+                return;
+            }
+
+            if (confirm('Vil du slette alle filer i køen?')) {
+                queue = [];
+                updateQueueDisplay();
+                document.getElementById('progress-container').style.display = 'none';
+            }
+        }
+
+        function base64ToBlob(base64, mimeType) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: mimeType });
+        }
+    </script>
+</body>
+</html>

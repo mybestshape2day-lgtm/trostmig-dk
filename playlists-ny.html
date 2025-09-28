@@ -209,7 +209,9 @@
         <div class="nav-links">
             <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
             <a href="Dashboard.html" class="nav-link">📊 Dashboard</a>
-            <a href="playlists.html" class="nav-link active">🎵 Playlister</a>
+            <a href="playlists.html" class="nav-link active" id="nav-playlist-link">
+                🎵 Playlister <span id="favorites-badge" style="display:none; background:#ef4444; color:white; font-size:0.8rem; border-radius:8px; padding:2px 7px; margin-left:4px; vertical-align:middle;">0</span>
+            </a>
             <a href="angst.html" class="nav-link">⚡ Angst</a>
             <a href="depression.html" class="nav-link">🧠 Depression</a>
         </div>
@@ -294,7 +296,37 @@
         </div>
     </div>
     <script>
-    // AI Playlist Popup logic
+    // --- FAVORIT BADGE OG AUTO-OPDATERING ---
+    function updateFavoritesBadge() {
+        const favorites = JSON.parse(localStorage.getItem('favoriteScripts') || '[]');
+        const badge = document.getElementById('favorites-badge');
+        if (favorites.length > 0) {
+            badge.textContent = favorites.length;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+        updateFavoritesList(favorites);
+    }
+    function updateFavoritesList(favorites) {
+        const container = document.getElementById('favorites-list');
+        if (!favorites || favorites.length === 0) {
+            container.innerHTML = `<p style='color: #718096; text-align: center; padding: 20px;'>Ingen favoritter endnu. Tilføj scripts fra andre sider.</p>`;
+            return;
+        }
+        let html = '<div class="script-list">';
+        favorites.forEach(id => {
+            html += `<div class='script-item'><div class='script-info'><h4>${id}</h4></div><button class='btn btn-small' onclick="playAudioFile('${id}')">▶</button></div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+    // Opdater badge og favoritter ved load og når localStorage ændres
+    document.addEventListener('DOMContentLoaded', updateFavoritesBadge);
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'favoriteScripts') updateFavoritesBadge();
+    });
+    // --- AI Playlist Popup logic ---
     const aiPopup = document.getElementById('ai-playlist-popup');
     document.getElementById('generate-playlist-btn').onclick = function(e) {
         e.preventDefault();

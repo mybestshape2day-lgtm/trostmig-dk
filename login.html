@@ -770,6 +770,7 @@
 
         <!-- Social Login -->
         <div class="divider">
+
             <span>eller</span>
         </div>
 
@@ -777,8 +778,15 @@
             <span>🔐</span>
             Fortsæt med Google
         </button>
-
-        <button class="btn btn-anonymous" onclick="signInAnonymously()">
+        <button class="btn btn-facebook" style="background:#1877f2;color:white;margin-top:10px;" onclick="signInWithFacebook()">
+            <span>📘</span>
+            Fortsæt med Facebook
+        </button>
+        <button class="btn btn-apple" style="background:#000;color:white;margin-top:10px;" onclick="signInWithApple()">
+            <span></span>
+            Fortsæt med Apple
+        </button>
+        <button class="btn btn-anonymous" onclick="signInAnonymously()" style="margin-top:10px;">
             <span>👤</span>
             Prøv uden konto
         </button>
@@ -991,30 +999,102 @@
         });
 
         // Google Sign In
+        import { signInWithRedirect, getRedirectResult, FacebookAuthProvider, OAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Helper: Show detailed error
+        function showDetailedError(error, fallbackMsg) {
+            let errorMessage = fallbackMsg || 'Login fejlede. Prøv igen.';
+            if (error && error.code) errorMessage += ' [' + error.code + ']';
+            if (error && error.message) errorMessage += ' ' + error.message;
+            showMessage('error', errorMessage);
+            console.error('Login error:', error);
+        }
+
+        // Google Sign In with fallback to redirect
         window.signInWithGoogle = async function() {
+            const provider = new GoogleAuthProvider();
             try {
-                const provider = new GoogleAuthProvider();
                 const result = await signInWithPopup(auth, provider);
-                
                 await createUserProfile(result.user);
                 showMessage('success', 'Google login succesfuld! Omdirigerer...');
-                
                 setTimeout(() => {
                     window.location.href = 'Dashboard.html';
                 }, 1500);
-                
             } catch (error) {
-                let errorMessage = 'Google login fejlede. Prøv igen.';
-                
-                if (error.code === 'auth/popup-closed-by-user') {
-                    errorMessage = 'Login afbrudt af bruger.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    errorMessage = 'Netværksfejl. Tjek din internetforbindelse.';
+                // Popup blocked or CSP error: fallback to redirect
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/web-storage-unsupported' || error.code === 'auth/operation-not-supported-in-this-environment') {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                    } catch (redirectError) {
+                        showDetailedError(redirectError, 'Google login (redirect) fejlede.');
+                    }
+                } else {
+                    showDetailedError(error, 'Google login fejlede. Prøv igen.');
                 }
-                
-                showMessage('error', errorMessage);
             }
         };
+
+        // Facebook Sign In (eksempel, aktiver i Firebase først)
+        window.signInWithFacebook = async function() {
+            const provider = new FacebookAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await createUserProfile(result.user);
+                showMessage('success', 'Facebook login succesfuld! Omdirigerer...');
+                setTimeout(() => {
+                    window.location.href = 'Dashboard.html';
+                }, 1500);
+            } catch (error) {
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/web-storage-unsupported' || error.code === 'auth/operation-not-supported-in-this-environment') {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                    } catch (redirectError) {
+                        showDetailedError(redirectError, 'Facebook login (redirect) fejlede.');
+                    }
+                } else {
+                    showDetailedError(error, 'Facebook login fejlede. Prøv igen.');
+                }
+            }
+        };
+
+        // Apple Sign In (eksempel, aktiver i Firebase først)
+        window.signInWithApple = async function() {
+            const provider = new OAuthProvider('apple.com');
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await createUserProfile(result.user);
+                showMessage('success', 'Apple login succesfuld! Omdirigerer...');
+                setTimeout(() => {
+                    window.location.href = 'Dashboard.html';
+                }, 1500);
+            } catch (error) {
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/web-storage-unsupported' || error.code === 'auth/operation-not-supported-in-this-environment') {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                    } catch (redirectError) {
+                        showDetailedError(redirectError, 'Apple login (redirect) fejlede.');
+                    }
+                } else {
+                    showDetailedError(error, 'Apple login fejlede. Prøv igen.');
+                }
+            }
+        };
+
+        // Håndter redirect-resultat (for Google/Facebook/Apple)
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const result = await getRedirectResult(auth);
+                if (result && result.user) {
+                    await createUserProfile(result.user);
+                    showMessage('success', 'Login succesfuld! Omdirigerer...');
+                    setTimeout(() => {
+                        window.location.href = 'Dashboard.html';
+                    }, 1500);
+                }
+            } catch (error) {
+                showDetailedError(error, 'Login via redirect fejlede.');
+            }
+        });
 
         // Anonymous Sign In
         window.signInAnonymously = async function() {

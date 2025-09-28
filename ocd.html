@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panikangst - TrøstMig.dk</title>
+    <title>OCD - TrøstMig.dk</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
             --bg-secondary: #ffffff;
             --text-primary: #2d3748;
             --text-secondary: #718096;
-            --accent: #dc2626;
-            --accent-hover: #b91c1c;
+            --accent: #10b981;
+            --accent-hover: #059669;
             --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.1);
             --purple: #7c3aed;
@@ -33,8 +33,8 @@
             --bg-secondary: #2d3748;
             --text-primary: #f7fafc;
             --text-secondary: #cbd5e0;
-            --accent: #ef4444;
-            --accent-hover: #dc2626;
+            --accent: #34d399;
+            --accent-hover: #10b981;
             --border: #4a5568;
             --purple: #9f7aea;
             --purple-hover: #805ad5;
@@ -136,7 +136,7 @@
         
         /* Welcome Section */
         .welcome-section {
-            background: linear-gradient(135deg, var(--bg-secondary), rgba(220, 38, 38, 0.05));
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(16, 185, 129, 0.05));
             border-radius: 20px;
             padding: 30px;
             margin: 20px auto;
@@ -181,7 +181,7 @@
         .selection-header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #dc2626, #ef4444);
+            background: linear-gradient(135deg, #10b981, #34d399);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -390,7 +390,7 @@
         .choice-letter {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -590,11 +590,6 @@
             opacity: 1;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .selection-grid {
@@ -632,8 +627,8 @@
     <div class="main-selection" id="mainSelection">
         <!-- Welcome Section -->
         <div class="welcome-section">
-            <h2>Velkommen til Panikangst hjælp</h2>
-            <p>Få øjeblikkelig hjælp, forstå din panik, lær teknikker og forebyg fremtidige anfald</p>
+            <h2>Velkommen til OCD hjælp</h2>
+            <p>Stop tvangstanker, bryd tvangshandlinger, og tag dit liv tilbage</p>
             <button class="welcome-play-btn" onclick="playWelcome()">
                 <span>▶</span>
                 <span>Hør introduktion</span>
@@ -641,34 +636,34 @@
         </div>
         
         <div class="selection-header">
-            <h1>Panikangst</h1>
-            <p>Vælg den hjælp du har brug for</p>
+            <h1>OCD - Tvangstanker & Tvangshandlinger</h1>
+            <p>Evidensbaseret hjælp når du har brug for det</p>
         </div>
         
         <!-- All 6 categories in one grid -->
         <div class="selection-grid">
             <div class="selection-card" onclick="startCategory('akut')">
-                <div class="selection-icon">🆘</div>
-                <h2>Akut hjælp</h2>
-                <p>Stop panikken lige nu</p>
+                <div class="selection-icon">🛑</div>
+                <h2>Stop tvangen</h2>
+                <p>Bryd mønsteret lige nu</p>
             </div>
             
             <div class="selection-card" onclick="startCategory('viden')">
                 <div class="selection-icon">🧠</div>
-                <h2>Forstå panik</h2>
+                <h2>Forstå OCD</h2>
                 <p>Viden om hvad der sker</p>
             </div>
             
             <div class="selection-card" onclick="startCategory('teknikker')">
                 <div class="selection-icon">🛠️</div>
-                <h2>Teknikker</h2>
-                <p>Værktøjer og øvelser</p>
+                <h2>ERP & Teknikker</h2>
+                <p>Værktøjer der virker</p>
             </div>
             
             <div class="selection-card" onclick="startCategory('forebyggelse')">
                 <div class="selection-icon">🛡️</div>
                 <h2>Forebyggelse</h2>
-                <p>Undgå fremtidige anfald</p>
+                <p>Byg et stærkere fundament</p>
             </div>
             
             <div class="selection-card filosofi" onclick="playFilosof()">
@@ -680,7 +675,7 @@
             <div class="selection-card scenario" onclick="startScenarios()">
                 <div class="selection-icon">🎭</div>
                 <h2>Øv Scenarier</h2>
-                <p>Træn svære situationer</p>
+                <p>Træn rigtige situationer</p>
             </div>
         </div>
     </div>
@@ -688,7 +683,7 @@
     <!-- Session Display -->
     <div class="session-display" id="sessionDisplay">
         <video class="video-background" autoplay muted loop playsinline>
-            <source src="video/din-video.mp4" type="video/mp4">
+            <source src="video/ocd.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
         
@@ -743,139 +738,139 @@
     <div class="toast" id="toast"></div>
     
     <script>
-        // Audio configuration
+        // Audio configuration for OCD
         const audioFiles = {
-            welcome: { file: 'audio/audio_panik_velkommen.mp3', title: 'Velkommen til panikhjælp' },
+            welcome: { file: 'audio/audio_ocd_velkommen.mp3', title: 'Velkommen til OCD hjælp' },
             akut: [
-                { file: 'audio/psyk_panik_stop_nu.mp3', title: 'Stop panikken NU' },
-                { file: 'audio/psyk_panik_grounding.mp3', title: '5-4-3-2-1 grounding' },
-                { file: 'audio/psyk_panik_sikker.mp3', title: 'Du er sikker' },
-                { file: 'audio/psyk_panik_midlertidigt.mp3', title: 'Dette går over' }
+                { file: 'audio/psyk_ocd_stop_kompulsion.mp3', title: 'Stop tvangen NU' },
+                { file: 'audio/psyk_ocd_surf_trang.mp3', title: 'Surf på trangen' },
+                { file: 'audio/psyk_ocd_tanke_er_kun_tanke.mp3', title: 'En tanke er bare en tanke' },
+                { file: 'audio/psyk_ocd_fem_minutter_regel.mp3', title: '5-minutters reglen' }
             ],
             viden: [
-                { file: 'audio/psyk_panik_hvad_er.mp3', title: 'Hvad er panikangst?' },
-                { file: 'audio/psyk_panik_fight_flight.mp3', title: 'Fight-or-flight forklaret' },
-                { file: 'audio/psyk_panik_ikke_farligt.mp3', title: 'Hvorfor det ikke er farligt' },
-                { file: 'audio/psyk_panik_normale_symptomer.mp3', title: 'Normale symptomer' }
+                { file: 'audio/psyk_ocd_hvad_er.mp3', title: 'Hvad er OCD?' },
+                { file: 'audio/psyk_ocd_hjernens_fejlalarm.mp3', title: 'Hjernens fejlalarm' },
+                { file: 'audio/psyk_ocd_ikke_dine_tanker.mp3', title: 'Du er ikke dine tanker' },
+                { file: 'audio/psyk_ocd_typer_og_temaer.mp3', title: 'OCD typer og temaer' }
             ],
             teknikker: [
-                { file: 'audio/psyk_panik_vejrtraekning.mp3', title: '4-7-8 vejrtrækning' },
-                { file: 'audio/psyk_panik_muskelafspending.mp3', title: 'Progressiv muskelafspænding' },
-                { file: 'audio/psyk_panik_tankearbejde.mp3', title: 'Kognitive teknikker' },
-                { file: 'audio/psyk_panik_accept.mp3', title: 'Accept og surfing' }
+                { file: 'audio/psyk_ocd_erp_eksponering.mp3', title: 'ERP - Eksponering' },
+                { file: 'audio/psyk_ocd_tanke_labeling.mp3', title: 'Tanke-labeling teknik' },
+                { file: 'audio/psyk_ocd_usikkerhed_tolerance.mp3', title: 'Lær at leve med usikkerhed' },
+                { file: 'audio/psyk_ocd_vredesstol_teknik.mp3', title: 'To-stole teknikken' }
             ],
             forebyggelse: [
-                { file: 'audio/psyk_panik_triggers.mp3', title: 'Identificer dine triggere' },
-                { file: 'audio/psyk_panik_livssstil.mp3', title: 'Livsstilsændringer' },
-                { file: 'audio/psyk_panik_eksponering.mp3', title: 'Gradvis eksponering' },
-                { file: 'audio/psyk_panik_vedligeholdelse.mp3', title: 'Langsigtet strategi' }
+                { file: 'audio/psyk_ocd_trigger_kortlaegning.mp3', title: 'Kortlæg dine triggers' },
+                { file: 'audio/psyk_ocd_livsbalance.mp3', title: 'Livsbalance mod OCD' },
+                { file: 'audio/psyk_ocd_tilbagefald_plan.mp3', title: 'Håndter tilbagefald' },
+                { file: 'audio/psyk_ocd_vaerdier_kompas.mp3', title: 'Lev efter værdier' }
             ]
         };
         
         const filosofAudio = {
-            file: 'audio/filo_panikangst.mp3',
-            title: 'Angstens eksistentielle mening'
+            file: 'audio/filo_ocd.mp3',
+            title: 'OCD og eksistensen'
         };
         
         // Scenarios configuration  
         const scenarios = {
-            supermarked: {
-                title: 'Kø i supermarkedet',
-                setup: 'Du står i kø i Netto. Der er 5 foran dig. Dit hjerte begynder at banke...',
-                setupAudio: 'audio/scenario_panik_supermarked_setup.mp3',
+            handvask: {
+                title: 'På offentligt toilet',
+                setup: 'Du har vasket hænder én gang. Men føler de ikke er rene nok...',
+                setupAudio: 'audio/scenario_ocd_handvask_setup.mp3',
                 choices: [
                     {
-                        text: 'Jeg forlader vognen og går ud',
-                        audio: 'audio/scenario_panik_supermarked_a.mp3',
-                        score: 3,
-                        feedback: 'Undgåelse forstærker angsten på sigt'
-                    },
-                    {
-                        text: 'Jeg bliver og bruger vejrtrækning',
-                        audio: 'audio/scenario_panik_supermarked_b.mp3',
-                        score: 10,
-                        feedback: 'Perfekt! Eksponering + teknik = vækst'
-                    },
-                    {
-                        text: 'Jeg tjekker min puls konstant',
-                        audio: 'audio/scenario_panik_supermarked_c.mp3',
-                        score: 5,
-                        feedback: 'Body scanning øger angsten'
-                    }
-                ]
-            },
-            transport: {
-                title: 'I toget',
-                setup: 'Du sidder i toget. Dørene lukker. Næste stop om 15 minutter...',
-                setupAudio: 'audio/scenario_panik_transport_setup.mp3',
-                choices: [
-                    {
-                        text: 'Jeg går hen til døren',
-                        audio: 'audio/scenario_panik_transport_a.mp3',
-                        score: 4,
-                        feedback: 'Delvis eksponering, men forbereder flugt'
-                    },
-                    {
-                        text: 'Jeg starter en meditation app',
-                        audio: 'audio/scenario_panik_transport_b.mp3',
-                        score: 9,
-                        feedback: 'Smart! Du bliver og bruger værktøjer'
-                    },
-                    {
-                        text: 'Jeg ringer til en ven',
-                        audio: 'audio/scenario_panik_transport_c.mp3',
-                        score: 6,
-                        feedback: 'Distraction virker, men du lærer ikke'
-                    }
-                ]
-            },
-            arbejde: {
-                title: 'Præsentation på arbejdet',
-                setup: 'Om 5 minutter skal du præsentere. Hænderne ryster. Panikken bygger...',
-                setupAudio: 'audio/scenario_panik_arbejde_setup.mp3',
-                choices: [
-                    {
-                        text: 'Jeg siger jeg er syg og går',
-                        audio: 'audio/scenario_panik_arbejde_a.mp3',
+                        text: 'Jeg vasker igen flere gange',
+                        audio: 'audio/scenario_ocd_handvask_a.mp3',
                         score: 2,
-                        feedback: 'Store konsekvenser for karriere og selvtillid'
+                        feedback: 'Du fodrer OCD og gør det værre'
                     },
                     {
-                        text: 'Jeg beder om 5 min pause',
-                        audio: 'audio/scenario_panik_arbejde_b.mp3',
+                        text: 'Jeg går væk efter én vask',
+                        audio: 'audio/scenario_ocd_handvask_b.mp3',
                         score: 10,
-                        feedback: 'Perfekt! Selvmedfølelse uden flugt'
+                        feedback: 'Perfekt ERP! Du sulter OCD'
                     },
                     {
-                        text: 'Jeg tager en betablokker',
-                        audio: 'audio/scenario_panik_arbejde_c.mp3',
-                        score: 5,
-                        feedback: 'Kan hjælpe, men skaber afhængighed'
+                        text: 'Jeg bruger håndsprit i stedet',
+                        audio: 'audio/scenario_ocd_handvask_c.mp3',
+                        score: 4,
+                        feedback: 'Sikkerhedsadfærd - stadig OCD'
                     }
                 ]
             },
-            hjemme: {
-                title: 'Alene hjemme om aftenen',
-                setup: 'Du er alene hjemme kl. 22. Pludselig banker hjertet vildt...',
-                setupAudio: 'audio/scenario_panik_hjemme_setup.mp3',
+            lås: {
+                title: 'På vej til arbejde',
+                setup: 'Halvvejs kommer tanken: "Låste jeg døren?"',
+                setupAudio: 'audio/scenario_ocd_lås_setup.mp3',
                 choices: [
                     {
-                        text: 'Jeg ringer 112',
-                        audio: 'audio/scenario_panik_hjemme_a.mp3',
+                        text: 'Jeg går tilbage og tjekker',
+                        audio: 'audio/scenario_ocd_lås_a.mp3',
+                        score: 2,
+                        feedback: 'Tjek-spiralen forstærkes'
+                    },
+                    {
+                        text: 'Jeg fortsætter til arbejde',
+                        audio: 'audio/scenario_ocd_lås_b.mp3',
+                        score: 10,
+                        feedback: 'Stærkt! Du tolererer usikkerhed'
+                    },
+                    {
+                        text: 'Jeg ringer til min partner',
+                        audio: 'audio/scenario_ocd_lås_c.mp3',
                         score: 3,
-                        feedback: 'Forstærker ideen om fare'
-                    },
+                        feedback: 'Du outsourcer din tvang'
+                    }
+                ]
+            },
+            symmetri: {
+                title: 'Bøger på hylden',
+                setup: 'En bog stikker 2mm ud. OCD siger "ret den!"',
+                setupAudio: 'audio/scenario_ocd_symmetri_setup.mp3',
+                choices: [
                     {
-                        text: 'Jeg går i gang med husarbejde',
-                        audio: 'audio/scenario_panik_hjemme_b.mp3',
-                        score: 9,
-                        feedback: 'Smart! Bruger adrenalinet konstruktivt'
-                    },
-                    {
-                        text: 'Jeg googler mine symptomer',
-                        audio: 'audio/scenario_panik_hjemme_c.mp3',
+                        text: 'Jeg retter alle bøgerne',
+                        audio: 'audio/scenario_ocd_symmetri_a.mp3',
                         score: 1,
-                        feedback: 'Værste valg - Dr. Google skaber mere angst'
+                        feedback: 'Perfektionsfælden - aldrig god nok'
+                    },
+                    {
+                        text: 'Jeg går væk',
+                        audio: 'audio/scenario_ocd_symmetri_b.mp3',
+                        score: 9,
+                        feedback: 'Godt! Imperfekt er okay'
+                    },
+                    {
+                        text: 'Jeg skubber den mere ud',
+                        audio: 'audio/scenario_ocd_symmetri_c.mp3',
+                        score: 10,
+                        feedback: 'Power move! Du er modig'
+                    }
+                ]
+            },
+            tanke: {
+                title: 'Holder søsters baby',
+                setup: 'Tanken kommer: "Hvad hvis jeg taber hende?"',
+                setupAudio: 'audio/scenario_ocd_tanke_setup.mp3',
+                choices: [
+                    {
+                        text: 'Jeg giver babyen tilbage',
+                        audio: 'audio/scenario_ocd_tanke_a.mp3',
+                        score: 2,
+                        feedback: 'Du bekræfter OCD\'s løgn'
+                    },
+                    {
+                        text: 'Jeg bliver ved med at holde',
+                        audio: 'audio/scenario_ocd_tanke_b.mp3',
+                        score: 10,
+                        feedback: 'Fantastisk mod! Tanker ≠ handlinger'
+                    },
+                    {
+                        text: 'Jeg fortæller om min OCD',
+                        audio: 'audio/scenario_ocd_tanke_c.mp3',
+                        score: 6,
+                        feedback: 'Okay hvis ikke for reassurance'
                     }
                 ]
             }
@@ -952,7 +947,7 @@
         }
         
         function playWelcome() {
-            currentAudioId = 'audio_panik_velkommen';
+            currentAudioId = 'audio_ocd_velkommen';
             
             document.getElementById('mainSelection').style.display = 'none';
             document.getElementById('sessionDisplay').classList.add('active');
@@ -1027,7 +1022,7 @@
         }
         
         function playFilosof() {
-            currentAudioId = 'filo_panikangst';
+            currentAudioId = 'filo_ocd';
             
             document.getElementById('mainSelection').style.display = 'none';
             document.getElementById('sessionDisplay').classList.add('active');
