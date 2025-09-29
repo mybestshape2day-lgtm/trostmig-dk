@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCD Specialist - TrøstMig</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .warning {
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #F9FAFB;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+
+        .message.assistant .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #E5E7EB;
+        }
+
+        .message.user .message-bubble {
+            background: #667eea;
+            color: white;
+        }
+
+        .typing-indicator {
+            display: none;
+            color: #6B7280;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .quick-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-button {
+            padding: 8px 14px;
+            background: #F3F4F6;
+            border: 1px solid #D1D5DB;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tool-button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background: #5a5fcf;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .emergency {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #EF4444;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.4);
+        }
+
+        .emergency:hover {
+            background: #DC2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 OCD Specialist</h1>
+            <p>Evidensbaseret støtte til tvangstanker og tvangshandlinger</p>
+        </div>
+        
+        <div class="warning">
+            ⚠️ Dette er en AI-assistent. Ved akutte kriser kontakt Livslinien: 70 201 201
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message assistant">
+                <div class="message-bubble">
+                    Hej, jeg er specialiseret i at hjælpe med OCD, tvangstanker og tvangshandlinger. 
+                    <br><br>
+                    Jeg bruger evidensbaserede metoder som ERP (Exposure Response Prevention) og kognitiv terapi.
+                    <br><br>
+                    Hvad kæmper du med lige nu? Du kan dele alt - jeg er her for at støtte dig. 💜
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            Skriver...
+        </div>
+
+        <div class="input-container">
+            <div class="quick-tools">
+                <div class="tool-button" onclick="quickMessage('Jeg har tvangstanker')">
+                    💭 Tvangstanker
+                </div>
+                <div class="tool-button" onclick="quickMessage('Jeg udfører ritualer')">
+                    🔄 Ritualer/tjek
+                </div>
+                <div class="tool-button" onclick="quickMessage('Jeg har brug for ERP øvelse')">
+                    📋 ERP øvelse
+                </div>
+                <div class="tool-button" onclick="quickMessage('Hjælp med angst lige nu')">
+                    😰 Akut angst
+                </div>
+                <div class="tool-button" onclick="quickMessage('Forklar OCD for mig')">
+                    📚 Om OCD
+                </div>
+            </div>
+            <div class="input-row">
+                <input type="text" id="messageInput" placeholder="Skriv din besked her..." onkeypress="handleKeyPress(event)">
+                <button id="sendButton" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="tel:70201201" class="emergency">🆘 Akut hjælp</a>
+
+    <script>
+        // SIMPEL OG STABIL VERSION
+        const API_KEY = 'AIzaSyBBO4XeLC4_t6wXYlGfryK3YMxHO9hpSJ4'; // Indsæt din API key her
+        
+        // Kort samtalehistorik - max 6 beskeder for stabilitet
+        let messages = [];
+        
+        // OCD Specialist System Prompt - MEGET SPECIFIK
+        const SYSTEM_PROMPT = `Du er en dansk OCD-specialist psykolog med dyb ekspertise i tvangstanker og tvangshandlinger.
+
+VIGTIG VIDEN OM OCD:
+- OCD er en neurobiologisk lidelse, IKKE en karakterbrist
+- Tvangstanker er ufrivillige og betyder IKKE noget om personens karakter
+- Tvangshandlinger/ritualer giver kun kortvarig lindring og forstærker OCD
+- ERP (Exposure Response Prevention) er guldstandard behandling
+- Usikkerhed er ubehageligt men ufarligt
+
+DIN TILGANG:
+1. Vær varm, validerende og ikke-dømmende
+2. Normaliser at have grimme/skræmmende tanker
+3. Hjælp med at identificere tvangstanker vs reelle bekymringer
+4. Guide i ERP-principper uden at blive behandler
+5. Mind om at ritualer føder OCD-monsteret
+6. Tal ALDRIG ned til personen
+
+VIGTIGE RESPONSER:
+- Ved tvangstanker: "Det er OCD der taler, ikke dig. Tanker er ikke farlige."
+- Ved ritualer: "Jeg forstår trangen, men ritualet vil kun hjælpe kortvarigt."
+- Ved skam: "OCD-tanker siger INTET om hvem du er som person."
+
+Svar KORT (max 3-4 sætninger) og på DANSK. Vær konkret og praktisk.`;
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Vis brugerens besked
+            addMessage('user', message);
+            input.value = '';
+            
+            // Disable send button og vis typing
+            document.getElementById('sendButton').disabled = true;
+            document.getElementById('typingIndicator').classList.add('show');
+            
+            // Tilføj til historik (max 6 beskeder)
+            messages.push({role: 'user', content: message});
+            if (messages.length > 6) {
+                messages = messages.slice(-6);
+            }
+            
+            try {
+                // Kald Gemini API
+                const response = await callGeminiAPI(message);
+                
+                // Vis svar
+                addMessage('assistant', response);
+                messages.push({role: 'assistant', content: response});
+                
+            } catch (error) {
+                console.error('Fejl:', error);
+                addMessage('assistant', 'Beklager, jeg oplever tekniske problemer. Prøv venligst igen.');
+            } finally {
+                document.getElementById('sendButton').disabled = false;
+                document.getElementById('typingIndicator').classList.remove('show');
+            }
+        }
+
+        async function callGeminiAPI(message) {
+            // Brug Gemini 2.0 Flash som er mest stabil
+            const API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent';
+            
+            // Byg samtale med system prompt
+            const conversation = [
+                {
+                    role: 'user',
+                    parts: [{text: SYSTEM_PROMPT}]
+                },
+                {
+                    role: 'model',
+                    parts: [{text: 'Forstået. Jeg er klar til at hjælpe som OCD-specialist.'}]
+                }
+            ];
+            
+            // Tilføj tidligere beskeder
+            messages.forEach(msg => {
+                conversation.push({
+                    role: msg.role === 'user' ? 'user' : 'model',
+                    parts: [{text: msg.content}]
+                });
+            });
+            
+            // Tilføj ny besked
+            conversation.push({
+                role: 'user',
+                parts: [{text: message}]
+            });
+            
+            const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: conversation,
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 200, // Kort svar
+                        topP: 0.9
+                    },
+                    safetySettings: [
+                        {
+                            category: "HARM_CATEGORY_HARASSMENT",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_HATE_SPEECH",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            threshold: "BLOCK_NONE"
+                        }
+                    ]
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                console.error('API Error:', error);
+                throw new Error('API fejl');
+            }
+            
+            const data = await response.json();
+            
+            // Hent tekst fra response
+            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                return data.candidates[0].content.parts[0].text;
+            }
+            
+            throw new Error('Kunne ikke få svar');
+        }
+
+        function addMessage(sender, content) {
+            const container = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `
+                <div class="message-bubble">${content}</div>
+            `;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function quickMessage(text) {
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Test forbindelse ved load
+        window.addEventListener('load', () => {
+            console.log('OCD Specialist klar!');
+            console.log('Husk at indsætte din API key i koden.');
+        });
+    </script>
+</body>
+</html>

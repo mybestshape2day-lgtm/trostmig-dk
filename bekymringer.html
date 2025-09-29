@@ -4,438 +4,651 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bekymringer & Overtænkning - TrøstMig.dk</title>
-    <meta name="description" content="Stop tankemylderet og find ro. Evidensbaserede teknikker til at håndtere bekymringer, grublerier og overtænkning. Gratis lydguides på dansk.">
-    <meta name="keywords" content="bekymringer, overtænkning, grublerier, tankemylder, angst, mental sundhed, mindfulness, CBT">
     
-    <!-- TTS Config -->
-    <script src="tts-config.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         :root {
-            --primary-color: #f59e0b; /* Amber/Orange for bekymringer */
-            --primary-dark: #d97706;
-            --primary-light: #fbbf24;
-            --bg-dark: #1a1a1a;
-            --text-light: #f3f4f6;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(245, 158, 11, 0.3);
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --accent: #f59e0b; /* Orange/amber for bekymringer */
+            --accent-hover: #d97706;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --purple: #7c3aed;
+            --purple-hover: #6d28d9;
+            --blue: #3b82f6;
+            --blue-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e0;
+            --accent: #fbbf24;
+            --accent-hover: #f59e0b;
+            --border: #4a5568;
+            --purple: #9f7aea;
+            --purple-hover: #805ad5;
+            --blue: #63b3ed;
+            --blue-hover: #4299e1;
         }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+            margin-top: 70px;
+            transition: all 0.3s ease;
+            -webkit-font-smoothing: antialiased;
         }
-
+        
         /* Navigation */
-        .nav {
+        .nav-header {
             position: fixed;
             top: 0;
-            width: 100%;
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
             z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
         }
-
+        
         .nav-logo {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
         }
-
+        
         .nav-links {
             display: flex;
-            gap: 2rem;
             align-items: center;
+            gap: 20px;
         }
-
+        
         .nav-link {
-            color: var(--text-light);
+            color: var(--text-primary);
             text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        .crisis-btn {
-            background: #ef4444;
-            color: white;
-            padding: 0.5rem 1rem;
+            font-weight: 500;
+            padding: 8px 16px;
             border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            animation: pulse 2s infinite;
+            transition: all 0.2s ease;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+        
+        .nav-link:hover {
+            background: var(--bg-primary);
+            color: var(--accent);
         }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 6rem 2rem 2rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 3rem 0;
-            margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Category Grid */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .category-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .category-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-        }
-
-        .category-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
-
-        .category-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .category-title {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
-
-        .category-description {
-            opacity: 0.8;
-            line-height: 1.6;
-        }
-
-        .script-count {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            opacity: 0.6;
-        }
-
-        /* Audio Player Section */
-        .player-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(26, 26, 26, 0.98);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-color);
-            padding: 1.5rem;
-            transform: translateY(100%);
-            transition: transform 0.3s;
-            z-index: 999;
-        }
-
-        .player-section.active {
-            transform: translateY(0);
-        }
-
-        .player-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .now-playing {
-            flex: 1;
-        }
-
-        .script-title {
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .script-meta {
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .control-btn {
-            background: var(--primary-color);
-            border: none;
+        
+        .nav-link.crisis {
+            background: var(--danger);
             color: white;
-            width: 50px;
-            height: 50px;
+        }
+        
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Voice Selection */
+        .voice-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 5px;
+        }
+        
+        .voice-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .voice-btn:hover:not(.active) {
+            background: var(--bg-secondary);
+        }
+        
+        .favorite-count {
+            background: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
             border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1.3rem;
         }
-
-        .control-btn:hover {
-            background: var(--primary-dark);
+        
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(245, 158, 11, 0.05));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 1200px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+        
+        .welcome-play-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .welcome-play-btn:hover {
+            background: var(--accent-hover);
             transform: scale(1.05);
         }
-
-        .control-btn.play-pause {
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-        }
-
-        /* Text Display System */
-        .text-toggle-btn {
-            background: rgba(245, 158, 11, 0.2);
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .text-toggle-btn:hover {
-            background: var(--primary-color);
+        
+        /* Play All Button */
+        .play-all-section {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
             color: white;
-        }
-
-        .text-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(26, 26, 26, 0.98);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s;
-        }
-
-        .text-panel.active {
-            opacity: 1;
-            pointer-events: all;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .text-panel-header {
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
         }
-
-        .text-panel-title {
-            font-size: 1.3rem;
-            color: var(--primary-color);
+        
+        .play-all-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
-
-        .close-text-btn {
-            background: none;
+        
+        .play-all-duration {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .play-all-btn {
+            background: white;
+            color: var(--accent);
             border: none;
-            color: var(--text-light);
-            font-size: 1.5rem;
+            padding: 12px 24px;
+            border-radius: 30px;
             cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
-
-        .close-text-btn:hover {
-            opacity: 1;
+        
+        .play-all-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-
-        .text-content {
-            line-height: 1.8;
-            font-size: 1.1rem;
+        
+        /* Main Selection */
+        .main-selection {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-
-        .text-content p {
-            margin-bottom: 1rem;
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
         }
-
-        /* Overlay */
-        .overlay {
+        
+        .selection-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .selection-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+        
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent);
+        }
+        
+        .selection-card.filosofi {
+            border-color: var(--purple);
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(124, 58, 237, 0.05));
+        }
+        
+        .selection-card.filosofi:hover {
+            border-color: var(--purple-hover);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+        }
+        
+        .selection-card.scenario {
+            border-color: var(--blue);
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(59, 130, 246, 0.05));
+        }
+        
+        .selection-card.scenario:hover {
+            border-color: var(--blue-hover);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+        
+        .selection-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .audio-count {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Session Display */
+        .session-display {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            z-index: 2000;
         }
-
-        .overlay.active {
-            opacity: 1;
-            pointer-events: all;
+        
+        .session-display.active {
+            display: block;
         }
-
-        /* Progress Bar */
-        .progress-bar {
-            flex: 1;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        /* Script Modal */
-        .scripts-modal {
-            display: none;
+        
+        .video-background {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            z-index: 2001;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%) scale(1.02);
+            z-index: -2;
+            filter: brightness(0.3);
         }
-
-        .scripts-modal.active {
+        
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+            z-index: -1;
+        }
+        
+        .session-content {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            padding: 40px;
+        }
+        
+        .module-indicator {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .session-title {
+            color: white;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        /* Text Display Box */
+        .text-display-box {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 900px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 15;
+        }
+        
+        .text-display-box.active {
             display: block;
         }
-
-        .scripts-list {
-            margin-top: 1.5rem;
+        
+        .text-content {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            line-height: 1.8;
+            text-align: center;
+            color: white;
         }
-
-        .script-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            justify-content: space-between;
+        
+        /* Word animation */
+        .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            margin: 0 3px;
+        }
+        
+        .word.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Audio Timer */
+        .audio-timer {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 300;
+            display: none;
+        }
+        
+        .audio-timer.active {
+            display: block;
+        }
+        
+        .timer-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .timer-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s linear;
+        }
+        
+        /* Choice Modal */
+        .choice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
             align-items: center;
+            justify-content: center;
+            z-index: 3000;
         }
-
-        .script-item:hover {
-            border-color: var(--primary-color);
-            transform: translateX(4px);
+        
+        .choice-modal.active {
+            display: flex;
         }
-
-        .script-item-info {
-            flex: 1;
+        
+        .choice-container {
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .script-item-title {
+        
+        .choice-question {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .choice-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .choice-letter {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 600;
-            margin-bottom: 0.3rem;
+            flex-shrink: 0;
         }
-
-        .script-item-duration {
-            opacity: 0.7;
-            font-size: 0.9rem;
+        
+        /* Controls */
+        .controls-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 15px 20px;
+            border-radius: 50px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .play-script-btn {
-            background: var(--primary-color);
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+            font-size: 14px;
+            transition: all 0.2s ease;
         }
-
-        .play-script-btn:hover {
-            background: var(--primary-dark);
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
         }
-
+        
+        .control-btn.skip {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--accent);
+        }
+        
+        .control-btn.skip:hover {
+            background: rgba(245, 158, 11, 0.3);
+        }
+        
+        .control-btn.text-active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .favorite-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            color: white;
+        }
+        
+        .favorite-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .favorite-btn.active {
+            color: #ef4444;
+        }
+        
+        .queue-indicator {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            padding: 0 10px;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 3500;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .category-grid {
+            .selection-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -443,1506 +656,697 @@
                 display: none;
             }
             
-            .player-content {
+            .play-all-section {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .text-display-box {
+                width: 95%;
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-logo">TrøstMig.dk</div>
-        <div class="nav-links">
-            <a href="index.html" class="nav-link">Hjem</a>
-            <a href="angst.html" class="nav-link">Angst</a>
-            <a href="depression.html" class="nav-link">Depression</a>
-            <a href="selvmordstanker.html" class="crisis-btn">🆘 Akut Hjælp</a>
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">TrøstMig.dk</a>
+            
+            <div class="nav-links">
+                <a href="selvmordstanker.html" class="nav-link crisis">🚨 Akut Hjælp</a>
+                <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+                <a href="playlists.html" class="nav-link">
+                    🎵 Playlister 
+                    <span class="favorite-count" id="favCount">0</span>
+                </a>
+            </div>
+            
+            <div class="nav-user">
+                <div class="voice-selector">
+                    <button class="voice-btn active" id="voiceMale" onclick="selectVoice('mand')">👨 Mand</button>
+                    <button class="voice-btn" id="voiceFemale" onclick="selectVoice('kvinde')">👩 Kvinde</button>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
         </div>
     </nav>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
+    
+    <!-- Main Selection -->
+    <div class="main-selection" id="mainSelection">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2>Velkommen til hjælp mod bekymringer</h2>
+            <p>Stop tankemylderet og find ro med evidensbaserede teknikker</p>
+            <button class="welcome-play-btn" onclick="playWelcome()">
+                <span>▶</span>
+                <span>Hør introduktion</span>
+            </button>
+        </div>
+        
+        <!-- Play All Section -->
+        <div class="play-all-section">
+            <div class="play-all-info">
+                <h3>Afspil hele bekymringssamlingen</h3>
+                <span class="play-all-duration">📚 44 scripts • ⏱️ Ca. 2 timer</span>
+            </div>
+            <button class="play-all-btn" onclick="playAllAudios()">
+                ▶ Afspil alle øvelser
+            </button>
+        </div>
+        
+        <div class="selection-header">
             <h1>💭 Bekymringer & Overtænkning</h1>
             <p>Stop tankemylderet og find ro med evidensbaserede teknikker</p>
-        </section>
-
-        <!-- Category Grid -->
-        <div class="category-grid">
-            <!-- Akut Hjælp -->
-            <div class="category-card" onclick="showScripts('akut')">
-                <div class="category-icon">🚨</div>
-                <h3 class="category-title">Akut: Stop tankemylderet NU</h3>
-                <p class="category-description">Øjeblikkelig hjælp når tankerne kører i ring</p>
-                <p class="script-count">5 scripts • 25 min total</p>
-            </div>
-
-            <!-- Forstå Bekymringer -->
-            <div class="category-card" onclick="showScripts('forsta')">
-                <div class="category-icon">🧠</div>
-                <h3 class="category-title">Forstå dine bekymringer</h3>
-                <p class="category-description">Hvorfor overtænker vi, og hvad sker der i hjernen?</p>
-                <p class="script-count">5 scripts • 30 min total</p>
-            </div>
-
-            <!-- CBT Teknikker -->
-            <div class="category-card" onclick="showScripts('cbt')">
-                <div class="category-icon">🛠️</div>
-                <h3 class="category-title">CBT værktøjer mod grubleri</h3>
-                <p class="category-description">Kognitive teknikker til at bryde negative tankemønstre</p>
-                <p class="script-count">6 scripts • 35 min total</p>
-            </div>
-
-            <!-- Mindfulness -->
-            <div class="category-card" onclick="showScripts('mindfulness')">
-                <div class="category-icon">🧘</div>
-                <h3 class="category-title">Mindfulness for overtænkere</h3>
-                <p class="category-description">Slip tankerne og vend tilbage til nuet</p>
-                <p class="script-count">5 scripts • 40 min total</p>
-            </div>
-
-            <!-- Praktiske Teknikker -->
-            <div class="category-card" onclick="showScripts('praktisk')">
-                <div class="category-icon">📝</div>
-                <h3 class="category-title">Praktiske anti-bekymringsteknikker</h3>
-                <p class="category-description">Konkrete øvelser du kan bruge med det samme</p>
-                <p class="script-count">6 scripts • 30 min total</p>
-            </div>
-
-            <!-- Søvn og Bekymringer -->
-            <div class="category-card" onclick="showScripts('sovn')">
-                <div class="category-icon">😴</div>
-                <h3 class="category-title">Nattens bekymringer</h3>
-                <p class="category-description">Når tankerne holder dig vågen</p>
-                <p class="script-count">5 scripts • 35 min total</p>
-            </div>
-
-            <!-- Arbejde og Studier -->
-            <div class="category-card" onclick="showScripts('arbejde')">
-                <div class="category-icon">💼</div>
-                <h3 class="category-title">Bekymringer om arbejde/studier</h3>
-                <p class="category-description">Håndter præstationsangst og deadline-stress</p>
-                <p class="script-count">5 scripts • 30 min total</p>
-            </div>
-
-            <!-- Relationer -->
-            <div class="category-card" onclick="showScripts('relationer')">
-                <div class="category-icon">❤️</div>
-                <h3 class="category-title">Bekymringer i relationer</h3>
-                <p class="category-description">Når du overtænker andres reaktioner</p>
-                <p class="script-count">4 scripts • 25 min total</p>
-            </div>
-
-            <!-- Filosofens Ord -->
-            <div class="category-card" onclick="showScripts('filosofi')">
-                <div class="category-icon">📚</div>
-                <h3 class="category-title">Filosofens perspektiv</h3>
-                <p class="category-description">Dybere refleksioner over bekymringens natur</p>
-                <p class="script-count">3 scripts • 20 min total</p>
-            </div>
         </div>
-    </div>
-
-    <!-- Audio Player Section -->
-    <div class="player-section" id="playerSection">
-        <div class="player-content">
-            <div class="now-playing">
-                <div class="script-title" id="currentTitle">Ingen script valgt</div>
-                <div class="script-meta" id="currentMeta">Vælg et script for at starte</div>
+        
+        <!-- All categories in grid -->
+        <div class="selection-grid">
+            <div class="selection-card" onclick="startCategory('akut')">
+                <span class="audio-count">5</span>
+                <div class="selection-icon">🚨</div>
+                <h2>Stop tankemylderet NU</h2>
+                <p>Øjeblikkelig hjælp når tankerne kører i ring</p>
             </div>
             
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+            <div class="selection-card" onclick="startCategory('forsta')">
+                <span class="audio-count">5</span>
+                <div class="selection-icon">🧠</div>
+                <h2>Forstå dine bekymringer</h2>
+                <p>Hvorfor overtænker vi, og hvad sker der i hjernen?</p>
             </div>
             
-            <div class="player-controls">
-                <button class="control-btn" onclick="skipBackward()">⏮</button>
-                <button class="control-btn play-pause" id="playPauseBtn" onclick="togglePlayPause()">▶</button>
-                <button class="control-btn" onclick="skipForward()">⏭</button>
-                <button class="text-toggle-btn" onclick="toggleText()">📖 Vis tekst</button>
+            <div class="selection-card" onclick="startCategory('cbt')">
+                <span class="audio-count">6</span>
+                <div class="selection-icon">🛠️</div>
+                <h2>CBT værktøjer</h2>
+                <p>Kognitive teknikker til at bryde negative tankemønstre</p>
+            </div>
+            
+            <div class="selection-card" onclick="startCategory('mindfulness')">
+                <span class="audio-count">5</span>
+                <div class="selection-icon">🧘</div>
+                <h2>Mindfulness</h2>
+                <p>Slip tankerne og vend tilbage til nuet</p>
+            </div>
+            
+            <div class="selection-card" onclick="startCategory('praktisk')">
+                <span class="audio-count">6</span>
+                <div class="selection-icon">📝</div>
+                <h2>Praktiske teknikker</h2>
+                <p>Konkrete øvelser du kan bruge med det samme</p>
+            </div>
+            
+            <div class="selection-card" onclick="startCategory('sovn')">
+                <span class="audio-count">5</span>
+                <div class="selection-icon">😴</div>
+                <h2>Nattens bekymringer</h2>
+                <p>Når tankerne holder dig vågen</p>
+            </div>
+            
+            <div class="selection-card" onclick="startCategory('arbejde')">
+                <span class="audio-count">5</span>
+                <div class="selection-icon">💼</div>
+                <h2>Arbejde & studier</h2>
+                <p>Håndter præstationsangst og deadline-stress</p>
+            </div>
+            
+            <div class="selection-card" onclick="startCategory('relationer')">
+                <span class="audio-count">4</span>
+                <div class="selection-icon">❤️</div>
+                <h2>Bekymringer i relationer</h2>
+                <p>Når du overtænker andres reaktioner</p>
+            </div>
+            
+            <div class="selection-card filosofi" onclick="playFilosof()">
+                <span class="audio-count">3</span>
+                <div class="selection-icon">📚</div>
+                <h2>Filosofens perspektiv</h2>
+                <p>Dybere refleksioner over bekymringens natur</p>
             </div>
         </div>
     </div>
-
-    <!-- Text Panel -->
-    <div class="overlay" id="overlay" onclick="closeText()"></div>
-    <div class="text-panel" id="textPanel">
-        <div class="text-panel-header">
-            <h3 class="text-panel-title" id="textPanelTitle">Script tekst</h3>
-            <button class="close-text-btn" onclick="closeText()">✕</button>
+    
+    <!-- Session Display -->
+    <div class="session-display" id="sessionDisplay">
+        <video class="video-background" autoplay muted loop playsinline>
+            <source src="video/bekymringer.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+        
+        <div class="session-content">
+            <div class="module-indicator" id="moduleIndicator">Afspiller...</div>
+            <h2 class="session-title" id="sessionTitle"></h2>
+            
+            <!-- Audio Timer -->
+            <div class="audio-timer" id="audioTimer">
+                <div id="timerDisplay">0:00 / 0:00</div>
+                <div class="timer-progress">
+                    <div class="timer-fill" id="timerFill"></div>
+                </div>
+            </div>
+            
+            <!-- Text Display Box -->
+            <div class="text-display-box" id="textDisplayBox">
+                <div class="text-content" id="textContent"></div>
+            </div>
         </div>
-        <div class="text-content" id="textContent">
-            <!-- Text will be inserted here -->
+        
+        <div class="controls-bar">
+            <button class="control-btn" onclick="togglePlay()" id="playBtn">⏸</button>
+            <button class="control-btn" onclick="toggleTextDisplay()" id="textBtn">📝 Tekst</button>
+            <button class="control-btn skip" onclick="skipToNext()" id="skipBtn" style="display: none;">⏭ Spring over</button>
+            <button class="favorite-btn" onclick="toggleFavorite()" id="favBtn">🤍</button>
+            <span class="queue-indicator" id="queueIndicator" style="display: none;">1/44</span>
+            <button class="control-btn" onclick="backToSelection()">← Menu</button>
         </div>
     </div>
-
-    <!-- Scripts Modal -->
-    <div class="scripts-modal" id="scriptsModal">
-        <div class="text-panel-header">
-            <h3 class="text-panel-title" id="categoryTitle">Scripts</h3>
-            <button class="close-text-btn" onclick="closeScriptsModal()">✕</button>
-        </div>
-        <div class="scripts-list" id="scriptsList">
-            <!-- Scripts will be inserted here -->
+    
+    <!-- Choice Modal -->
+    <div class="choice-modal" id="choiceModal">
+        <div class="choice-container">
+            <h3 class="choice-question" id="choiceQuestion">Vælg det script der passer bedst:</h3>
+            <div class="choice-options" id="choiceOptions"></div>
         </div>
     </div>
-
+    
+    <!-- Audio element -->
+    <audio id="audioPlayer" preload="auto"></audio>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
     <script>
-        // Script Database with full text
-        const scriptsDatabase = {
+        // Audio configuration with durations
+        const audioFiles = {
+            welcome: { 
+                file: 'psyk_bekymringer_velkommen', 
+                title: 'Velkommen til hjælp mod bekymringer',
+                duration: 60,
+                text: 'Velkommen til hjælp mod bekymringer og overtænkning. Dit sind kører i ring jeg forstår det...'
+            },
             akut: [
-                {
-                    id: 'akut_1',
-                    title: 'STOP-teknikken - bryd tankespiralen nu',
-                    duration: '5 min',
-                    text: `Tag en dyb vejrtrækning. Jeg ved dine tanker kører rundt lige nu. Som et hamsterhjul der ikke kan stoppe. Det er okay. Vi skal bryde det sammen.
-
-                    STOP står for Stop, Tag et skridt tilbage, Observer, og Proceed - fortsæt.
-                    
-                    Først: Stop. Lige nu. Sæt alt på pause. Forestil dig et stort rødt stopskildt. Dine tanker protesterer måske, men det er okay.
-                    
-                    Tag et skridt tilbage. Forestil dig du træder ud af din krop og ser dig selv udefra. Som om du ser en film af dit eget liv. Det skaber afstand til tankerne.
-                    
-                    Observer. Hvad sker der lige nu? Ikke i dine tanker, men omkring dig. Nævn fem ting du kan se. Fire ting du kan høre. Tre ting du kan mærke. To ting du kan lugte. En ting du kan smage.
-                    
-                    Nu er du tilbage i nuet. Proceed - fortsæt. Men denne gang med bevidst opmærksomhed. Tankerne er der stadig, men du er ikke fanget i dem længere.`
-                },
-                {
-                    id: 'akut_2',
-                    title: '5-4-3-2-1 grounding for overtænkere',
-                    duration: '4 min',
-                    text: `Dine tanker flyver afsted. Jeg forstår det. Lad os bringe dig ned på jorden igen. Helt bogstaveligt.
-                    
-                    Find fem ting du kan se lige nu. Sig dem højt hvis du kan. "Jeg kan se lampen. Jeg kan se døren. Jeg kan se min hånd."
-                    
-                    Fire ting du kan røre ved. Rør ved dem faktisk. Mærk teksturen. Er det blødt? Hårdt? Koldt? Varmt?
-                    
-                    Tre ting du kan høre. Måske trafikken udenfor. Dit eget åndedræt. Uret der tikker.
-                    
-                    To ting du kan lugte. Tag en dyb indånding. Hvad dufter der af?
-                    
-                    En ting du kan smage. Måske kaffen fra tidligere. Eller bare din egen mund.
-                    
-                    Nu er du her. Ikke i fremtidens katastrofer. Ikke i fortidens fejl. Men lige her, lige nu.`
-                },
-                {
-                    id: 'akut_3',
-                    title: 'Bekymringsstop - 10 minutters regel',
-                    duration: '6 min',
-                    text: `Okay. Jeg har et forslag. Giv dig selv ti minutter til at bekymre dig. Ja, du hørte rigtigt. Ti minutter hvor du må tænke alle de værste tanker.
-                    
-                    Men her er tricket: Sæt en timer. Når de ti minutter er gået, så stopper vi. Ikke et sekund mere.
-                    
-                    I de ti minutter, så bekymr dig rigtigt. Skriv det ned hvis du vil. Alle de værste scenarier. Alt det der kan gå galt.
-                    
-                    [Pause]
-                    
-                    Nu forestiller jeg mig timeren ringer. Stop. Bekymringstiden er slut. 
-                    
-                    Tag papirerne hvis du skrev. Fold dem sammen. Læg dem i en skuffe. De er der stadig hvis du får brug for dem. Men ikke nu.
-                    
-                    Resten af dagen er bekymringsfri zone. Når tankerne kommer tilbage, så sig: "Det er ikke bekymringstid nu. Jeg har allerede brugt min tid i dag."
-                    
-                    Det lyder simpelt. Måske for simpelt. Men prøv det. Din hjerne kan lære at bekymringerne har deres tid og sted. Ikke hele tiden. Ikke alle steder.`
-                },
-                {
-                    id: 'akut_4',
-                    title: 'Tankerne er ikke farlige',
-                    duration: '5 min',
-                    text: `Lyt. Jeg ved dine tanker føles overvældende lige nu. Som om de kan ødelægge dig. Men jeg har noget vigtigt at fortælle dig.
-                    
-                    Tanker kan ikke skade dig. De føles farlige, men de er det ikke. De er som skyer på himlen. De kommer, de går.
-                    
-                    Prøv dette: Tænk på en lyserød elefant. Seriøst, gør det nu. En stor, lyserød elefant.
-                    
-                    Se? Du kan skabe den tanke. Nu, prøv IKKE at tænke på den lyserøde elefant. Hvad sker der? Den bliver ved med at dukke op, ikke?
-                    
-                    Det er det samme med bekymringstanker. Jo mere du kæmper imod dem, jo stærkere bliver de.
-                    
-                    Så i stedet for at kæmpe, prøv dette: "Hej tanke. Jeg ser dig. Du er her. Det er okay. Du er bare en tanke."
-                    
-                    Giv tanken plads til at være der. Som en irriterende gæst til en fest. Du behøver ikke snakke med den. Du behøver ikke lytte. Men du behøver heller ikke smide den ud.
-                    
-                    Med tiden går den selv. Det gør tanker altid. Hvis vi lader dem.`
-                },
-                {
-                    id: 'akut_5',
-                    title: 'Åndedræt for overtænkere',
-                    duration: '5 min',
-                    text: `Dit åndedræt er hurtigt og overfladisk lige nu. Det ved jeg, fordi sådan reagerer kroppen når tankerne kører for stærkt.
-                    
-                    Vi skal sænke farten. Ikke i tankerne først - det er for svært. Men i kroppen. Når kroppen slapper af, følger tankerne med.
-                    
-                    Læg en hånd på maven. Den anden på brystet. Hvilken hånd bevæger sig mest? Sandsynligvis den på brystet, ikke?
-                    
-                    Vi skal have åndedrættet ned i maven. Forestil dig en ballon i din mave. Når du ånder ind, pustes ballonen op. Når du ånder ud, tømmes den.
-                    
-                    Ind gennem næsen. Langsomt. Tæl til fire. En... to... tre... fire.
-                    
-                    Hold. Tæl til fire igen. En... to... tre... fire.
-                    
-                    Ud gennem munden. Som om du puster forsigtigt til et stearinlys. Tæl til seks. En... to... tre... fire... fem... seks.
-                    
-                    Gentag. Ind-fire, hold-fire, ud-seks.
-                    
-                    Dine tanker vil protestere. "Vi har ikke tid til det her!" Ignorer dem. Fortsæt. Dette er vigtigere end tankerne tror.`
-                }
+                { file: 'psyk_bekymringer_stop_teknik', title: 'STOP-teknikken - bryd tankespiralen nu', duration: 300 },
+                { file: 'psyk_bekymringer_5_4_3_2_1', title: '5-4-3-2-1 grounding for overtænkere', duration: 240 },
+                { file: 'psyk_bekymringer_10_min_regel', title: 'Bekymringsstop - 10 minutters regel', duration: 360 },
+                { file: 'psyk_bekymringer_tanker_ikke_farlige', title: 'Tankerne er ikke farlige', duration: 300 },
+                { file: 'psyk_bekymringer_aandedraet', title: 'Åndedræt for overtænkere', duration: 300 }
             ],
             forsta: [
-                {
-                    id: 'forsta_1',
-                    title: 'Hvorfor overtænker vi? Evolutionens fejl',
-                    duration: '6 min',
-                    text: `Velkommen. Lad mig fortælle dig hvorfor din hjerne overtænker. Det er faktisk ikke din skyld.
-                    
-                    For titusindvis af år siden var vores forfædre konstant i fare. Sabeltandede tigre. Fjendtlige stammer. Gift i bær.
-                    
-                    De der bekymrede sig mest, overlevede. "Er det en tiger i buskene?" Bedre at løbe hundrede gange for ingenting end at blive spist én gang.
-                    
-                    Din hjerne har arvet dette. Den scanner konstant for fare. Men i dag? Der er ingen tigre. Så hjernen finder andre ting at bekymre sig om.
-                    
-                    "Hvad hvis min chef ikke kan lide mig?" "Hvad hvis jeg bliver syg?" "Hvad hvis jeg sagde noget dumt?"
-                    
-                    Din hjerne tror den beskytter dig. Som en overbeskyttende forælder der ikke kan se du er vokset op.
-                    
-                    Men her er sandheden: Nioghalvfems procent af det vi bekymrer os om sker aldrig. Og det ene procent der sker? Det klarer vi alligevel.
-                    
-                    Din bekymringshjerne er ikke din fjende. Den er bare forældet software der har brug for en opdatering.`
-                },
-                {
-                    id: 'forsta_2',
-                    title: 'Bekymringsspiralen - hvordan den virker',
-                    duration: '5 min',
-                    text: `Lad mig vise dig hvordan bekymringsspiralen fungerer. Når du forstår mekanismen, mister den noget af sin magt.
-                    
-                    Det starter med en tanke. Måske "Hvad hvis jeg glemmer noget vigtigt?"
-                    
-                    Din hjerne tager den tanke alvorligt. Den begynder at lede efter beviser. "Jeg glemte faktisk noget sidste uge!"
-                    
-                    Nu kommer følelserne. Angst. Uro. Hjertet banker hurtigere.
-                    
-                    Kroppen reagerer. Spændte skuldre. Ondt i maven. Hovedpine.
-                    
-                    Hjernen tolker kroppens signaler: "Se! Kroppen er også bekymret. Det MÅ være farligt!"
-                    
-                    Flere tanker. "Hvad hvis jeg mister mit job?" "Hvad hvis alle tror jeg er inkompetent?"
-                    
-                    Og spiralen fortsætter. Opad og opad. Hurtigere og hurtigere.
-                    
-                    Men ved du hvad? Nu hvor du kender spiralen, kan du spotte den. "Ah, der er spiralen igen." 
-                    
-                    Og når du kan se den, er du ikke længere fanget i den. Du er observatøren, ikke offeret.`
-                },
-                {
-                    id: 'forsta_3',
-                    title: 'Forskellen på produktive og uproduktive bekymringer',
-                    duration: '6 min',
-                    text: `Ikke alle bekymringer er ens. Nogle hjælper dig faktisk. Andre holder dig bare fanget.
-                    
-                    Produktive bekymringer leder til handling. "Jeg er bekymret for eksamen" bliver til "Jeg laver en læseplan."
-                    
-                    Uproduktive bekymringer kører i ring. "Hvad hvis jeg dør?" "Hvad hvis verden går under?" Du kan ikke gøre noget ved dem.
-                    
-                    Her er testen: Spørg dig selv "Kan jeg gøre noget ved dette lige nu?"
-                    
-                    Hvis ja - så gør det. Lav en plan. Tag et skridt. Selv et lille et.
-                    
-                    Hvis nej - så er det en uproduktiv bekymring. Den stjæler bare din energi.
-                    
-                    For de uproduktive bekymringer, prøv dette: Skriv dem ned. Læg papiret i en "bekymringsboks". Fortæl dig selv: "Dette er ikke mit ansvar lige nu."
-                    
-                    Det lyder måske barnligt. Men din bekymringshjerne ER barnlig. Den forstår simple ritualer bedre end logiske argumenter.
-                    
-                    Husk: Bekymring er ikke problemløsning. Det føles som om du gør noget, men du kører bare i ring.`
-                },
-                {
-                    id: 'forsta_4',
-                    title: 'Når bekymringer bliver til generaliseret angst',
-                    duration: '5 min',
-                    text: `Nogle gange vokser bekymringerne. De spreder sig som ukrudt. Fra én ting til alting.
-                    
-                    Det starter måske med arbejdet. Så pengene. Så helbredet. Så relationerne. Pludselig er alt farligt.
-                    
-                    Dette kaldes generaliseret angst. Når bekymringen ikke har et specifikt mål længere. Den er bare... der. Hele tiden.
-                    
-                    Hvis dette lyder bekendt, så vid: Du er ikke alene. Millioner lever med dette. Og der er hjælp.
-                    
-                    Første skridt er at anerkende det. "Okay, min bekymring er blevet generaliseret. Den handler ikke om specifikke ting længere."
-                    
-                    Andet skridt er at forstå: Dette er en tilstand. Som forkølelse eller hovedpine. Det er ikke din personlighed. Det er ikke permanent.
-                    
-                    Tredje skridt er at søge støtte. Tal med nogen. En ven, en læge, en psykolog. Du fortjener hjælp.
-                    
-                    Generaliseret angst kan behandles. CBT virker. Mindfulness hjælper. Nogle gange hjælper medicin. 
-                    
-                    Du behøver ikke leve sådan her. Der er veje ud.`
-                },
-                {
-                    id: 'forsta_5',
-                    title: 'Bekymringens pris - hvad den stjæler fra dig',
-                    duration: '5 min',
-                    text: `Lad os være ærlige om hvad konstant bekymring koster dig. Ikke for at gøre dig mere bekymret, men for at motivere forandring.
-                    
-                    Bekymring stjæler din søvn. Du ligger vågen, tankerne kører. Næste dag er du træt, hvilket gør bekymringerne værre.
-                    
-                    Den stjæler din glæde. Du er til fest, men tankerne er et andet sted. "Hvad hvis..." i stedet for "Hvor dejligt!"
-                    
-                    Den stjæler din energi. Bekymring er udmattende. Som at løbe maraton uden at flytte sig.
-                    
-                    Den stjæler dine relationer. Du er der fysisk, men mentalt er du fanget i dit eget hoved.
-                    
-                    Den stjæler din kreativitet. Bekymringshjernen kan ikke skabe. Den kan kun forestille sig katastrofer.
-                    
-                    Men ved du hvad? Du læser dette fordi du vil have dit liv tilbage. Og det kan du få.
-                    
-                    Hver gang du bruger en teknik, hver gang du stopper spiralen, hver gang du vælger nuet over bekymringen - så tager du et stykke af dit liv tilbage.
-                    
-                    Små sejre. Hver dag. Det er sådan du vinder.`
-                }
+                { file: 'psyk_bekymringer_evolution', title: 'Hvorfor overtænker vi? Evolutionens fejl', duration: 360 },
+                { file: 'psyk_bekymringer_spiral', title: 'Bekymringsspiralen - hvordan den virker', duration: 300 },
+                { file: 'psyk_bekymringer_produktiv_uproduktiv', title: 'Forskellen på produktive og uproduktive bekymringer', duration: 360 },
+                { file: 'psyk_bekymringer_generaliseret_angst', title: 'Når bekymringer bliver til generaliseret angst', duration: 300 },
+                { file: 'psyk_bekymringer_pris', title: 'Bekymringens pris - hvad den stjæler fra dig', duration: 300 }
             ],
             cbt: [
-                {
-                    id: 'cbt_1',
-                    title: 'Tankefælder - kognitive forvrængninger',
-                    duration: '6 min',
-                    text: `Din hjerne snyder dig. Den bruger genveje som skaber bekymringer. Lad os afsløre de mest almindelige tankefælder.
-                    
-                    Katastrofetænkning: Du springer direkte til det værste scenarie. Hovedpine bliver til hjernetumor. Sen besked bliver til "de hader mig."
-                    
-                    Tankelæsning: Du "ved" hvad andre tænker. "Hun synes jeg er dum." Hvordan ved du det? Du gætter.
-                    
-                    Spåkuglegazing: Du "ved" hvad fremtiden bringer. "Det kommer til at gå galt." Er du synsk? Nej.
-                    
-                    Alt-eller-intet: Enten er alt perfekt eller alt er katastrofe. Der findes ikke noget midt imellem.
-                    
-                    Personalisering: Alt handler om dig. Chefen er sur? Det må være din skyld. Regn? Du bragte uheld.
-                    
-                    Mental filter: Du ser kun det negative. Ti komplimenter og én kritik? Du husker kun kritikken.
-                    
-                    Nu hvor du kender fælderne, kan du spotte dem. "Ah, der katastrofetænker jeg igen." 
-                    
-                    Bevidsthed er første skridt mod frihed.`
-                },
-                {
-                    id: 'cbt_2',
-                    title: 'Tankeudfordring - er det sandt?',
-                    duration: '5 min',
-                    text: `Når bekymringstanken kommer, stil disse spørgsmål. Som en detektiv der undersøger en sag.
-                    
-                    Spørgsmål 1: Er denne tanke et faktum eller en følelse? "Alle hader mig" er en følelse, ikke et faktum.
-                    
-                    Spørgsmål 2: Hvad er beviserne FOR denne tanke? Vær specifik. Ikke "jeg har en fornemmelse."
-                    
-                    Spørgsmål 3: Hvad er beviserne IMOD? Hvad taler imod din bekymring? Der er altid noget.
-                    
-                    Spørgsmål 4: Hvad ville jeg sige til en ven med samme tanke? Vi er hårdere ved os selv end andre.
-                    
-                    Spørgsmål 5: Hvad er det værste der realistisk kan ske? Og kunne jeg overleve det? Svaret er næsten altid ja.
-                    
-                    Spørgsmål 6: Hvad er det mest sandsynlige udfald? Ikke det værste, ikke det bedste. Det realistiske.
-                    
-                    Spørgsmål 7: Hjælper denne tanke mig eller holder den mig tilbage? Hvis den ikke hjælper, hvorfor holde fast?
-                    
-                    Udfordr dine tanker. De er ikke hellige. De kan tage fejl. Og de gør det ofte.`
-                },
-                {
-                    id: 'cbt_3',
-                    title: 'ABC-modellen - forstå dine reaktioner',
-                    duration: '6 min',
-                    text: `Lad mig lære dig ABC-modellen. Den viser hvordan tanker skaber følelser, ikke situationer.
-                    
-                    A står for Activating event - den udløsende hændelse. Din chef sender en kort email.
-                    
-                    B står for Beliefs - dine tanker om hændelsen. "Hun er sur på mig. Jeg har gjort noget forkert."
-                    
-                    C står for Consequences - følelsesmæssige konsekvenser. Angst, bekymring, mavepine.
-                    
-                    De fleste tror A fører direkte til C. Chefen sender kort mail = jeg får angst.
-                    
-                    Men sandheden er: A → B → C. Det er B, dine tanker, der skaber følelserne.
-                    
-                    Bevis: Samme situation, forskellige mennesker, forskellige reaktioner. Hvorfor? Forskellige tanker.
-                    
-                    Én person: "Chefen har travlt." Ingen angst.
-                    Anden person: "Hun hader mig." Panik.
-                    
-                    Samme A, forskelligt B, derfor forskelligt C.
-                    
-                    Du kan ikke altid ændre A. Men du kan arbejde med B. Og når B ændres, ændres C automatisk.
-                    
-                    Næste gang du får angst, stop. Hvad er A? Hvad er B? Er B realistisk? Hvis ikke, hvad kunne være en alternativ B?`
-                },
-                {
-                    id: 'cbt_4',
-                    title: 'Bekymringsdagbog - spot mønstre',
-                    duration: '5 min',
-                    text: `Jeg vil lære dig et kraftfuldt værktøj: Bekymringsdagbogen. Det lyder kedeligt, men det virker.
-                    
-                    Hver gang en bekymring dukker op, skriv:
-                    Tidspunkt. Situation. Tanke. Følelse (1-10). Kropslig reaktion.
-                    
-                    Eksempel:
-                    14:30. Så kollega hviske. "De snakker om mig." Angst 7/10. Hjertebanken.
-                    
-                    Gør dette i en uge. Bare en uge. Så kig på mønstrene.
-                    
-                    Måske opdager du: Bekymringerne er værst om eftermiddagen. Eller når du er træt. Eller efter kaffe.
-                    
-                    Måske ser du: Samme bekymring igen og igen. "Folk dømmer mig." I forskellige forklædninger.
-                    
-                    Måske finder du: Dine forudsigelser tager fejl. Du skrev "Mødet bliver en katastrofe." Var det? Nej.
-                    
-                    Dagbogen gør det ubevidste bevidst. Den gør mønstrene synlige. 
-                    
-                    Og når du kan se mønstrene, kan du bryde dem. 
-                    
-                    Start i dag. Bare en note i telefonen. "Tid. Situation. Tanke. Følelse. Krop."
-                    
-                    Viden er magt. Også over bekymringer.`
-                },
-                {
-                    id: 'cbt_5',
-                    title: 'Alternative tanker - find den grå zone',
-                    duration: '6 min',
-                    text: `Bekymringshjernen ser sort-hvidt. Lad os finde de grå nuancer.
-                    
-                    Tag din bekymringstanke. Måske: "Jeg kommer til at fejle fuldstændigt til præsentationen."
-                    
-                    Nu, lav et spektrum. Værste scenarie til venstre. Bedste til højre.
-                    
-                    Værst: Jeg glemmer alt, folk griner, jeg bliver fyret.
-                    Bedst: Standing ovation, forfremmelse, berømmelse.
-                    
-                    Begge er usandsynlige, ikke? Sandheden ligger i midten.
-                    
-                    Realistisk: Jeg er nervøs men kommer igennem. Nogle dele går godt, andre mindre. Folk lytter høfligt. Livet fortsætter.
-                    
-                    Eller tag: "Ingen kan lide mig."
-                    
-                    Værst: Alle hader mig aktivt.
-                    Bedst: Alle elsker mig betingelsesløst.
-                    Realistisk: Nogle kan lide mig, andre er neutrale, enkelte kan jeg ikke med. Normalt.
-                    
-                    Øv dig i at finde midten. Den kedelige, realistiske midte.
-                    
-                    Bekymringshjernen hader midten. Den vil have drama. Men virkeligheden? Den er mest midt i mellem.
-                    
-                    Næste bekymring, find spektrummet. Placer din tanke. Er den realistisk? Eller er den i yderpunkterne?
-                    
-                    Træn din hjerne til at se nuancer. Det er der virkeligheden lever.`
-                },
-                {
-                    id: 'cbt_6',
-                    title: 'Adfærdseksperimenter - test dine tanker',
-                    duration: '5 min',
-                    text: `Din bekymringshjerne har teorier. "Hvis jeg siger min mening, vil folk hade mig." Lad os teste det.
-                    
-                    Videnskabsmænd tester hypoteser. Det skal du også. Din bekymring er bare en hypotese.
-                    
-                    Start småt. Hvis du tror "Jeg kan ikke klare at være alene," prøv fem minutter alene. Hvad skete der? Døde du? Nej.
-                    
-                    Ti minutter næste gang. Så femten. Byg op langsomt.
-                    
-                    Eller: "Folk dømmer mit udseende." Gå en tur uden makeup. Eller med en plet på skjorten. Hvad sker der? Sandsynligvis ingenting.
-                    
-                    Skriv ned:
-                    Min forudsigelse: Alle vil stirre og dømme.
-                    Hvad skete faktisk: En person kiggede, resten var ligeglade.
-                    
-                    Igen og igen vil du opdage: Dine forudsigelser tager fejl. Verden er ikke så farlig som din hjerne tror.
-                    
-                    Hver gang du tester og overlever, bliver din bekymringshjerne svagere. "Måske tager jeg fejl," begynder den at tænke.
-                    
-                    Mod er ikke fravær af frygt. Det er at handle på trods af frygten. Og hver handling er et eksperiment der beviser: Du kan klare mere end du tror.`
-                }
+                { file: 'psyk_bekymringer_tankefaelder', title: 'Tankefælder - kognitive forvrængninger', duration: 360 },
+                { file: 'psyk_bekymringer_tankeudfordring', title: 'Tankeudfordring - er det sandt?', duration: 300 },
+                { file: 'psyk_bekymringer_abc_model', title: 'ABC-modellen - forstå dine reaktioner', duration: 360 },
+                { file: 'psyk_bekymringer_dagbog', title: 'Bekymringsdagbog - spot mønstre', duration: 300 },
+                { file: 'psyk_bekymringer_alternative_tanker', title: 'Alternative tanker - find den grå zone', duration: 360 },
+                { file: 'psyk_bekymringer_eksperiment', title: 'Adfærdseksperimenter - test dine tanker', duration: 300 }
             ],
             mindfulness: [
-                {
-                    id: 'mindfulness_1',
-                    title: 'Tanker som skyer - observér uden at dømme',
-                    duration: '7 min',
-                    text: `Sæt dig behageligt. Luk øjnene hvis du vil. Forestil dig du ligger på græsset og ser op på himlen.
-                    
-                    Skyerne driver forbi. Store skyer, små skyer. Mørke skyer, lyse skyer. De kommer, de går.
-                    
-                    Dine tanker er som skyerne. De dukker op, driver forbi, forsvinder igen.
-                    
-                    En bekymringstanke kommer. "Hvad hvis..." Se den som en sky. En mørk sky måske, men bare en sky.
-                    
-                    Du behøver ikke gøre noget ved skyen. Du behøver ikke jage den væk. Du behøver ikke holde fast i den.
-                    
-                    Bare observér. "Ah, der er bekymringsskyen igen."
-                    
-                    Måske kommer vredesskyen. Eller ensomhedsskyen. Eller glædesskyen.
-                    
-                    Alle skyer er velkomne på din himmel. Du er himlen - vid, åben, uforanderlig. Skyerne kommer og går, men himlen forbliver.
-                    
-                    Når du bliver fanget i en sky, når du glemmer du er himlen - så husk: Du er ikke dine tanker. Du er den der observerer tankerne.
-                    
-                    Øv dette dagligt. Fem minutter. Se tankeskyerne drive forbi. Med tiden lærer du: Tanker er midlertidige. Som skyer. De har ingen permanent magt over dig.`
-                },
-                {
-                    id: 'mindfulness_2',
-                    title: 'Nuets anker - kom tilbage når tankerne flyver',
-                    duration: '6 min',
-                    text: `Tankerne flyver til fortid og fremtid. Lad os kaste anker i nuet.
-                    
-                    Dit anker er din krop. Den er altid her, altid nu.
-                    
-                    Start med fødderne. Mærk dem. I skoene eller mod gulvet. Vrikk lidt med tæerne. Der er du. I nuet.
-                    
-                    Op gennem benene. Mærk vægten. Tyngden. Du er forankret til jorden.
-                    
-                    Maven. Udvider sig når du ånder ind. Trækker sig sammen når du ånder ud. Som bølger på stranden.
-                    
-                    Hænderne. Hvor er de? Hvordan føles de? Varme? Kolde? Afslappede? Spændte?
-                    
-                    Skuldrene. Løft dem op til ørerne. Slip. Mærk forskellen.
-                    
-                    Ansigtet. Afslap panden. Kæben. Tungen.
-                    
-                    Nu, hele kroppen. Fra top til tå. Dette er dit anker. Dit hjem i nuet.
-                    
-                    Når tankerne flyver - og det gør de - så kom tilbage hertil. Til kroppen. Til åndedrættet. Til nuet.
-                    
-                    Du behøver ikke stoppe tankerne. Bare kom tilbage. Igen og igen. Som et barn der lærer at gå. Falder, rejser sig, går igen.
-                    
-                    Dette er mindfulness. Ikke perfekt ro. Men evnen til at vende tilbage.`
-                },
-                {
-                    id: 'mindfulness_3',
-                    title: 'RAIN-meditation for bekymringer',
-                    duration: '8 min',
-                    text: `RAIN er en kraftfuld meditation for svære følelser og tanker. R-A-I-N.
-                    
-                    R - Recognize. Genkend hvad der sker.
-                    "Der er bekymring. Der er frygt. Der er tankemylder."
-                    Bare navngiv det. Uden drama.
-                    
-                    A - Allow. Tillad det at være der.
-                    "Det er okay at dette er her lige nu. Jeg behøver ikke kæmpe imod."
-                    Som at åbne døren for en uvelkommen gæst. Du inviterer dem ikke ind, men du smækker heller ikke døren.
-                    
-                    I - Investigate. Undersøg med venlighed.
-                    Hvor mærker du det i kroppen? Hvordan føles det? Tungt? Let? Varmt? Koldt?
-                    Vær nysgerrig, ikke dømmende. Som en videnskabsmand der studerer et interessant fænomen.
-                    
-                    N - Non-identification. Ikke-identifikation.
-                    Du er ikke dine bekymringer. Du er den der oplever dem.
-                    Som vejret ikke er himlen. Bekymringerne er vejr. Du er himlen.
-                    
-                    Øv RAIN når bekymringerne kommer.
-                    Genkend. Tillad. Undersøg. Slip identifikationen.
-                    
-                    Med tiden bliver bekymringerne mindre skræmmende. De er bare mentalt vejr. Og alt vejr passerer.`
-                },
-                {
-                    id: 'mindfulness_4',
-                    title: 'Opmærksom gang - bevægelse mod overtænkning',
-                    duration: '6 min',
-                    text: `Når tankerne kører for stærkt, skal kroppen i bevægelse. Men ikke bare bevægelse. Opmærksom bevægelse.
-                    
-                    Rejs dig op. Hvis du ikke kan, er det okay - gør øvelsen siddende.
-                    
-                    Stå stille et øjeblik. Mærk kontakten med gulvet. Vægten der skifter mellem fødderne.
-                    
-                    Begynd at gå. Langsomt. Meget langsomt. Som i slowmotion.
-                    
-                    Løft højre fod. Mærk hvordan vægten skifter til venstre. Mærk musklerne arbejde.
-                    
-                    Flyt foden fremad. Gennem luften. Langsomt.
-                    
-                    Sæt hælen ned. Rul gennem foden. Til tæerne.
-                    
-                    Nu venstre fod. Samme opmærksomhed.
-                    
-                    Hvis tankerne kommer - og det gør de - så tilbage til fødderne. Løft, flyt, sæt ned.
-                    
-                    Dette er meditation i bevægelse. Tankerne kan ikke overtænke når du er så opmærksom på nuet.
-                    
-                    Ti skridt frem. Vend om. Ti skridt tilbage.
-                    
-                    Eller gå rundt i stuen. Haven. Gaden.
-                    
-                    Når du går opmærksomt, kan tankerne ikke løbe. De må gå i dit tempo. Langsomt. Roligt. Ét skridt ad gangen.`
-                },
-                {
-                    id: 'mindfulness_5',
-                    title: 'Loving kindness for bekymrede sind',
-                    duration: '7 min',
-                    text: `Bekymring kommer ofte fra selvkritik. Lad os øve venlighed i stedet.
-                    
-                    Luk øjnene. Læg en hånd på hjertet hvis det føles godt.
-                    
-                    Start med dig selv. Sig indeni eller højt:
-                    "Må jeg være tryg. Må jeg være i fred. Må jeg være fri for lidelse. Må jeg leve med lethed."
-                    
-                    Mærk ordene. Ikke bare som ord, men som ønsker. Ægte ønsker for dit eget velbefindende.
-                    
-                    Nu, tænk på nogen du holder af. Nogen det er let at elske.
-                    "Må du være tryg. Må du være i fred. Må du være fri for lidelse. Må du leve med lethed."
-                    
-                    En neutral person. Kasseassistenten, buschaufføren.
-                    Samme ønsker. "Må du være tryg..."
-                    
-                    Nogen du har svært ved. Start med nogen let besværlig.
-                    "Må du være tryg..." Det kan være svært. Det er okay.
-                    
-                    Alle levende væsener.
-                    "Må alle være trygge. Må alle være i fred. Må alle være fri for lidelse. Må alle leve med lethed."
-                    
-                    Tilbage til dig selv.
-                    "Må jeg være tryg. Ligesom alle andre ønsker at være trygge. Må jeg være i fred. Ligesom alle andre længes efter fred."
-                    
-                    Venlighed er det modsatte af bekymring. Øv det dagligt. Mod dig selv først. Så spreder det sig.`
-                }
+                { file: 'psyk_bekymringer_skyer', title: 'Tanker som skyer - observér uden at dømme', duration: 420 },
+                { file: 'psyk_bekymringer_anker', title: 'Nuets anker - kom tilbage når tankerne flyver', duration: 360 },
+                { file: 'psyk_bekymringer_rain', title: 'RAIN-meditation for bekymringer', duration: 480 },
+                { file: 'psyk_bekymringer_gang', title: 'Opmærksom gang - bevægelse mod overtænkning', duration: 360 },
+                { file: 'psyk_bekymringer_loving_kindness', title: 'Loving kindness for bekymrede sind', duration: 420 }
             ],
             praktisk: [
-                {
-                    id: 'praktisk_1',
-                    title: 'Bekymringstid - 15 minutter om dagen',
-                    duration: '5 min',
-                    text: `Her er en teknik der lyder mærkelig men virker: Planlagt bekymringstid.
-                    
-                    Vælg et tidspunkt hver dag. Klokken 17 til 17:15 for eksempel. Dette er din officielle bekymringstid.
-                    
-                    Når bekymringer dukker op i løbet af dagen, skriv dem ned. Bare en kort note. "Bekymret for mødet." "Nervøs for helbredet."
-                    
-                    Sig til bekymringen: "Tak for påmindelsen. Jeg tager mig af dig klokken 17."
-                    
-                    Når klokken er 17, sæt dig ned med listen. Nu MÅ du bekymre dig. Det er din pligt. 
-                    
-                    Gennemgå hver bekymring. Giv den fuld opmærksomhed. Tænk det værste. Det er okay, du har tilladelse.
-                    
-                    Men når de 15 minutter er gået - stop. Færdig for i dag.
-                    
-                    Det mærkelige sker: Når du endelig må bekymre dig, virker mange bekymringer pludselig ligegyldige. "Hvorfor var jeg bekymret for det?"
-                    
-                    Og bekymringerne lærer: De har deres tid. Ikke hele dagen. Kun 15 minutter.
-                    
-                    Start i morgen. 15 minutter. Ikke mere, ikke mindre. Se hvad der sker efter en uge.`
-                },
-                {
-                    id: 'praktisk_2',
-                    title: 'Beslutningsmatrix - stop beslutningsangst',
-                    duration: '6 min',
-                    text: `Kan ikke beslutte dig? Overtænker hver mulighed? Lad os gøre det systematisk.
-                    
-                    Tag et papir. Del det i fire felter.
-                    
-                    Øverst til venstre: Fordele ved at gøre det.
-                    Øverst til højre: Ulemper ved at gøre det.
-                    Nederst til venstre: Fordele ved IKKE at gøre det.
-                    Nederst til højre: Ulemper ved IKKE at gøre det.
-                    
-                    Udfyld alle fire. Vær specifik. Ikke "det bliver godt" men "jeg sparer 5000 kr."
-                    
-                    Giv hver punkt en score fra 1-10. Hvor vigtigt er det?
-                    
-                    Læg sammen. Hvilket felt har højest score?
-                    
-                    Men her er hemmeligheden: Scoren er ikke det vigtigste. Processen er.
-                    
-                    Når du skriver det ned, flytter du beslutningen fra følelseshjernen til den logiske hjerne.
-                    
-                    Og ofte, mens du skriver, ved du allerede svaret. Din mavefornemmelse fortæller dig det. Matrixen bekræfter det bare.
-                    
-                    Brug den til store beslutninger. Jobskifte. Flytning. Forhold.
-                    Brug den til små. Restaurant. Film. Weekendplaner.
-                    
-                    Beslutninger bliver mindre skræmmende når de er på papir.`
-                },
-                {
-                    id: 'praktisk_3',
-                    title: 'Worst case scenario - forbered dig mentalt',
-                    duration: '5 min',
-                    text: `Paradoksalt nok: Nogle gange hjælper det at tænke det værste scenarie helt til ende.
-                    
-                    Tag din største bekymring lige nu. Hvad er det absolut værste der kan ske?
-                    
-                    Skriv det ned. I detaljer. Gør det værre end din hjerne gør.
-                    
-                    Nu: Hvad ville du gøre hvis det skete? Helt konkret. Step for step.
-                    
-                    Mister jobbet? 
-                    Step 1: Ansøg om dagpenge.
-                    Step 2: Opdater CV.
-                    Step 3: Kontakt netværk.
-                    Step 4: Søg 5 jobs om ugen.
-                    
-                    Ser du? Selv det værste har en plan. Du ville overleve. Du ville klare det.
-                    
-                    Og her er sandheden: Det værste sker næsten aldrig. Men nu ved du: Selv hvis det gjorde, ville du klare det.
-                    
-                    Dette fjerner ikke bekymringen, men det fjerner panikken. Fra "Jeg dør hvis det sker" til "Det ville være træls, men jeg ville klare det."
-                    
-                    Forberedelse dræber panik. Når du har en plan - selv for det værste - er intet uovervindeligt.`
-                },
-                {
-                    id: 'praktisk_4',
-                    title: 'Eksternt perspektiv - zoom ud',
-                    duration: '5 min',
-                    text: `Når bekymringerne føles enorme, zoom ud. Langt ud.
-                    
-                    Forestil dig du svæver op. Op over dit hus. Du kan se dig selv dernede, lille og bekymret.
-                    
-                    Højere. Over byen. Tusindvis af huse. Tusindvis af mennesker. Alle med deres bekymringer.
-                    
-                    Højere. Du ser landet. Millioner af mennesker. Lige nu, i dette øjeblik, bekymrer millioner sig.
-                    
-                    Ud i rummet. Jorden, en lille blå prik. Alle menneskers bekymringer på den lille prik.
-                    
-                    Vil din bekymring betyde noget om hundrede år? Ti år? Et år? En måned?
-                    
-                    Dette er ikke for at gøre dine følelser ligegyldige. De er vigtige for dig, og det er okay.
-                    
-                    Men perspektiv hjælper. Din bekymring føles som hele verden. Men den er en dråbe i havet.
-                    
-                    Og ligesom du ville trøste en ven der bekymrer sig, så har universet medfølelse med dig. Du er ikke alene med din bekymring. Millioner deler den lige nu.
-                    
-                    Zoom ud når det bliver for meget. Se det store billede. Og husk: Dette går også over.`
-                },
-                {
-                    id: 'praktisk_5',
-                    title: 'To-minutters regel - handling mod lammelse',
-                    duration: '5 min',
-                    text: `Bekymringer lammer ofte. Du ved hvad du skal gøre, men du gør det ikke. Her er to-minutters reglen.
-                    
-                    Hvis noget tager mindre end to minutter - gør det NU. Ingen undskyldninger.
-                    
-                    Den mail du bekymrer dig over at sende? To minutter. Send den.
-                    
-                    Opkaldet du udskyder? To minutter. Ring nu.
-                    
-                    Regningen der stresser dig? To minutter at betale online.
-                    
-                    Beskeden du skal svare på? To minutter. Svar nu.
-                    
-                    Ved du hvorfor dette virker? Fordi bekymring elsker udskydelse. Jo længere du venter, jo større bliver bekymringen.
-                    
-                    Men handling? Handling dræber bekymring. Selv små handlinger.
-                    
-                    Og her er tricket: Når du starter, fortsætter du ofte. "Nu jeg er i gang, kan jeg lige..."
-                    
-                    Men selv hvis du stopper efter to minutter, har du gjort noget. Du har bevist: "Jeg kan handle trods bekymring."
-                    
-                    Start i morgen. Lav en liste over to-minutters opgaver. Blast igennem dem. Mærk hvordan bekymringerne bliver mindre.
-                    
-                    Action er bekymringens kryptonit. To minutter ad gangen.`
-                },
-                {
-                    id: 'praktisk_6',
-                    title: 'Bekymringsvennnen - del byrden',
-                    duration: '5 min',
-                    text: `Du behøver ikke bære bekymringerne alene. Find en bekymringsven.
-                    
-                    Ikke en terapeut. Ikke en coach. Bare en ven. Nogen der også bekymrer sig.
-                    
-                    Aftal: En gang om ugen, ti minutter hver. På telefon, på café, på gåtur.
-                    
-                    Fem minutter: Du fortæller dine bekymringer. Ingen filter, ingen skam. Bare udtøm.
-                    Din ven lytter. Ingen råd, ingen løsninger. Bare: "Jeg hører dig."
-                    
-                    Så bytter I.
-                    Fem minutter: Din ven fortæller. Du lytter.
-                    
-                    Det er det. Ingen terapi. Ingen dybe analyser. Bare deling.
-                    
-                    Ved du hvad der sker? Bekymringerne mister magt når de siges højt. De skrumper i dagslys.
-                    
-                    Og du opdager: Din ven har lignende bekymringer. Du er ikke mærkelig. Du er menneskelig.
-                    
-                    Plus: Når du lytter til din vens bekymringer, får du perspektiv på dine egne.
-                    
-                    Find din bekymringsven i dag. Send beskeden: "Vil du være min bekymringsven? Ti minutter om ugen, vi deler bekymringer, ingen dømmende?"
-                    
-                    Deling er halv byrde. Og halv byrde er til at bære.`
-                }
+                { file: 'psyk_bekymringer_tid', title: 'Bekymringstid - 15 minutter om dagen', duration: 300 },
+                { file: 'psyk_bekymringer_beslutning', title: 'Beslutningsmatrix - stop beslutningsangst', duration: 360 },
+                { file: 'psyk_bekymringer_worst_case', title: 'Worst case scenario - forbered dig mentalt', duration: 300 },
+                { file: 'psyk_bekymringer_perspektiv', title: 'Eksternt perspektiv - zoom ud', duration: 300 },
+                { file: 'psyk_bekymringer_to_minut', title: 'To-minutters regel - handling mod lammelse', duration: 300 },
+                { file: 'psyk_bekymringer_ven', title: 'Bekymringsvennen - del byrden', duration: 300 }
             ],
             sovn: [
-                {
-                    id: 'sovn_1',
-                    title: 'Nattens tankemylder - hvorfor det er værre om natten',
-                    duration: '6 min',
-                    text: `Klokken er to om natten. Du ligger vågen. Tankerne kører hurtigere og mørkere end om dagen. Hvorfor?
-                    
-                    Om natten er din præfrontale cortex - din logiske hjerne - træt. Den har fri. 
-                    
-                    Men amygdala - din alarmcentral - den sover aldrig helt. Den står vagt.
-                    
-                    Så bekymringerne møder ingen modstand. Ingen logik der siger "det er usandsynligt." Ingen fornuft der bremser.
-                    
-                    Plus: Om natten er du alene. Ingen distraktioner. Ingen andre stemmer. Kun dig og tankerne.
-                    
-                    Og mørket... evolutionært var natten farlig. Rovdyr jagede. Fjender angreb. Din hjerne husker dette.
-                    
-                    Så den scanner. Og scanner. Og finder fare overalt. I jobbet, helbredet, relationerne.
-                    
-                    Men hør dette: Natte-tankerne er løgnere. De er ikke mere sande fordi de er intense.
-                    
-                    Regel nummer et: Tag aldrig store beslutninger om natten. Vent til morgenen.
-                    
-                    Regel nummer to: Mind dig selv - "Dette er natte-hjernen der taler. Den overdriver altid."
-                    
-                    Regel nummer tre: Hvis du har ligget vågen i tyve minutter - stå op. Bryd mønsteret. Lav te, læs lidt, kom tilbage når du er træt.
-                    
-                    Natten forstørrer alt. Men morgenen kommer altid. Og med den kommer perspektivet tilbage.`
-                },
-                {
-                    id: 'sovn_2',
-                    title: 'Tankeparkering - læg bekymringerne fra dig',
-                    duration: '5 min',
-                    text: `Inden sengetid, lad os parkere dagens bekymringer.
-                    
-                    Tag papir og pen. Eller telefonen. Skriv overskriften: "Parkeringsplads."
-                    
-                    List alt der bekymrer dig. Stort, småt, lige meget. Få det ud af hovedet og ned på papiret.
-                    
-                    "Mødet i morgen."
-                    "Regningen der skal betales."
-                    "Mors fødselsdag."
-                    "Den mærkelige lyd i bilen."
-                    
-                    Alt. Tøm hovedet.
-                    
-                    Nu skriver du: "Kære bekymringer. I er parkeret her indtil i morgen kl. 7. God nat."
-                    
-                    Læg papiret væk. I en skuffe, en bog, hvor som helst. Ikke ved sengen.
-                    
-                    Når bekymringerne kommer i sengen - og det gør de - sig: "Du er parkeret. Vi ses i morgen."
-                    
-                    Dette er ikke fornægtelse. Du anerkender bekymringerne. Du giver dem bare ikke lov til at holde dig vågen.
-                    
-                    I morgen kan du hente dem fra parkeringspladsen. Hvis du vil. Ofte vil du opdage, at nogle bekymringer er kørt deres vej i løbet af natten.
-                    
-                    Parkér bekymringerne. Hver aften. Det tager fem minutter. Det giver timers søvn.`
-                },
-                {
-                    id: 'sovn_3',
-                    title: 'Progressiv afslapning for bekymrede kroppe',
-                    duration: '8 min',
-                    text: `Bekymring spænder kroppen. Spændt krop kan ikke sove. Lad os slippe spændingerne.
-                    
-                    Lig på ryggen. Armene langs siden. Ben let spredte.
-                    
-                    Start med tæerne. Spænd dem helt. Krum dem. Hold... hold... slip. Mærk forskellen.
-                    
-                    Fødderne. Spænd. Som om du står på tæer. Hold... slip. Tung afslappelse.
-                    
-                    Lægge. Spænd musklerne. Hold... slip. De synker ned i madrassen.
-                    
-                    Lårene. Spænd hårdt. Hold... slip. Tunge som bly.
-                    
-                    Ballerne. Klem sammen. Hold... slip.
-                    
-                    Maven. Træk den ind. Hold... slip. Lad den være blød.
-                    
-                    Hænderne. Knytnæver. Hårde. Hold... slip. Fingrene åbner sig.
-                    
-                    Armene. Spænd biceps. Hold... slip. De flyder ud.
-                    
-                    Skuldrene. Op til ørerne. Hold... slip. De falder ned.
-                    
-                    Ansigtet. Rynk det hele sammen. Hold... slip. Alt glatter ud.
-                    
-                    Hele kroppen nu. Spænd alt. Hold... hold... hold... slip.
-                    
-                    Du synker. Ned i madrassen. Tung. Afslappet. 
-                    
-                    Bekymringerne har ikke noget at holde fast i nu. Den afslappede krop kan ikke holde på bekymringer.
-                    
-                    Gentag hvis du vågner. Spænd, slip, synk.`
-                },
-                {
-                    id: 'sovn_4',
-                    title: 'Historiefortælling - distraher natte-hjernen',
-                    duration: '6 min',
-                    text: `Natte-hjernen elsker historier. Desværre vælger den altid gyserversionen. Lad os give den noget bedre.
-                    
-                    Vælg en kedelig historie. Virkelig kedelig. Ingen drama, ingen fare.
-                    
-                    Måske: Du går tur i en skov. Beskriv hver detalje.
-                    "Jeg går på stien. Gruset knaser. Solen skinner gennem bladene. En fugl synger. Det er en solsort. Den sidder på en gren..."
-                    
-                    Eller: Du er på et bibliotek.
-                    "Jeg går mellem reolerne. Bøgerne står på rad. Nogle er røde, nogle blå. Jeg tager en bog ned. Den handler om haver. Side et har et billede af en rose..."
-                    
-                    Eller: Du laver mad.
-                    "Jeg tager grøntsagerne frem. Først gulerødderne. Jeg skræller dem. Skrællen falder i skraldespanden. Nu skærer jeg. Først på langs, så på tværs..."
-                    
-                    Detaljerne er vigtige. Jo mere kedelige, jo bedre.
-                    
-                    Når bekymringerne afbryder - og det gør de - tilbage til historien. "Hvor var jeg? Nå ja, gulerødderne..."
-                    
-                    Dette er ikke flugt. Det er omdirigering. Du giver hjernen noget at gøre. Noget sikkert, kedeligt, forudsigeligt.
-                    
-                    Find din historie. Brug den hver nat. Samme historie. Hjernen lærer: "Denne historie betyder søvn."
-                    
-                    Kedelige historier er de bedste sovepiller.`
-                },
-                {
-                    id: 'sovn_5',
-                    title: '4-7-8 åndedrættet - naturens sovemiddel',
-                    duration: '5 min',
-                    text: `Dette åndedræt kaldes naturens beroligende middel. Det virker. Videnskabeligt bevist.
-                    
-                    Læg tungen bag de øverste fortænder. Hold den der hele tiden.
-                    
-                    Pust al luften ud gennem munden. Helt ud. Tom lungerne.
-                    
-                    Luk munden. Ind gennem næsen mens du tæller til fire. En... to... tre... fire.
-                    
-                    Hold vejret. Tæl til syv. En... to... tre... fire... fem... seks... syv.
-                    
-                    Ud gennem munden. Tæl til otte. En... to... tre... fire... fem... seks... syv... otte.
-                    Lav en hvislende lyd når du puster ud.
-                    
-                    Dette er én cyklus. Gentag tre gange til. Fire cyklusser total.
-                    
-                    Ind-4, hold-7, ud-8. Ind-4, hold-7, ud-8.
-                    
-                    Hvorfor virker det? Det aktiverer det parasympatiske nervesystem. Kroppens bremse.
-                    
-                    Det sænker hjerterytmen. Blodtrykket falder. Stresshormoner reduceres.
-                    
-                    Brug det hver aften. Samme tid. I sengen. Fire cyklusser.
-                    
-                    Første uge: Måske ikke meget forskel. 
-                    Anden uge: Du bliver mere søvnig.
-                    Tredje uge: Du falder i søvn før fjerde cyklus.
-                    
-                    Tålmodighed. Øvelse. Dette er en færdighed, ikke magi. Men når du mestrer den, har du en sovepille du altid har med dig.`
-                }
+                { file: 'psyk_bekymringer_nat', title: 'Nattens tankemylder - hvorfor det er værre om natten', duration: 360 },
+                { file: 'psyk_bekymringer_parkering', title: 'Tankeparkering - læg bekymringerne fra dig', duration: 300 },
+                { file: 'psyk_bekymringer_progressiv', title: 'Progressiv afslapning for bekymrede kroppe', duration: 480 },
+                { file: 'psyk_bekymringer_historie', title: 'Historiefortælling - distraher natte-hjernen', duration: 360 },
+                { file: 'psyk_bekymringer_4_7_8', title: '4-7-8 åndedrættet - naturens sovemiddel', duration: 300 }
             ],
             arbejde: [
-                {
-                    id: 'arbejde_1',
-                    title: 'Præstationsangst - når alt skal være perfekt',
-                    duration: '6 min',
-                    text: `Hver opgave føles som en eksamen. Hver mail skal være perfekt. Hver præsentation afgørende. Jeg forstår presset.
-                    
-                    Men lad mig fortælle dig en hemmelighed: Ingen husker dine små fejl. De er for optaget af deres egne.
-                    
-                    Den mail du brugte en time på at formulere? Modtageren læste den på ti sekunder.
-                    
-                    Præsentationen hvor du glemte et punkt? Ingen lagde mærke til det. De huskede hovedbudskabet.
-                    
-                    Perfektionisme er ikke kvalitet. Det er angst forklædt som ambition.
-                    
-                    Prøv 80/20 reglen: Firs procent kvalitet tager tyve procent tid. De sidste tyve procent kvalitet? Firs procent tid.
-                    
-                    Er de sidste tyve procent virkelig det værd? Sjældent.
-                    
-                    Her er øvelsen: Næste opgave, giv dig selv halvdelen af normal tid. Ja, halvdelen.
-                    
-                    Du vil panikke. "Det bliver ikke godt nok!" Men prøv det.
-                    
-                    Du vil opdage: Det bliver godt nok. Måske endda bedre, fordi du ikke overtænker.
-                    
-                    Perfekt er ikke målet. Færdig er målet. God nok er god nok.
-                    
-                    Din værdi ligger ikke i fejlfri præstationer. Den ligger i at du prøver, lærer, vokser.`
-                },
-                {
-                    id: 'arbejde_2',
-                    title: 'Deadline-panik - når tiden løber ud',
-                    duration: '5 min',
-                    text: `Deadline nærmer sig. Panikken vokser. Tankerne flyver. "Jeg når det aldrig. Det bliver en katastrofe."
-                    
-                    Stop. Ånd. Lad os dele elefanten op.
-                    
-                    Først: Hvad er det absolutte minimum? Ikke det perfekte. Det acceptable.
-                    
-                    Skriv det ned. "Rapport med hovedpointer. Ikke alle detaljer."
-                    
-                    Nu: Hvor lang tid tager minimum? Vær realistisk. Måske tre timer, ikke tre dage.
-                    
-                    Har du tre timer? Sandsynligvis ja, hvis du dropper perfektionismen.
-                    
-                    Del de tre timer op. Time et: Struktur og hovedpointer. Time to: Udfyld indhold. Time tre: Hurtig gennemlæsning.
-                    
-                    Sæt en timer for hver del. Når timeren ringer, videre til næste del. Ingen diskussion.
-                    
-                    Dette kaldes timeboxing. Det virker fordi:
-                    Parkinson's lov: Arbejde udvider sig til at fylde tiden. Giv det mindre tid, det bliver mere fokuseret.
-                    
-                    Og hvis det ikke bliver perfekt? Så hvad? Færdig til tiden slår perfekt for sent hver gang.
-                    
-                    Deadlines er ikke fjender. De er rammer der tvinger dig til at prioritere.
-                    
-                    Næste deadline: Minimum først, forbedringer hvis tid. Du vil overraske dig selv.`
-                },
-                {
-                    id: 'arbejde_3',
-                    title: 'Fejl-angst - når du ikke tør prøve',
-                    duration: '5 min',
-                    text: `Du tør ikke række hånden op. Ikke foreslå ideen. Ikke søge forfremmelsen. Fordi... hvad hvis du tager fejl?
-                    
-                    Her er sandheden: Alle laver fejl. Hver dag. Din chef, den succesfulde kollega, direktøren. Alle.
-                    
-                    Forskellen? De har accepteret det.
-                    
-                    Fejl er ikke fiasko. Fejl er data. "Dette virkede ikke, prøv noget andet."
-                    
-                    Tænk på et barn der lærer at gå. Falder hundrede gange. Griner, rejser sig, prøver igen.
-                    
-                    Hvornår mistede vi det? Hvornår blev fejl farlige i stedet for lærerige?
-                    
-                    Her er reframing: I stedet for "jeg fejlede" sig "jeg lærte hvad der ikke virker."
-                    
-                    I stedet for "alle så det" sig "alle har været der."
-                    
-                    I stedet for "jeg er dum" sig "jeg var modig nok til at prøve."
-                    
-                    Start småt. Sig noget i næste møde. Bare én kommentar. Hvis den falder til jorden? Så hvad? Du overlevede.
-                    
-                    Næste gang, sig to ting. Byg op.
-                    
-                    Fejl-musklen skal trænes ligesom alle andre. Jo mere du fejler, jo mindre skræmmende bliver det.
-                    
-                    Og en dag opdager du: De der aldrig fejler, er dem der aldrig prøver noget nyt.`
-                },
-                {
-                    id: 'arbejde_4',
-                    title: 'Imposter syndrome - "de finder ud af jeg snyder"',
-                    duration: '6 min',
-                    text: `Du sidder til mødet og tænker: "Snart opdager de jeg ikke ved hvad jeg laver. At jeg faker det hele."
-                    
-                    Velkommen til imposter syndrome klubben. Medlemmer inkluderer: Næsten alle succesfulde mennesker.
-                    
-                    Serieentreprenøren føler sig som en bedrager. Den anerkendte forsker venter på at blive afsløret. Direktøren googler stadig basale ting.
-                    
-                    Ved du hvorfor? Fordi jo mere du lærer, jo mere opdager du hvor meget du ikke ved.
-                    
-                    Begyndere ved ikke nok til at vide hvad de ikke ved. Eksperter ved præcis hvor meget de ikke ved.
-                    
-                    Dunning-Kruger effekten omvendt.
-                    
-                    Men her er hemmeligheden: Alle faker det til en vis grad. Ingen har alle svarene.
-                    
-                    Den selvsikre kollega? Googler også. Chefen? Improviserer halvdelen af tiden.
-                    
-                    Du er ikke en bedrager. Du er et menneske der lærer undervejs. Som alle andre.
-                    
-                    Næste gang imposter-følelsen kommer, sig: "Jeg hører til her. Jeg lærer stadig. Det gør alle."
-                    
-                    Og hvis de "afslører" dig? Så afslører de et menneske der gør sit bedste. Det er ikke en skandale. Det er menneskeligt.
-                    
-                    Du snyder ikke. Du navigerer. Ligesom alle vi andre.`
-                },
-                {
-                    id: 'arbejde_5',
-                    title: 'Søndag-angsten - når weekenden ødelægges',
-                    duration: '5 min',
-                    text: `Søndag eftermiddag. Angsten begynder. Mandag nærmer sig. Weekenden er næsten slut. Arbejdet venter.
-                    
-                    Du kan ikke nyde søndagen fordi du tænker på mandag. Weekenden bliver forkortet af bekymring.
-                    
-                    Dette hedder anticipatorisk angst. Angst for noget der ikke er sket endnu.
-                    
-                    Men tænk: Mandag er ikke værre end andre dage. Det er forventningen der er problemet.
-                    
-                    Løsning et: Søndag-ritualet.
-                    Hver søndag aften, samme tid, forbered mandag. Ti minutter. Tjek kalender, læg tøj frem, pak taske.
-                    Færdig. Ikke mere forberedelse.
-                    
-                    Løsning to: Mandag-gave.
-                    Giv dig selv noget at glæde dig til mandag. Favorit-kaffe, lækker frokost, yndlingspodcast på vej.
-                    Små ting der gør mandag mindre fjendtlig.
-                    
-                    Løsning tre: Søndag-grænse.
-                    Efter klokken 18 søndag: Ingen arbejdstanker. De kommer? "Det er efter 18, jeg tænker på det i morgen."
-                    
-                    Beskyt søndagen. Den er din, ikke arbejdets. Mandag kommer uanset om du bekymrer dig eller ej.
-                    
-                    Så hvorfor ikke nyde søndagen mens den er her?`
-                }
+                { file: 'psyk_bekymringer_praestationsangst', title: 'Præstationsangst - når alt skal være perfekt', duration: 360 },
+                { file: 'psyk_bekymringer_deadline', title: 'Deadline-panik - når tiden løber ud', duration: 300 },
+                { file: 'psyk_bekymringer_fejl', title: 'Fejl-angst - når du ikke tør prøve', duration: 300 },
+                { file: 'psyk_bekymringer_imposter', title: 'Imposter syndrome - "de finder ud af jeg snyder"', duration: 360 },
+                { file: 'psyk_bekymringer_soendag', title: 'Søndag-angsten - når weekenden ødelægges', duration: 300 }
             ],
             relationer: [
-                {
-                    id: 'relationer_1',
-                    title: 'Mind-reading - "jeg ved hvad de tænker"',
-                    duration: '5 min',
-                    text: `Du er overbevist: "Hun er sur på mig. Han synes jeg er irriterende. De snakker om mig bag min ryg."
-                    
-                    Hvordan ved du det? "Jeg kan mærke det. Se det på dem."
-                    
-                    Men kan du virkelig det? Eller projicerer du dine bekymringer?
-                    
-                    Mennesker er komplicerede. Deres ansigtsudtryk, tonefald, energi - påvirket af tusind ting.
-                    
-                    Måske er hun træt. Måske har han hovedpine. Måske tænker de på deres egne problemer.
-                    
-                    Men din bekymringshjerne gør alt til dig. "Det MÅ handle om mig."
-                    
-                    Næste gang du "læser tanker", spørg dig selv:
-                    Hvad er beviset? Konkret, ikke "en følelse."
-                    Hvad kunne andre forklaringer være? List mindst tre.
-                    Hvis jeg spurgte direkte, hvad ville de sige?
-                    
-                    Og nogle gange... spørg faktisk. "Du virker stille, er alt okay?" 
-                    Ofte får du: "Åh, jeg er bare træt/har meget at tænke på/fik ikke kaffe."
-                    
-                    Du er ikke synsk. Du gætter. Og dine gæt er farvet af bekymring.
-                    
-                    Stop med at læse tanker. Start med at spørge. Eller endnu bedre: Accepter at du ikke ved hvad andre tænker. Og det er okay.`
-                },
-                {
-                    id: 'relationer_2',
-                    title: 'Afvisnings-angst - når "nej" føles farligt',
-                    duration: '6 min',
-                    text: `Du siger ja til alt. Ekstra arbejde, kedelige arrangementer, tjenester du ikke har tid til. Fordi et nej kunne betyde afvisning.
-                    
-                    Men ved du hvad der sker? Folk respekterer ikke ja-sigere. De udnytter dem.
-                    
-                    Og du? Du bliver bitter. Udmattet. "Hvorfor sætter ingen pris på alt jeg gør?"
-                    
-                    Fordi dit ja har ingen værdi når du aldrig siger nej.
-                    
-                    Nej er ikke afvisning. Nej er grænse. Og grænser skaber respekt.
-                    
-                    Start småt. Øv nej til små ting.
-                    "Vil du have mere kaffe?" "Nej tak."
-                    "Kan du lige..." "Nej, desværre ikke nu."
-                    
-                    Mærk: Verden går ikke under. Folk bliver ikke sure. De går videre.
-                    
-                    Næste niveau: Nej til mellem-ting.
-                    "Kan du tage ekstravagten?" "Nej, jeg har andre planer."
-                    Hvilke planer? At slappe af er også en plan.
-                    
-                    Hvert nej til noget er et ja til noget andet. Nej til overarbejde er ja til familie. Nej til drama er ja til ro.
-                    
-                    Folk der ikke kan acceptere dit nej? De fortjener ikke dit ja.
-                    
-                    Dit nej er lige så værdifuldt som dit ja. Brug det.`
-                },
-                {
-                    id: 'relationer_3',
-                    title: 'Konfliktskyhed - når fred koster for meget',
-                    duration: '5 min',
-                    text: `Du undgår konflikter. Sluger din mening. Smiler når du er sur. Alt for fredens skyld.
-                    
-                    Men hvilken fred? Den udenpå mens det stormer indeni?
-                    
-                    Konfliktskyhed skaber ikke fred. Den skaber undertrykkelse. Og undertrykkelse eksploderer til sidst.
-                    
-                    Små konflikter er sunde. Som små jordskælv der forhindrer det store.
-                    
-                    Men du har lært: Konflikt = fare. Uenighed = afvisning.
-                    
-                    Hvad hvis: Konflikt = afklaring? Uenighed = vækst?
-                    
-                    Start med mikro-konflikter. 
-                    "Jeg er faktisk uenig."
-                    "Det ser jeg anderledes på."
-                    "Min oplevelse var en anden."
-                    
-                    Ikke aggressivt. Bare ærligt.
-                    
-                    Se hvad der sker. Ofte: "Interessant, fortæl mere." Dialog, ikke drama.
-                    
-                    Og selv om det bliver ubehageligt? Ubehag er midlertidigt. Undertrykkelse er kronisk.
-                    
-                    Du skylder ikke nogen falsk enighed. Din mening har værdi. Dine følelser er gyldige.
-                    
-                    Ægte fred kommer fra ægte kommunikation. Og det kræver mod til mild konflikt.`
-                },
-                {
-                    id: 'relationer_4',
-                    title: 'Menneske-pleasing - når andres behov kommer først',
-                    duration: '6 min',
-                    text: `Alle kan lide dig. Du er så sød, hjælpsom, nem. Men indeni? Du er udmattet, vred, tom.
-                    
-                    People-pleasing er ikke kærlighed. Det er frygt. Frygt for at være dig selv ikke er nok.
-                    
-                    Så du performer. Smiler når du er træt. Hjælper når du ikke har overskud. Siger ja når du mener nej.
-                    
-                    Men her er ironien: Folk kan mærke det ikke er ægte. De kan ikke stole på dit ja, for de ved ikke hvornår det er ærligt.
-                    
-                    Og du? Du glemmer hvem du er under alle maskerne.
-                    
-                    Tid til at stoppe forestillingen.
-                    
-                    Øvelse: Én gang om dagen, vær ærlig om noget lille.
-                    "Faktisk kan jeg ikke lide kaffe."
-                    "Jeg er træt i dag."
-                    "Den film kedede mig."
-                    
-                    Se folks reaktioner. De fleste: "Okay, fedt at vide." Verden fortsætter.
-                    
-                    Gradvist, vis mere af dig selv. Dine meninger, præferencer, grænser.
-                    
-                    Nogle vil måske ikke kunne lide den ægte dig. Godt. De kunne heller ikke lide den falske dig - de kunne lide servicen.
-                    
-                    Men andre vil elske den ægte dig. Og deres kærlighed er ægte, ikke købt med people-pleasing.
-                    
-                    Du er nok som du er. Uden performance. Uden please. Bare dig.`
-                }
-            ],
-            filosofi: [
-                {
-                    id: 'filosofi_1',
-                    title: 'Stoisk visdom - kontrol og accept',
-                    duration: '7 min',
-                    text: `Marcus Aurelius, romersk kejser og filosof, vågnede hver morgen med verdens bekymringer. Hans trick? Stoicismen.
-                    
-                    Central ide: Der er ting du kan kontrollere og ting du ikke kan. Visdom er at kende forskellen.
-                    
-                    Du kan kontrollere:
-                    Dine tanker (med øvelse).
-                    Dine handlinger.
-                    Dine reaktioner.
-                    Dit perspektiv.
-                    
-                    Du kan ikke kontrollere:
-                    Andre menneskers handlinger.
-                    Fortiden.
-                    Fremtiden (fuldt ud).
-                    Tilfældigheder.
-                    Døden.
-                    
-                    Bekymring opstår når vi prøver at kontrollere det ukontrollerbare.
-                    
-                    "Hvad hvis de ikke kan lide mig?" Ikke din kontrol.
-                    "Hvad hvis jeg bliver syg?" Delvist kontrol (livsstil), mest ikke.
-                    "Hvad hvis økonomien crasher?" Ikke din kontrol.
-                    
-                    Stoikerne havde en øvelse: Hver morgen, mind dig selv om hvad der kunne gå galt. Ikke for at bekymre, men for at forberede.
-                    
-                    "I dag kan nogen være uhøflige. Trafikken kan være slem. Vejret kan være dårligt."
-                    
-                    Så når det sker: "Ah, som forventet." Ingen overraskelse, ingen panik.
-                    
-                    Dette er ikke pessimisme. Det er realisme. Og realisme skaber ro.
-                    
-                    Fokuser på dit domæne. Slip resten. Som Epictetus sagde: "Det er ikke tingene selv der forstyrrer os, men vores meninger om dem."`
-                },
-                {
-                    id: 'filosofi_2',
-                    title: 'Eksistentiel angst - meningen med det hele',
-                    duration: '8 min',
-                    text: `Nogle gange handler bekymringerne ikke om hverdagen. De handler om eksistensen selv.
-                    
-                    "Hvad er meningen?"
-                    "Hvorfor er jeg her?"
-                    "Betyder noget noget?"
-                    
-                    Kierkegaard kaldte det angst - ikke frygt for noget specifikt, men for eksistensen selv. For friheden, valget, ansvaret.
-                    
-                    Du er kastet ind i verden uden manual. Du må skabe din egen mening. Det er skræmmende. Og befriende.
-                    
-                    Sartre sagde: Eksistensen kommer før essensen. Du findes først, så skaber du hvem du er.
-                    
-                    Ingen forudbestemt mening. Kun den mening du skaber.
-                    
-                    Er det tomt? Eller er det frihed?
-                    
-                    Camus så absurditeten. Livet har ingen mening, men vi søger mening. Som Sisyfos der skubber stenen op ad bjerget, igen og igen.
-                    
-                    Men, sagde Camus, vi må forestille os Sisyfos lykkelig. Han har accepteret absurditeten. Fundet glæde i kampen selv.
-                    
-                    Din eksistentielle angst er ikke sygdom. Den er bevidsthed. Du er vågen nok til at stille de store spørgsmål.
-                    
-                    Svaret er ikke derude. Det er i dig. I dine valg, handlinger, relationer.
-                    
-                    Meningen er ikke noget du finder. Det er noget du skaber. Hver dag. I små handlinger og store valg.
-                    
-                    Bekymringen om meningen? Den er meningsfuld i sig selv. Den viser du er levende, bevidst, menneskelig.`
-                },
-                {
-                    id: 'filosofi_3',
-                    title: 'Tid og dødelighed - den ultimative bekymring',
-                    duration: '6 min',
-                    text: `Under alle bekymringer ligger måske den største: Tiden går. Vi skal dø.
-                    
-                    Heidegger kaldte det "væren-mod-døden." Bevidstheden om vores endelighed farver alt.
-                    
-                    Derfor bekymrer vi os. Hver bekymring er måske en lille død. Frygten for at miste, fejle, forsvinde.
-                    
-                    Men paradokset: Uden død, ingen liv. Uden begrænsning, ingen betydning.
-                    
-                    Hvis du var udødelig, ville intet haste. Ingen valg ville betyde noget. Du kunne altid gøre det om.
-                    
-                    Men fordi tiden er begrænset, betyder hvert øjeblik noget. Hver beslutning tæller.
-                    
-                    Memento mori, sagde romerne. Husk du skal dø. Ikke for at skabe angst, men perspektiv.
-                    
-                    Den deadline du bekymrer dig om? Midlertidig. Den pinlige situation? Glemt om et år. Den store beslutning? Mindre i det store billede.
-                    
-                    Men også: Dette øjeblik? Unikt. Denne samtale? Aldrig igen. Denne kærlighed? Kostbar fordi forgængelig.
-                    
-                    Døden er ikke fjenden. Den er rammen der giver billedet form.
-                    
-                    Dine bekymringer om tid? De viser du forstår livets værdi. Men brug ikke al tiden på at bekymre dig om tiden.
-                    
-                    Som Seneca sagde: "Det er ikke at vi har så lidt tid, men at vi spilder så meget af den."`
-                }
+                { file: 'psyk_bekymringer_mindreading', title: 'Mind-reading - "jeg ved hvad de tænker"', duration: 300 },
+                { file: 'psyk_bekymringer_afvisning', title: 'Afvisnings-angst - når "nej" føles farligt', duration: 360 },
+                { file: 'psyk_bekymringer_konflikt', title: 'Konfliktskyhed - når fred koster for meget', duration: 300 },
+                { file: 'psyk_bekymringer_pleasing', title: 'Menneske-pleasing - når andres behov kommer først', duration: 360 }
             ]
         };
-
-        // Player state
-        let currentScript = null;
-        let isPlaying = false;
+        
+        const filosofAudio = [
+            { file: 'psyk_bekymringer_stoisk', title: 'Stoisk visdom - kontrol og accept', duration: 420 },
+            { file: 'psyk_bekymringer_eksistentiel', title: 'Eksistentiel angst - meningen med det hele', duration: 480 },
+            { file: 'psyk_bekymringer_doed', title: 'Tid og dødelighed - den ultimative bekymring', duration: 360 }
+        ];
+        
+        // State
         let currentCategory = null;
-
-        // Play functions
-        function showScripts(category) {
-            currentCategory = category;
-            const modal = document.getElementById('scriptsModal');
-            const title = document.getElementById('categoryTitle');
-            const list = document.getElementById('scriptsList');
+        let currentAudio = null;
+        let currentAudioId = null;
+        let currentAudioText = null;
+        let isPlaying = false;
+        let audioQueue = [];
+        let queueIndex = 0;
+        let audioTimer = null;
+        let audioDuration = 0;
+        let textDisplayActive = false;
+        let wordAnimationTimer = null;
+        let selectedVoice = 'mand'; // Default voice
+        
+        // Voice selection
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            localStorage.setItem('trostmig_voice', voice);
             
-            // Set title
-            const categoryTitles = {
-                'akut': 'Akut: Stop tankemylderet NU',
-                'forsta': 'Forstå dine bekymringer',
-                'cbt': 'CBT værktøjer mod grubleri',
-                'mindfulness': 'Mindfulness for overtænkere',
-                'praktisk': 'Praktiske anti-bekymringsteknikker',
-                'sovn': 'Nattens bekymringer',
-                'arbejde': 'Bekymringer om arbejde/studier',
-                'relationer': 'Bekymringer i relationer',
-                'filosofi': 'Filosofens perspektiv'
+            // Update UI
+            document.getElementById('voiceMale').classList.toggle('active', voice === 'mand');
+            document.getElementById('voiceFemale').classList.toggle('active', voice === 'kvinde');
+            
+            showToast(`Stemme ændret til ${voice === 'mand' ? 'mandestemme' : 'kvindestemme'}`);
+        }
+        
+        // Get audio file with voice preference
+        function getAudioFile(baseFile) {
+            // Add audio folder, voice type and .mp3 extension
+            return `audio/${baseFile}_${selectedVoice}.mp3`;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved voice preference
+            const savedVoice = localStorage.getItem('trostmig_voice') || 'mand';
+            selectedVoice = savedVoice;
+            selectVoice(savedVoice);
+            
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            updateFavoriteCount();
+        });
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        function updateFavoriteCount() {
+            const favorites = JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
+            document.getElementById('favCount').textContent = favorites.length;
+        }
+        
+        function playWelcome() {
+            currentAudioId = 'psyk_bekymringer_velkommen';
+            currentAudioText = audioFiles.welcome.text;
+            
+            document.getElementById('mainSelection').style.display = 'none';
+            document.getElementById('sessionDisplay').classList.add('active');
+            
+            document.getElementById('moduleIndicator').textContent = 'Introduktion';
+            document.getElementById('sessionTitle').textContent = audioFiles.welcome.title;
+            
+            startAudioTimer(audioFiles.welcome.duration);
+            
+            const audio = document.getElementById('audioPlayer');
+            audio.src = getAudioFile(audioFiles.welcome.file);
+            currentAudio = audio;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            }).catch(() => {
+                showToast('Lydfil ikke fundet - kommer snart!');
+            });
+            
+            audio.onended = () => {
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+                stopAudioTimer();
+                showToast('Velkommen! 💪');
+                setTimeout(() => backToSelection(), 2000);
             };
+        }
+        
+        function startCategory(category) {
+            currentCategory = category;
             
-            title.textContent = categoryTitles[category] || 'Scripts';
+            const modal = document.getElementById('choiceModal');
+            const optionsEl = document.getElementById('choiceOptions');
             
-            // Build scripts list
-            const scripts = scriptsDatabase[category] || [];
-            list.innerHTML = scripts.map(script => `
-                <div class="script-item" onclick="playScript('${category}', '${script.id}')">
-                    <div class="script-item-info">
-                        <div class="script-item-title">${script.title}</div>
-                        <div class="script-item-duration">${script.duration}</div>
-                    </div>
-                    <button class="play-script-btn">▶ Afspil</button>
-                </div>
+            const categoryAudio = audioFiles[category];
+            
+            optionsEl.innerHTML = categoryAudio.map((audio, i) => `
+                <button class="choice-btn" onclick="playAudio('${category}', ${i})">
+                    <span class="choice-letter">${i + 1}</span>
+                    <span>${audio.title}</span>
+                </button>
             `).join('');
             
-            // Show modal and overlay
             modal.classList.add('active');
-            document.getElementById('overlay').classList.add('active');
         }
-
-        function closeScriptsModal() {
-            document.getElementById('scriptsModal').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        }
-
-        function playScript(category, scriptId) {
-            const script = scriptsDatabase[category].find(s => s.id === scriptId);
-            if (!script) return;
+        
+        function playAudio(category, index) {
+            const audioData = audioFiles[category][index];
+            currentAudioId = audioData.file.replace('audio/', '').replace('.mp3', '');
+            currentAudioText = audioData.text;
             
-            currentScript = script;
+            document.getElementById('choiceModal').classList.remove('active');
+            document.getElementById('mainSelection').style.display = 'none';
+            document.getElementById('sessionDisplay').classList.add('active');
             
-            // Update player UI
-            document.getElementById('currentTitle').textContent = script.title;
-            document.getElementById('currentMeta').textContent = `${script.duration} • ${category}`;
+            document.getElementById('moduleIndicator').textContent = getCategoryName(category);
+            document.getElementById('sessionTitle').textContent = audioData.title;
             
-            // Show player
-            document.getElementById('playerSection').classList.add('active');
+            startAudioTimer(audioData.duration);
             
-            // Close modal
-            closeScriptsModal();
+            const audio = document.getElementById('audioPlayer');
+            audio.src = getAudioFile(audioData.file);
+            currentAudio = audio;
             
-            // Start playing (using TTS if available)
-            if (window.TrøstMigTTS) {
+            audio.play().then(() => {
                 isPlaying = true;
-                updatePlayPauseButton();
-                window.TrøstMigTTS.speak(script.text);
-                
-                // Simulate progress
-                simulateProgress(script.duration);
-            }
-        }
-
-        function togglePlayPause() {
-            if (!currentScript) return;
+                document.getElementById('playBtn').textContent = '⏸';
+            }).catch(() => {
+                showToast('Lydfil ikke fundet - kommer snart!');
+            });
             
-            isPlaying = !isPlaying;
-            updatePlayPauseButton();
+            audio.onended = () => {
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+                stopAudioTimer();
+                showToast('Godt klaret! 💪');
+            };
+        }
+        
+        function getCategoryName(category) {
+            const names = {
+                'akut': 'Akut hjælp',
+                'forsta': 'Forstå bekymringer',
+                'cbt': 'CBT værktøjer',
+                'mindfulness': 'Mindfulness',
+                'praktisk': 'Praktiske teknikker',
+                'sovn': 'Nattens bekymringer',
+                'arbejde': 'Arbejde & studier',
+                'relationer': 'Relationer'
+            };
+            return names[category] || 'Psykologens Ord';
+        }
+        
+        function playFilosof() {
+            currentCategory = 'filosofi';
             
-            if (window.TrøstMigTTS) {
-                if (isPlaying) {
-                    window.TrøstMigTTS.resume();
-                } else {
-                    window.TrøstMigTTS.pause();
-                }
-            }
-        }
-
-        function updatePlayPauseButton() {
-            const btn = document.getElementById('playPauseBtn');
-            btn.textContent = isPlaying ? '⏸' : '▶';
-        }
-
-        function skipForward() {
-            // Skip to next script in category
-            if (currentCategory && currentScript) {
-                const scripts = scriptsDatabase[currentCategory];
-                const currentIndex = scripts.findIndex(s => s.id === currentScript.id);
-                if (currentIndex < scripts.length - 1) {
-                    playScript(currentCategory, scripts[currentIndex + 1].id);
-                }
-            }
-        }
-
-        function skipBackward() {
-            // Skip to previous script
-            if (currentCategory && currentScript) {
-                const scripts = scriptsDatabase[currentCategory];
-                const currentIndex = scripts.findIndex(s => s.id === currentScript.id);
-                if (currentIndex > 0) {
-                    playScript(currentCategory, scripts[currentIndex - 1].id);
-                }
-            }
-        }
-
-        function toggleText() {
-            if (!currentScript) return;
+            const modal = document.getElementById('choiceModal');
+            const optionsEl = document.getElementById('choiceOptions');
             
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('textPanel').classList.add('active');
-            document.getElementById('textPanelTitle').textContent = currentScript.title;
-            document.getElementById('textContent').innerHTML = currentScript.text.split('\n').map(p => 
-                `<p>${p.trim()}</p>`
-            ).join('');
+            optionsEl.innerHTML = filosofAudio.map((audio, i) => `
+                <button class="choice-btn" onclick="playFilosofAudio(${i})">
+                    <span class="choice-letter">${i + 1}</span>
+                    <span>${audio.title}</span>
+                </button>
+            `).join('');
+            
+            modal.classList.add('active');
         }
-
-        function closeText() {
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('textPanel').classList.remove('active');
+        
+        function playFilosofAudio(index) {
+            const audioData = filosofAudio[index];
+            currentAudioId = audioData.file.replace('audio/', '').replace('.mp3', '');
+            
+            document.getElementById('choiceModal').classList.remove('active');
+            document.getElementById('mainSelection').style.display = 'none';
+            document.getElementById('sessionDisplay').classList.add('active');
+            
+            document.getElementById('moduleIndicator').textContent = 'Filosofens Ord';
+            document.getElementById('sessionTitle').textContent = audioData.title;
+            
+            startAudioTimer(audioData.duration);
+            
+            const audio = document.getElementById('audioPlayer');
+            audio.src = getAudioFile(audioData.file);
+            currentAudio = audio;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            }).catch(() => {
+                showToast('Lydfil ikke fundet - kommer snart!');
+            });
+            
+            audio.onended = () => {
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶';
+                stopAudioTimer();
+                showToast('Tak for at lytte 🙏');
+            };
         }
-
-        function simulateProgress(duration) {
-            const durationMs = parseInt(duration) * 60 * 1000; // Convert to milliseconds
-            const interval = 100; // Update every 100ms
+        
+        function playAllAudios() {
+            audioQueue = [];
+            
+            // Add welcome
+            audioQueue.push(audioFiles.welcome);
+            
+            // Add all category audios
+            ['akut', 'forsta', 'cbt', 'mindfulness', 'praktisk', 'sovn', 'arbejde', 'relationer'].forEach(cat => {
+                audioFiles[cat].forEach(audio => {
+                    audioQueue.push(audio);
+                });
+            });
+            
+            // Add filosof
+            filosofAudio.forEach(audio => {
+                audioQueue.push(audio);
+            });
+            
+            queueIndex = 0;
+            playQueuedAudio();
+        }
+        
+        function playQueuedAudio() {
+            if (queueIndex >= audioQueue.length) {
+                showToast('Alle øvelser afspillet! 🎉');
+                backToSelection();
+                return;
+            }
+            
+            const audioData = audioQueue[queueIndex];
+            currentAudioId = audioData.file.replace('audio/', '').replace('.mp3', '');
+            currentAudioText = audioData.text;
+            
+            document.getElementById('mainSelection').style.display = 'none';
+            document.getElementById('sessionDisplay').classList.add('active');
+            document.getElementById('skipBtn').style.display = 'inline-block';
+            document.getElementById('queueIndicator').style.display = 'inline-block';
+            document.getElementById('queueIndicator').textContent = `${queueIndex + 1}/${audioQueue.length}`;
+            
+            document.getElementById('moduleIndicator').textContent = 'Afspiller samling';
+            document.getElementById('sessionTitle').textContent = audioData.title;
+            
+            startAudioTimer(audioData.duration);
+            
+            const audio = document.getElementById('audioPlayer');
+            audio.src = getAudioFile(audioData.file);
+            currentAudio = audio;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                document.getElementById('playBtn').textContent = '⏸';
+            }).catch(() => {
+                // If audio file doesn't exist, skip to next
+                skipToNext();
+            });
+            
+            audio.onended = () => {
+                playNextInQueue();
+            };
+        }
+        
+        function playNextInQueue() {
+            queueIndex++;
+            if (queueIndex < audioQueue.length) {
+                playQueuedAudio();
+            } else {
+                showToast('Samling færdig! 🎉');
+                backToSelection();
+            }
+        }
+        
+        function skipToNext() {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+            playNextInQueue();
+        }
+        
+        function togglePlay() {
+            if (!currentAudio) return;
+            
+            if (isPlaying) {
+                currentAudio.pause();
+                document.getElementById('playBtn').textContent = '▶';
+                isPlaying = false;
+            } else {
+                currentAudio.play();
+                document.getElementById('playBtn').textContent = '⏸';
+                isPlaying = true;
+            }
+        }
+        
+        function toggleTextDisplay() {
+            textDisplayActive = !textDisplayActive;
+            const btn = document.getElementById('textBtn');
+            const textBox = document.getElementById('textDisplayBox');
+            
+            if (textDisplayActive) {
+                btn.classList.add('text-active');
+                textBox.classList.add('active');
+                // Here we would start text animation if we had the full texts
+                document.getElementById('textContent').innerHTML = '<p>Tekst vil blive vist her når lydfiler er klar...</p>';
+            } else {
+                btn.classList.remove('text-active');
+                textBox.classList.remove('active');
+            }
+        }
+        
+        function toggleFavorite() {
+            if (!currentAudioId) return;
+            
+            const favorites = JSON.parse(localStorage.getItem('trostmig_favorites') || '[]');
+            const btn = document.getElementById('favBtn');
+            
+            const index = favorites.indexOf(currentAudioId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                btn.textContent = '🤍';
+                showToast('Fjernet fra favoritter');
+            } else {
+                favorites.push(currentAudioId);
+                btn.textContent = '❤️';
+                showToast('Tilføjet til favoritter ❤️');
+            }
+            
+            localStorage.setItem('trostmig_favorites', JSON.stringify(favorites));
+            updateFavoriteCount();
+        }
+        
+        function startAudioTimer(duration) {
+            const timerEl = document.getElementById('audioTimer');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerFill = document.getElementById('timerFill');
+            
+            timerEl.classList.add('active');
+            audioDuration = duration || 60;
+            
             let elapsed = 0;
             
-            const progressInterval = setInterval(() => {
-                if (!isPlaying) return;
+            audioTimer = setInterval(() => {
+                elapsed++;
+                const remaining = Math.max(0, audioDuration - elapsed);
                 
-                elapsed += interval;
-                const progress = (elapsed / durationMs) * 100;
-                document.getElementById('progressFill').style.width = `${Math.min(progress, 100)}%`;
+                const elapsedMin = Math.floor(elapsed / 60);
+                const elapsedSec = elapsed % 60;
+                const totalMin = Math.floor(audioDuration / 60);
+                const totalSec = audioDuration % 60;
                 
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    isPlaying = false;
-                    updatePlayPauseButton();
-                    skipForward(); // Auto-play next
+                timerDisplay.textContent = `${elapsedMin}:${elapsedSec.toString().padStart(2, '0')} / ${totalMin}:${totalSec.toString().padStart(2, '0')}`;
+                timerFill.style.width = `${(elapsed / audioDuration) * 100}%`;
+                
+                if (elapsed >= audioDuration) {
+                    clearInterval(audioTimer);
+                    if (audioQueue.length > 0 && queueIndex < audioQueue.length - 1) {
+                        playNextInQueue();
+                    }
                 }
-            }, interval);
+            }, 1000);
         }
-
-        // Initialize
-        console.log('🧠 Bekymringer & Overtænkning system loaded');
-        console.log(`📚 ${Object.keys(scriptsDatabase).length} kategorier`);
-        console.log(`📝 ${Object.values(scriptsDatabase).flat().length} scripts total`);
+        
+        function stopAudioTimer() {
+            if (audioTimer) {
+                clearInterval(audioTimer);
+                audioTimer = null;
+            }
+            document.getElementById('audioTimer').classList.remove('active');
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        function backToSelection() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            
+            stopAudioTimer();
+            audioQueue = [];
+            queueIndex = 0;
+            
+            document.getElementById('sessionDisplay').classList.remove('active');
+            document.getElementById('mainSelection').style.display = 'block';
+            document.getElementById('choiceModal').classList.remove('active');
+            document.getElementById('sessionTitle').textContent = '';
+            document.getElementById('skipBtn').style.display = 'none';
+            document.getElementById('queueIndicator').style.display = 'none';
+            document.getElementById('textBtn').classList.remove('text-active');
+            document.getElementById('textDisplayBox').classList.remove('active');
+            
+            isPlaying = false;
+            currentCategory = null;
+            currentAudioId = null;
+            currentAudioText = null;
+            textDisplayActive = false;
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('sessionDisplay').classList.contains('active')) return;
+            
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'Escape':
+                    backToSelection();
+                    break;
+                case 'f':
+                    toggleFavorite();
+                    break;
+                case 't':
+                    toggleTextDisplay();
+                    break;
+                case 'ArrowRight':
+                    if (audioQueue.length > 0) skipToNext();
+                    break;
+            }
+        });
     </script>
 </body>
 </html>
