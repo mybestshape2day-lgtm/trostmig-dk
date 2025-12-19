@@ -508,6 +508,152 @@
     gap: 15px;
 }
 
+/* Search Container */
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    padding-left: 40px;
+    border: 2px solid #e2e8f0;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    background: #f7fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23718096'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E") 12px center/20px no-repeat;
+    transition: all 0.3s ease;
+    color: #2d3748;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+.search-input::placeholder {
+    color: #a0aec0;
+}
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1001;
+}
+
+.search-results.active {
+    display: block;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #2d3748;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: #f7fafc;
+}
+
+.search-result-icon {
+    font-size: 1.5rem;
+    margin-right: 12px;
+    width: 40px;
+    text-align: center;
+}
+
+.search-result-content {
+    flex: 1;
+}
+
+.search-result-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.search-result-description {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+.search-result-category {
+    font-size: 0.7rem;
+    color: #a0aec0;
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.search-no-results {
+    padding: 20px;
+    text-align: center;
+    color: #718096;
+}
+
+.search-help {
+    padding: 10px 15px;
+    background: #f7fafc;
+    font-size: 0.8rem;
+    color: #718096;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Dark mode for search */
+[data-theme="dark"] .search-input {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #f7fafc;
+}
+
+[data-theme="dark"] .search-results {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+[data-theme="dark"] .search-result-item {
+    color: #f7fafc;
+    border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .search-result-item:hover {
+    background: #1a202c;
+}
+
+[data-theme="dark"] .search-result-description {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .search-result-category {
+    background: #4a5568;
+    color: #cbd5e0;
+}
+
+[data-theme="dark"] .search-help {
+    background: #1a202c;
+    border-color: #4a5568;
+}
+
 .voice-selector {
     background: #f7fafc;
     border: 1px solid #e2e8f0;
@@ -604,6 +750,12 @@ body {
             <a href="playlists.html" class="nav-link">Playlister</a>
         </div>
         
+        <!-- Search Box -->
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Søg efter emne..." oninput="handleSearch()" onfocus="showSearchResults()" autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
         <!-- User Controls -->
         <div class="nav-user">
             <!-- Voice Selector -->
@@ -1220,7 +1372,142 @@ console.log('Auto-Hide Navigation loaded - fade efter 3 sekunder');
             if (event.target === modal) {
                 closeSOS();
             }
+            // Close search when clicking outside
+            const searchContainer = document.querySelector('.search-container');
+            if (searchContainer && !searchContainer.contains(event.target)) {
+                hideSearchResults();
+            }
         }
+
+        // ==========================================
+        // SEARCH FUNCTIONALITY
+        // ==========================================
+
+        // Comprehensive search data with keywords for each topic
+        const searchData = [
+            // Akut hjælp
+            { url: 'selvmordstanker.html', icon: '🚨', name: 'Selvmordstanker', description: 'Du er ikke alene - find hjælp og håb her', category: 'Akut hjælp', keywords: ['selvmord', 'suicidal', 'dø', 'liv', 'håb', 'mørke', 'tanker', 'slut', 'give op', 'skade'] },
+            { url: 'panik.html', icon: '😱', name: 'Panikangst', description: 'Stop panikken og find ro igen', category: 'Akut hjælp', keywords: ['panik', 'angstanfald', 'hjertebanken', 'svimmel', 'luft', 'åndenød', 'hyperventilering', 'frygt', 'anfald'] },
+            { url: 'selvskade.html', icon: '🩹', name: 'Selvskade', description: 'Alternativer til at skade dig selv', category: 'Akut hjælp', keywords: ['selvskade', 'cutting', 'skære', 'smerte', 'ar', 'skade', 'pine'] },
+            { url: 'akut-krise.html', icon: '⚡', name: 'Akut krise', description: 'Når alt falder fra hinanden', category: 'Akut hjælp', keywords: ['krise', 'akut', 'nød', 'hjælp', 'desperat', 'sammenbrud'] },
+
+            // Almindelige udfordringer
+            { url: 'angst.html', icon: '😰', name: 'Angst', description: 'Håndter bekymringer og uro', category: 'Almindelige udfordringer', keywords: ['angst', 'ængstelig', 'bekymring', 'nervøs', 'uro', 'frygt', 'bange', 'spænding'] },
+            { url: 'depression.html', icon: '😔', name: 'Depression', description: 'Find lys i mørket', category: 'Almindelige udfordringer', keywords: ['depression', 'trist', 'nedtrykt', 'håbløs', 'tom', 'energiløs', 'træt', 'mørke', 'glæde', 'motivation'] },
+            { url: 'stress.html', icon: '😣', name: 'Stress', description: 'Skab balance i hverdagen', category: 'Almindelige udfordringer', keywords: ['stress', 'overbelastet', 'pres', 'travl', 'balance', 'hvile', 'afslapning', 'presset'] },
+            { url: 'sovn.html', icon: '😴', name: 'Søvnproblemer', description: 'Bedre søvnkvalitet', category: 'Almindelige udfordringer', keywords: ['søvn', 'insomni', 'søvnløs', 'træt', 'hvile', 'sove', 'vågen', 'mareridt', 'nat'] },
+            { url: 'selvvaerd.html', icon: '💪', name: 'Selvværd', description: 'Styrk dit selvbillede', category: 'Almindelige udfordringer', keywords: ['selvværd', 'selvtillid', 'selvbillede', 'usikker', 'værdiløs', 'dårlig', 'god nok', 'selvfølelse'] },
+            { url: 'ensomhed.html', icon: '🤗', name: 'Ensomhed', description: 'Du er ikke alene', category: 'Almindelige udfordringer', keywords: ['ensom', 'alene', 'isoleret', 'venner', 'social', 'kontakt', 'relation', 'forladt'] },
+            { url: 'vrede.html', icon: '😤', name: 'Vrede', description: 'Håndter vrede konstruktivt', category: 'Almindelige udfordringer', keywords: ['vrede', 'sur', 'rasende', 'irriteret', 'aggressiv', 'frustreret', 'temperament', 'ked'] },
+            { url: 'udbraendthed.html', icon: '🔥', name: 'Udbrændthed', description: 'Genopbyg din energi', category: 'Almindelige udfordringer', keywords: ['udbrændt', 'burnout', 'udmattet', 'overarbejde', 'energi', 'træthed', 'opgivelse'] },
+            { url: 'bekymringer.html', icon: '💭', name: 'Overtænkning', description: 'Stop tankemylderet', category: 'Almindelige udfordringer', keywords: ['overtænkning', 'tankemylder', 'gruble', 'bekymring', 'tanker', 'hovedet', 'mental', 'ro'] },
+
+            // Specifikke tilstande
+            { url: 'adhd.html', icon: '🧠', name: 'ADHD', description: 'Fokus og struktur', category: 'Specifikke tilstande', keywords: ['adhd', 'add', 'fokus', 'koncentration', 'hyperaktiv', 'urolig', 'distraheret', 'opmærksomhed', 'impulsiv'] },
+            { url: 'autisme.html', icon: '🧩', name: 'Autisme', description: 'Forståelse og mestring', category: 'Specifikke tilstande', keywords: ['autisme', 'asperger', 'asd', 'social', 'sanseoverbelastning', 'rutiner', 'særinteresser'] },
+            { url: 'ptsd.html', icon: '⚡', name: 'PTSD', description: 'Heling efter trauma', category: 'Specifikke tilstande', keywords: ['ptsd', 'trauma', 'chok', 'flashback', 'mareridt', 'overgreb', 'ulykke', 'vold'] },
+            { url: 'ocd.html', icon: '🔄', name: 'OCD', description: 'Bryd tvangstanker', category: 'Specifikke tilstande', keywords: ['ocd', 'tvangstanker', 'tvangshandlinger', 'ritualer', 'kontrol', 'gentage', 'perfekt'] },
+            { url: 'bipolar.html', icon: '🎭', name: 'Bipolar', description: 'Balance mellem yderpunkter', category: 'Specifikke tilstande', keywords: ['bipolar', 'mani', 'manisk', 'humørsvingninger', 'op', 'ned', 'ekstrem'] },
+            { url: 'borderline.html', icon: '💭', name: 'Borderline', description: 'Emotionel stabilitet', category: 'Specifikke tilstande', keywords: ['borderline', 'bpd', 'følelser', 'emotionel', 'ustabil', 'relation', 'forladthed'] },
+            { url: 'spiseforstyrrelse.html', icon: '🍽️', name: 'Spiseforstyrrelser', description: 'Sund relation til mad', category: 'Specifikke tilstande', keywords: ['spiseforstyrrelse', 'anoreksi', 'bulimi', 'mad', 'vægt', 'krop', 'slank', 'kaste op', 'spisning'] },
+            { url: 'misbrug.html', icon: '🚫', name: 'Misbrug', description: 'Vej til recovery', category: 'Specifikke tilstande', keywords: ['misbrug', 'afhængighed', 'alkohol', 'stoffer', 'piller', 'gambling', 'addiction', 'rus'] },
+            { url: 'hsp.html', icon: '🌟', name: 'Højsensitivitet', description: 'Din sensitivitet som styrke', category: 'Specifikke tilstande', keywords: ['hsp', 'sensitiv', 'følsom', 'overstimulering', 'sanser', 'empati', 'introvert'] },
+            { url: 'social-angst.html', icon: '👥', name: 'Social angst', description: 'Tryg blandt andre', category: 'Specifikke tilstande', keywords: ['social angst', 'genert', 'flovhed', 'mennesker', 'sociale situationer', 'tale', 'præstation'] },
+            { url: 'fobi.html', icon: '🕷️', name: 'Fobier', description: 'Overkom din frygt', category: 'Specifikke tilstande', keywords: ['fobi', 'frygt', 'fobisk', 'edderkopper', 'højder', 'fly', 'claustrofobi', 'agorafobi'] },
+            { url: 'kronisk-smerte.html', icon: '🩹', name: 'Kroniske smerter', description: 'Lev med smerter', category: 'Specifikke tilstande', keywords: ['smerte', 'kronisk', 'ondt', 'fysisk', 'krop', 'sygdom', 'lidelse'] },
+
+            // Livssituationer
+            { url: 'sorg.html', icon: '💔', name: 'Sorg og tab', description: 'Bearbejd tab og sorg', category: 'Livssituationer', keywords: ['sorg', 'tab', 'død', 'miste', 'savner', 'begravelse', 'afsked', 'græde'] },
+            { url: 'skilsmisse.html', icon: '💔', name: 'Skilsmisse/brud', description: 'Start forfra efter brud', category: 'Livssituationer', keywords: ['skilsmisse', 'brud', 'separation', 'forhold', 'ekskæreste', 'slut', 'breakup', 'kærlighed'] },
+            { url: 'mobning.html', icon: '😢', name: 'Mobning', description: 'Håndter mobning', category: 'Livssituationer', keywords: ['mobning', 'mobbet', 'chikane', 'drille', 'skole', 'arbejde', 'online', 'cybermobbning'] },
+            { url: 'arbejdsloshed.html', icon: '💼', name: 'Arbejdsløshed', description: 'Hold modet oppe', category: 'Livssituationer', keywords: ['arbejdsløs', 'fyret', 'job', 'ledighed', 'økonomi', 'usikker', 'karriere'] },
+            { url: 'eksamen.html', icon: '📚', name: 'Eksamensangst', description: 'Præster uden panik', category: 'Livssituationer', keywords: ['eksamen', 'prøve', 'test', 'præstation', 'skole', 'studie', 'universitet', 'nervøs'] },
+            { url: 'foraldre.html', icon: '👨‍👩‍👧', name: 'Forældrestress', description: 'Overskud som forælder', category: 'Livssituationer', keywords: ['forældre', 'børn', 'familie', 'mor', 'far', 'overskud', 'opdragelse', 'balance'] },
+            { url: 'identitet.html', icon: '🏳️‍🌈', name: 'Identitet & seksualitet', description: 'Vær dig selv', category: 'Livssituationer', keywords: ['identitet', 'seksualitet', 'lgbt', 'trans', 'homoseksuel', 'køn', 'coming out', 'accept'] },
+            { url: 'alderskriser.html', icon: '🎂', name: 'Livskriser', description: 'Quarter-/midlife crisis', category: 'Livssituationer', keywords: ['livskrise', 'midlife', 'quarterlife', 'alder', 'eksistentiel', 'mening', 'retning'] },
+            { url: 'meningsloshed.html', icon: '❓', name: 'Meningsløshed', description: 'Find mening igen', category: 'Livssituationer', keywords: ['meningsløshed', 'formål', 'mening', 'eksistens', 'tomhed', 'livet', 'hvorfor'] },
+            { url: 'psykologens-ord.html', icon: '👨‍⚕️', name: 'Psykologens ord', description: 'Professionel indsigt', category: 'Ressourcer', keywords: ['psykolog', 'professionel', 'terapi', 'behandling', 'hjælp', 'ekspert', 'råd'] },
+
+            // Extra resources
+            { url: 'Dashboard.html', icon: '📊', name: 'Dashboard', description: 'Se din fremgang og statistik', category: 'Ressourcer', keywords: ['dashboard', 'fremgang', 'statistik', 'oversigt', 'tracking', 'udvikling'] },
+            { url: 'playlists.html', icon: '🎵', name: 'Playlister', description: 'Lyt til afslappende øvelser', category: 'Ressourcer', keywords: ['playlist', 'musik', 'lyd', 'øvelse', 'meditation', 'afspænding', 'audio'] }
+        ];
+
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            const query = input.value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('searchResults');
+
+            if (query.length === 0) {
+                resultsContainer.innerHTML = '<div class="search-help">Skriv for at søge i alle emner</div>';
+                return;
+            }
+
+            // Search through all data
+            const results = searchData.filter(item => {
+                const searchText = `${item.name} ${item.description} ${item.keywords.join(' ')}`.toLowerCase();
+                return searchText.includes(query) ||
+                       item.keywords.some(keyword => keyword.includes(query));
+            });
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="search-no-results">
+                        <p>Ingen resultater for "<strong>${query}</strong>"</p>
+                        <p style="font-size: 0.8rem; margin-top: 8px;">Prøv et andet søgeord eller browse kategorierne</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render results
+            resultsContainer.innerHTML = results.slice(0, 8).map(item => `
+                <a href="${item.url}" class="search-result-item">
+                    <span class="search-result-icon">${item.icon}</span>
+                    <div class="search-result-content">
+                        <div class="search-result-title">${highlightMatch(item.name, query)}</div>
+                        <div class="search-result-description">${item.description}</div>
+                    </div>
+                    <span class="search-result-category">${item.category}</span>
+                </a>
+            `).join('');
+        }
+
+        function highlightMatch(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<mark style="background: #fef08a; padding: 0 2px; border-radius: 2px;">$1</mark>');
+        }
+
+        function showSearchResults() {
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.classList.add('active');
+            if (!document.getElementById('searchInput').value.trim()) {
+                resultsContainer.innerHTML = '<div class="search-help">Skriv for at søge i alle emner</div>';
+            }
+        }
+
+        function hideSearchResults() {
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.classList.remove('active');
+        }
+
+        // Keyboard navigation for search
+        document.addEventListener('keydown', function(e) {
+            const searchInput = document.getElementById('searchInput');
+
+            // Press "/" to focus search
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+                showSearchResults();
+            }
+
+            // Press Escape to close search
+            if (e.key === 'Escape') {
+                searchInput.blur();
+                hideSearchResults();
+            }
+        });
     </script>
 </body>
 </html>
