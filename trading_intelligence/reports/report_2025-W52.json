@@ -1,0 +1,25 @@
+{
+  "week_start": "2025-12-29T00:00:00",
+  "week_end": "2026-01-04T23:59:59",
+  "total_signals": 11,
+  "completed_signals": 11,
+  "win_rate": 36.36,
+  "profit_factor": 1.51,
+  "avg_profit": 180.96,
+  "win_rate_change": 0.0,
+  "signals_change": 0,
+  "best_regime": "RANGING",
+  "worst_regime": "WEAK_UPTREND",
+  "best_session": "OVERLAP",
+  "suggestions": [
+    {
+      "type": "SCORE_THRESHOLD",
+      "priority": "MEDIUM",
+      "message": "Adjust minimum score from 65 to 55",
+      "expected_impact": "36.4% win rate with 11 signals",
+      "current_value": "65",
+      "suggested_value": "55"
+    }
+  ],
+  "learning_progress": "STABLE"
+}
