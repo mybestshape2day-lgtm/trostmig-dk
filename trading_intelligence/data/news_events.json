@@ -1,0 +1,38 @@
+{
+  "events": [
+    {
+      "timestamp": "2026-01-04T08:23:00Z",
+      "headline": "Fed Chair Powell signals rate patience amid economic uncertainty",
+      "source": "Reuters",
+      "sentiment": "DOVISH",
+      "impact": "MEDIUM",
+      "gold_impact": "BULLISH",
+      "duration_minutes": 120,
+      "tags": ["fed", "rates", "powell"]
+    },
+    {
+      "timestamp": "2026-01-03T14:15:00Z",
+      "headline": "US Dollar strengthens on safe-haven demand",
+      "source": "Bloomberg",
+      "sentiment": "HAWKISH",
+      "impact": "LOW",
+      "gold_impact": "BEARISH",
+      "duration_minutes": 60,
+      "tags": ["dollar", "safe-haven"]
+    }
+  ],
+  "sentiment_keywords": {
+    "BULLISH_GOLD": [
+      "rate cut", "dovish", "inflation fears", "geopolitical tension",
+      "safe haven", "dollar weakness", "QE", "stimulus", "recession fears"
+    ],
+    "BEARISH_GOLD": [
+      "rate hike", "hawkish", "strong dollar", "risk on",
+      "tapering", "quantitative tightening", "economic strength"
+    ]
+  },
+  "metadata": {
+    "last_updated": "2026-01-04T00:00:00Z",
+    "note": "Add breaking news manually or via API integration later"
+  }
+}
