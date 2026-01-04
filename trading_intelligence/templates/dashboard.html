@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Intelligence - Gold Futures Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info {
+            text-align: right;
+            color: #9ca3af;
+        }
+
+        .header-info .update-time { font-size: 0.9em; }
+        .header-info .status { font-size: 0.85em; margin-top: 5px; }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        @media (max-width: 1200px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .grid, .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 0.9em;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-icon { font-size: 1.5em; }
+
+        /* Price Card */
+        .price-card { grid-column: span 2; }
+
+        .price-main {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .price-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .price-change {
+            font-size: 1.3em;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .price-change.positive { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .price-change.negative { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .price-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .price-detail {
+            text-align: center;
+        }
+
+        .price-detail-label { font-size: 0.75em; color: #6b7280; }
+        .price-detail-value { font-size: 1.1em; font-weight: 500; margin-top: 3px; }
+
+        /* Signal Card */
+        .signal-card { grid-column: span 2; }
+
+        .signal-main {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .signal-direction {
+            font-size: 2.5em;
+            font-weight: 700;
+            padding: 15px 30px;
+            border-radius: 12px;
+        }
+
+        .signal-direction.LONG { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+        .signal-direction.SHORT { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .signal-direction.HOLD { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+
+        .signal-meta { flex: 1; }
+        .signal-strength { font-size: 1.2em; margin-bottom: 5px; }
+        .signal-score { color: #9ca3af; }
+
+        .signal-levels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .signal-level { text-align: center; }
+        .signal-level-label { font-size: 0.75em; color: #6b7280; }
+        .signal-level-value { font-size: 1.3em; font-weight: 600; margin-top: 3px; }
+        .signal-level-value.entry { color: #60a5fa; }
+        .signal-level-value.stop { color: #ef4444; }
+        .signal-level-value.target { color: #22c55e; }
+
+        /* Indicator Cards */
+        .indicator-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .indicator-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-bullish { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .status-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-neutral { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+        .status-overbought { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-oversold { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+
+        /* Regime & Sentiment */
+        .regime-value, .sentiment-value {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .regime-uptrend { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .regime-downtrend { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .regime-ranging { background: rgba(234, 179, 8, 0.2); color: #eab308; }
+
+        .sentiment-risk-on { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .sentiment-risk-off { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .sentiment-neutral { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+
+        /* Risk Card */
+        .risk-level {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .risk-NORMAL { color: #22c55e; }
+        .risk-ELEVATED { color: #eab308; }
+        .risk-HIGH { color: #f97316; }
+        .risk-CRITICAL { color: #ef4444; }
+
+        .risk-score {
+            font-size: 0.9em;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .risk-alerts {
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .alert-item {
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+        }
+
+        /* Correlation Card */
+        .correlation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .correlation-item:last-child { border-bottom: none; }
+
+        .correlation-name { color: #9ca3af; }
+        .correlation-value { font-weight: 600; font-size: 1.1em; }
+        .corr-positive { color: #22c55e; }
+        .corr-negative { color: #ef4444; }
+
+        /* Performance Card */
+        .perf-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .perf-item { text-align: center; }
+        .perf-value { font-size: 1.5em; font-weight: 700; }
+        .perf-label { font-size: 0.75em; color: #6b7280; margin-top: 5px; }
+
+        .perf-value.win-rate { color: #22c55e; }
+        .perf-value.profit-factor { color: #60a5fa; }
+
+        /* Patterns */
+        .pattern-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .pattern-name { font-weight: 500; }
+        .pattern-score {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        /* Criteria */
+        .criteria-list { list-style: none; }
+        .criteria-item {
+            padding: 8px 0;
+            font-size: 0.9em;
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .criteria-item::before {
+            content: "✓";
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            color: #6b7280;
+        }
+
+        .loading::after {
+            content: "";
+            width: 30px;
+            height: 30px;
+            border: 3px solid #333;
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 15px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .refresh-btn:hover { transform: scale(1.05); }
+        .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Error */
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Gold Futures Trading Intelligence</h1>
+            <div class="header-info">
+                <div class="update-time">Sidst opdateret: <span id="updateTime">--</span></div>
+                <div class="status">
+                    <button class="refresh-btn" onclick="refreshData()">Opdater Data</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboard">
+            <div class="loading">Indlæser data...</div>
+        </div>
+    </div>
+
+    <script>
+        let refreshing = false;
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/data');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return { error: error.message };
+            }
+        }
+
+        async function refreshData() {
+            if (refreshing) return;
+            refreshing = true;
+
+            const btn = document.querySelector('.refresh-btn');
+            btn.disabled = true;
+            btn.textContent = 'Opdaterer...';
+
+            try {
+                const response = await fetch('/api/refresh');
+                const data = await response.json();
+                renderDashboard(data);
+            } catch (error) {
+                console.error('Error refreshing:', error);
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Opdater Data';
+            refreshing = false;
+        }
+
+        function getRegimeClass(regime) {
+            if (regime.includes('UPTREND')) return 'regime-uptrend';
+            if (regime.includes('DOWNTREND')) return 'regime-downtrend';
+            return 'regime-ranging';
+        }
+
+        function getSentimentClass(sentiment) {
+            if (sentiment === 'RISK_ON') return 'sentiment-risk-on';
+            if (sentiment === 'RISK_OFF') return 'sentiment-risk-off';
+            return 'sentiment-neutral';
+        }
+
+        function getRsiStatus(rsi) {
+            if (rsi >= 70) return { text: 'Overkøbt', class: 'status-overbought' };
+            if (rsi <= 30) return { text: 'Oversolgt', class: 'status-oversold' };
+            if (rsi >= 55) return { text: 'Bullish', class: 'status-bullish' };
+            if (rsi <= 45) return { text: 'Bearish', class: 'status-bearish' };
+            return { text: 'Neutral', class: 'status-neutral' };
+        }
+
+        function getMacdStatus(macd, signal) {
+            if (macd > signal) return { text: 'Bullish', class: 'status-bullish' };
+            return { text: 'Bearish', class: 'status-bearish' };
+        }
+
+        function getStochStatus(k) {
+            if (k >= 80) return { text: 'Overkøbt', class: 'status-overbought' };
+            if (k <= 20) return { text: 'Oversolgt', class: 'status-oversold' };
+            return { text: 'Neutral', class: 'status-neutral' };
+        }
+
+        function renderDashboard(data) {
+            if (data.error) {
+                document.getElementById('dashboard').innerHTML = `
+                    <div class="error">
+                        <h3>Fejl ved indlæsning</h3>
+                        <p>${data.error}</p>
+                        <button class="refresh-btn" onclick="refreshData()" style="margin-top: 15px;">Prøv igen</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const rsiStatus = getRsiStatus(data.indicators.rsi);
+            const macdStatus = getMacdStatus(data.indicators.macd, data.indicators.macd_signal);
+            const stochStatus = getStochStatus(data.indicators.stoch_k);
+
+            document.getElementById('updateTime').textContent = new Date(data.timestamp).toLocaleString('da-DK');
+
+            document.getElementById('dashboard').innerHTML = `
+                <!-- Row 1: Price + Signal -->
+                <div class="grid grid-2">
+                    <!-- Price Card -->
+                    <div class="card price-card">
+                        <div class="card-header">
+                            <span class="card-title">Gold Futures (GC)</span>
+                            <span class="card-icon">🪙</span>
+                        </div>
+                        <div class="price-main">
+                            <span class="price-value">$${data.price.current.toLocaleString()}</span>
+                            <span class="price-change ${data.price.change_pct >= 0 ? 'positive' : 'negative'}">
+                                ${data.price.change_pct >= 0 ? '+' : ''}${data.price.change_pct}%
+                            </span>
+                        </div>
+                        <div class="price-details">
+                            <div class="price-detail">
+                                <div class="price-detail-label">Open</div>
+                                <div class="price-detail-value">$${data.price.open.toLocaleString()}</div>
+                            </div>
+                            <div class="price-detail">
+                                <div class="price-detail-label">High</div>
+                                <div class="price-detail-value">$${data.price.high.toLocaleString()}</div>
+                            </div>
+                            <div class="price-detail">
+                                <div class="price-detail-label">Low</div>
+                                <div class="price-detail-value">$${data.price.low.toLocaleString()}</div>
+                            </div>
+                            <div class="price-detail">
+                                <div class="price-detail-label">ATR</div>
+                                <div class="price-detail-value">$${data.indicators.atr}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signal Card -->
+                    <div class="card signal-card">
+                        <div class="card-header">
+                            <span class="card-title">Trading Signal</span>
+                            <span class="card-icon">🎯</span>
+                        </div>
+                        <div class="signal-main">
+                            <div class="signal-direction ${data.signal.direction}">${data.signal.direction}</div>
+                            <div class="signal-meta">
+                                <div class="signal-strength">Styrke: ${data.signal.strength}</div>
+                                <div class="signal-score">Score: ${data.signal.score}/100</div>
+                            </div>
+                        </div>
+                        <div class="signal-levels">
+                            <div class="signal-level">
+                                <div class="signal-level-label">Entry</div>
+                                <div class="signal-level-value entry">${data.signal.entry ? '$' + data.signal.entry : '-'}</div>
+                            </div>
+                            <div class="signal-level">
+                                <div class="signal-level-label">Stop Loss</div>
+                                <div class="signal-level-value stop">${data.signal.stop_loss ? '$' + data.signal.stop_loss : '-'}</div>
+                            </div>
+                            <div class="signal-level">
+                                <div class="signal-level-label">Take Profit</div>
+                                <div class="signal-level-value target">${data.signal.take_profit ? '$' + data.signal.take_profit : '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Indicators -->
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">RSI (14)</span>
+                        </div>
+                        <div class="indicator-value">${data.indicators.rsi}</div>
+                        <span class="indicator-status ${rsiStatus.class}">${rsiStatus.text}</span>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">MACD</span>
+                        </div>
+                        <div class="indicator-value">${data.indicators.macd}</div>
+                        <span class="indicator-status ${macdStatus.class}">${macdStatus.text}</span>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Stochastic %K</span>
+                        </div>
+                        <div class="indicator-value">${data.indicators.stoch_k}</div>
+                        <span class="indicator-status ${stochStatus.class}">${stochStatus.text}</span>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">ADX</span>
+                        </div>
+                        <div class="indicator-value">${data.indicators.adx}</div>
+                        <span class="indicator-status ${data.indicators.adx >= 25 ? 'status-bullish' : 'status-neutral'}">
+                            ${data.indicators.adx >= 25 ? 'Stærk Trend' : 'Svag Trend'}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Row 3: Regime, Sentiment, Risk, Correlations -->
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Markedsregime</span>
+                            <span class="card-icon">📊</span>
+                        </div>
+                        <div class="regime-value ${getRegimeClass(data.regime.current)}">
+                            ${data.regime.current.replace('_', ' ')}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Sentiment</span>
+                            <span class="card-icon">🌡️</span>
+                        </div>
+                        <div class="sentiment-value ${getSentimentClass(data.sentiment.overall)}">
+                            ${data.sentiment.overall.replace('_', ' ')}
+                        </div>
+                        <div style="font-size: 0.85em; color: #6b7280; margin-top: 10px;">
+                            DXY: ${data.sentiment.dxy_trend} |
+                            Yields: ${data.sentiment.yield_trend} |
+                            Equity: ${data.sentiment.equity_trend}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Risk Status</span>
+                            <span class="card-icon">⚠️</span>
+                        </div>
+                        <div class="risk-level risk-${data.risk.level}">${data.risk.level}</div>
+                        <div class="risk-score">Score: ${data.risk.score}/100</div>
+                        ${data.risk.alerts.length > 0 ? `
+                            <div class="risk-alerts">
+                                ${data.risk.alerts.map(a => `<div class="alert-item">${a}</div>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Korrelationer</span>
+                            <span class="card-icon">🔗</span>
+                        </div>
+                        <div class="correlation-item">
+                            <span class="correlation-name">US Dollar</span>
+                            <span class="correlation-value ${data.correlations.dxy < 0 ? 'corr-negative' : 'corr-positive'}">
+                                ${data.correlations.dxy > 0 ? '+' : ''}${data.correlations.dxy}
+                            </span>
+                        </div>
+                        <div class="correlation-item">
+                            <span class="correlation-name">Silver</span>
+                            <span class="correlation-value ${data.correlations.silver < 0 ? 'corr-negative' : 'corr-positive'}">
+                                ${data.correlations.silver > 0 ? '+' : ''}${data.correlations.silver}
+                            </span>
+                        </div>
+                        <div class="correlation-item">
+                            <span class="correlation-name">S&P 500</span>
+                            <span class="correlation-value ${data.correlations.sp500 < 0 ? 'corr-negative' : 'corr-positive'}">
+                                ${data.correlations.sp500 > 0 ? '+' : ''}${data.correlations.sp500}
+                            </span>
+                        </div>
+                        <div class="correlation-item">
+                            <span class="correlation-name">Oil</span>
+                            <span class="correlation-value ${data.correlations.oil < 0 ? 'corr-negative' : 'corr-positive'}">
+                                ${data.correlations.oil > 0 ? '+' : ''}${data.correlations.oil}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Performance + Patterns + Criteria -->
+                <div class="grid grid-3">
+                    ${data.performance ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Performance</span>
+                                <span class="card-icon">📈</span>
+                            </div>
+                            <div class="perf-grid">
+                                <div class="perf-item">
+                                    <div class="perf-value win-rate">${data.performance.win_rate}%</div>
+                                    <div class="perf-label">Win Rate</div>
+                                </div>
+                                <div class="perf-item">
+                                    <div class="perf-value profit-factor">${data.performance.profit_factor}</div>
+                                    <div class="perf-label">Profit Factor</div>
+                                </div>
+                                <div class="perf-item">
+                                    <div class="perf-value">${data.performance.total_trades}</div>
+                                    <div class="perf-label">Total Trades</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                <span style="color: #22c55e">${data.performance.wins} Wins</span> /
+                                <span style="color: #ef4444">${data.performance.losses} Losses</span>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Performance</span>
+                                <span class="card-icon">📈</span>
+                            </div>
+                            <div style="text-align: center; color: #6b7280; padding: 30px 0;">
+                                Ingen historik endnu.<br>
+                                Kør <code>run_learning.py --simulate</code> for testdata.
+                            </div>
+                        </div>
+                    `}
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Mønstre Fundet</span>
+                            <span class="card-icon">🔍</span>
+                        </div>
+                        ${data.patterns.length > 0 ? data.patterns.map(p => `
+                            <div class="pattern-item">
+                                <span class="pattern-name">${p.name}</span>
+                                <span class="pattern-score">${Math.round(p.score * 100)}%</span>
+                            </div>
+                        `).join('') : '<div style="color: #6b7280; text-align: center; padding: 20px;">Ingen mønstre fundet</div>'}
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Signal Kriterier</span>
+                            <span class="card-icon">✅</span>
+                        </div>
+                        <ul class="criteria-list">
+                            ${data.signal.criteria.map(c => `<li class="criteria-item">${c}</li>`).join('')}
+                        </ul>
+                        ${data.signal.criteria.length === 0 ? '<div style="color: #6b7280; text-align: center; padding: 20px;">Ingen kriterier opfyldt</div>' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initial load
+        fetchData().then(renderDashboard);
+
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+            fetchData().then(renderDashboard);
+        }, 60000);
+    </script>
+</body>
+</html>
