@@ -1,17 +1,29 @@
 """
-Learning Module - Signal Tracking og Performance Learning
-=========================================================
-Fase 4: Logger signals, tracker outcomes, og lærer fra resultater.
+Strategy Factory - Self-Evolving Trading Intelligence
 
-Moduler:
-- signal_logger: Logger alle signals med komplet kontekst
-- outcome_tracker: Tracker pris efter signal
-- performance: Beregner metrics og statistik
-- optimizer: Finder optimale parametre
-- reports: Genererer læringsrapporter
+The Loop:
+Data -> Analysis -> Risk Check -> Signal -> Trade -> Log ->
+  -> Performance Review -> Strategy Factory -> New Rules ->
+    -> Back to Analysis (with improved rules)
+
+Components:
+- PatternMiner: Discovers profitable patterns in historical data
+- RuleEvolution: Generates and evolves trading rules
+- AutoTuner: Optimizes parameters automatically
+- StrategyFactory: Main orchestrator
+- FeedbackLoop: Connects signals to outcomes
 """
 
-from .signal_logger import SignalLogger, SignalRecord
-from .performance import PerformanceAnalyzer
-from .optimizer import StrategyOptimizer
-from .reports import ReportGenerator
+from .pattern_miner import PatternMiner
+from .rule_evolution import RuleEvolution
+from .auto_tuner import AutoTuner
+from .strategy_factory import StrategyFactory
+from .feedback_loop import FeedbackLoop
+
+__all__ = [
+    'PatternMiner',
+    'RuleEvolution',
+    'AutoTuner',
+    'StrategyFactory',
+    'FeedbackLoop'
+]
