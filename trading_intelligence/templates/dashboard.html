@@ -485,14 +485,23 @@
             data.risk.score = data.risk.score ?? 0;
             data.risk.alerts = data.risk.alerts || [];
 
-            data.correlations.dxy = data.correlations.dxy ?? 0;
-            data.correlations.silver = data.correlations.silver ?? 0;
-            data.correlations.sp500 = data.correlations.sp500 ?? 0;
-            data.correlations.oil = data.correlations.oil ?? 0;
+            // Handle correlations - might be keyed by symbol or by name
+            const corrData = data.correlations || {};
+            data.correlations = {
+                dxy: corrData.dxy ?? corrData['DX-Y.NYB']?.correlation ?? corrData['DX-Y.NYB'] ?? 0,
+                silver: corrData.silver ?? corrData['SI=F']?.correlation ?? corrData['SI=F'] ?? 0,
+                sp500: corrData.sp500 ?? corrData['^GSPC']?.correlation ?? corrData['^GSPC'] ?? 0,
+                oil: corrData.oil ?? corrData['CL=F']?.correlation ?? corrData['CL=F'] ?? 0,
+                treasury: corrData.treasury ?? corrData['^TNX']?.correlation ?? corrData['^TNX'] ?? 0
+            };
 
-            // Handle regime - could be string or object with 'current'
+            // Handle regime - could be string, object with 'current', or object with 'trend'
             if (typeof data.regime === 'string') {
                 data.regime = { current: data.regime };
+            } else if (data.regime && data.regime.trend) {
+                // New format: {trend, volatility, liquidity}
+                data.regime.current = data.regime.trend;
+                data.regime.display = `${data.regime.trend} + ${data.regime.volatility || ''}_VOL + ${data.regime.liquidity || ''}_LIQ`;
             }
             data.regime.current = data.regime.current || 'UNKNOWN';
 

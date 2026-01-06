@@ -16,8 +16,13 @@ DB_PATH = BASE_DIR / "database" / "trading_data.db"
 @dataclass
 class SymbolConfig:
     """Konfiguration for handelssymboler"""
-    # Primært symbol - Guld Futures
-    PRIMARY_SYMBOL: str = "GC=F"
+    # Primært symbol - Micro Gold Futures (MGC)
+    # Brug "MGC=F" for Micro Gold eller "GC=F" for standard Gold
+    PRIMARY_SYMBOL: str = "MGC=F"
+
+    # Alternative symbols
+    MICRO_GOLD: str = "MGC=F"      # Micro Gold Futures
+    STANDARD_GOLD: str = "GC=F"   # Standard Gold Futures
 
     # Korrelerede markeder
     CORRELATED_SYMBOLS: List[str] = field(default_factory=lambda: [
@@ -30,6 +35,7 @@ class SymbolConfig:
 
     # Navne til visning
     SYMBOL_NAMES: dict = field(default_factory=lambda: {
+        "MGC=F": "Micro Gold Futures",
         "GC=F": "Gold Futures",
         "DX-Y.NYB": "US Dollar Index",
         "^TNX": "10Y Treasury Yield",

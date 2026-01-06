@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Signal - Gold Futures</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .header {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header .subtitle { color: #9ca3af; }
+
+        .signal-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .price {
+            font-size: 3.5em;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        .price-change {
+            font-size: 1.5em;
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .price-change.positive { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .price-change.negative { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .signal-display {
+            margin: 40px 0;
+        }
+        .signal-direction {
+            font-size: 4em;
+            font-weight: 800;
+            padding: 30px 60px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .signal-direction.LONG, .signal-direction.LONG_ENTRY {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 60px rgba(34, 197, 94, 0.4);
+        }
+        .signal-direction.SHORT, .signal-direction.SHORT_ENTRY {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 60px rgba(239, 68, 68, 0.4);
+        }
+        .signal-direction.HOLD, .signal-direction.WAIT {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .signal-meta {
+            font-size: 1.3em;
+            color: #9ca3af;
+        }
+        .signal-meta .strength { color: #ffd700; font-weight: 600; }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .level-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        .level-label { color: #6b7280; font-size: 0.9em; margin-bottom: 10px; }
+        .level-value { font-size: 2em; font-weight: 700; }
+        .level-value.entry { color: #60a5fa; }
+        .level-value.stop { color: #ef4444; }
+        .level-value.target { color: #22c55e; }
+
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .indicator {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .indicator-label { color: #6b7280; font-size: 0.8em; }
+        .indicator-value { font-size: 1.8em; font-weight: 600; margin-top: 5px; }
+
+        .confluence-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .confluence-title { font-size: 1.2em; margin-bottom: 15px; color: #ffd700; }
+        .confluence-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+        .refresh-btn:hover { transform: scale(1.05); }
+
+        .update-time { color: #6b7280; margin-top: 20px; font-size: 0.9em; }
+
+        .loading { text-align: center; padding: 60px; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Trading Signal</h1>
+            <p class="subtitle">Gold Futures (MGC1! / GC=F)</p>
+        </div>
+
+        <div id="signal-content">
+            <div class="loading">Indlæser signal data...</div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="refresh-btn" onclick="refreshData()">🔄 Opdater Signal</button>
+            <div class="update-time">Sidst opdateret: <span id="updateTime">--</span></div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/data');
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                return { error: error.message };
+            }
+        }
+
+        async function refreshData() {
+            const content = document.getElementById('signal-content');
+            content.innerHTML = '<div class="loading">Opdaterer...</div>';
+
+            try {
+                const response = await fetch('/api/refresh');
+                const data = await response.json();
+                renderSignal(data);
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Fejl: ${error.message}</div>`;
+            }
+        }
+
+        function renderSignal(data) {
+            if (data.error) {
+                document.getElementById('signal-content').innerHTML = `
+                    <div class="signal-card">
+                        <p style="color: #ef4444;">Fejl: ${data.error}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Normalize data
+            data.price = data.price || {};
+            data.signal = data.signal || {};
+            data.indicators = data.indicators || {};
+            data.confluence = data.confluence || {};
+
+            const direction = data.signal.direction || 'WAIT';
+            const changePct = data.price.change_pct || 0;
+
+            document.getElementById('updateTime').textContent =
+                new Date(data.timestamp).toLocaleString('da-DK');
+
+            document.getElementById('signal-content').innerHTML = `
+                <div class="signal-card">
+                    <div class="price">$${(data.price.current || 0).toLocaleString()}</div>
+                    <div class="price-change ${changePct >= 0 ? 'positive' : 'negative'}">
+                        ${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%
+                    </div>
+
+                    <div class="signal-display">
+                        <div class="signal-direction ${direction}">${direction.replace('_', ' ')}</div>
+                        <div class="signal-meta">
+                            Styrke: <span class="strength">${data.signal.strength || 'N/A'}</span> |
+                            Score: ${data.signal.score || 0}/100
+                        </div>
+                    </div>
+
+                    <div class="levels-grid">
+                        <div class="level-card">
+                            <div class="level-label">ENTRY</div>
+                            <div class="level-value entry">${data.signal.entry ? '$' + data.signal.entry : '-'}</div>
+                        </div>
+                        <div class="level-card">
+                            <div class="level-label">STOP LOSS</div>
+                            <div class="level-value stop">${data.signal.stop_loss ? '$' + data.signal.stop_loss : '-'}</div>
+                        </div>
+                        <div class="level-card">
+                            <div class="level-label">TAKE PROFIT</div>
+                            <div class="level-value target">${data.signal.take_profit ? '$' + data.signal.take_profit : '-'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="indicators-grid">
+                    <div class="indicator">
+                        <div class="indicator-label">RSI</div>
+                        <div class="indicator-value">${data.indicators.rsi || '-'}</div>
+                    </div>
+                    <div class="indicator">
+                        <div class="indicator-label">STOCH %K</div>
+                        <div class="indicator-value">${data.indicators.stoch_k || '-'}</div>
+                    </div>
+                    <div class="indicator">
+                        <div class="indicator-label">ADX</div>
+                        <div class="indicator-value">${data.indicators.adx || '-'}</div>
+                    </div>
+                    <div class="indicator">
+                        <div class="indicator-label">ATR</div>
+                        <div class="indicator-value">$${data.indicators.atr || '-'}</div>
+                    </div>
+                </div>
+
+                ${data.confluence && Object.keys(data.confluence).length > 0 ? `
+                    <div class="confluence-section">
+                        <div class="confluence-title">📊 Confluence Data</div>
+                        <div class="confluence-item">
+                            <span>Stoch Zone</span>
+                            <span>${data.confluence.stoch_zone || '-'}</span>
+                        </div>
+                        <div class="confluence-item">
+                            <span>Session</span>
+                            <span>${data.confluence.session || '-'}</span>
+                        </div>
+                        <div class="confluence-item">
+                            <span>Confluence Grade</span>
+                            <span>${data.confluence.confluence_grade || '-'}</span>
+                        </div>
+                        ${data.confluence.danger_signals?.length > 0 ? `
+                            <div class="confluence-item" style="color: #ef4444;">
+                                <span>⚠️ Danger Signals</span>
+                                <span>${data.confluence.danger_signals.join(', ')}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // Initial load
+        fetchData().then(renderSignal);
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => fetchData().then(renderSignal), 30000);
+    </script>
+</body>
+</html>
