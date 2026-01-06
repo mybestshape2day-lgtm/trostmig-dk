@@ -375,7 +375,96 @@
     <script>
         let refreshing = false;
 
+        // Firebase config - same as station
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        async function fetchFirebaseData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+
+                if (data) {
+                    const keys = Object.keys(data);
+                    const latest = data[keys[keys.length - 1]];
+
+                    if (latest && latest.price) {
+                        // Calculate change %
+                        const changePct = latest.open ? ((latest.price - latest.open) / latest.open * 100) : 0;
+
+                        return {
+                            source: 'firebase',
+                            timestamp: new Date().toISOString(),
+                            price: {
+                                current: latest.price,
+                                open: latest.open || latest.price,
+                                high: latest.high || latest.price,
+                                low: latest.low || latest.price,
+                                change_pct: changePct
+                            },
+                            indicators: {
+                                rsi: latest.rsi || 50,
+                                macd: 0,
+                                macd_signal: 0,
+                                stoch_k: latest.stoch || 50,
+                                stoch_d: latest.stoch || 50,
+                                adx: 0,
+                                atr: latest.atr || 0,
+                                ema_9: latest.ema9 || 0,
+                                ema_21: latest.ema20 || 0
+                            },
+                            regime: {
+                                current: latest.trend || 'UNKNOWN',
+                                trend: latest.trend || 'UNKNOWN'
+                            },
+                            sentiment: {
+                                overall: 'NEUTRAL',
+                                dxy_trend: '-',
+                                yield_trend: '-',
+                                equity_trend: '-'
+                            },
+                            signal: {
+                                direction: latest.signal || (latest.score_long > latest.score_short ? 'LONG' : latest.score_short > latest.score_long ? 'SHORT' : 'WAIT'),
+                                strength: latest.score_long > 70 || latest.score_short > 70 ? 'STRONG' : 'MEDIUM',
+                                score: Math.max(latest.score_long || 0, latest.score_short || 0),
+                                entry: latest.price,
+                                stop_loss: latest.score_long > latest.score_short
+                                    ? latest.price - (latest.atr || 10)
+                                    : latest.price + (latest.atr || 10),
+                                take_profit: latest.score_long > latest.score_short
+                                    ? latest.price + (latest.atr || 10) * 1.5
+                                    : latest.price - (latest.atr || 10) * 1.5,
+                                criteria: []
+                            },
+                            risk: {
+                                level: 'NORMAL',
+                                score: 0,
+                                alerts: []
+                            },
+                            correlations: {},
+                            patterns: [],
+                            performance: null,
+                            confluence: {
+                                stoch_zone: latest.stoch < 25 ? 'oversold' : latest.stoch > 75 ? 'overbought' : 'neutral',
+                                session: latest.session || 'unknown'
+                            }
+                        };
+                    }
+                }
+                return null;
+            } catch (e) {
+                console.error('Firebase fetch failed:', e);
+                return null;
+            }
+        }
+
         async function fetchData() {
+            // Try Firebase first for real-time data
+            const firebaseData = await fetchFirebaseData();
+            if (firebaseData) {
+                return firebaseData;
+            }
+
+            // Fallback to Python API
             try {
                 const response = await fetch('/api/data');
                 const data = await response.json();
@@ -395,8 +484,8 @@
             btn.textContent = 'Opdaterer...';
 
             try {
-                const response = await fetch('/api/refresh');
-                const data = await response.json();
+                // Try Firebase first
+                const data = await fetchData();
                 renderDashboard(data);
             } catch (error) {
                 console.error('Error refreshing:', error);
