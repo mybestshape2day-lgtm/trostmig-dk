@@ -408,12 +408,14 @@
         }
 
         function getRegimeClass(regime) {
+            if (!regime) return 'regime-ranging';
             if (regime.includes('UPTREND')) return 'regime-uptrend';
             if (regime.includes('DOWNTREND')) return 'regime-downtrend';
             return 'regime-ranging';
         }
 
         function getSentimentClass(sentiment) {
+            if (!sentiment) return 'sentiment-neutral';
             if (sentiment === 'RISK_ON') return 'sentiment-risk-on';
             if (sentiment === 'RISK_OFF') return 'sentiment-risk-off';
             return 'sentiment-neutral';
@@ -449,6 +451,59 @@
                 `;
                 return;
             }
+
+            // Normalize data with defaults to handle missing properties
+            data.price = data.price || {};
+            data.indicators = data.indicators || {};
+            data.signal = data.signal || {};
+            data.regime = data.regime || {};
+            data.sentiment = data.sentiment || {};
+            data.risk = data.risk || {};
+            data.correlations = data.correlations || {};
+            data.patterns = data.patterns || [];
+
+            // Set defaults for nested values
+            data.price.current = data.price.current ?? 0;
+            data.price.open = data.price.open ?? 0;
+            data.price.high = data.price.high ?? 0;
+            data.price.low = data.price.low ?? 0;
+            data.price.change_pct = data.price.change_pct ?? 0;
+
+            data.indicators.rsi = data.indicators.rsi ?? 50;
+            data.indicators.macd = data.indicators.macd ?? 0;
+            data.indicators.macd_signal = data.indicators.macd_signal ?? 0;
+            data.indicators.stoch_k = data.indicators.stoch_k ?? 50;
+            data.indicators.adx = data.indicators.adx ?? 0;
+            data.indicators.atr = data.indicators.atr ?? 0;
+
+            data.signal.direction = data.signal.direction || 'HOLD';
+            data.signal.strength = data.signal.strength || 'WEAK';
+            data.signal.score = data.signal.score ?? 0;
+            data.signal.criteria = data.signal.criteria || [];
+
+            data.risk.level = data.risk.level || 'UNKNOWN';
+            data.risk.score = data.risk.score ?? 0;
+            data.risk.alerts = data.risk.alerts || [];
+
+            data.correlations.dxy = data.correlations.dxy ?? 0;
+            data.correlations.silver = data.correlations.silver ?? 0;
+            data.correlations.sp500 = data.correlations.sp500 ?? 0;
+            data.correlations.oil = data.correlations.oil ?? 0;
+
+            // Handle regime - could be string or object with 'current'
+            if (typeof data.regime === 'string') {
+                data.regime = { current: data.regime };
+            }
+            data.regime.current = data.regime.current || 'UNKNOWN';
+
+            // Handle sentiment - could be string or object with 'overall'
+            if (typeof data.sentiment === 'string') {
+                data.sentiment = { overall: data.sentiment };
+            }
+            data.sentiment.overall = data.sentiment.overall || 'NEUTRAL';
+            data.sentiment.dxy_trend = data.sentiment.dxy_trend || '-';
+            data.sentiment.yield_trend = data.sentiment.yield_trend || '-';
+            data.sentiment.equity_trend = data.sentiment.equity_trend || '-';
 
             const rsiStatus = getRsiStatus(data.indicators.rsi);
             const macdStatus = getMacdStatus(data.indicators.macd, data.indicators.macd_signal);
@@ -566,7 +621,7 @@
                             <span class="card-icon">📊</span>
                         </div>
                         <div class="regime-value ${getRegimeClass(data.regime.current)}">
-                            ${data.regime.current.replace('_', ' ')}
+                            ${data.regime.current.replace(/_/g, ' ')}
                         </div>
                     </div>
 
@@ -576,7 +631,7 @@
                             <span class="card-icon">🌡️</span>
                         </div>
                         <div class="sentiment-value ${getSentimentClass(data.sentiment.overall)}">
-                            ${data.sentiment.overall.replace('_', ' ')}
+                            ${data.sentiment.overall.replace(/_/g, ' ')}
                         </div>
                         <div style="font-size: 0.85em; color: #6b7280; margin-top: 10px;">
                             DXY: ${data.sentiment.dxy_trend} |
