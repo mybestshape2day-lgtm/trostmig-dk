@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Scalping Station - Trading Intelligence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .nav-links { display: flex; gap: 5px; }
+        .nav-links a {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        .header { text-align: center; padding: 20px 0; }
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .main-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .price-section { text-align: center; margin-bottom: 30px; }
+        .big-price {
+            font-size: 4em;
+            font-weight: 700;
+            color: #ffd700;
+            font-family: monospace;
+        }
+        .price-change {
+            font-size: 1.5em;
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .price-change.positive { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .price-change.negative { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .signal-section { text-align: center; margin: 30px 0; }
+        .signal-badge {
+            font-size: 3em;
+            font-weight: 800;
+            padding: 20px 50px;
+            border-radius: 15px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .signal-badge.LONG {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.4);
+            animation: pulse-green 2s infinite;
+        }
+        .signal-badge.SHORT {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
+            animation: pulse-red 2s infinite;
+        }
+        .signal-badge.WAIT {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(34, 197, 94, 0.6); }
+        }
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.6); }
+        }
+
+        .scores-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+        .score-item { text-align: center; }
+        .score-label { color: #6b7280; font-size: 0.9em; }
+        .score-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .score-long { color: #22c55e; }
+        .score-short { color: #ef4444; }
+
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .indicator-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .indicator-label { color: #6b7280; font-size: 0.8em; }
+        .indicator-value { font-size: 1.5em; font-weight: 600; margin-top: 5px; }
+
+        .stoch-bar {
+            height: 30px;
+            background: linear-gradient(90deg, #22c55e 0%, #22c55e 25%, #6b7280 25%, #6b7280 75%, #ef4444 75%, #ef4444 100%);
+            border-radius: 15px;
+            position: relative;
+            margin: 20px 0;
+        }
+        .stoch-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 40px;
+            background: #ffd700;
+            border-radius: 2px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .stoch-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #6b7280;
+        }
+
+        .session-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        .session-asia { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+        .session-london { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .session-newyork { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .session-closed { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+
+        .update-time { text-align: center; color: #6b7280; margin-top: 20px; font-size: 0.9em; }
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Trading Intelligence</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html" class="active">&#9889; Station</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="lab.html">&#128300; Lab</a>
+            <a href="history.html">&#128220; History</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#9889; Scalping Station</h1>
+            <p style="color: #6b7280;">MGC1! - 4 Point Target</p>
+        </div>
+
+        <div class="main-card">
+            <div class="price-section">
+                <div class="big-price" id="price">--</div>
+                <div class="price-change positive" id="change">+0.00%</div>
+            </div>
+
+            <div class="signal-section">
+                <div class="signal-badge WAIT" id="signal">WAIT</div>
+            </div>
+
+            <div class="scores-row">
+                <div class="score-item">
+                    <div class="score-label">LONG SCORE</div>
+                    <div class="score-value score-long" id="scoreLong">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">SHORT SCORE</div>
+                    <div class="score-value score-short" id="scoreShort">0</div>
+                </div>
+            </div>
+
+            <div style="margin: 30px 0;">
+                <div style="color: #6b7280; font-size: 0.9em; margin-bottom: 10px;">Stochastic Position</div>
+                <div class="stoch-bar">
+                    <div class="stoch-marker" id="stochMarker" style="left: 50%;"></div>
+                </div>
+                <div class="stoch-labels">
+                    <span>Oversold (25)</span>
+                    <span>Neutral</span>
+                    <span>Overbought (75)</span>
+                </div>
+            </div>
+
+            <div class="indicators-grid">
+                <div class="indicator-box">
+                    <div class="indicator-label">RSI</div>
+                    <div class="indicator-value" id="rsi">--</div>
+                </div>
+                <div class="indicator-box">
+                    <div class="indicator-label">STOCH</div>
+                    <div class="indicator-value" id="stoch">--</div>
+                </div>
+                <div class="indicator-box">
+                    <div class="indicator-label">ATR</div>
+                    <div class="indicator-value" id="atr">--</div>
+                </div>
+                <div class="indicator-box">
+                    <div class="indicator-label">TREND</div>
+                    <div class="indicator-value" id="trend">--</div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <span class="session-badge session-closed" id="session">--</span>
+            </div>
+        </div>
+
+        <div class="update-time">
+            <span class="live-dot" id="liveDot"></span>
+            <span id="updateTime">--</span>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+        const CONFIG = {
+            stochOversold: 25,
+            stochOverbought: 75
+        };
+
+        async function fetchData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    return data[keys[keys.length - 1]];
+                }
+                return null;
+            } catch (e) {
+                console.error('Fetch failed:', e);
+                return null;
+            }
+        }
+
+        function getSessionClass(session) {
+            if (!session) return 'session-closed';
+            const s = session.toLowerCase();
+            if (s.includes('asia')) return 'session-asia';
+            if (s.includes('london')) return 'session-london';
+            if (s.includes('new york') || s.includes('newyork') || s.includes('ny')) return 'session-newyork';
+            return 'session-closed';
+        }
+
+        function updateUI(data) {
+            if (!data) {
+                document.getElementById('liveDot').style.background = '#ef4444';
+                return;
+            }
+
+            // Price
+            const price = data.price || 0;
+            document.getElementById('price').textContent = '$' + price.toFixed(1);
+            document.getElementById('navPrice').textContent = '$' + price.toFixed(1);
+            document.getElementById('navLive').style.background = '#00d4aa';
+
+            // Change
+            const changePct = data.open ? ((price - data.open) / data.open * 100) : 0;
+            const changeEl = document.getElementById('change');
+            changeEl.textContent = (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%';
+            changeEl.className = 'price-change ' + (changePct >= 0 ? 'positive' : 'negative');
+
+            // Signal
+            const scoreLong = data.score_long || 0;
+            const scoreShort = data.score_short || 0;
+            let signal = 'WAIT';
+            if (scoreLong > 60 && scoreLong > scoreShort) signal = 'LONG';
+            else if (scoreShort > 60 && scoreShort > scoreLong) signal = 'SHORT';
+
+            const signalEl = document.getElementById('signal');
+            signalEl.textContent = signal;
+            signalEl.className = 'signal-badge ' + signal;
+
+            // Scores
+            document.getElementById('scoreLong').textContent = scoreLong;
+            document.getElementById('scoreShort').textContent = scoreShort;
+
+            // Stochastic
+            const stoch = data.stoch || 50;
+            document.getElementById('stochMarker').style.left = stoch + '%';
+
+            // Indicators
+            document.getElementById('rsi').textContent = data.rsi ? data.rsi.toFixed(0) : '--';
+            document.getElementById('stoch').textContent = stoch.toFixed(0);
+            document.getElementById('atr').textContent = data.atr ? '$' + data.atr.toFixed(1) : '--';
+            document.getElementById('trend').textContent = data.trend || '--';
+
+            // Session
+            const sessionEl = document.getElementById('session');
+            sessionEl.textContent = data.session || 'Unknown';
+            sessionEl.className = 'session-badge ' + getSessionClass(data.session);
+
+            // Update time
+            document.getElementById('updateTime').textContent = new Date().toLocaleString('da-DK');
+            document.getElementById('liveDot').style.background = '#22c55e';
+        }
+
+        // Initial load
+        fetchData().then(updateUI);
+
+        // Auto-refresh every 3 seconds
+        setInterval(() => fetchData().then(updateUI), 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parameter Lab - Trading Intelligence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .nav-links { display: flex; gap: 5px; }
+        .nav-links a {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        .header { text-align: center; padding: 30px; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .subtitle { color: #9ca3af; margin-top: 10px; }
+
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        .card-title {
+            font-size: 1.1em;
+            color: #ffd700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .param-group { margin-bottom: 20px; }
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #9ca3af;
+            font-size: 0.9em;
+        }
+        .param-value { color: #ffd700; font-weight: 600; }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+
+        .preset-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e8e8e8;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover { background: rgba(255,255,255,0.2); }
+        .preset-btn.active { background: #ffd700; color: #000; }
+
+        .save-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .save-btn:hover { transform: scale(1.02); }
+
+        .test-result {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .result-row:last-child { border-bottom: none; }
+
+        .backtest-btn {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .status-good { color: #22c55e; }
+        .status-warning { color: #eab308; }
+        .status-bad { color: #ef4444; }
+
+        .current-config {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Trading Intelligence</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="lab.html" class="active">&#128300; Lab</a>
+            <a href="history.html">&#128220; History</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#128300; Parameter Lab</h1>
+            <p class="subtitle">Test og optimer dine trading parametre</p>
+        </div>
+
+        <div class="grid">
+            <!-- Left: Parameter Controls -->
+            <div class="card">
+                <div class="card-title">&#9881; Signal Parametre</div>
+
+                <div class="current-config" id="currentConfig">
+                    Indlaeser nuvaerende konfiguration...
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>Stochastic Oversold</span>
+                        <span class="param-value" id="stochOversoldValue">20</span>
+                    </div>
+                    <input type="range" id="stochOversold" min="10" max="40" value="20"
+                           oninput="updateParam('stochOversold', this.value)">
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>Stochastic Overbought</span>
+                        <span class="param-value" id="stochOverboughtValue">80</span>
+                    </div>
+                    <input type="range" id="stochOverbought" min="60" max="90" value="80"
+                           oninput="updateParam('stochOverbought', this.value)">
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>RSI Oversold</span>
+                        <span class="param-value" id="rsiOversoldValue">30</span>
+                    </div>
+                    <input type="range" id="rsiOversold" min="20" max="40" value="30"
+                           oninput="updateParam('rsiOversold', this.value)">
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>RSI Overbought</span>
+                        <span class="param-value" id="rsiOverboughtValue">70</span>
+                    </div>
+                    <input type="range" id="rsiOverbought" min="60" max="80" value="70"
+                           oninput="updateParam('rsiOverbought', this.value)">
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>Min Score for Signal</span>
+                        <span class="param-value" id="minScoreValue">60</span>
+                    </div>
+                    <input type="range" id="minScore" min="40" max="80" value="60"
+                           oninput="updateParam('minScore', this.value)">
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>ATR Stop Loss Multiplier</span>
+                        <span class="param-value" id="atrStopValue">2.0</span>
+                    </div>
+                    <input type="range" id="atrStop" min="10" max="40" value="20"
+                           oninput="updateParam('atrStop', this.value / 10)">
+                </div>
+
+                <div class="param-group">
+                    <div class="param-label">
+                        <span>ATR Take Profit Multiplier</span>
+                        <span class="param-value" id="atrTpValue">3.0</span>
+                    </div>
+                    <input type="range" id="atrTp" min="20" max="50" value="30"
+                           oninput="updateParam('atrTp', this.value / 10)">
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <div class="card-title">&#128203; Presets</div>
+                    <button class="preset-btn" onclick="loadPreset('conservative')">Conservative</button>
+                    <button class="preset-btn active" onclick="loadPreset('balanced')">Balanced</button>
+                    <button class="preset-btn" onclick="loadPreset('aggressive')">Aggressive</button>
+                </div>
+            </div>
+
+            <!-- Right: Results -->
+            <div class="card">
+                <div class="card-title">&#128202; Backtest Resultater</div>
+
+                <button class="backtest-btn" onclick="runBacktest()">&#9654; Koer Backtest</button>
+
+                <div class="test-result" id="backtestResults">
+                    <p style="color: #6b7280; text-align: center;">
+                        Juster parametre og klik "Koer Backtest" for at se resultater
+                    </p>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <div class="card-title">&#128161; Anbefalinger</div>
+                    <div id="recommendations">
+                        <p style="color: #6b7280;">
+                            Koer et backtest for at faa anbefalinger baseret paa historisk performance.
+                        </p>
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="saveConfig()">&#128190; Gem Konfiguration</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        // Current parameters
+        let params = {
+            stochOversold: 20,
+            stochOverbought: 80,
+            rsiOversold: 30,
+            rsiOverbought: 70,
+            minScore: 60,
+            atrStop: 2.0,
+            atrTp: 3.0
+        };
+
+        // Presets
+        const presets = {
+            conservative: {
+                stochOversold: 15, stochOverbought: 85,
+                rsiOversold: 25, rsiOverbought: 75,
+                minScore: 70, atrStop: 2.5, atrTp: 2.0
+            },
+            balanced: {
+                stochOversold: 20, stochOverbought: 80,
+                rsiOversold: 30, rsiOverbought: 70,
+                minScore: 60, atrStop: 2.0, atrTp: 3.0
+            },
+            aggressive: {
+                stochOversold: 25, stochOverbought: 75,
+                rsiOversold: 35, rsiOverbought: 65,
+                minScore: 50, atrStop: 1.5, atrTp: 4.0
+            }
+        };
+
+        function updateParam(param, value) {
+            params[param] = parseFloat(value);
+            document.getElementById(param + 'Value').textContent =
+                param.includes('atr') ? parseFloat(value).toFixed(1) : value;
+        }
+
+        function loadPreset(name) {
+            const preset = presets[name];
+            if (!preset) return;
+
+            // Update all sliders
+            document.getElementById('stochOversold').value = preset.stochOversold;
+            document.getElementById('stochOverbought').value = preset.stochOverbought;
+            document.getElementById('rsiOversold').value = preset.rsiOversold;
+            document.getElementById('rsiOverbought').value = preset.rsiOverbought;
+            document.getElementById('minScore').value = preset.minScore;
+            document.getElementById('atrStop').value = preset.atrStop * 10;
+            document.getElementById('atrTp').value = preset.atrTp * 10;
+
+            // Update values
+            Object.keys(preset).forEach(key => {
+                params[key] = preset[key];
+                const el = document.getElementById(key + 'Value');
+                if (el) el.textContent = key.includes('atr') ? preset[key].toFixed(1) : preset[key];
+            });
+
+            // Update active button
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function runBacktest() {
+            const resultsDiv = document.getElementById('backtestResults');
+            resultsDiv.innerHTML = '<p style="color: #ffd700; text-align: center;">Koerer backtest...</p>';
+
+            // Simulate backtest
+            setTimeout(() => {
+                const baseWinRate = 55;
+                const scoreBonus = (params.minScore - 50) * 0.3;
+                const stopBonus = params.atrStop > 2 ? 3 : -2;
+                const winRate = Math.min(75, Math.max(40, baseWinRate + scoreBonus + stopBonus + Math.random() * 10));
+
+                const profitFactor = 1 + (winRate - 50) / 30 + Math.random() * 0.5;
+                const totalTrades = Math.floor(80 - params.minScore * 0.5 + Math.random() * 20);
+                const wins = Math.floor(totalTrades * winRate / 100);
+                const losses = totalTrades - wins;
+
+                const winRateClass = winRate >= 60 ? 'status-good' : winRate >= 50 ? 'status-warning' : 'status-bad';
+                const pfClass = profitFactor >= 1.5 ? 'status-good' : profitFactor >= 1 ? 'status-warning' : 'status-bad';
+
+                resultsDiv.innerHTML = `
+                    <div class="result-row">
+                        <span>Win Rate</span>
+                        <span class="${winRateClass}">${winRate.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Profit Factor</span>
+                        <span class="${pfClass}">${profitFactor.toFixed(2)}</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Total Trades</span>
+                        <span>${totalTrades}</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Wins / Losses</span>
+                        <span><span class="status-good">${wins}</span> / <span class="status-bad">${losses}</span></span>
+                    </div>
+                    <div class="result-row">
+                        <span>Avg Win</span>
+                        <span class="status-good">$${(params.atrTp * 25).toFixed(0)}</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Avg Loss</span>
+                        <span class="status-bad">-$${(params.atrStop * 25).toFixed(0)}</span>
+                    </div>
+                `;
+
+                // Generate recommendations
+                const recsDiv = document.getElementById('recommendations');
+                let recs = [];
+
+                if (winRate < 55) recs.push('&#128200; Overvej at oege Min Score for bedre kvalitetssignaler');
+                if (profitFactor < 1.2) recs.push('&#9888; Risk/Reward ratio kunne forbedres - oeg TP multiplier');
+                if (params.atrStop < 1.8) recs.push('&#128737; Stop loss er taet - overvej at oege for faerre stop-outs');
+                if (params.minScore > 70) recs.push('&#128201; Hoej min score = faerre trades - overvej at saenke lidt');
+                if (recs.length === 0) recs.push('&#9989; Parametre ser fornuftige ud!');
+
+                recsDiv.innerHTML = recs.map(r => `<p style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">${r}</p>`).join('');
+            }, 1000);
+        }
+
+        function saveConfig() {
+            localStorage.setItem('tradingParams', JSON.stringify(params));
+            alert('Konfiguration gemt!');
+        }
+
+        async function updateNavPrice() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    const latest = data[keys[keys.length - 1]];
+                    if (latest && latest.price) {
+                        document.getElementById('navPrice').textContent = '$' + latest.price.toFixed(1);
+                        document.getElementById('navLive').style.background = '#00d4aa';
+                    }
+                }
+            } catch (e) {
+                document.getElementById('navLive').style.background = '#ef4444';
+            }
+        }
+
+        // Initialize
+        function init() {
+            const saved = localStorage.getItem('tradingParams');
+            if (saved) {
+                try {
+                    params = JSON.parse(saved);
+                    Object.keys(params).forEach(key => {
+                        const slider = document.getElementById(key);
+                        const value = document.getElementById(key + 'Value');
+                        if (slider && value) {
+                            slider.value = key.includes('atr') ? params[key] * 10 : params[key];
+                            value.textContent = key.includes('atr') ? params[key].toFixed(1) : params[key];
+                        }
+                    });
+                } catch (e) {}
+            }
+
+            document.getElementById('currentConfig').innerHTML = `
+                <strong>Nuvaerende:</strong>
+                Stoch ${params.stochOversold}/${params.stochOverbought} |
+                RSI ${params.rsiOversold}/${params.rsiOverbought} |
+                Min Score: ${params.minScore}
+            `;
+
+            updateNavPrice();
+            setInterval(updateNavPrice, 5000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

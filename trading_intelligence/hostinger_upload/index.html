@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Trading Intelligence - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .nav-links { display: flex; gap: 5px; }
+        .nav-links a {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive {
+            width: 8px;
+            height: 8px;
+            background: #666;
+            border-radius: 50%;
+        }
+
+        /* Main content */
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        .header {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .subtitle { color: #9ca3af; margin-top: 10px; }
+
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 1200px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .card-title {
+            font-size: 0.9em;
+            color: #9ca3af;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-display {
+            font-size: 3em;
+            font-weight: 700;
+            color: #ffd700;
+            text-align: center;
+        }
+        .price-change {
+            text-align: center;
+            font-size: 1.2em;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .price-change.positive { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .price-change.negative { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .signal-badge {
+            font-size: 2em;
+            font-weight: 700;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .signal-badge.LONG, .signal-badge.LONG_ENTRY {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+        .signal-badge.SHORT, .signal-badge.SHORT_ENTRY {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        .signal-badge.HOLD, .signal-badge.WAIT {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .indicator-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .indicator-row:last-child { border-bottom: none; }
+        .indicator-label { color: #9ca3af; }
+        .indicator-value { font-weight: 600; font-family: monospace; }
+
+        .regime-badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .regime-uptrend { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .regime-downtrend { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .regime-ranging { background: rgba(234, 179, 8, 0.2); color: #eab308; }
+
+        .score-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .levels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .level-item { text-align: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+        .level-label { font-size: 0.8em; color: #6b7280; }
+        .level-value { font-size: 1.2em; font-weight: 600; margin-top: 5px; }
+        .level-value.entry { color: #60a5fa; }
+        .level-value.stop { color: #ef4444; }
+        .level-value.target { color: #22c55e; }
+
+        .loading { text-align: center; padding: 40px; color: #6b7280; }
+        .update-time { text-align: center; color: #6b7280; margin-top: 20px; font-size: 0.9em; }
+
+        .source-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            margin-left: 10px;
+        }
+        .source-firebase { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .source-api { background: rgba(33, 150, 243, 0.2); color: #2196f3; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Trading Intelligence</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="active">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="lab.html">&#128300; Lab</a>
+            <a href="history.html">&#128220; History</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#9889; Gold Trading Intelligence</h1>
+            <p class="subtitle">MGC1! - Micro Gold Futures | Real-time Analysis</p>
+        </div>
+
+        <div id="content">
+            <div class="loading">Indlaeser data...</div>
+        </div>
+
+        <div class="update-time">
+            Sidst opdateret: <span id="updateTime">--</span>
+            <span id="sourceIndicator" class="source-badge"></span>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        async function fetchFirebaseData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    const latest = data[keys[keys.length - 1]];
+                    if (latest && latest.price) {
+                        return {
+                            source: 'firebase',
+                            timestamp: new Date().toISOString(),
+                            price: {
+                                current: latest.price,
+                                open: latest.open || latest.price,
+                                high: latest.high || latest.price,
+                                low: latest.low || latest.price,
+                                change_pct: latest.open ? ((latest.price - latest.open) / latest.open * 100) : 0
+                            },
+                            indicators: {
+                                rsi: latest.rsi || 50,
+                                stoch_k: latest.stoch || 50,
+                                stoch_d: latest.stoch_d || 50,
+                                atr: latest.atr || 0,
+                                adx: latest.adx || 0,
+                                ema_9: latest.ema9 || 0,
+                                ema_21: latest.ema20 || 0
+                            },
+                            regime: {
+                                current: latest.trend || 'UNKNOWN'
+                            },
+                            sentiment: {
+                                overall: latest.sentiment || 'NEUTRAL'
+                            },
+                            signal: {
+                                direction: latest.signal || (latest.score_long > latest.score_short ? 'LONG' : latest.score_short > latest.score_long ? 'SHORT' : 'WAIT'),
+                                strength: latest.score_long > 70 || latest.score_short > 70 ? 'STRONG' : 'MEDIUM',
+                                score: Math.max(latest.score_long || 0, latest.score_short || 0),
+                                entry: latest.price,
+                                stop_loss: latest.score_long > latest.score_short
+                                    ? latest.price - (latest.atr || 10)
+                                    : latest.price + (latest.atr || 10),
+                                take_profit: latest.score_long > latest.score_short
+                                    ? latest.price + (latest.atr || 10) * 1.5
+                                    : latest.price - (latest.atr || 10) * 1.5
+                            },
+                            confluence: {
+                                score_long: latest.score_long || 0,
+                                score_short: latest.score_short || 0,
+                                session: latest.session || 'unknown'
+                            }
+                        };
+                    }
+                }
+                return null;
+            } catch (e) {
+                console.error('Firebase fetch failed:', e);
+                return null;
+            }
+        }
+
+        async function fetchData() {
+            const data = await fetchFirebaseData();
+            return data || { error: 'Could not fetch data from Firebase' };
+        }
+
+        function getRegimeClass(regime) {
+            if (!regime) return 'regime-ranging';
+            const r = regime.toUpperCase();
+            if (r.includes('UPTREND') || r.includes('BULLISH')) return 'regime-uptrend';
+            if (r.includes('DOWNTREND') || r.includes('BEARISH')) return 'regime-downtrend';
+            return 'regime-ranging';
+        }
+
+        function renderDashboard(data) {
+            if (data.error) {
+                document.getElementById('content').innerHTML = `
+                    <div class="card" style="text-align: center;">
+                        <p style="color: #ef4444;">Fejl: ${data.error}</p>
+                        <p style="color: #6b7280; margin-top: 10px;">Tjek Firebase forbindelse</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Update nav price
+            document.getElementById('navPrice').textContent = '$' + (data.price?.current || 0).toFixed(1);
+            document.getElementById('navLive').style.background = '#00d4aa';
+
+            // Update time and source
+            document.getElementById('updateTime').textContent = new Date(data.timestamp).toLocaleString('da-DK');
+            const sourceEl = document.getElementById('sourceIndicator');
+            sourceEl.textContent = data.source === 'firebase' ? 'FIREBASE' : 'API';
+            sourceEl.className = 'source-badge ' + (data.source === 'firebase' ? 'source-firebase' : 'source-api');
+
+            const price = data.price || {};
+            const signal = data.signal || {};
+            const indicators = data.indicators || {};
+            const regime = data.regime?.current || 'UNKNOWN';
+            const confluence = data.confluence || {};
+
+            const changePct = price.change_pct || 0;
+            const direction = signal.direction || 'WAIT';
+
+            document.getElementById('content').innerHTML = `
+                <div class="grid">
+                    <!-- Price Card -->
+                    <div class="card">
+                        <div class="card-title">&#128176; PRIS</div>
+                        <div class="price-display">$${(price.current || 0).toLocaleString()}</div>
+                        <div style="text-align: center;">
+                            <span class="price-change ${changePct >= 0 ? 'positive' : 'negative'}">
+                                ${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%
+                            </span>
+                        </div>
+                        <div style="margin-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; font-size: 0.9em;">
+                            <div><span style="color: #6b7280;">Open</span><br><span style="color: #e8e8e8;">$${(price.open || 0).toFixed(1)}</span></div>
+                            <div><span style="color: #6b7280;">High</span><br><span style="color: #22c55e;">$${(price.high || 0).toFixed(1)}</span></div>
+                            <div><span style="color: #6b7280;">Low</span><br><span style="color: #ef4444;">$${(price.low || 0).toFixed(1)}</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Signal Card -->
+                    <div class="card">
+                        <div class="card-title">&#127919; SIGNAL</div>
+                        <div class="signal-badge ${direction}">${direction.replace('_', ' ')}</div>
+                        <div style="text-align: center; color: #9ca3af;">
+                            Styrke: <span style="color: #ffd700;">${signal.strength || 'N/A'}</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${signal.score || 0}%;"></div>
+                        </div>
+                        <div style="text-align: center; margin-top: 5px; font-size: 0.9em; color: #6b7280;">
+                            Score: ${signal.score || 0}/100
+                        </div>
+                        <div class="levels-grid">
+                            <div class="level-item">
+                                <div class="level-label">ENTRY</div>
+                                <div class="level-value entry">${signal.entry ? '$' + signal.entry.toFixed(1) : '-'}</div>
+                            </div>
+                            <div class="level-item">
+                                <div class="level-label">STOP</div>
+                                <div class="level-value stop">${signal.stop_loss ? '$' + signal.stop_loss.toFixed(1) : '-'}</div>
+                            </div>
+                            <div class="level-item">
+                                <div class="level-label">TARGET</div>
+                                <div class="level-value target">${signal.take_profit ? '$' + signal.take_profit.toFixed(1) : '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Regime Card -->
+                    <div class="card">
+                        <div class="card-title">&#128200; REGIME</div>
+                        <div class="regime-badge ${getRegimeClass(regime)}" style="font-size: 1.5em; margin-bottom: 15px;">
+                            ${regime}
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">Long Score</span>
+                            <span class="indicator-value" style="color: #22c55e;">${confluence.score_long || 0}</span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">Short Score</span>
+                            <span class="indicator-value" style="color: #ef4444;">${confluence.score_short || 0}</span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">Session</span>
+                            <span class="indicator-value">${confluence.session || '-'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Indicators Card -->
+                    <div class="card">
+                        <div class="card-title">&#128202; INDIKATORER</div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">RSI (14)</span>
+                            <span class="indicator-value" style="color: ${indicators.rsi > 70 ? '#ef4444' : indicators.rsi < 30 ? '#22c55e' : '#e8e8e8'};">
+                                ${indicators.rsi || '-'}
+                            </span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">Stochastic %K</span>
+                            <span class="indicator-value" style="color: ${indicators.stoch_k > 80 ? '#ef4444' : indicators.stoch_k < 20 ? '#22c55e' : '#e8e8e8'};">
+                                ${indicators.stoch_k || '-'}
+                            </span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">ADX</span>
+                            <span class="indicator-value">${indicators.adx || '-'}</span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">ATR</span>
+                            <span class="indicator-value">$${indicators.atr || '-'}</span>
+                        </div>
+                    </div>
+
+                    <!-- EMA Card -->
+                    <div class="card">
+                        <div class="card-title">&#128200; MOVING AVERAGES</div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">EMA 9</span>
+                            <span class="indicator-value">${indicators.ema_9 ? '$' + indicators.ema_9.toFixed(1) : '-'}</span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">EMA 21</span>
+                            <span class="indicator-value">${indicators.ema_21 ? '$' + indicators.ema_21.toFixed(1) : '-'}</span>
+                        </div>
+                        <div class="indicator-row">
+                            <span class="indicator-label">Price vs EMA9</span>
+                            <span class="indicator-value" style="color: ${price.current > indicators.ema_9 ? '#22c55e' : '#ef4444'};">
+                                ${price.current > indicators.ema_9 ? 'Above' : 'Below'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Card -->
+                    <div class="card">
+                        <div class="card-title">&#9889; QUICK LINKS</div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="station.html" style="display: block; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 8px; color: #ffd700; text-decoration: none; text-align: center;">
+                                &#9889; Scalping Station
+                            </a>
+                            <a href="signal.html" style="display: block; padding: 15px; background: rgba(34,197,94,0.1); border-radius: 8px; color: #22c55e; text-decoration: none; text-align: center;">
+                                &#127919; Full Signal View
+                            </a>
+                            <a href="lab.html" style="display: block; padding: 15px; background: rgba(96,165,250,0.1); border-radius: 8px; color: #60a5fa; text-decoration: none; text-align: center;">
+                                &#128300; Parameter Lab
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initial load
+        fetchData().then(renderDashboard);
+
+        // Auto-refresh every 5 seconds
+        setInterval(() => fetchData().then(renderDashboard), 5000);
+    </script>
+</body>
+</html>
