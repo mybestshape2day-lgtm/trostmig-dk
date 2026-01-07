@@ -55,6 +55,26 @@
             background-clip: text;
         }
 
+        /* Sound Controls */
+        .sound-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .sound-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .sound-btn.active { background: #22c55e; color: white; }
+        .sound-btn.muted { background: #ef4444; color: white; }
+        .sound-btn.option { background: rgba(255,255,255,0.1); color: #e8e8e8; }
+        .sound-btn.option.selected { background: #ffd700; color: #000; }
+
         .main-card {
             background: rgba(255,255,255,0.05);
             border-radius: 20px;
@@ -196,6 +216,26 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
+
+        .alert-banner {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        .alert-banner.long { background: #22c55e; color: white; }
+        .alert-banner.short { background: #ef4444; color: white; }
+        .alert-banner.info { background: #3b82f6; color: white; }
+        @keyframes slideDown {
+            from { top: 50px; opacity: 0; }
+            to { top: 70px; opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -217,10 +257,23 @@
         </div>
     </nav>
 
+    <!-- Alert Banner -->
+    <div class="alert-banner" id="alertBanner"></div>
+
     <div class="container">
         <div class="header">
             <h1>&#9889; Scalping Station</h1>
             <p style="color: #6b7280;">MGC1! - 4 Point Target</p>
+        </div>
+
+        <!-- Sound Controls -->
+        <div class="sound-controls">
+            <button class="sound-btn active" id="soundToggle" onclick="toggleSound()">
+                &#128266; Lyd TIL
+            </button>
+            <button class="sound-btn option selected" onclick="setSoundLevel('all')">Alle</button>
+            <button class="sound-btn option" onclick="setSoundLevel('important')">Vigtige</button>
+            <button class="sound-btn option" onclick="setSoundLevel('signals')">Kun Signals</button>
         </div>
 
         <div class="main-card">
@@ -288,10 +341,78 @@
 
     <script>
         const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
-        const CONFIG = {
-            stochOversold: 25,
-            stochOverbought: 75
+
+        // Sound System
+        let soundEnabled = true;
+        let soundLevel = 'all'; // 'all', 'important', 'signals'
+        let lastSignal = 'WAIT';
+        let lastStochZone = 'neutral';
+        let lastSession = '';
+        let alertCooldowns = {};
+
+        // Preload audio files (du skal uploade disse)
+        const sounds = {
+            signal_long_strong: new Audio('signal_long_strong.mp3'),
+            signal_short_strong: new Audio('signal_short_strong.mp3'),
+            signal_long_ready: new Audio('signal_long_ready.mp3'),
+            signal_short_ready: new Audio('signal_short_ready.mp3'),
+            score_building_long: new Audio('score_building_long.mp3'),
+            score_building_short: new Audio('score_building_short.mp3'),
+            stoch_oversold: new Audio('stoch_oversold.mp3'),
+            stoch_overbought: new Audio('stoch_overbought.mp3'),
+            session_london_open: new Audio('session_london_open.mp3'),
+            session_newyork_open: new Audio('session_newyork_open.mp3'),
+            confluence_high: new Audio('confluence_high.mp3'),
+            system_ready: new Audio('system_ready.mp3')
         };
+
+        function playSound(soundName, priority = 'normal') {
+            if (!soundEnabled) return;
+
+            // Check sound level filter
+            if (soundLevel === 'signals' && !soundName.includes('signal')) return;
+            if (soundLevel === 'important' && priority === 'low') return;
+
+            // Cooldown check (don't repeat same sound within 30 sec)
+            const now = Date.now();
+            if (alertCooldowns[soundName] && now - alertCooldowns[soundName] < 30000) return;
+            alertCooldowns[soundName] = now;
+
+            if (sounds[soundName]) {
+                sounds[soundName].play().catch(e => console.log('Audio blocked:', e));
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const banner = document.getElementById('alertBanner');
+            banner.textContent = message;
+            banner.className = 'alert-banner ' + type;
+            banner.style.display = 'block';
+
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 5000);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            if (soundEnabled) {
+                btn.textContent = '🔊 Lyd TIL';
+                btn.className = 'sound-btn active';
+            } else {
+                btn.textContent = '🔇 Lyd FRA';
+                btn.className = 'sound-btn muted';
+            }
+        }
+
+        function setSoundLevel(level) {
+            soundLevel = level;
+            document.querySelectorAll('.sound-btn.option').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
 
         async function fetchData() {
             try {
@@ -317,11 +438,89 @@
             return 'session-closed';
         }
 
+        function checkAlerts(data) {
+            const scoreLong = data.score_long || 0;
+            const scoreShort = data.score_short || 0;
+            const stoch = data.stoch || 50;
+            const session = data.session || '';
+
+            // Determine current signal
+            let currentSignal = 'WAIT';
+            if (scoreLong > 80 && scoreLong > scoreShort) currentSignal = 'LONG_STRONG';
+            else if (scoreShort > 80 && scoreShort > scoreLong) currentSignal = 'SHORT_STRONG';
+            else if (scoreLong > 70 && scoreLong > scoreShort) currentSignal = 'LONG';
+            else if (scoreShort > 70 && scoreShort > scoreLong) currentSignal = 'SHORT';
+
+            // Signal alerts
+            if (currentSignal !== lastSignal) {
+                if (currentSignal === 'LONG_STRONG') {
+                    playSound('signal_long_strong', 'high');
+                    showAlert('🚀 STÆRKT LONG SIGNAL! Score: ' + scoreLong, 'long');
+                } else if (currentSignal === 'SHORT_STRONG') {
+                    playSound('signal_short_strong', 'high');
+                    showAlert('🔻 STÆRKT SHORT SIGNAL! Score: ' + scoreShort, 'short');
+                } else if (currentSignal === 'LONG') {
+                    playSound('signal_long_ready', 'normal');
+                    showAlert('📈 Long signal klar. Score: ' + scoreLong, 'long');
+                } else if (currentSignal === 'SHORT') {
+                    playSound('signal_short_ready', 'normal');
+                    showAlert('📉 Short signal klar. Score: ' + scoreShort, 'short');
+                }
+                lastSignal = currentSignal;
+            }
+
+            // Score building alerts
+            if (scoreLong > 60 && scoreLong < 70 && lastSignal === 'WAIT') {
+                playSound('score_building_long', 'low');
+            }
+            if (scoreShort > 60 && scoreShort < 70 && lastSignal === 'WAIT') {
+                playSound('score_building_short', 'low');
+            }
+
+            // Stochastic zone alerts
+            let stochZone = 'neutral';
+            if (stoch < 25) stochZone = 'oversold';
+            else if (stoch > 75) stochZone = 'overbought';
+
+            if (stochZone !== lastStochZone) {
+                if (stochZone === 'oversold') {
+                    playSound('stoch_oversold', 'normal');
+                    showAlert('📊 Stokastisk oversold - mulig bund', 'info');
+                } else if (stochZone === 'overbought') {
+                    playSound('stoch_overbought', 'normal');
+                    showAlert('📊 Stokastisk overbought - mulig top', 'info');
+                }
+                lastStochZone = stochZone;
+            }
+
+            // Session alerts
+            if (session !== lastSession && session) {
+                if (session.toLowerCase().includes('london') && !lastSession.toLowerCase().includes('london')) {
+                    playSound('session_london_open', 'normal');
+                    showAlert('🇬🇧 London session åbner!', 'info');
+                }
+                if ((session.toLowerCase().includes('new york') || session.toLowerCase().includes('ny')) &&
+                    !lastSession.toLowerCase().includes('new york') && !lastSession.toLowerCase().includes('ny')) {
+                    playSound('session_newyork_open', 'normal');
+                    showAlert('🇺🇸 New York session åbner!', 'info');
+                }
+                lastSession = session;
+            }
+
+            // High confluence alert
+            if ((scoreLong > 75 || scoreShort > 75) && Math.abs(scoreLong - scoreShort) > 20) {
+                playSound('confluence_high', 'normal');
+            }
+        }
+
         function updateUI(data) {
             if (!data) {
                 document.getElementById('liveDot').style.background = '#ef4444';
                 return;
             }
+
+            // Check for alerts
+            checkAlerts(data);
 
             // Price
             const price = data.price || 0;
@@ -371,7 +570,11 @@
         }
 
         // Initial load
-        fetchData().then(updateUI);
+        fetchData().then(data => {
+            updateUI(data);
+            // Play system ready on first load
+            setTimeout(() => playSound('system_ready', 'low'), 1000);
+        });
 
         // Auto-refresh every 3 seconds
         setInterval(() => fetchData().then(updateUI), 3000);
