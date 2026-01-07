@@ -18,19 +18,20 @@ import threading
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from learning.auto_logger import AutoLogger
 
-# 10 smarte test-konfigurationer
+# 10 smarte test-konfigurationer - "Sikker Profit" strategi
+# Idé: Tag små sikre gevinster, bred stop loss
 CONFIGS = [
     # Navn, SL, TP, MinScore, Beskrivelse
-    ("ultra_tight", 1.5, 3, 65, "Meget stram - hurtige trades"),
-    ("tight", 2, 4, 60, "Stram SL/TP"),
-    ("conservative", 3, 6, 70, "Høj score krav"),
-    ("balanced", 4, 8, 60, "Standard balance"),
-    ("r2_ratio", 3, 6, 55, "1:2 risk/reward"),
-    ("r3_ratio", 2, 6, 55, "1:3 risk/reward"),
-    ("aggressive", 5, 10, 50, "Lav score, bred SL/TP"),
-    ("wide", 6, 12, 45, "Meget bred"),
-    ("scalp", 1, 2, 70, "Scalping - minimal bevægelse"),
-    ("swing", 8, 16, 60, "Swing - store mål"),
+    ("safe_3_wide", 30, 3, 75, "Sikker $3 - bred SL, høj score"),
+    ("safe_3_medium", 20, 3, 70, "Sikker $3 - medium SL"),
+    ("safe_2_wide", 30, 2, 75, "Sikker $2 - meget bred SL"),
+    ("safe_4_wide", 40, 4, 70, "Sikker $4 - bred SL"),
+    ("safe_5_wide", 50, 5, 70, "Sikker $5 - meget bred SL"),
+    ("safe_3_tight", 15, 3, 80, "Sikker $3 - tættere SL, meget høj score"),
+    ("safe_2_tight", 10, 2, 80, "Sikker $2 - tæt SL, meget høj score"),
+    ("safe_6_wide", 60, 6, 65, "Sikker $6 - meget bred SL"),
+    ("safe_3_super", 100, 3, 75, "Sikker $3 - super bred SL"),
+    ("safe_4_super", 100, 4, 70, "Sikker $4 - super bred SL"),
 ]
 
 
@@ -55,7 +56,7 @@ class MultiTester:
                 take_profit_points=tp,
                 min_score=min_score,
                 check_interval_seconds=5,
-                signal_expiry_minutes=30  # Kortere expiry
+                signal_expiry_minutes=120  # 2 timer - giv trades tid til at ramme TP
             )
             self.loggers[name] = logger
             print(f"  ✓ {name}: SL={sl}, TP={tp}, Score>={min_score} ({desc})")
