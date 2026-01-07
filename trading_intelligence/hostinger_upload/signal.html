@@ -378,6 +378,34 @@
         }
         // ========== END SOUND SYSTEM ==========
 
+        // ========== LAB PARAMETERS ==========
+        // Default params (can be overridden by Lab settings)
+        let labParams = {
+            stochOversold: 20,
+            stochOverbought: 80,
+            rsiOversold: 30,
+            rsiOverbought: 70,
+            minScore: 60,
+            atrStop: 2.0,
+            atrTp: 3.0
+        };
+
+        function loadLabParams() {
+            const saved = localStorage.getItem('tradingParams');
+            if (saved) {
+                try {
+                    labParams = JSON.parse(saved);
+                    console.log('Lab params loaded:', labParams);
+                } catch (e) {
+                    console.log('Using default params');
+                }
+            }
+        }
+
+        // Load Lab params on startup
+        loadLabParams();
+        // ========== END LAB PARAMETERS ==========
+
         async function fetchData() {
             try {
                 const res = await fetch(FIREBASE_URL);
@@ -403,22 +431,24 @@
                             },
                             signal: {
                                 direction: latest.signal || (latest.score_long > latest.score_short ? 'LONG' : latest.score_short > latest.score_long ? 'SHORT' : 'WAIT'),
-                                strength: latest.score_long > 70 || latest.score_short > 70 ? 'STRONG' : 'MEDIUM',
+                                strength: latest.score_long > labParams.minScore + 10 || latest.score_short > labParams.minScore + 10 ? 'STRONG' : 'MEDIUM',
                                 score: Math.max(latest.score_long || 0, latest.score_short || 0),
                                 entry: latest.price,
+                                // Use Lab params for SL/TP calculations
                                 stop_loss: latest.score_long > latest.score_short
-                                    ? latest.price - (latest.atr || 10)
-                                    : latest.price + (latest.atr || 10),
+                                    ? latest.price - (latest.atr || 10) * labParams.atrStop
+                                    : latest.price + (latest.atr || 10) * labParams.atrStop,
                                 take_profit: latest.score_long > latest.score_short
-                                    ? latest.price + (latest.atr || 10) * 1.5
-                                    : latest.price - (latest.atr || 10) * 1.5
+                                    ? latest.price + (latest.atr || 10) * labParams.atrTp
+                                    : latest.price - (latest.atr || 10) * labParams.atrTp
                             },
                             confluence: {
-                                stoch_zone: latest.stoch < 25 ? 'oversold' : latest.stoch > 75 ? 'overbought' : 'neutral',
+                                stoch_zone: latest.stoch < labParams.stochOversold ? 'oversold' : latest.stoch > labParams.stochOverbought ? 'overbought' : 'neutral',
                                 session: latest.session || 'unknown',
                                 trend: latest.trend || 'unknown',
                                 score_long: latest.score_long,
-                                score_short: latest.score_short
+                                score_short: latest.score_short,
+                                labParams: labParams  // Include lab params for display
                             }
                         };
                     }
@@ -521,6 +551,25 @@
                     <div class="confluence-item">
                         <span>Short Score</span>
                         <span style="color: #ef4444;">${data.confluence.score_short || 0}</span>
+                    </div>
+                </div>
+
+                <div class="confluence-section" style="margin-top: 20px;">
+                    <div class="confluence-title">&#128300; Lab Settings (aktiv)</div>
+                    <div class="confluence-item">
+                        <span>Min Score</span>
+                        <span style="color: #ffd700;">${labParams.minScore}</span>
+                    </div>
+                    <div class="confluence-item">
+                        <span>Stoch Zones</span>
+                        <span style="color: #60a5fa;">${labParams.stochOversold} / ${labParams.stochOverbought}</span>
+                    </div>
+                    <div class="confluence-item">
+                        <span>ATR Stop / TP</span>
+                        <span style="color: #60a5fa;">${labParams.atrStop}x / ${labParams.atrTp}x</span>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px; font-size: 0.85em; color: #6b7280;">
+                        <a href="lab.html" style="color: #ffd700; text-decoration: none;">&#9881; Aendre i Lab</a>
                     </div>
                 </div>
             `;
