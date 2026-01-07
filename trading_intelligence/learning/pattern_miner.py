@@ -88,42 +88,89 @@ class PatternMiner:
     
     def load_historical_data(self) -> List[Dict]:
         """Load historical trading data from database"""
-        if not os.path.exists(self.db_path):
-            # Generate synthetic data for testing
-            return self._generate_synthetic_data()
-        
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            SELECT timestamp, price, rsi, stoch_k, stoch_d, adx, atr,
-                   regime, session, signal_direction, outcome, pnl
-            FROM trading_signals
-            WHERE outcome IS NOT NULL
-            ORDER BY timestamp
-        """)
-        
-        rows = cursor.fetchall()
-        conn.close()
-        
         data = []
-        for row in rows:
-            data.append({
-                "timestamp": row[0],
-                "price": row[1],
-                "rsi": row[2],
-                "stoch_k": row[3],
-                "stoch_d": row[4],
-                "adx": row[5],
-                "atr": row[6],
-                "regime": row[7],
-                "session": row[8],
-                "direction": row[9],
-                "outcome": row[10],  # WIN or LOSS
-                "pnl": row[11]
-            })
-        
-        return data if data else self._generate_synthetic_data()
+
+        # First try to load from auto_signals.db (Auto-Logger data)
+        auto_db_path = "data/auto_signals.db"
+        if os.path.exists(auto_db_path):
+            try:
+                conn = sqlite3.connect(auto_db_path)
+                cursor = conn.cursor()
+
+                cursor.execute("""
+                    SELECT timestamp, entry_price, rsi, stoch, stoch, 25, atr,
+                           regime, session, direction, status, pnl
+                    FROM signals
+                    WHERE status IN ('WIN', 'LOSS')
+                    ORDER BY timestamp
+                """)
+
+                rows = cursor.fetchall()
+                conn.close()
+
+                for row in rows:
+                    data.append({
+                        "timestamp": row[0],
+                        "price": row[1],
+                        "rsi": row[2],
+                        "stoch_k": row[3],
+                        "stoch_d": row[4],
+                        "adx": row[5],
+                        "atr": row[6],
+                        "regime": row[7],
+                        "session": row[8],
+                        "direction": row[9],
+                        "outcome": row[10],
+                        "pnl": row[11]
+                    })
+
+                print(f"Loaded {len(data)} signals from Auto-Logger")
+            except Exception as e:
+                print(f"Could not load from auto_signals.db: {e}")
+
+        # Also try the main trading_history.db
+        if os.path.exists(self.db_path):
+            try:
+                conn = sqlite3.connect(self.db_path)
+                cursor = conn.cursor()
+
+                cursor.execute("""
+                    SELECT timestamp, price, rsi, stoch_k, stoch_d, adx, atr,
+                           regime, session, signal_direction, outcome, pnl
+                    FROM trading_signals
+                    WHERE outcome IS NOT NULL
+                    ORDER BY timestamp
+                """)
+
+                rows = cursor.fetchall()
+                conn.close()
+
+                for row in rows:
+                    data.append({
+                        "timestamp": row[0],
+                        "price": row[1],
+                        "rsi": row[2],
+                        "stoch_k": row[3],
+                        "stoch_d": row[4],
+                        "adx": row[5],
+                        "atr": row[6],
+                        "regime": row[7],
+                        "session": row[8],
+                        "direction": row[9],
+                        "outcome": row[10],
+                        "pnl": row[11]
+                    })
+
+                print(f"Loaded additional {len(rows)} signals from trading_history.db")
+            except Exception as e:
+                print(f"Could not load from trading_history.db: {e}")
+
+        # If no real data, generate synthetic for testing
+        if not data:
+            print("No real data found - generating synthetic data for testing")
+            return self._generate_synthetic_data()
+
+        return data
     
     def _generate_synthetic_data(self, n_samples: int = 1000) -> List[Dict]:
         """Generate synthetic trading data for pattern discovery"""
