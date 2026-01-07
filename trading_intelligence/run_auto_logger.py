@@ -44,13 +44,15 @@ Eksempler:
                        help="Minimum score for at logge signal (default: 60)")
     parser.add_argument("--interval", type=int, default=10, 
                        help="Check interval i sekunder (default: 10)")
-    parser.add_argument("--expiry", type=int, default=60, 
+    parser.add_argument("--expiry", type=int, default=60,
                        help="Signal udløber efter X minutter (default: 60)")
-    parser.add_argument("--stats", action="store_true", 
+    parser.add_argument("--db", type=str, default=None,
+                       help="Database navn for multi-test (f.eks. 'conservative', 'aggressive')")
+    parser.add_argument("--stats", action="store_true",
                        help="Vis kun statistik")
-    parser.add_argument("--export", action="store_true", 
+    parser.add_argument("--export", action="store_true",
                        help="Eksporter data til Strategy Factory")
-    
+
     args = parser.parse_args()
     
     print("""
@@ -65,8 +67,15 @@ Eksempler:
     ╚══════════════════════════════════════════════════════════════════╝
     """)
     
-    logger = AutoLogger()
-    
+    # Brug custom database hvis specificeret (til multi-testing)
+    if args.db:
+        db_path = f"data/auto_signals_{args.db}.db"
+        print(f"    📁 Database: {db_path}")
+    else:
+        db_path = "data/auto_signals.db"
+
+    logger = AutoLogger(db_path=db_path)
+
     # Opdater config
     logger.set_config(
         stop_loss_points=args.sl,
