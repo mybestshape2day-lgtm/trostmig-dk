@@ -564,6 +564,8 @@
         }
 
         // ============ SMART ANALYSIS ============
+        // V2.1 FIX: Score is now a GATE, not just bonus points
+        // Stochastic is CRITICAL for scalping signals
         function analyzeContext(data) {
             const reasons = [];
             let signalType = 'WAIT';
@@ -580,95 +582,112 @@
             const ema20 = data.ema20 || 0;
             const ema50 = data.ema50 || 0;
 
+            // Score thresholds - GATES for signals
+            const minScoreForSignal = params.minScore || 40;      // Minimum for any signal
+            const minScoreForBuilding = minScoreForSignal / 2;    // 20 - allow "building" status
+            const strongScoreBonus = 20;                           // Extra points needed for "strong"
+
             // ====== LONG ANALYSIS ======
             let longPoints = 0;
             let longReasons = [];
+            let longHasScoreGate = false;  // Track if score meets minimum
 
-            // Score check
-            if (scoreLong >= params.minScore) {
-                longPoints += 2;
-                longReasons.push({ text: `Score ${scoreLong} over minimum (${params.minScore})`, good: true });
+            // GATE CHECK: Score must meet threshold for signal
+            if (scoreLong >= minScoreForSignal) {
+                longHasScoreGate = true;
+                longPoints += 3;  // Base points for meeting threshold
+                longReasons.push({ text: `Score ${scoreLong} >= ${minScoreForSignal} ✓`, good: true });
+            } else if (scoreLong >= minScoreForBuilding) {
+                longReasons.push({ text: `Score ${scoreLong} under minimum (${minScoreForSignal}) - venter`, good: null });
+            } else {
+                longReasons.push({ text: `Score ${scoreLong} for lav`, good: false });
             }
 
-            // Stochastic position - CRITICAL for longs
+            // CRITICAL: Stochastic for scalping (only counts if has potential)
             if (stoch <= params.stochOversold) {
-                longPoints += 3; // Extra weight!
-                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} i OVERSOLD zone - optimal for long`, good: true });
+                longPoints += 3; // Heavy weight - this is KEY for scalping
+                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERSOLD - perfekt for long scalp!`, good: true });
+            } else if (stoch <= 30) {
+                longPoints += 1;
+                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} nær oversold`, good: true });
             } else if (stoch >= params.stochOverbought) {
-                longPoints -= 2;
-                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERBOUGHT - dårlig for long`, good: false });
+                longPoints -= 3; // Heavy penalty - wrong direction for long
+                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERBOUGHT - undgå long!`, good: false });
+            } else {
+                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} neutral`, good: null });
             }
 
-            // RSI
+            // RSI confirmation (secondary)
             if (rsi <= params.rsiOversold) {
-                longPoints += 2;
-                longReasons.push({ text: `RSI ${rsi.toFixed(0)} oversold - bullish`, good: true });
+                longPoints += 1;
+                longReasons.push({ text: `RSI ${rsi.toFixed(0)} oversold`, good: true });
             } else if (rsi >= params.rsiOverbought) {
                 longPoints -= 1;
                 longReasons.push({ text: `RSI ${rsi.toFixed(0)} overbought`, good: false });
             }
 
-            // Trend alignment
+            // Trend alignment (bonus, not required)
             if (trend.includes('up') || trend.includes('bullish')) {
-                longPoints += 2;
-                longReasons.push({ text: `Trend: ${data.trend} - aligned med long`, good: true });
+                longPoints += 1;
+                longReasons.push({ text: `Trend: ${data.trend}`, good: true });
             } else if (trend.includes('down') || trend.includes('bearish')) {
-                longPoints -= 1;
                 longReasons.push({ text: `Trend: ${data.trend} - mod long`, good: false });
             }
 
-            // EMA position
+            // EMA position (bonus)
             if (ema20 > 0 && ema50 > 0) {
                 if (price > ema20 && ema20 > ema50) {
                     longPoints += 1;
-                    longReasons.push({ text: 'Pris over EMA stack - bullish struktur', good: true });
+                    longReasons.push({ text: 'EMA bullish struktur', good: true });
                 } else if (price < ema20 && price < ema50) {
-                    longPoints -= 1;
-                    longReasons.push({ text: 'Pris under begge EMAs', good: false });
+                    longReasons.push({ text: 'Pris under EMAs', good: false });
                 }
             }
 
-            // Session - ALL sessions are opportunities (including Asia)
+            // Session info (no points, just context)
             const sessionLower = session.toLowerCase();
-            const isActiveSession = sessionLower.includes('london') ||
-                                   sessionLower.includes('new york') ||
-                                   sessionLower.includes('overlap') ||
-                                   sessionLower.includes('asia');
-
             if (sessionLower.includes('overlap')) {
-                longPoints += 2; // Best session
-                longReasons.push({ text: `OVERLAP session: ${session} - bedste volatilitet!`, good: true });
+                longReasons.push({ text: `Session: ${session} - høj volatilitet`, good: true });
             } else if (sessionLower.includes('london') || sessionLower.includes('new york')) {
-                longPoints += 1;
-                longReasons.push({ text: `Aktiv session: ${session}`, good: true });
+                longReasons.push({ text: `Session: ${session}`, good: true });
             } else if (sessionLower.includes('asia')) {
-                longPoints += 1;
-                longReasons.push({ text: `Asia session: ${session} - range trading`, good: true });
+                longReasons.push({ text: `Session: ${session} - range`, good: null });
             }
 
             // ====== SHORT ANALYSIS ======
             let shortPoints = 0;
             let shortReasons = [];
+            let shortHasScoreGate = false;
 
-            // Score check
-            if (scoreShort >= params.minScore) {
-                shortPoints += 2;
-                shortReasons.push({ text: `Score ${scoreShort} over minimum (${params.minScore})`, good: true });
+            // GATE CHECK: Score must meet threshold for signal
+            if (scoreShort >= minScoreForSignal) {
+                shortHasScoreGate = true;
+                shortPoints += 3;
+                shortReasons.push({ text: `Score ${scoreShort} >= ${minScoreForSignal} ✓`, good: true });
+            } else if (scoreShort >= minScoreForBuilding) {
+                shortReasons.push({ text: `Score ${scoreShort} under minimum (${minScoreForSignal}) - venter`, good: null });
+            } else {
+                shortReasons.push({ text: `Score ${scoreShort} for lav`, good: false });
             }
 
-            // Stochastic position - CRITICAL for shorts
+            // CRITICAL: Stochastic for scalping
             if (stoch >= params.stochOverbought) {
                 shortPoints += 3;
-                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} i OVERBOUGHT zone - optimal for short`, good: true });
+                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERBOUGHT - perfekt for short scalp!`, good: true });
+            } else if (stoch >= 70) {
+                shortPoints += 1;
+                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} nær overbought`, good: true });
             } else if (stoch <= params.stochOversold) {
-                shortPoints -= 2;
-                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERSOLD - dårlig for short`, good: false });
+                shortPoints -= 3;
+                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERSOLD - undgå short!`, good: false });
+            } else {
+                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} neutral`, good: null });
             }
 
-            // RSI
+            // RSI confirmation
             if (rsi >= params.rsiOverbought) {
-                shortPoints += 2;
-                shortReasons.push({ text: `RSI ${rsi.toFixed(0)} overbought - bearish`, good: true });
+                shortPoints += 1;
+                shortReasons.push({ text: `RSI ${rsi.toFixed(0)} overbought`, good: true });
             } else if (rsi <= params.rsiOversold) {
                 shortPoints -= 1;
                 shortReasons.push({ text: `RSI ${rsi.toFixed(0)} oversold`, good: false });
@@ -676,10 +695,9 @@
 
             // Trend alignment
             if (trend.includes('down') || trend.includes('bearish')) {
-                shortPoints += 2;
-                shortReasons.push({ text: `Trend: ${data.trend} - aligned med short`, good: true });
+                shortPoints += 1;
+                shortReasons.push({ text: `Trend: ${data.trend}`, good: true });
             } else if (trend.includes('up') || trend.includes('bullish')) {
-                shortPoints -= 1;
                 shortReasons.push({ text: `Trend: ${data.trend} - mod short`, good: false });
             }
 
@@ -687,63 +705,65 @@
             if (ema20 > 0 && ema50 > 0) {
                 if (price < ema20 && ema20 < ema50) {
                     shortPoints += 1;
-                    shortReasons.push({ text: 'Pris under EMA stack - bearish struktur', good: true });
+                    shortReasons.push({ text: 'EMA bearish struktur', good: true });
                 }
             }
 
-            // Session - ALL sessions are opportunities
+            // Session info
             if (sessionLower.includes('overlap')) {
-                shortPoints += 2;
-                shortReasons.push({ text: `OVERLAP session: ${session} - bedste volatilitet!`, good: true });
+                shortReasons.push({ text: `Session: ${session} - høj volatilitet`, good: true });
             } else if (sessionLower.includes('london') || sessionLower.includes('new york')) {
-                shortPoints += 1;
-                shortReasons.push({ text: `Aktiv session: ${session}`, good: true });
+                shortReasons.push({ text: `Session: ${session}`, good: true });
             } else if (sessionLower.includes('asia')) {
-                shortPoints += 1;
-                shortReasons.push({ text: `Asia session: ${session} - range trading`, good: true });
+                shortReasons.push({ text: `Session: ${session} - range`, good: null });
             }
 
             // ====== DETERMINE SIGNAL ======
-            const strongThreshold = 5;
-            const readyThreshold = 3;
-            const buildingThreshold = 2;
+            // KEY CHANGE: Signal REQUIRES score gate to be met!
+            const strongThreshold = 6;   // Score(3) + Stoch(3) = 6
+            const readyThreshold = 4;    // Score(3) + Stoch(1) or Score(3) + Trend(1) = 4
 
-            if (longPoints >= strongThreshold && longPoints > shortPoints) {
+            // LONG signal - MUST have score gate
+            if (longHasScoreGate && longPoints >= strongThreshold && longPoints > shortPoints) {
                 signalType = 'LONG';
                 signalStrength = 2; // Strong
                 reasons.push(...longReasons);
                 cardClass = 'long-ready';
-            } else if (longPoints >= readyThreshold && longPoints > shortPoints) {
+            } else if (longHasScoreGate && longPoints >= readyThreshold && longPoints > shortPoints) {
                 signalType = 'LONG';
                 signalStrength = 1; // Ready
                 reasons.push(...longReasons);
                 cardClass = 'long-ready';
-            } else if (shortPoints >= strongThreshold && shortPoints > longPoints) {
+            // SHORT signal - MUST have score gate
+            } else if (shortHasScoreGate && shortPoints >= strongThreshold && shortPoints > longPoints) {
                 signalType = 'SHORT';
                 signalStrength = 2;
                 reasons.push(...shortReasons);
                 cardClass = 'short-ready';
-            } else if (shortPoints >= readyThreshold && shortPoints > longPoints) {
+            } else if (shortHasScoreGate && shortPoints >= readyThreshold && shortPoints > longPoints) {
                 signalType = 'SHORT';
                 signalStrength = 1;
                 reasons.push(...shortReasons);
                 cardClass = 'short-ready';
-            } else if (longPoints >= buildingThreshold || shortPoints >= buildingThreshold) {
+            // BUILDING - score at least half of minimum
+            } else if (scoreLong >= minScoreForBuilding && longPoints >= 2 && longPoints > shortPoints) {
                 signalType = 'BUILDING';
                 cardClass = 'building';
-                // Show the stronger direction
-                if (longPoints >= shortPoints) {
-                    reasons.push(...longReasons.slice(0, 3));
-                    reasons.push({ text: `Long setup bygger (${longPoints} point)`, good: null });
-                } else {
-                    reasons.push(...shortReasons.slice(0, 3));
-                    reasons.push({ text: `Short setup bygger (${shortPoints} point)`, good: null });
-                }
+                reasons.push(...longReasons.slice(0, 4));
+                reasons.push({ text: `Long bygger - mangler score >= ${minScoreForSignal}`, good: null });
+            } else if (scoreShort >= minScoreForBuilding && shortPoints >= 2 && shortPoints > longPoints) {
+                signalType = 'BUILDING';
+                cardClass = 'building';
+                reasons.push(...shortReasons.slice(0, 4));
+                reasons.push({ text: `Short bygger - mangler score >= ${minScoreForSignal}`, good: null });
             } else {
-                // No signal
-                reasons.push({ text: 'Ingen klar setup - vent på bedre forhold', good: null });
+                // No signal - show why
+                reasons.push({ text: 'Ingen setup - kriterier ikke opfyldt', good: null });
+                if (scoreLong < minScoreForSignal && scoreShort < minScoreForSignal) {
+                    reasons.push({ text: `Scores (L:${scoreLong} S:${scoreShort}) under ${minScoreForSignal}`, good: false });
+                }
                 if (stoch > 30 && stoch < 70) {
-                    reasons.push({ text: `Stoch ${stoch.toFixed(0)} i neutral zone`, good: null });
+                    reasons.push({ text: `Stoch ${stoch.toFixed(0)} i neutral zone (20-80)`, good: null });
                 }
             }
 
