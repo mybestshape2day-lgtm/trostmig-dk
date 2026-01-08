@@ -1,0 +1,101 @@
+{
+  "events": [
+    {
+      "date": "2026-01-10",
+      "time": "13:30",
+      "timezone": "UTC",
+      "event": "US Non-Farm Payrolls",
+      "impact": "HIGH",
+      "expected": "180K",
+      "previous": "227K",
+      "currency": "USD",
+      "warning_minutes": 60,
+      "description": "Monthly employment report - major market mover for gold"
+    },
+    {
+      "date": "2026-01-14",
+      "time": "13:30",
+      "timezone": "UTC",
+      "event": "US CPI (Inflation)",
+      "impact": "HIGH",
+      "expected": "2.8%",
+      "previous": "2.7%",
+      "currency": "USD",
+      "warning_minutes": 60,
+      "description": "Consumer Price Index - inflation indicator"
+    },
+    {
+      "date": "2026-01-15",
+      "time": "19:00",
+      "timezone": "UTC",
+      "event": "FOMC Meeting Minutes",
+      "impact": "HIGH",
+      "currency": "USD",
+      "warning_minutes": 120,
+      "description": "Federal Reserve meeting minutes - rate guidance"
+    },
+    {
+      "date": "2026-01-16",
+      "time": "13:30",
+      "timezone": "UTC",
+      "event": "US Retail Sales",
+      "impact": "MEDIUM",
+      "expected": "0.4%",
+      "previous": "0.7%",
+      "currency": "USD",
+      "warning_minutes": 30,
+      "description": "Consumer spending indicator"
+    },
+    {
+      "date": "2026-01-17",
+      "time": "15:00",
+      "timezone": "UTC",
+      "event": "US Consumer Sentiment",
+      "impact": "MEDIUM",
+      "expected": "74.0",
+      "previous": "74.0",
+      "currency": "USD",
+      "warning_minutes": 30,
+      "description": "University of Michigan consumer sentiment"
+    },
+    {
+      "date": "2026-01-29",
+      "time": "19:00",
+      "timezone": "UTC",
+      "event": "FOMC Rate Decision",
+      "impact": "HIGH",
+      "currency": "USD",
+      "warning_minutes": 120,
+      "description": "Federal Reserve interest rate decision - highest impact event"
+    },
+    {
+      "date": "2026-02-07",
+      "time": "13:30",
+      "timezone": "UTC",
+      "event": "US Non-Farm Payrolls",
+      "impact": "HIGH",
+      "expected": "TBD",
+      "previous": "TBD",
+      "currency": "USD",
+      "warning_minutes": 60,
+      "description": "Monthly employment report"
+    }
+  ],
+  "gold_specific_events": [
+    {
+      "type": "COMEX_EXPIRY",
+      "description": "Gold futures contract expiration dates",
+      "warning_minutes": 240
+    },
+    {
+      "type": "OPTIONS_EXPIRY",
+      "description": "Gold options expiration - increased volatility",
+      "warning_minutes": 120
+    }
+  ],
+  "metadata": {
+    "last_updated": "2026-01-04",
+    "source": "Manual entry",
+    "note": "Update regularly from economic calendar sources"
+  }
+}

@@ -392,6 +392,104 @@
         }
         .score-long { color: #22c55e; }
         .score-short { color: #ef4444; }
+
+        /* Economic Events Panel */
+        .events-panel {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+        .events-panel.warning {
+            background: rgba(255, 200, 0, 0.15);
+            border-color: rgba(255, 200, 0, 0.5);
+            animation: pulse-warning 2s infinite;
+        }
+        .events-panel.danger {
+            background: rgba(255, 50, 50, 0.2);
+            border-color: #ef4444;
+            animation: pulse-danger 1s infinite;
+        }
+        @keyframes pulse-warning {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 200, 0, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(255, 200, 0, 0.5); }
+        }
+        @keyframes pulse-danger {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 50, 50, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(255, 50, 50, 0.6); }
+        }
+        .events-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffc107;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85em;
+        }
+        .event-item:last-child { border-bottom: none; }
+        .event-name { color: #e0e0e0; }
+        .event-time { color: #6b7280; font-family: monospace; }
+        .event-impact {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+        .event-impact.high { background: #ef4444; color: white; }
+        .event-impact.medium { background: #f59e0b; color: white; }
+        .event-impact.low { background: #6b7280; color: white; }
+
+        /* Stats Panel */
+        .stats-panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .stats-title {
+            color: #ffd700;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .stat-box {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .stat-value.positive { color: #22c55e; }
+        .stat-value.negative { color: #ef4444; }
+        .stat-label {
+            font-size: 0.7em;
+            color: #6b7280;
+            margin-top: 3px;
+        }
     </style>
 </head>
 <body>
@@ -594,15 +692,50 @@
                 </div>
 
                 <div class="stoch-container">
-                    <div class="stoch-label">Stochastic Position</div>
+                    <div class="stoch-label">Stochastic Position (Min Score: <span id="minScoreLabel">60</span>)</div>
                     <div class="stoch-bar">
                         <div class="stoch-marker" id="stochMarker" style="left: 50%;"></div>
                     </div>
                     <div class="stoch-labels">
-                        <span>Oversold</span>
+                        <span id="stochOversoldLabel">Oversold (&lt;20)</span>
                         <span>Neutral</span>
-                        <span>Overbought</span>
+                        <span id="stochOverboughtLabel">Overbought (&gt;80)</span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Economic Events Warning -->
+        <div class="events-panel" id="eventsPanel" style="display: none;">
+            <div class="events-title">
+                <span>&#9888;</span>
+                <span>Kommende Begivenheder</span>
+            </div>
+            <div id="eventsList"></div>
+        </div>
+
+        <!-- Signal History Stats -->
+        <div class="stats-panel">
+            <div class="stats-title">
+                <span>&#128202;</span>
+                <span>Signal Statistik (Seneste 50)</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value positive" id="statWinRate">--</div>
+                    <div class="stat-label">WIN RATE</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statTotalTrades">--</div>
+                    <div class="stat-label">TRADES</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value positive" id="statAvgProfit">--</div>
+                    <div class="stat-label">AVG PROFIT</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value negative" id="statMaxDD">--</div>
+                    <div class="stat-label">MAX DD</div>
                 </div>
             </div>
         </div>
@@ -619,6 +752,7 @@
 
     <script>
         const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+        const DATA_PATH = 'data/';  // Path to JSON data files on server
 
         // State
         let soundEnabled = true;
@@ -626,6 +760,44 @@
         let lastStrategies = {};
         let alertCooldowns = {};
         let filterSettings = {};
+        let economicEvents = [];
+        let signalHistory = [];
+
+        // Load Lab params from localStorage
+        let params = {
+            stochOversold: 20,
+            stochOverbought: 80,
+            rsiOversold: 30,
+            rsiOverbought: 70,
+            minScore: 60,
+            atrStop: 2.0,
+            atrTp: 3.0
+        };
+
+        function loadParams() {
+            try {
+                const saved = localStorage.getItem('tradingParams');
+                if (saved) {
+                    params = JSON.parse(saved);
+                    console.log('Loaded Lab params:', params);
+                }
+            } catch (e) {
+                console.log('Using default params');
+            }
+            // Update UI labels with params
+            updateParamsUI();
+        }
+
+        function updateParamsUI() {
+            // Update stoch labels
+            const oversoldLabel = document.getElementById('stochOversoldLabel');
+            const overboughtLabel = document.getElementById('stochOverboughtLabel');
+            const minScoreLabel = document.getElementById('minScoreLabel');
+
+            if (oversoldLabel) oversoldLabel.textContent = 'Oversold (<' + params.stochOversold + ')';
+            if (overboughtLabel) overboughtLabel.textContent = 'Overbought (>' + params.stochOverbought + ')';
+            if (minScoreLabel) minScoreLabel.textContent = params.minScore;
+        }
 
         // Load filter settings
         function loadFilters() {
@@ -635,6 +807,124 @@
             } catch (e) {
                 console.log('No saved filters');
             }
+        }
+
+        // ========== JSON DATA INTEGRATION ==========
+
+        // Load economic events from JSON
+        async function loadEconomicEvents() {
+            try {
+                const res = await fetch(DATA_PATH + 'economic_events.json');
+                const data = await res.json();
+                if (data && data.events) {
+                    economicEvents = data.events;
+                    updateEventsPanel();
+                }
+            } catch (e) {
+                console.log('Could not load economic events:', e);
+            }
+        }
+
+        // Load signal history from JSON
+        async function loadSignalHistory() {
+            try {
+                const res = await fetch(DATA_PATH + 'signal_history.json');
+                const data = await res.json();
+                if (data && data.signals) {
+                    signalHistory = data.signals;
+                    updateSignalStats();
+                }
+            } catch (e) {
+                console.log('Could not load signal history:', e);
+            }
+        }
+
+        // Update economic events panel
+        function updateEventsPanel() {
+            const panel = document.getElementById('eventsPanel');
+            const list = document.getElementById('eventsList');
+
+            if (!economicEvents || economicEvents.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            const now = new Date();
+            const upcoming = economicEvents.filter(event => {
+                const eventDate = new Date(event.date + 'T' + event.time + ':00Z');
+                const hoursUntil = (eventDate - now) / (1000 * 60 * 60);
+                return hoursUntil > -1 && hoursUntil < 48; // Within 48 hours
+            }).slice(0, 3); // Show max 3
+
+            if (upcoming.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+
+            // Check if any high impact event is within warning time
+            let dangerLevel = '';
+            upcoming.forEach(event => {
+                const eventDate = new Date(event.date + 'T' + event.time + ':00Z');
+                const minutesUntil = (eventDate - now) / (1000 * 60);
+                if (event.impact === 'HIGH' && minutesUntil <= event.warning_minutes && minutesUntil > 0) {
+                    dangerLevel = 'danger';
+                } else if (event.impact === 'HIGH' && minutesUntil <= event.warning_minutes * 2 && dangerLevel !== 'danger') {
+                    dangerLevel = 'warning';
+                }
+            });
+
+            panel.className = 'events-panel ' + dangerLevel;
+
+            list.innerHTML = upcoming.map(event => {
+                const eventDate = new Date(event.date + 'T' + event.time + ':00Z');
+                const hoursUntil = Math.round((eventDate - now) / (1000 * 60 * 60));
+                const timeStr = hoursUntil <= 0 ? 'NU!' : hoursUntil + 'h';
+
+                return `
+                    <div class="event-item">
+                        <span class="event-name">${event.event}</span>
+                        <span class="event-time">${timeStr}</span>
+                        <span class="event-impact ${event.impact.toLowerCase()}">${event.impact}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Play warning sound for high impact events within warning time
+            if (dangerLevel === 'danger') {
+                playSound('risk_high_volatility');
+                showAlert('HIGH IMPACT NEWS SNART! Overvej at lukke positioner.', 'strategy');
+            }
+        }
+
+        // Calculate and update signal statistics
+        function updateSignalStats() {
+            if (!signalHistory || signalHistory.length === 0) return;
+
+            const completed = signalHistory.filter(s => s.status === 'COMPLETED');
+            const wins = completed.filter(s => s.outcome && s.outcome.result === 'WIN');
+            const losses = completed.filter(s => s.outcome && s.outcome.result === 'LOSS');
+
+            // Win rate
+            const winRate = completed.length > 0 ? (wins.length / completed.length * 100) : 0;
+            document.getElementById('statWinRate').textContent = winRate.toFixed(0) + '%';
+            document.getElementById('statWinRate').className = 'stat-value ' + (winRate >= 50 ? 'positive' : 'negative');
+
+            // Total trades
+            document.getElementById('statTotalTrades').textContent = completed.length;
+
+            // Average profit on winners
+            const avgProfit = wins.length > 0
+                ? wins.reduce((sum, s) => sum + (s.outcome.max_profit || 0), 0) / wins.length
+                : 0;
+            document.getElementById('statAvgProfit').textContent = '$' + avgProfit.toFixed(0);
+
+            // Max drawdown
+            const maxDD = completed.length > 0
+                ? Math.min(...completed.map(s => s.outcome ? s.outcome.max_drawdown : 0))
+                : 0;
+            document.getElementById('statMaxDD').textContent = '$' + Math.abs(maxDD).toFixed(0);
         }
 
         // Strategy definitions with education
@@ -719,16 +1009,118 @@
             }
         };
 
-        // Sound definitions
+        // Sound definitions - All 96 V2.0 sounds
         const sounds = {
-            signal_long: new Audio('sounds/signal_long_ready.mp3'),
-            signal_short: new Audio('sounds/signal_short_ready.mp3'),
+            // Signals
             signal_long_strong: new Audio('sounds/signal_long_strong.mp3'),
             signal_short_strong: new Audio('sounds/signal_short_strong.mp3'),
-            strategy_bullish: new Audio('sounds/fvg_bullish.mp3'),
-            strategy_bearish: new Audio('sounds/fvg_bearish.mp3'),
+            signal_long_ready: new Audio('sounds/signal_long_ready.mp3'),
+            signal_short_ready: new Audio('sounds/signal_short_ready.mp3'),
+            signal_wait: new Audio('sounds/signal_wait.mp3'),
+            signal_expired: new Audio('sounds/signal_expired.mp3'),
+            // Score
+            score_building_long: new Audio('sounds/score_building_long.mp3'),
+            score_building_short: new Audio('sounds/score_building_short.mp3'),
+            score_threshold_70: new Audio('sounds/score_threshold_70.mp3'),
+            score_threshold_80: new Audio('sounds/score_threshold_80.mp3'),
+            score_dropping: new Audio('sounds/score_dropping.mp3'),
+            // ICT Strategies
+            fvg_bullish: new Audio('sounds/fvg_bullish.mp3'),
+            fvg_bearish: new Audio('sounds/fvg_bearish.mp3'),
+            fvg_filled: new Audio('sounds/fvg_filled.mp3'),
+            orderblock_bullish: new Audio('sounds/orderblock_bullish.mp3'),
+            orderblock_bearish: new Audio('sounds/orderblock_bearish.mp3'),
+            orderblock_touch: new Audio('sounds/orderblock_touch.mp3'),
+            bos_bullish: new Audio('sounds/bos_bullish.mp3'),
+            bos_bearish: new Audio('sounds/bos_bearish.mp3'),
+            liquidity_sweep_high: new Audio('sounds/liquidity_sweep_high.mp3'),
+            liquidity_sweep_low: new Audio('sounds/liquidity_sweep_low.mp3'),
+            liquidity_zone: new Audio('sounds/liquidity_zone.mp3'),
+            // Divergence
+            divergence_bullish_rsi: new Audio('sounds/divergence_bullish_rsi.mp3'),
+            divergence_bearish_rsi: new Audio('sounds/divergence_bearish_rsi.mp3'),
+            divergence_bullish_macd: new Audio('sounds/divergence_bullish_macd.mp3'),
+            divergence_bearish_macd: new Audio('sounds/divergence_bearish_macd.mp3'),
+            // Breakouts
+            breakout_pdh: new Audio('sounds/breakout_pdh.mp3'),
+            breakout_pdl: new Audio('sounds/breakout_pdl.mp3'),
+            breakout_weekly_high: new Audio('sounds/breakout_weekly_high.mp3'),
+            breakout_weekly_low: new Audio('sounds/breakout_weekly_low.mp3'),
+            breakout_failed: new Audio('sounds/breakout_failed.mp3'),
+            // Pivots & VWAP
+            pivot_support: new Audio('sounds/pivot_support.mp3'),
+            pivot_resistance: new Audio('sounds/pivot_resistance.mp3'),
+            pivot_main: new Audio('sounds/pivot_main.mp3'),
+            vwap_cross_above: new Audio('sounds/vwap_cross_above.mp3'),
+            vwap_cross_below: new Audio('sounds/vwap_cross_below.mp3'),
+            vwap_touch: new Audio('sounds/vwap_touch.mp3'),
+            // Price Action
+            engulfing_bullish: new Audio('sounds/engulfing_bullish.mp3'),
+            engulfing_bearish: new Audio('sounds/engulfing_bearish.mp3'),
+            pinbar_bullish: new Audio('sounds/pinbar_bullish.mp3'),
+            pinbar_bearish: new Audio('sounds/pinbar_bearish.mp3'),
+            hammer: new Audio('sounds/hammer.mp3'),
+            shooting_star: new Audio('sounds/shooting_star.mp3'),
+            doji: new Audio('sounds/doji.mp3'),
+            doji_at_high: new Audio('sounds/doji_at_high.mp3'),
+            doji_at_low: new Audio('sounds/doji_at_low.mp3'),
+            // Round Numbers
+            round_number_10: new Audio('sounds/round_number_10.mp3'),
+            round_number_50: new Audio('sounds/round_number_50.mp3'),
+            round_number_100: new Audio('sounds/round_number_100.mp3'),
+            // Sessions
+            session_asia_open: new Audio('sounds/session_asia_open.mp3'),
+            session_london_open: new Audio('sounds/session_london_open.mp3'),
+            session_newyork_open: new Audio('sounds/session_newyork_open.mp3'),
+            session_overlap: new Audio('sounds/session_overlap.mp3'),
+            session_closing: new Audio('sounds/session_closing.mp3'),
+            session_closed: new Audio('sounds/session_closed.mp3'),
+            // Confluence
+            confluence_3_bullish: new Audio('sounds/confluence_3_bullish.mp3'),
+            confluence_3_bearish: new Audio('sounds/confluence_3_bearish.mp3'),
+            confluence_5_bullish: new Audio('sounds/confluence_5_bullish.mp3'),
+            confluence_5_bearish: new Audio('sounds/confluence_5_bearish.mp3'),
             confluence_high: new Audio('sounds/confluence_high.mp3'),
-            session_open: new Audio('sounds/session_london_open.mp3')
+            confluence_max: new Audio('sounds/confluence_max.mp3'),
+            // Indicators
+            rsi_oversold: new Audio('sounds/rsi_oversold.mp3'),
+            rsi_overbought: new Audio('sounds/rsi_overbought.mp3'),
+            rsi_extreme_low: new Audio('sounds/rsi_extreme_low.mp3'),
+            rsi_extreme_high: new Audio('sounds/rsi_extreme_high.mp3'),
+            stoch_oversold: new Audio('sounds/stoch_oversold.mp3'),
+            stoch_overbought: new Audio('sounds/stoch_overbought.mp3'),
+            stoch_cross_up: new Audio('sounds/stoch_cross_up.mp3'),
+            stoch_cross_down: new Audio('sounds/stoch_cross_down.mp3'),
+            macd_cross_bullish: new Audio('sounds/macd_cross_bullish.mp3'),
+            macd_cross_bearish: new Audio('sounds/macd_cross_bearish.mp3'),
+            adx_trending: new Audio('sounds/adx_trending.mp3'),
+            adx_ranging: new Audio('sounds/adx_ranging.mp3'),
+            ema_bullish_stack: new Audio('sounds/ema_bullish_stack.mp3'),
+            ema_bearish_stack: new Audio('sounds/ema_bearish_stack.mp3'),
+            ema_cross_golden: new Audio('sounds/ema_cross_golden.mp3'),
+            ema_cross_death: new Audio('sounds/ema_cross_death.mp3'),
+            // Regime & Trend
+            regime_change_bullish: new Audio('sounds/regime_change_bullish.mp3'),
+            regime_change_bearish: new Audio('sounds/regime_change_bearish.mp3'),
+            trend_strong_up: new Audio('sounds/trend_strong_up.mp3'),
+            trend_strong_down: new Audio('sounds/trend_strong_down.mp3'),
+            trend_weakening: new Audio('sounds/trend_weakening.mp3'),
+            // Risk & Targets
+            target_hit: new Audio('sounds/target_hit.mp3'),
+            stop_warning: new Audio('sounds/stop_warning.mp3'),
+            stop_triggered: new Audio('sounds/stop_triggered.mp3'),
+            trailing_active: new Audio('sounds/trailing_active.mp3'),
+            risk_high_volatility: new Audio('sounds/risk_high_volatility.mp3'),
+            new_high: new Audio('sounds/new_high.mp3'),
+            new_low: new Audio('sounds/new_low.mp3'),
+            volatility_spike: new Audio('sounds/volatility_spike.mp3'),
+            // System
+            system_ready: new Audio('sounds/system_ready.mp3'),
+            system_error: new Audio('sounds/system_error.mp3'),
+            data_updated: new Audio('sounds/data_updated.mp3'),
+            connection_lost: new Audio('sounds/connection_lost.mp3'),
+            connection_restored: new Audio('sounds/connection_restored.mp3'),
+            all_clear: new Audio('sounds/all_clear.mp3')
         };
 
         function playSound(soundName) {
@@ -899,10 +1291,14 @@
             // Update strategies and get confluence
             const confluence = updateStrategies(data);
 
-            // Signal
+            // Signal - uses params.minScore from Lab settings
             let signal = 'WAIT';
-            if (scoreLong > 60 && scoreLong > scoreShort) signal = 'LONG';
-            else if (scoreShort > 60 && scoreShort > scoreLong) signal = 'SHORT';
+            const minScore = params.minScore || 60;
+            const strongScore = minScore + 20; // Strong signal is 20 points above min
+
+            if (scoreLong > minScore && scoreLong > scoreShort) signal = 'LONG';
+            else if (scoreShort > minScore && scoreShort > scoreLong) signal = 'SHORT';
+
             // Also consider confluence
             if (confluence.bullish >= 4 && confluence.bullish > confluence.bearish) signal = 'LONG';
             if (confluence.bearish >= 4 && confluence.bearish > confluence.bullish) signal = 'SHORT';
@@ -913,11 +1309,22 @@
 
             if (signal !== lastSignal) {
                 if (signal === 'LONG') {
-                    playSound('signal_long');
-                    showAlert('LONG SIGNAL AKTIVT!', 'long');
+                    // Check if strong signal
+                    if (scoreLong > strongScore) {
+                        playSound('signal_long_strong');
+                        showAlert('STÆRKT LONG SIGNAL! Score: ' + scoreLong, 'long');
+                    } else {
+                        playSound('signal_long_ready');
+                        showAlert('LONG SIGNAL AKTIVT! Score: ' + scoreLong, 'long');
+                    }
                 } else if (signal === 'SHORT') {
-                    playSound('signal_short');
-                    showAlert('SHORT SIGNAL AKTIVT!', 'short');
+                    if (scoreShort > strongScore) {
+                        playSound('signal_short_strong');
+                        showAlert('STÆRKT SHORT SIGNAL! Score: ' + scoreShort, 'short');
+                    } else {
+                        playSound('signal_short_ready');
+                        showAlert('SHORT SIGNAL AKTIVT! Score: ' + scoreShort, 'short');
+                    }
                 }
                 lastSignal = signal;
             }
@@ -960,11 +1367,26 @@
         }
 
         // Initialize
+        loadParams();  // Load Lab settings from localStorage
         loadFilters();
+        loadEconomicEvents();  // Load economic events from JSON
+        loadSignalHistory();   // Load signal history from JSON
+
         fetchData().then(updateUI);
 
         // Auto-refresh every 3 seconds
         setInterval(() => fetchData().then(updateUI), 3000);
+
+        // Refresh economic events every 5 minutes
+        setInterval(loadEconomicEvents, 5 * 60 * 1000);
+
+        // Update events panel every minute (for time countdown)
+        setInterval(updateEventsPanel, 60 * 1000);
+
+        // Play system ready sound on load
+        setTimeout(() => {
+            if (soundEnabled) playSound('system_ready');
+        }, 1000);
     </script>
 </body>
 </html>

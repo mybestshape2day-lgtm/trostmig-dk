@@ -1,0 +1,1660 @@
+{
+  "signals": [
+    {
+      "signal_id": "SIM-0001",
+      "timestamp": "2025-12-17T21:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "US",
+        "volatility": "LOW",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 64,
+        "momentum": 55,
+        "trend": 51,
+        "volume": 95
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -31.112831904683517,
+        "duration_minutes": 166
+      }
+    },
+    {
+      "signal_id": "SIM-0002",
+      "timestamp": "2025-12-21T19:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "US",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 74,
+        "momentum": 59,
+        "trend": 69,
+        "volume": 94
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -60.23747222665545,
+        "duration_minutes": 53
+      }
+    },
+    {
+      "signal_id": "SIM-0003",
+      "timestamp": "2025-12-13T10:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "US",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 68,
+        "momentum": 74,
+        "trend": 94,
+        "volume": 80
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 86.7580524870055,
+        "max_drawdown": -65.72903624306639,
+        "duration_minutes": 120
+      }
+    },
+    {
+      "signal_id": "SIM-0004",
+      "timestamp": "2025-12-15T21:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 75,
+        "min_score": 65,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "ASIAN",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 74,
+        "momentum": 73,
+        "trend": 92,
+        "volume": 68
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 184.73225224922703,
+        "max_drawdown": -38.352255474797445,
+        "duration_minutes": 95
+      }
+    },
+    {
+      "signal_id": "SIM-0005",
+      "timestamp": "2026-01-03T02:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 75,
+        "min_score": 65,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "ASIAN",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 72,
+        "momentum": 63,
+        "trend": 94,
+        "volume": 90
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -68.36226754800292,
+        "duration_minutes": 43
+      }
+    },
+    {
+      "signal_id": "SIM-0006",
+      "timestamp": "2025-12-09T11:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "US",
+        "volatility": "LOW",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 80,
+        "momentum": 67,
+        "trend": 66,
+        "volume": 56
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 88.12739603848978,
+        "max_drawdown": -21.112430030029614,
+        "duration_minutes": 65
+      }
+    },
+    {
+      "signal_id": "SIM-0007",
+      "timestamp": "2025-12-08T13:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 68,
+        "momentum": 69,
+        "trend": 81,
+        "volume": 76
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 232.29727314908126,
+        "max_drawdown": -17.677544378511598,
+        "duration_minutes": 105
+      }
+    },
+    {
+      "signal_id": "SIM-0008",
+      "timestamp": "2026-01-02T22:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "LONDON",
+        "volatility": "LOW",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 57,
+        "momentum": 81,
+        "trend": 63,
+        "volume": 90
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -86.52819754946113,
+        "duration_minutes": 59
+      }
+    },
+    {
+      "signal_id": "SIM-0009",
+      "timestamp": "2025-12-29T17:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "LONDON",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 58,
+        "momentum": 87,
+        "trend": 65,
+        "volume": 61
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -44.46708381270288,
+        "duration_minutes": 160
+      }
+    },
+    {
+      "signal_id": "SIM-0010",
+      "timestamp": "2025-12-31T01:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "LOW",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 88,
+        "momentum": 60,
+        "trend": 58,
+        "volume": 75
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 232.85501921614286,
+        "max_drawdown": -38.03350621913077,
+        "duration_minutes": 20
+      }
+    },
+    {
+      "signal_id": "SIM-0011",
+      "timestamp": "2025-12-30T11:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 64,
+        "momentum": 80,
+        "trend": 87,
+        "volume": 87
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -51.57646650704409,
+        "duration_minutes": 40
+      }
+    },
+    {
+      "signal_id": "SIM-0012",
+      "timestamp": "2025-12-10T03:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "US",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 89,
+        "momentum": 91,
+        "trend": 57,
+        "volume": 58
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 161.95988920579623,
+        "max_drawdown": -97.77484254896565,
+        "duration_minutes": 57
+      }
+    },
+    {
+      "signal_id": "SIM-0013",
+      "timestamp": "2025-12-06T10:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 80,
+        "min_score": 65,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "LOW",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 88,
+        "momentum": 64,
+        "trend": 74,
+        "volume": 86
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 157.4663986565012,
+        "max_drawdown": -85.35959171020428,
+        "duration_minutes": 58
+      }
+    },
+    {
+      "signal_id": "SIM-0014",
+      "timestamp": "2025-12-13T03:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 66,
+        "momentum": 53,
+        "trend": 93,
+        "volume": 92
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 154.5347181361679,
+        "max_drawdown": -83.08416726252335,
+        "duration_minutes": 25
+      }
+    },
+    {
+      "signal_id": "SIM-0015",
+      "timestamp": "2025-12-09T18:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "ASIAN",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 70,
+        "momentum": 60,
+        "trend": 94,
+        "volume": 66
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 245.58827616536,
+        "max_drawdown": -49.34830341643285,
+        "duration_minutes": 89
+      }
+    },
+    {
+      "signal_id": "SIM-0016",
+      "timestamp": "2026-01-01T20:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "ASIAN",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 65,
+        "momentum": 51,
+        "trend": 73,
+        "volume": 58
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -81.41132068689446,
+        "duration_minutes": 169
+      }
+    },
+    {
+      "signal_id": "SIM-0017",
+      "timestamp": "2025-12-24T20:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 80,
+        "min_score": 70,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "US",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 57,
+        "momentum": 81,
+        "trend": 78,
+        "volume": 80
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -27.44551249342281,
+        "duration_minutes": 11
+      }
+    },
+    {
+      "signal_id": "SIM-0018",
+      "timestamp": "2025-12-06T06:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "LONDON",
+        "volatility": "LOW",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 57,
+        "momentum": 60,
+        "trend": 64,
+        "volume": 56
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 54.582814117943286,
+        "max_drawdown": -56.25851845802122,
+        "duration_minutes": 70
+      }
+    },
+    {
+      "signal_id": "SIM-0019",
+      "timestamp": "2025-12-27T10:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 80,
+        "min_score": 70,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "LONDON",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 65,
+        "momentum": 71,
+        "trend": 85,
+        "volume": 67
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -16.760738858009063,
+        "duration_minutes": 53
+      }
+    },
+    {
+      "signal_id": "SIM-0020",
+      "timestamp": "2025-12-15T05:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 70,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 90,
+        "momentum": 62,
+        "trend": 93,
+        "volume": 66
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 218.72864168124846,
+        "max_drawdown": -17.957919289314006,
+        "duration_minutes": 54
+      }
+    },
+    {
+      "signal_id": "SIM-0021",
+      "timestamp": "2025-12-28T02:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 69,
+        "momentum": 65,
+        "trend": 50,
+        "volume": 78
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 75.0530731014958,
+        "max_drawdown": -41.37167612841868,
+        "duration_minutes": 169
+      }
+    },
+    {
+      "signal_id": "SIM-0022",
+      "timestamp": "2025-12-31T02:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "US",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 86,
+        "momentum": 90,
+        "trend": 85,
+        "volume": 85
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 122.43320977215706,
+        "max_drawdown": -21.417203005051547,
+        "duration_minutes": 80
+      }
+    },
+    {
+      "signal_id": "SIM-0023",
+      "timestamp": "2025-12-19T16:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 70,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 59,
+        "momentum": 72,
+        "trend": 51,
+        "volume": 86
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -21.61492888089643,
+        "duration_minutes": 92
+      }
+    },
+    {
+      "signal_id": "SIM-0024",
+      "timestamp": "2025-12-28T15:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "RANGING",
+        "session": "OVERLAP",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 75,
+        "momentum": 60,
+        "trend": 67,
+        "volume": 95
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 58.89594822840037,
+        "max_drawdown": -24.205616669990633,
+        "duration_minutes": 111
+      }
+    },
+    {
+      "signal_id": "SIM-0025",
+      "timestamp": "2025-12-31T20:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "ASIAN",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 69,
+        "momentum": 70,
+        "trend": 68,
+        "volume": 67
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -67.69728932714554,
+        "duration_minutes": 46
+      }
+    },
+    {
+      "signal_id": "SIM-0026",
+      "timestamp": "2025-12-10T10:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "LONDON",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 70,
+        "momentum": 58,
+        "trend": 60,
+        "volume": 74
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 163.93335183541205,
+        "max_drawdown": -97.71007323959115,
+        "duration_minutes": 91
+      }
+    },
+    {
+      "signal_id": "SIM-0027",
+      "timestamp": "2025-12-21T04:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 75,
+        "min_score": 65,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "RANGING",
+        "session": "LONDON",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 87,
+        "momentum": 56,
+        "trend": 65,
+        "volume": 76
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 110.8062330451277,
+        "max_drawdown": -54.43063790097881,
+        "duration_minutes": 120
+      }
+    },
+    {
+      "signal_id": "SIM-0028",
+      "timestamp": "2025-12-22T17:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "ASIAN",
+        "volatility": "NORMAL",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 68,
+        "momentum": 93,
+        "trend": 61,
+        "volume": 53
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 223.1574040829545,
+        "max_drawdown": -19.06857861728608,
+        "duration_minutes": 161
+      }
+    },
+    {
+      "signal_id": "SIM-0029",
+      "timestamp": "2025-12-27T23:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 70,
+        "min_score": 70,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 78,
+        "momentum": 84,
+        "trend": 50,
+        "volume": 56
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 91.23719240694993,
+        "max_drawdown": -54.68625349715636,
+        "duration_minutes": 20
+      }
+    },
+    {
+      "signal_id": "SIM-0030",
+      "timestamp": "2026-01-03T04:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "STRONG_DOWNTREND",
+        "session": "US",
+        "volatility": "NORMAL",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 73,
+        "momentum": 55,
+        "trend": 77,
+        "volume": 68
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 194.56249156741748,
+        "max_drawdown": -54.08899087741164,
+        "duration_minutes": 13
+      }
+    },
+    {
+      "signal_id": "SIM-0031",
+      "timestamp": "2025-12-09T04:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "ASIAN",
+        "volatility": "LOW",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 86,
+        "momentum": 65,
+        "trend": 86,
+        "volume": 79
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 134.78870493731793,
+        "max_drawdown": -48.205650062381416,
+        "duration_minutes": 139
+      }
+    },
+    {
+      "signal_id": "SIM-0032",
+      "timestamp": "2025-12-07T19:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "LONDON",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 84,
+        "momentum": 53,
+        "trend": 92,
+        "volume": 86
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -78.21495036958162,
+        "duration_minutes": 70
+      }
+    },
+    {
+      "signal_id": "SIM-0033",
+      "timestamp": "2026-01-03T07:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 80,
+        "min_score": 65,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "RANGING",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 65,
+        "momentum": 69,
+        "trend": 58,
+        "volume": 82
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 173.9945473715597,
+        "max_drawdown": -87.38011352187905,
+        "duration_minutes": 17
+      }
+    },
+    {
+      "signal_id": "SIM-0034",
+      "timestamp": "2025-12-06T09:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 70,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 71,
+        "momentum": 59,
+        "trend": 58,
+        "volume": 67
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 77.61028846553486,
+        "max_drawdown": -61.671617470014844,
+        "duration_minutes": 37
+      }
+    },
+    {
+      "signal_id": "SIM-0035",
+      "timestamp": "2025-12-06T09:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "OVERLAP",
+        "volatility": "LOW",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 80,
+        "momentum": 56,
+        "trend": 67,
+        "volume": 74
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -46.183304139414936,
+        "duration_minutes": 137
+      }
+    },
+    {
+      "signal_id": "SIM-0036",
+      "timestamp": "2025-12-09T06:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "LONDON",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 75,
+        "momentum": 79,
+        "trend": 80,
+        "volume": 59
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -16.205849832052607,
+        "duration_minutes": 179
+      }
+    },
+    {
+      "signal_id": "SIM-0037",
+      "timestamp": "2025-12-10T20:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 80,
+        "min_score": 70,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "RANGING",
+        "session": "LONDON",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 74,
+        "momentum": 68,
+        "trend": 62,
+        "volume": 74
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 266.5760976786491,
+        "max_drawdown": -89.11022847483537,
+        "duration_minutes": 160
+      }
+    },
+    {
+      "signal_id": "SIM-0038",
+      "timestamp": "2025-12-22T17:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 75,
+        "min_score": 65,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "RANGING",
+        "session": "OVERLAP",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 70,
+        "momentum": 80,
+        "trend": 61,
+        "volume": 51
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 249.03891795631804,
+        "max_drawdown": -20.3849380077763,
+        "duration_minutes": 162
+      }
+    },
+    {
+      "signal_id": "SIM-0039",
+      "timestamp": "2025-12-23T00:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 88,
+        "momentum": 83,
+        "trend": 71,
+        "volume": 64
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 254.16066164332776,
+        "max_drawdown": -85.29042869327722,
+        "duration_minutes": 159
+      }
+    },
+    {
+      "signal_id": "SIM-0040",
+      "timestamp": "2025-12-11T17:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 75,
+        "min_score": 65,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 81,
+        "momentum": 87,
+        "trend": 55,
+        "volume": 54
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 127.88233918095153,
+        "max_drawdown": -56.7650956176528,
+        "duration_minutes": 96
+      }
+    },
+    {
+      "signal_id": "SIM-0041",
+      "timestamp": "2025-12-08T04:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 80,
+        "min_score": 60,
+        "atr_stop_mult": 1.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "STRONG_UPTREND",
+        "session": "US",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 75,
+        "momentum": 62,
+        "trend": 95,
+        "volume": 52
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 287.49962880245204,
+        "max_drawdown": -21.98392457041534,
+        "duration_minutes": 167
+      }
+    },
+    {
+      "signal_id": "SIM-0042",
+      "timestamp": "2025-12-22T22:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 25,
+        "stoch_overbought": 80,
+        "min_score": 70,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 62,
+        "momentum": 95,
+        "trend": 74,
+        "volume": 91
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -39.6768834547798,
+        "duration_minutes": 23
+      }
+    },
+    {
+      "signal_id": "SIM-0043",
+      "timestamp": "2025-12-25T12:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "US",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 88,
+        "momentum": 91,
+        "trend": 56,
+        "volume": 75
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 109.88309059978926,
+        "max_drawdown": -86.52083561889785,
+        "duration_minutes": 14
+      }
+    },
+    {
+      "signal_id": "SIM-0044",
+      "timestamp": "2025-12-24T09:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 75,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.0
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "ASIAN",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 69,
+        "momentum": 77,
+        "trend": 78,
+        "volume": 86
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 131.20941539743933,
+        "max_drawdown": -40.50613799384156,
+        "duration_minutes": 63
+      }
+    },
+    {
+      "signal_id": "SIM-0045",
+      "timestamp": "2025-12-22T02:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "RANGING",
+        "session": "OVERLAP",
+        "volatility": "HIGH",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 81,
+        "momentum": 88,
+        "trend": 56,
+        "volume": 87
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -48.00756537637015,
+        "duration_minutes": 95
+      }
+    },
+    {
+      "signal_id": "SIM-0046",
+      "timestamp": "2025-12-25T17:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 70,
+        "min_score": 60,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "LOW",
+        "sentiment": "NEUTRAL"
+      },
+      "score": {
+        "total": 65,
+        "momentum": 84,
+        "trend": 67,
+        "volume": 53
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 204.51350855453617,
+        "max_drawdown": -43.6831230498479,
+        "duration_minutes": 55
+      }
+    },
+    {
+      "signal_id": "SIM-0047",
+      "timestamp": "2025-12-18T02:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "WEAK",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 70,
+        "min_score": 70,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "OVERLAP",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 68,
+        "momentum": 93,
+        "trend": 52,
+        "volume": 58
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 158.29108129933496,
+        "max_drawdown": -20.638989680933392,
+        "duration_minutes": 158
+      }
+    },
+    {
+      "signal_id": "SIM-0048",
+      "timestamp": "2026-01-03T23:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 75,
+        "min_score": 70,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 3.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "LONDON",
+        "volatility": "NORMAL",
+        "sentiment": "RISK_ON"
+      },
+      "score": {
+        "total": 79,
+        "momentum": 74,
+        "trend": 65,
+        "volume": 95
+      },
+      "outcome": {
+        "result": "LOSS",
+        "max_profit": 0,
+        "max_drawdown": -79.81864129878478,
+        "duration_minutes": 160
+      }
+    },
+    {
+      "signal_id": "SIM-0049",
+      "timestamp": "2025-12-28T14:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "LONG",
+      "strength": "MEDIUM",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 30,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 2.0,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_UPTREND",
+        "session": "US",
+        "volatility": "HIGH",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 70,
+        "momentum": 88,
+        "trend": 93,
+        "volume": 81
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 261.1358220364931,
+        "max_drawdown": -56.72979709900408,
+        "duration_minutes": 57
+      }
+    },
+    {
+      "signal_id": "SIM-0050",
+      "timestamp": "2025-12-27T22:59:09.593870Z",
+      "symbol": "GC=F",
+      "direction": "SHORT",
+      "strength": "STRONG",
+      "status": "COMPLETED",
+      "configuration": {
+        "stoch_oversold": 20,
+        "stoch_overbought": 70,
+        "min_score": 65,
+        "atr_stop_mult": 2.5,
+        "atr_tp_mult": 2.5
+      },
+      "market_conditions": {
+        "regime": "WEAK_DOWNTREND",
+        "session": "ASIAN",
+        "volatility": "LOW",
+        "sentiment": "RISK_OFF"
+      },
+      "score": {
+        "total": 89,
+        "momentum": 86,
+        "trend": 69,
+        "volume": 61
+      },
+      "outcome": {
+        "result": "WIN",
+        "max_profit": 189.87739000137913,
+        "max_drawdown": -36.50292772672234,
+        "duration_minutes": 19
+      }
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-04T01:59:09.594959Z",
+    "last_updated": "2026-01-04T01:59:09.594966Z",
+    "total_signals": 50,
+    "schema_version": "1.0"
+  }
+}
