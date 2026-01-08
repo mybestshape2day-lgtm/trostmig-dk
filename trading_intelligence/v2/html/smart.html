@@ -11,9 +11,40 @@
             background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
             color: #e8e8e8;
             min-height: 100vh;
-            padding: 20px;
         }
-        .container { max-width: 600px; margin: 0 auto; }
+
+        /* Navigation */
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
         /* Header */
         .header {
@@ -314,6 +345,25 @@
     </style>
 </head>
 <body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Intelligence V2.0</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="smart.html" class="active">&#128161; Smart</a>
+            <a href="strategies.html">&#128218; Strategier</a>
+            <a href="filters.html">&#9881; Filter</a>
+            <a href="lab.html">&#128300; Lab</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
     <button class="sound-btn on" id="soundBtn" onclick="toggleSound()">Lyd TIL</button>
 
     <div class="container">
@@ -424,8 +474,6 @@
             </div>
         </div>
 
-        <a href="lab.html" class="nav-link">Juster indstillinger i Lab</a>
-        <a href="station.html" class="nav-link">Tilbage til Station</a>
     </div>
 
     <script>
@@ -706,8 +754,13 @@
         function updateUI(data) {
             if (!data) {
                 document.getElementById('liveDot').style.background = '#ef4444';
+                document.getElementById('navLive').style.background = '#ef4444';
                 return;
             }
+
+            // Update nav price
+            document.getElementById('navPrice').textContent = '$' + (data.price || 0).toFixed(1);
+            document.getElementById('navLive').style.background = '#22c55e';
 
             // Price
             const price = data.price || 0;
