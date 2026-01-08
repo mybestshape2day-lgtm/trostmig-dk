@@ -555,11 +555,10 @@
         <div class="nav-links">
             <a href="index.html">&#128202; Dashboard</a>
             <a href="station.html" class="active">&#9889; Station</a>
+            <a href="smart.html">&#128161; Smart</a>
             <a href="strategies.html">&#128218; Strategier</a>
             <a href="filters.html">&#9881; Filter</a>
-            <a href="signal.html">&#127919; Signal</a>
             <a href="lab.html">&#128300; Lab</a>
-            <a href="history.html">&#128220; History</a>
         </div>
         <div class="nav-price">
             <span id="navPrice">--</span>
@@ -1540,15 +1539,21 @@
 
             // Signal - uses params.minScore from Lab settings
             let signal = 'WAIT';
-            const minScore = params.minScore || 60;
-            const strongScore = minScore + 20; // Strong signal is 20 points above min
+            const minScore = params.minScore || 40; // Default 40 for more opportunities
+            const strongScore = minScore + 30; // Strong signal is 30 points above min
 
-            if (scoreLong > minScore && scoreLong > scoreShort) signal = 'LONG';
-            else if (scoreShort > minScore && scoreShort > scoreLong) signal = 'SHORT';
+            // Only signal if score is above threshold
+            if (scoreLong >= minScore && scoreLong > scoreShort) signal = 'LONG';
+            else if (scoreShort >= minScore && scoreShort > scoreLong) signal = 'SHORT';
 
-            // Also consider confluence
-            if (confluence.bullish >= 4 && confluence.bullish > confluence.bearish) signal = 'LONG';
-            if (confluence.bearish >= 4 && confluence.bearish > confluence.bullish) signal = 'SHORT';
+            // Confluence can BOOST but not override low score
+            // Only use confluence if score is at least half of minScore
+            if (scoreLong >= minScore / 2 && confluence.bullish >= 4 && confluence.bullish > confluence.bearish) {
+                if (signal === 'WAIT') signal = 'LONG';
+            }
+            if (scoreShort >= minScore / 2 && confluence.bearish >= 4 && confluence.bearish > confluence.bullish) {
+                if (signal === 'WAIT') signal = 'SHORT';
+            }
 
             const signalEl = document.getElementById('signal');
             signalEl.textContent = signal;
