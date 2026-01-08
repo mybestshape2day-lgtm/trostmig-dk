@@ -1,394 +1,359 @@
 ===============================================================================
 GOLD TRADING INTELLIGENCE V2.0 - VOICE SCRIPTS
 ===============================================================================
-Brug disse scripts med en TTS generator (fx ElevenLabs, Google TTS)
-til at generere MP3 lydfiler.
 
-Anbefalede indstillinger:
-- Sprog: Dansk
-- Stemme: Rolig, professionel mandlig/kvindelig stemme
-- Hastighed: Normal til langsom (for tydelighed)
-===============================================================================
-
-
-=====================================
-SEKTION 1: SIGNAL ALERTS
-=====================================
-
-Filnavn: signal_long_strong.mp3
-Script: "Stærkt long signal! Score over firs. Overvej long position."
-
-Filnavn: signal_short_strong.mp3
-Script: "Stærkt short signal! Score over firs. Overvej short position."
-
-Filnavn: signal_long_ready.mp3
-Script: "Long signal klar. Score over halvfjerds."
-
-Filnavn: signal_short_ready.mp3
-Script: "Short signal klar. Score over halvfjerds."
-
-Filnavn: signal_wait.mp3
-Script: "Signal venteposition. Afvent bedre setup."
-
-Filnavn: signal_expired.mp3
-Script: "Signalet er udløbet. Vent på nyt signal."
-
-
-=====================================
-SEKTION 2: ICT STRATEGY ALERTS
-=====================================
-
---- FAIR VALUE GAP (FVG) ---
-
-Filnavn: fvg_bullish.mp3
-Script: "Fair value gap bullish detekteret. Pris ubalance over nuværende niveau. Potentielt support område."
-
-Filnavn: fvg_bearish.mp3
-Script: "Fair value gap bearish detekteret. Pris ubalance under nuværende niveau. Potentielt resistance område."
-
-Filnavn: fvg_filled.mp3
-Script: "Fair value gap udfyldt. Prisen har returneret til balancezonen."
-
-
---- ORDER BLOCKS ---
-
-Filnavn: orderblock_bullish.mp3
-Script: "Bullish order block detekteret. Institutionel købszone identificeret."
-
-Filnavn: orderblock_bearish.mp3
-Script: "Bearish order block detekteret. Institutionel salgszone identificeret."
-
-Filnavn: orderblock_touch.mp3
-Script: "Pris rører order block. Overvej entry ved bekræftelse."
-
-
---- BREAK OF STRUCTURE (BOS) ---
-
-Filnavn: bos_bullish.mp3
-Script: "Break of structure bullish! Trend bekræftet opadgående. Søg long entries."
-
-Filnavn: bos_bearish.mp3
-Script: "Break of structure bearish! Trend bekræftet nedadgående. Søg short entries."
-
-
---- LIQUIDITY ---
-
-Filnavn: liquidity_sweep_high.mp3
-Script: "Likviditets sweep af høj. Stop hunt opad detekteret. Overvej short ved reversal."
-
-Filnavn: liquidity_sweep_low.mp3
-Script: "Likviditets sweep af lav. Stop hunt nedad detekteret. Overvej long ved reversal."
-
-Filnavn: liquidity_zone.mp3
-Script: "Pris nærmer sig likviditetszone. Vær opmærksom på sweep."
-
-
-=====================================
-SEKTION 3: CLASSIC TA ALERTS
-=====================================
-
---- DIVERGENCE ---
-
-Filnavn: divergence_bullish_rsi.mp3
-Script: "Bullish RSI divergens detekteret. Pris laver lavere lows mens RSI laver højere lows. Reversal muligt."
-
-Filnavn: divergence_bearish_rsi.mp3
-Script: "Bearish RSI divergens detekteret. Pris laver højere highs mens RSI laver lavere highs. Reversal muligt."
-
-Filnavn: divergence_bullish_macd.mp3
-Script: "Bullish MACD divergens detekteret. Momentum divergerer fra pris. Overvej long."
-
-Filnavn: divergence_bearish_macd.mp3
-Script: "Bearish MACD divergens detekteret. Momentum divergerer fra pris. Overvej short."
-
-
---- BREAKOUTS ---
-
-Filnavn: breakout_pdh.mp3
-Script: "Breakout over forrige dags high! Momentum opad. Bullish signal."
-
-Filnavn: breakout_pdl.mp3
-Script: "Breakout under forrige dags low! Momentum nedad. Bearish signal."
-
-Filnavn: breakout_weekly_high.mp3
-Script: "Breakout over ugentlig high! Stærkt bullish momentum."
-
-Filnavn: breakout_weekly_low.mp3
-Script: "Breakout under ugentlig low! Stærkt bearish momentum."
-
-Filnavn: breakout_failed.mp3
-Script: "Falsk breakout detekteret. Pris trukket tilbage. Overvej reversal."
-
-
---- PIVOT POINTS ---
-
-Filnavn: pivot_support.mp3
-Script: "Pris rører pivot support niveau. Potentielt bounce område."
-
-Filnavn: pivot_resistance.mp3
-Script: "Pris rører pivot resistance niveau. Potentiel afvisning."
-
-Filnavn: pivot_main.mp3
-Script: "Pris ved daily pivot punkt. Vigtig beslutningszone."
-
-
---- VWAP ---
-
-Filnavn: vwap_cross_above.mp3
-Script: "Pris krydser over VWAP. Bullish bias aktiveret."
-
-Filnavn: vwap_cross_below.mp3
-Script: "Pris krydser under VWAP. Bearish bias aktiveret."
-
-Filnavn: vwap_touch.mp3
-Script: "Pris rører VWAP. Mean reversion niveau."
-
-
-=====================================
-SEKTION 4: PRICE ACTION ALERTS
-=====================================
-
---- ENGULFING PATTERNS ---
-
-Filnavn: engulfing_bullish.mp3
-Script: "Bullish engulfing pattern! Stærkt reversal signal opad."
-
-Filnavn: engulfing_bearish.mp3
-Script: "Bearish engulfing pattern! Stærkt reversal signal nedad."
-
-
---- PIN BAR / HAMMER ---
-
-Filnavn: pinbar_bullish.mp3
-Script: "Bullish pin bar detekteret. Lang hale nedad viser rejection. Long signal."
-
-Filnavn: pinbar_bearish.mp3
-Script: "Bearish pin bar detekteret. Lang hale opad viser rejection. Short signal."
-
-Filnavn: hammer.mp3
-Script: "Hammer mønster ved support. Potentiel bund. Overvej long."
-
-Filnavn: shooting_star.mp3
-Script: "Shooting star mønster ved resistance. Potentiel top. Overvej short."
-
-
---- DOJI ---
-
-Filnavn: doji.mp3
-Script: "Doji mønster detekteret. Ubeslutsomhed i markedet. Afvent bekræftelse."
-
-Filnavn: doji_at_high.mp3
-Script: "Doji ved høj. Potentiel reversal nedad. Afvent bekræftelse."
-
-Filnavn: doji_at_low.mp3
-Script: "Doji ved lav. Potentiel reversal opad. Afvent bekræftelse."
-
-
---- ROUND NUMBERS ---
-
-Filnavn: round_number_50.mp3
-Script: "Pris nærmer sig rund nummer. Halvtreds dollar niveau. Psykologisk support eller resistance."
-
-Filnavn: round_number_100.mp3
-Script: "Pris ved stort rundt nummer. Hundrede dollar niveau. Meget stærkt psykologisk niveau."
-
-
-=====================================
-SEKTION 5: SESSION ALERTS
-=====================================
-
-Filnavn: session_asia_open.mp3
-Script: "Asia session åbner. Forvent lavere volatilitet. Range trading betingelser."
-
-Filnavn: session_london_open.mp3
-Script: "London session åbner. Volatilitet øges. Breakout muligheder."
-
-Filnavn: session_newyork_open.mp3
-Script: "New York session åbner. Høj volatilitet forventet. Prime trading tid."
-
-Filnavn: session_overlap.mp3
-Script: "London og New York overlap. Maksimal likviditet og volatilitet."
-
-Filnavn: session_closing.mp3
-Script: "Session lukker snart. Overvej at reducere positioner."
-
-Filnavn: session_closed.mp3
-Script: "Alle større sessions lukket. Lav volatilitet forventet."
-
-
-=====================================
-SEKTION 6: CONFLUENCE ALERTS
-=====================================
-
-Filnavn: confluence_3_bullish.mp3
-Script: "Tre bullish strategier aktive. Moderat confluence opad."
-
-Filnavn: confluence_3_bearish.mp3
-Script: "Tre bearish strategier aktive. Moderat confluence nedad."
-
-Filnavn: confluence_5_bullish.mp3
-Script: "Fem eller flere bullish strategier aktive! Høj confluence. Stærkt long setup."
-
-Filnavn: confluence_5_bearish.mp3
-Script: "Fem eller flere bearish strategier aktive! Høj confluence. Stærkt short setup."
-
-Filnavn: confluence_max_bullish.mp3
-Script: "Maksimal bullish confluence! Alle indikatorer peger opad. Exceptionelt long setup."
-
-Filnavn: confluence_max_bearish.mp3
-Script: "Maksimal bearish confluence! Alle indikatorer peger nedad. Exceptionelt short setup."
-
-
-=====================================
-SEKTION 7: INDICATOR ALERTS
-=====================================
-
---- RSI ---
-
-Filnavn: rsi_oversold.mp3
-Script: "RSI oversold. Under tredive. Potentiel bund."
-
-Filnavn: rsi_overbought.mp3
-Script: "RSI overbought. Over halvfjerds. Potentiel top."
-
-Filnavn: rsi_extreme_low.mp3
-Script: "RSI ekstremt lav. Under tyve. Stærk oversold."
-
-Filnavn: rsi_extreme_high.mp3
-Script: "RSI ekstremt høj. Over firs. Stærk overbought."
-
-
---- STOCHASTIC ---
-
-Filnavn: stoch_oversold.mp3
-Script: "Stokastisk oversold. Under femogtyve. Søg long entry."
-
-Filnavn: stoch_overbought.mp3
-Script: "Stokastisk overbought. Over femoghalvfjerds. Søg short entry."
-
-Filnavn: stoch_cross_up.mp3
-Script: "Stokastisk kryds opad i oversold zone. Bullish signal."
-
-Filnavn: stoch_cross_down.mp3
-Script: "Stokastisk kryds nedad i overbought zone. Bearish signal."
-
-
---- MACD ---
-
-Filnavn: macd_cross_bullish.mp3
-Script: "MACD bullish kryds. Momentum skifter opad."
-
-Filnavn: macd_cross_bearish.mp3
-Script: "MACD bearish kryds. Momentum skifter nedad."
-
-Filnavn: macd_histogram_growing.mp3
-Script: "MACD histogram vokser. Momentum accelererer."
-
-
---- ADX ---
-
-Filnavn: adx_trending.mp3
-Script: "ADX over femogtyve. Stærk trend bekræftet."
-
-Filnavn: adx_ranging.mp3
-Script: "ADX under tyve. Marked i range. Undgå trend strategier."
-
-
---- EMA ---
-
-Filnavn: ema_bullish_stack.mp3
-Script: "EMA bullish struktur. Pris over alle moving averages. Trend opad."
-
-Filnavn: ema_bearish_stack.mp3
-Script: "EMA bearish struktur. Pris under alle moving averages. Trend nedad."
-
-Filnavn: ema_cross_golden.mp3
-Script: "Golden cross. Fifty EMA krydser over two hundred EMA. Langsigtet bullish."
-
-Filnavn: ema_cross_death.mp3
-Script: "Death cross. Fifty EMA krydser under two hundred EMA. Langsigtet bearish."
-
-
-=====================================
-SEKTION 8: SYSTEM ALERTS
-=====================================
-
-Filnavn: system_ready.mp3
-Script: "Trading intelligence system klar. Forbindelse etableret."
-
-Filnavn: system_error.mp3
-Script: "System fejl. Tjek forbindelse til data feed."
-
-Filnavn: data_updated.mp3
-Script: "Data opdateret."
-
-Filnavn: connection_lost.mp3
-Script: "Forbindelse tabt. Forsøger at genoprette."
-
-Filnavn: connection_restored.mp3
-Script: "Forbindelse genoprettet. Data synkroniseret."
-
-
-=====================================
-SEKTION 9: SCORE BUILDING
-=====================================
-
-Filnavn: score_building_long.mp3
-Script: "Long score bygger op. Treds procent. Overvej forberedelse."
-
-Filnavn: score_building_short.mp3
-Script: "Short score bygger op. Treds procent. Overvej forberedelse."
-
-Filnavn: score_dropping.mp3
-Script: "Score falder. Signal svækkes."
-
-Filnavn: score_threshold_70.mp3
-Script: "Score over halvfjerds. Signal tæt på aktivering."
-
-Filnavn: score_threshold_80.mp3
-Script: "Score over firs. Stærkt signal aktivt."
-
-
-=====================================
-SEKTION 10: RISK ALERTS
-=====================================
-
-Filnavn: risk_high_volatility.mp3
-Script: "Advarsel. Høj volatilitet detekteret. ATR over normalt. Tilpas position størrelse."
-
-Filnavn: risk_news_warning.mp3
-Script: "Potentiel nyheds påvirkning. Vær forsigtig med nye positioner."
-
-Filnavn: risk_stop_triggered.mp3
-Script: "Stop niveau ramt. Position lukket."
-
-Filnavn: risk_target_reached.mp3
-Script: "Target niveau nået. Profit sikret."
-
-Filnavn: risk_trailing_active.mp3
-Script: "Trailing stop aktiveret. Profit låst ind."
-
+---SCRIPT---
+signal_long_strong
+Stærkt LONG signal! Score over 80. Overvej entry nu.
+---SCRIPT---
+signal_short_strong
+Stærkt SHORT signal! Score over 80. Overvej entry nu.
+---SCRIPT---
+signal_long_ready
+LONG signal klar. Score over 70. God mulighed.
+---SCRIPT---
+signal_short_ready
+SHORT signal klar. Score over 70. God mulighed.
+---SCRIPT---
+signal_wait
+Signal venteposition. Afvent bedre setup.
+---SCRIPT---
+signal_expired
+Signalet er udløbet. Vent på nyt signal.
+---SCRIPT---
+score_building_long
+Long score bygger op. Følg med.
+---SCRIPT---
+score_building_short
+Short score bygger op. Følg med.
+---SCRIPT---
+score_threshold_70
+Score over 70. Signal tæt på aktivering.
+---SCRIPT---
+score_threshold_80
+Score over 80. Stærkt signal aktivt.
+---SCRIPT---
+score_dropping
+Score falder. Signal svækkes.
 
 ===============================================================================
-INSTRUKTIONER TIL GENERERING AF LYDFILER
+ICT STRATEGIER
 ===============================================================================
 
-1. Kopier script teksten
-2. Gå til TTS generator (fx elevenlabs.io, Google Cloud TTS, Amazon Polly)
-3. Vælg dansk stemme
-4. Generer MP3
-5. Gem med det angivne filnavn
-6. Upload til sounds/ mappen på din webhosting
+---SCRIPT---
+fvg_bullish
+Fair value gap bullish. Pris ubalance over nuværende niveau. Potentielt support.
+---SCRIPT---
+fvg_bearish
+Fair value gap bearish. Pris ubalance under nuværende niveau. Potentielt resistance.
+---SCRIPT---
+fvg_filled
+Fair value gap udfyldt. Prisen har returneret til balancezonen.
+---SCRIPT---
+orderblock_bullish
+Bullish order block detekteret. Institutionel købszone.
+---SCRIPT---
+orderblock_bearish
+Bearish order block detekteret. Institutionel salgszone.
+---SCRIPT---
+orderblock_touch
+Pris rører order block. Overvej entry ved bekræftelse.
+---SCRIPT---
+bos_bullish
+Break of structure bullish! Trend bekræftet opad. Søg long entries.
+---SCRIPT---
+bos_bearish
+Break of structure bearish! Trend bekræftet nedad. Søg short entries.
+---SCRIPT---
+liquidity_sweep_high
+Likviditets sweep af høj. Stop hunt opad. Overvej short ved reversal.
+---SCRIPT---
+liquidity_sweep_low
+Likviditets sweep af lav. Stop hunt nedad. Overvej long ved reversal.
+---SCRIPT---
+liquidity_zone
+Pris nærmer sig likviditetszone. Vær opmærksom på sweep.
 
-ALTERNATIV - BROWSER TTS:
-Du kan også bruge browserens indbyggede TTS via JavaScript:
-- speechSynthesis.speak(new SpeechSynthesisUtterance("tekst her"))
-- Dette kræver ingen eksterne filer, men kvaliteten varierer
+===============================================================================
+DIVERGENCE
+===============================================================================
 
-ANBEFALEDE TTS TJENESTER:
-- ElevenLabs (bedste kvalitet, dansk tilgængelig)
-- Google Cloud Text-to-Speech
-- Amazon Polly
-- Microsoft Azure Speech
+---SCRIPT---
+divergence_bullish_rsi
+Bullish RSI divergens. Pris lavere lows, RSI højere lows. Reversal muligt.
+---SCRIPT---
+divergence_bearish_rsi
+Bearish RSI divergens. Pris højere highs, RSI lavere highs. Reversal muligt.
+---SCRIPT---
+divergence_bullish_macd
+Bullish MACD divergens. Momentum divergerer fra pris. Overvej long.
+---SCRIPT---
+divergence_bearish_macd
+Bearish MACD divergens. Momentum divergerer fra pris. Overvej short.
+
+===============================================================================
+BREAKOUTS
+===============================================================================
+
+---SCRIPT---
+breakout_pdh
+Breakout over forrige dags high! Momentum opad. Bullish signal.
+---SCRIPT---
+breakout_pdl
+Breakout under forrige dags low! Momentum nedad. Bearish signal.
+---SCRIPT---
+breakout_weekly_high
+Breakout over ugentlig high! Stærkt bullish momentum.
+---SCRIPT---
+breakout_weekly_low
+Breakout under ugentlig low! Stærkt bearish momentum.
+---SCRIPT---
+breakout_failed
+Falsk breakout. Pris trukket tilbage. Overvej reversal.
+
+===============================================================================
+PIVOT POINTS
+===============================================================================
+
+---SCRIPT---
+pivot_support
+Pris rører pivot support niveau. Potentielt bounce område.
+---SCRIPT---
+pivot_resistance
+Pris rører pivot resistance niveau. Potentiel afvisning.
+---SCRIPT---
+pivot_main
+Pris ved daily pivot punkt. Vigtig beslutningszone.
+
+===============================================================================
+VWAP
+===============================================================================
+
+---SCRIPT---
+vwap_cross_above
+Pris krydser over VWAP. Bullish bias aktiveret.
+---SCRIPT---
+vwap_cross_below
+Pris krydser under VWAP. Bearish bias aktiveret.
+---SCRIPT---
+vwap_touch
+Pris rører VWAP. Mean reversion niveau.
+
+===============================================================================
+PRICE ACTION PATTERNS
+===============================================================================
+
+---SCRIPT---
+engulfing_bullish
+Bullish engulfing pattern! Stærkt reversal signal opad.
+---SCRIPT---
+engulfing_bearish
+Bearish engulfing pattern! Stærkt reversal signal nedad.
+---SCRIPT---
+pinbar_bullish
+Bullish pin bar. Lang hale nedad viser rejection. Long signal.
+---SCRIPT---
+pinbar_bearish
+Bearish pin bar. Lang hale opad viser rejection. Short signal.
+---SCRIPT---
+hammer
+Hammer mønster ved support. Potentiel bund. Overvej long.
+---SCRIPT---
+shooting_star
+Shooting star ved resistance. Potentiel top. Overvej short.
+---SCRIPT---
+doji
+Doji mønster. Ubeslutsomhed i markedet. Afvent bekræftelse.
+---SCRIPT---
+doji_at_high
+Doji ved høj. Potentiel reversal nedad. Afvent bekræftelse.
+---SCRIPT---
+doji_at_low
+Doji ved lav. Potentiel reversal opad. Afvent bekræftelse.
+
+===============================================================================
+ROUND NUMBERS
+===============================================================================
+
+---SCRIPT---
+round_number_10
+Pris nærmer sig rundt nummer. Ti dollar niveau.
+---SCRIPT---
+round_number_50
+Pris ved halvtreds dollar niveau. Psykologisk zone.
+---SCRIPT---
+round_number_100
+Pris ved hundrede dollar niveau. Meget stærkt psykologisk niveau.
+
+===============================================================================
+SESSIONS
+===============================================================================
+
+---SCRIPT---
+session_asia_open
+Asia session åbner. Lavere volatilitet forventet.
+---SCRIPT---
+session_london_open
+London session åbner. Volatilitet øges. Breakout muligheder.
+---SCRIPT---
+session_newyork_open
+New York session åbner. Høj volatilitet forventet.
+---SCRIPT---
+session_overlap
+London og New York overlap. Maksimal likviditet.
+---SCRIPT---
+session_closing
+Session lukker snart. Overvej at reducere positioner.
+---SCRIPT---
+session_closed
+Alle større sessions lukket. Lav volatilitet.
+
+===============================================================================
+CONFLUENCE
+===============================================================================
+
+---SCRIPT---
+confluence_3_bullish
+Tre bullish strategier aktive. Moderat confluence opad.
+---SCRIPT---
+confluence_3_bearish
+Tre bearish strategier aktive. Moderat confluence nedad.
+---SCRIPT---
+confluence_5_bullish
+Fem bullish strategier aktive! Høj confluence. Stærkt long setup.
+---SCRIPT---
+confluence_5_bearish
+Fem bearish strategier aktive! Høj confluence. Stærkt short setup.
+---SCRIPT---
+confluence_high
+Høj confluence! Mange faktorer peger samme vej.
+---SCRIPT---
+confluence_max
+Maksimal confluence! Exceptionelt setup.
+
+===============================================================================
+INDIKATORER
+===============================================================================
+
+---SCRIPT---
+rsi_oversold
+RSI oversold. Under 30. Potentiel bund.
+---SCRIPT---
+rsi_overbought
+RSI overbought. Over 70. Potentiel top.
+---SCRIPT---
+rsi_extreme_low
+RSI ekstremt lav. Under 20. Stærk oversold.
+---SCRIPT---
+rsi_extreme_high
+RSI ekstremt høj. Over 80. Stærk overbought.
+---SCRIPT---
+stoch_oversold
+Stokastisk oversold. Mulig bund.
+---SCRIPT---
+stoch_overbought
+Stokastisk overbought. Mulig top.
+---SCRIPT---
+stoch_cross_up
+Stokastisk kryds opad i oversold zone. Bullish signal.
+---SCRIPT---
+stoch_cross_down
+Stokastisk kryds nedad i overbought zone. Bearish signal.
+---SCRIPT---
+macd_cross_bullish
+MACD bullish kryds. Momentum skifter opad.
+---SCRIPT---
+macd_cross_bearish
+MACD bearish kryds. Momentum skifter nedad.
+---SCRIPT---
+adx_trending
+ADX over 25. Stærk trend bekræftet.
+---SCRIPT---
+adx_ranging
+ADX under 20. Marked i range. Undgå trend strategier.
+---SCRIPT---
+ema_bullish_stack
+EMA bullish struktur. Pris over alle moving averages. Trend opad.
+---SCRIPT---
+ema_bearish_stack
+EMA bearish struktur. Pris under alle moving averages. Trend nedad.
+---SCRIPT---
+ema_cross_golden
+Golden cross. 50 EMA krydser over 200 EMA. Langsigtet bullish.
+---SCRIPT---
+ema_cross_death
+Death cross. 50 EMA krydser under 200 EMA. Langsigtet bearish.
+
+===============================================================================
+REGIME & TREND
+===============================================================================
+
+---SCRIPT---
+regime_change_bullish
+Regime skifter til bullish. Trend op.
+---SCRIPT---
+regime_change_bearish
+Regime skifter til bearish. Trend ned.
+---SCRIPT---
+trend_strong_up
+Stærk opadgående trend. Hold long bias.
+---SCRIPT---
+trend_strong_down
+Stærk nedadgående trend. Hold short bias.
+---SCRIPT---
+trend_weakening
+Trend svækkes. Overvej at reducere position.
+
+===============================================================================
+RISK & TARGETS
+===============================================================================
+
+---SCRIPT---
+target_hit
+Target ramt! Luk position.
+---SCRIPT---
+stop_warning
+Advarsel. Tæt på stop loss.
+---SCRIPT---
+stop_triggered
+Stop loss ramt. Position lukket.
+---SCRIPT---
+trailing_active
+Trailing stop aktiveret. Profit låst ind.
+---SCRIPT---
+risk_high_volatility
+Advarsel. Høj volatilitet. Tilpas position størrelse.
+---SCRIPT---
+new_high
+Ny høj! Prisen bryder op.
+---SCRIPT---
+new_low
+Ny lav! Prisen bryder ned.
+---SCRIPT---
+volatility_spike
+Volatilitet stiger! Vær forsigtig.
+
+===============================================================================
+SYSTEM
+===============================================================================
+
+---SCRIPT---
+system_ready
+System klar. Overvågning aktiv.
+---SCRIPT---
+system_error
+System fejl. Tjek forbindelse.
+---SCRIPT---
+data_updated
+Data opdateret.
+---SCRIPT---
+connection_lost
+Forbindelse tabt. Forsøger at genoprette.
+---SCRIPT---
+connection_restored
+Forbindelse genoprettet.
+---SCRIPT---
+all_clear
+Markedet er roligt. Ingen signaler.
 
 ===============================================================================
