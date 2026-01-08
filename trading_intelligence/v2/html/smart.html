@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Trading - Context Aware Alerts</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+        .header .subtitle {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+
+        /* Sound Toggle */
+        .sound-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+        .sound-btn.on { background: #22c55e; color: white; }
+        .sound-btn.off { background: #ef4444; color: white; }
+
+        /* Main Signal Card */
+        .signal-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .signal-card.long-ready {
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+        }
+        .signal-card.short-ready {
+            border-color: #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+        .signal-card.building {
+            border-color: #f59e0b;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+
+        .price {
+            font-size: 3em;
+            font-weight: 700;
+            color: #ffd700;
+            font-family: monospace;
+        }
+
+        .signal-text {
+            font-size: 1.8em;
+            font-weight: 800;
+            margin: 15px 0;
+            padding: 15px 30px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        .signal-text.LONG { background: #22c55e; color: white; }
+        .signal-text.SHORT { background: #ef4444; color: white; }
+        .signal-text.WAIT { background: #4b5563; color: #9ca3af; }
+        .signal-text.BUILDING { background: #f59e0b; color: #000; }
+
+        /* Context Reason */
+        .context-reason {
+            background: rgba(255,215,0,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .context-reason .label {
+            color: #ffd700;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .context-reason ul {
+            list-style: none;
+            text-align: left;
+        }
+        .context-reason li {
+            padding: 3px 0;
+        }
+        .context-reason .good { color: #22c55e; }
+        .context-reason .bad { color: #ef4444; }
+        .context-reason .neutral { color: #9ca3af; }
+
+        /* Scores */
+        .scores-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+        .score-box {
+            text-align: center;
+        }
+        .score-label {
+            font-size: 0.8em;
+            color: #6b7280;
+        }
+        .score-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .score-value.long { color: #22c55e; }
+        .score-value.short { color: #ef4444; }
+
+        /* Context Indicators */
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .context-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+        .context-box .label {
+            font-size: 0.75em;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        .context-box .value {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        .context-box .value.bullish { color: #22c55e; }
+        .context-box .value.bearish { color: #ef4444; }
+        .context-box .value.neutral { color: #ffd700; }
+
+        /* Stoch Visual */
+        .stoch-visual {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stoch-title {
+            color: #6b7280;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .stoch-bar {
+            height: 30px;
+            background: linear-gradient(90deg,
+                #22c55e 0%, #22c55e 20%,
+                #4b5563 20%, #4b5563 80%,
+                #ef4444 80%, #ef4444 100%);
+            border-radius: 15px;
+            position: relative;
+        }
+        .stoch-marker {
+            position: absolute;
+            top: -5px;
+            width: 6px;
+            height: 40px;
+            background: #ffd700;
+            border-radius: 3px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            transition: left 0.5s;
+        }
+        .stoch-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+        .stoch-value {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .stoch-value.oversold { color: #22c55e; }
+        .stoch-value.overbought { color: #ef4444; }
+        .stoch-value.neutral { color: #9ca3af; }
+
+        /* Session Badge */
+        .session-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .session-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .session-badge.active { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .session-badge.inactive { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            color: #6b7280;
+        }
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Alert History */
+        .alert-history {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        .alert-history h3 {
+            color: #ffd700;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .alert-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+        }
+        .alert-item.long { background: rgba(34, 197, 94, 0.15); border-left: 3px solid #22c55e; }
+        .alert-item.short { background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; }
+        .alert-item.info { background: rgba(59, 130, 246, 0.15); border-left: 3px solid #3b82f6; }
+        .alert-time { color: #6b7280; font-family: monospace; }
+
+        /* Settings Panel */
+        .settings-panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .settings-panel h3 {
+            color: #ffd700;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-label { color: #9ca3af; font-size: 0.9em; }
+        .setting-value {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #ffd700;
+        }
+
+        /* Navigation */
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .nav-link:hover { color: #ffd700; }
+    </style>
+</head>
+<body>
+    <button class="sound-btn on" id="soundBtn" onclick="toggleSound()">Lyd TIL</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>Smart Trading</h1>
+            <p class="subtitle">Kontekst-baserede alerts - MGC Gold Futures</p>
+        </div>
+
+        <!-- Main Signal -->
+        <div class="signal-card" id="signalCard">
+            <div class="price" id="price">$----</div>
+            <div class="signal-text WAIT" id="signalText">VENT</div>
+
+            <div class="context-reason" id="contextReason">
+                <div class="label">Analyse:</div>
+                <ul id="reasonList">
+                    <li class="neutral">Venter på data...</li>
+                </ul>
+            </div>
+
+            <div class="scores-row">
+                <div class="score-box">
+                    <div class="score-label">LONG SCORE</div>
+                    <div class="score-value long" id="scoreLong">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">SHORT SCORE</div>
+                    <div class="score-value short" id="scoreShort">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Grid -->
+        <div class="context-grid">
+            <div class="context-box">
+                <div class="label">TREND</div>
+                <div class="value neutral" id="trend">--</div>
+            </div>
+            <div class="context-box">
+                <div class="label">RSI</div>
+                <div class="value neutral" id="rsi">--</div>
+            </div>
+            <div class="context-box">
+                <div class="label">EMA STATUS</div>
+                <div class="value neutral" id="emaStatus">--</div>
+            </div>
+            <div class="context-box">
+                <div class="label">ATR</div>
+                <div class="value" id="atr">--</div>
+            </div>
+        </div>
+
+        <!-- Stochastic -->
+        <div class="stoch-visual">
+            <div class="stoch-title">STOCHASTIC POSITION</div>
+            <div class="stoch-bar">
+                <div class="stoch-marker" id="stochMarker" style="left: 50%;"></div>
+            </div>
+            <div class="stoch-labels">
+                <span>OVERSOLD (Klar til LONG)</span>
+                <span>OVERBOUGHT (Klar til SHORT)</span>
+            </div>
+            <div class="stoch-value neutral" id="stochValue">50</div>
+        </div>
+
+        <!-- Session -->
+        <div class="session-row">
+            <span class="session-badge inactive" id="sessionBadge">--</span>
+            <div class="live-indicator">
+                <span class="live-dot" id="liveDot"></span>
+                <span id="updateTime">--</span>
+            </div>
+        </div>
+
+        <!-- Alert History -->
+        <div class="alert-history">
+            <h3>Seneste Alerts</h3>
+            <div id="alertList">
+                <div class="alert-item info">
+                    <span>System starter...</span>
+                    <span class="alert-time">--:--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Settings -->
+        <div class="settings-panel">
+            <h3>Aktive Indstillinger (fra Lab)</h3>
+            <div class="setting-row">
+                <span class="setting-label">Min Score</span>
+                <span class="setting-value" id="settingMinScore">60</span>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">Stoch Oversold</span>
+                <span class="setting-value" id="settingStochOS">20</span>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">Stoch Overbought</span>
+                <span class="setting-value" id="settingStochOB">80</span>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">RSI Oversold</span>
+                <span class="setting-value" id="settingRsiOS">30</span>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">RSI Overbought</span>
+                <span class="setting-value" id="settingRsiOB">70</span>
+            </div>
+        </div>
+
+        <a href="lab.html" class="nav-link">Juster indstillinger i Lab</a>
+        <a href="station.html" class="nav-link">Tilbage til Station</a>
+    </div>
+
+    <script>
+        // ============ CONFIG ============
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        // Default params - will be overwritten by Lab settings
+        let params = {
+            minScore: 60,
+            stochOversold: 20,
+            stochOverbought: 80,
+            rsiOversold: 30,
+            rsiOverbought: 70
+        };
+
+        // State
+        let soundEnabled = true;
+        let lastSignal = 'WAIT';
+        let lastAlertTime = 0;
+        let alertHistory = [];
+
+        // Sound files
+        const sounds = {
+            long_ready: new Audio('sounds/signal_long_ready.mp3'),
+            long_strong: new Audio('sounds/signal_long_strong.mp3'),
+            short_ready: new Audio('sounds/signal_short_ready.mp3'),
+            short_strong: new Audio('sounds/signal_short_strong.mp3'),
+            building: new Audio('sounds/score_building_long.mp3'),
+            stoch_oversold: new Audio('sounds/stoch_oversold.mp3'),
+            stoch_overbought: new Audio('sounds/stoch_overbought.mp3')
+        };
+
+        // ============ LOAD SETTINGS ============
+        function loadParams() {
+            try {
+                const saved = localStorage.getItem('tradingParams');
+                if (saved) {
+                    const loaded = JSON.parse(saved);
+                    params = { ...params, ...loaded };
+                }
+            } catch (e) {
+                console.log('Using default params');
+            }
+            updateSettingsUI();
+        }
+
+        function updateSettingsUI() {
+            document.getElementById('settingMinScore').textContent = params.minScore;
+            document.getElementById('settingStochOS').textContent = params.stochOversold;
+            document.getElementById('settingStochOB').textContent = params.stochOverbought;
+            document.getElementById('settingRsiOS').textContent = params.rsiOversold;
+            document.getElementById('settingRsiOB').textContent = params.rsiOverbought;
+        }
+
+        // ============ SOUND ============
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundBtn');
+            btn.textContent = soundEnabled ? 'Lyd TIL' : 'Lyd FRA';
+            btn.className = 'sound-btn ' + (soundEnabled ? 'on' : 'off');
+        }
+
+        function playSound(name) {
+            if (!soundEnabled) return;
+            const now = Date.now();
+            if (now - lastAlertTime < 10000) return; // 10 sec cooldown
+            lastAlertTime = now;
+
+            if (sounds[name]) {
+                sounds[name].play().catch(e => console.log('Audio blocked'));
+            }
+        }
+
+        // ============ ALERTS ============
+        function addAlert(message, type) {
+            const time = new Date().toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' });
+            alertHistory.unshift({ message, type, time });
+            if (alertHistory.length > 5) alertHistory.pop();
+
+            const list = document.getElementById('alertList');
+            list.innerHTML = alertHistory.map(a => `
+                <div class="alert-item ${a.type}">
+                    <span>${a.message}</span>
+                    <span class="alert-time">${a.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // ============ SMART ANALYSIS ============
+        function analyzeContext(data) {
+            const reasons = [];
+            let signalType = 'WAIT';
+            let signalStrength = 0;
+            let cardClass = '';
+
+            const scoreLong = data.score_long || 0;
+            const scoreShort = data.score_short || 0;
+            const stoch = data.stoch || 50;
+            const rsi = data.rsi || 50;
+            const trend = (data.trend || '').toLowerCase();
+            const session = data.session || '';
+            const price = data.price || 0;
+            const ema20 = data.ema20 || 0;
+            const ema50 = data.ema50 || 0;
+
+            // ====== LONG ANALYSIS ======
+            let longPoints = 0;
+            let longReasons = [];
+
+            // Score check
+            if (scoreLong >= params.minScore) {
+                longPoints += 2;
+                longReasons.push({ text: `Score ${scoreLong} over minimum (${params.minScore})`, good: true });
+            }
+
+            // Stochastic position - CRITICAL for longs
+            if (stoch <= params.stochOversold) {
+                longPoints += 3; // Extra weight!
+                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} i OVERSOLD zone - optimal for long`, good: true });
+            } else if (stoch >= params.stochOverbought) {
+                longPoints -= 2;
+                longReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERBOUGHT - dårlig for long`, good: false });
+            }
+
+            // RSI
+            if (rsi <= params.rsiOversold) {
+                longPoints += 2;
+                longReasons.push({ text: `RSI ${rsi.toFixed(0)} oversold - bullish`, good: true });
+            } else if (rsi >= params.rsiOverbought) {
+                longPoints -= 1;
+                longReasons.push({ text: `RSI ${rsi.toFixed(0)} overbought`, good: false });
+            }
+
+            // Trend alignment
+            if (trend.includes('up') || trend.includes('bullish')) {
+                longPoints += 2;
+                longReasons.push({ text: `Trend: ${data.trend} - aligned med long`, good: true });
+            } else if (trend.includes('down') || trend.includes('bearish')) {
+                longPoints -= 1;
+                longReasons.push({ text: `Trend: ${data.trend} - mod long`, good: false });
+            }
+
+            // EMA position
+            if (ema20 > 0 && ema50 > 0) {
+                if (price > ema20 && ema20 > ema50) {
+                    longPoints += 1;
+                    longReasons.push({ text: 'Pris over EMA stack - bullish struktur', good: true });
+                } else if (price < ema20 && price < ema50) {
+                    longPoints -= 1;
+                    longReasons.push({ text: 'Pris under begge EMAs', good: false });
+                }
+            }
+
+            // Session
+            const isActiveSession = session.toLowerCase().includes('london') ||
+                                   session.toLowerCase().includes('new york') ||
+                                   session.toLowerCase().includes('overlap');
+            if (isActiveSession) {
+                longPoints += 1;
+                longReasons.push({ text: `Aktiv session: ${session}`, good: true });
+            }
+
+            // ====== SHORT ANALYSIS ======
+            let shortPoints = 0;
+            let shortReasons = [];
+
+            // Score check
+            if (scoreShort >= params.minScore) {
+                shortPoints += 2;
+                shortReasons.push({ text: `Score ${scoreShort} over minimum (${params.minScore})`, good: true });
+            }
+
+            // Stochastic position - CRITICAL for shorts
+            if (stoch >= params.stochOverbought) {
+                shortPoints += 3;
+                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} i OVERBOUGHT zone - optimal for short`, good: true });
+            } else if (stoch <= params.stochOversold) {
+                shortPoints -= 2;
+                shortReasons.push({ text: `Stoch ${stoch.toFixed(0)} OVERSOLD - dårlig for short`, good: false });
+            }
+
+            // RSI
+            if (rsi >= params.rsiOverbought) {
+                shortPoints += 2;
+                shortReasons.push({ text: `RSI ${rsi.toFixed(0)} overbought - bearish`, good: true });
+            } else if (rsi <= params.rsiOversold) {
+                shortPoints -= 1;
+                shortReasons.push({ text: `RSI ${rsi.toFixed(0)} oversold`, good: false });
+            }
+
+            // Trend alignment
+            if (trend.includes('down') || trend.includes('bearish')) {
+                shortPoints += 2;
+                shortReasons.push({ text: `Trend: ${data.trend} - aligned med short`, good: true });
+            } else if (trend.includes('up') || trend.includes('bullish')) {
+                shortPoints -= 1;
+                shortReasons.push({ text: `Trend: ${data.trend} - mod short`, good: false });
+            }
+
+            // EMA position
+            if (ema20 > 0 && ema50 > 0) {
+                if (price < ema20 && ema20 < ema50) {
+                    shortPoints += 1;
+                    shortReasons.push({ text: 'Pris under EMA stack - bearish struktur', good: true });
+                }
+            }
+
+            // Session
+            if (isActiveSession) {
+                shortPoints += 1;
+                shortReasons.push({ text: `Aktiv session: ${session}`, good: true });
+            }
+
+            // ====== DETERMINE SIGNAL ======
+            const strongThreshold = 5;
+            const readyThreshold = 3;
+            const buildingThreshold = 2;
+
+            if (longPoints >= strongThreshold && longPoints > shortPoints) {
+                signalType = 'LONG';
+                signalStrength = 2; // Strong
+                reasons.push(...longReasons);
+                cardClass = 'long-ready';
+            } else if (longPoints >= readyThreshold && longPoints > shortPoints) {
+                signalType = 'LONG';
+                signalStrength = 1; // Ready
+                reasons.push(...longReasons);
+                cardClass = 'long-ready';
+            } else if (shortPoints >= strongThreshold && shortPoints > longPoints) {
+                signalType = 'SHORT';
+                signalStrength = 2;
+                reasons.push(...shortReasons);
+                cardClass = 'short-ready';
+            } else if (shortPoints >= readyThreshold && shortPoints > longPoints) {
+                signalType = 'SHORT';
+                signalStrength = 1;
+                reasons.push(...shortReasons);
+                cardClass = 'short-ready';
+            } else if (longPoints >= buildingThreshold || shortPoints >= buildingThreshold) {
+                signalType = 'BUILDING';
+                cardClass = 'building';
+                // Show the stronger direction
+                if (longPoints >= shortPoints) {
+                    reasons.push(...longReasons.slice(0, 3));
+                    reasons.push({ text: `Long setup bygger (${longPoints} point)`, good: null });
+                } else {
+                    reasons.push(...shortReasons.slice(0, 3));
+                    reasons.push({ text: `Short setup bygger (${shortPoints} point)`, good: null });
+                }
+            } else {
+                // No signal
+                reasons.push({ text: 'Ingen klar setup - vent på bedre forhold', good: null });
+                if (stoch > 30 && stoch < 70) {
+                    reasons.push({ text: `Stoch ${stoch.toFixed(0)} i neutral zone`, good: null });
+                }
+            }
+
+            return { signalType, signalStrength, reasons, cardClass, longPoints, shortPoints };
+        }
+
+        // ============ UPDATE UI ============
+        function updateUI(data) {
+            if (!data) {
+                document.getElementById('liveDot').style.background = '#ef4444';
+                return;
+            }
+
+            // Price
+            const price = data.price || 0;
+            document.getElementById('price').textContent = '$' + price.toFixed(1);
+
+            // Scores
+            document.getElementById('scoreLong').textContent = data.score_long || 0;
+            document.getElementById('scoreShort').textContent = data.score_short || 0;
+
+            // Context indicators
+            const trendEl = document.getElementById('trend');
+            trendEl.textContent = data.trend || '--';
+            const trendLower = (data.trend || '').toLowerCase();
+            trendEl.className = 'value ' + (trendLower.includes('up') ? 'bullish' : trendLower.includes('down') ? 'bearish' : 'neutral');
+
+            const rsiEl = document.getElementById('rsi');
+            const rsi = data.rsi || 50;
+            rsiEl.textContent = rsi.toFixed(0);
+            rsiEl.className = 'value ' + (rsi < params.rsiOversold ? 'bullish' : rsi > params.rsiOverbought ? 'bearish' : 'neutral');
+
+            const emaEl = document.getElementById('emaStatus');
+            if (data.ema20 && data.ema50) {
+                if (data.ema20 > data.ema50) {
+                    emaEl.textContent = 'BULLISH';
+                    emaEl.className = 'value bullish';
+                } else {
+                    emaEl.textContent = 'BEARISH';
+                    emaEl.className = 'value bearish';
+                }
+            } else {
+                emaEl.textContent = '--';
+                emaEl.className = 'value neutral';
+            }
+
+            document.getElementById('atr').textContent = data.atr ? '$' + data.atr.toFixed(1) : '--';
+
+            // Stochastic
+            const stoch = data.stoch || 50;
+            document.getElementById('stochMarker').style.left = stoch + '%';
+            const stochValueEl = document.getElementById('stochValue');
+            stochValueEl.textContent = stoch.toFixed(0);
+            stochValueEl.className = 'stoch-value ' + (stoch <= params.stochOversold ? 'oversold' : stoch >= params.stochOverbought ? 'overbought' : 'neutral');
+
+            // Session
+            const sessionEl = document.getElementById('sessionBadge');
+            sessionEl.textContent = data.session || 'Closed';
+            const isActive = (data.session || '').toLowerCase().includes('london') ||
+                            (data.session || '').toLowerCase().includes('new york');
+            sessionEl.className = 'session-badge ' + (isActive ? 'active' : 'inactive');
+
+            // Run smart analysis
+            const analysis = analyzeContext(data);
+
+            // Update signal card
+            const signalCard = document.getElementById('signalCard');
+            signalCard.className = 'signal-card ' + analysis.cardClass;
+
+            const signalText = document.getElementById('signalText');
+            if (analysis.signalType === 'LONG') {
+                signalText.textContent = analysis.signalStrength === 2 ? 'STRONG LONG' : 'LONG READY';
+                signalText.className = 'signal-text LONG';
+            } else if (analysis.signalType === 'SHORT') {
+                signalText.textContent = analysis.signalStrength === 2 ? 'STRONG SHORT' : 'SHORT READY';
+                signalText.className = 'signal-text SHORT';
+            } else if (analysis.signalType === 'BUILDING') {
+                signalText.textContent = 'SETUP BUILDING...';
+                signalText.className = 'signal-text BUILDING';
+            } else {
+                signalText.textContent = 'VENT';
+                signalText.className = 'signal-text WAIT';
+            }
+
+            // Update reasons
+            const reasonList = document.getElementById('reasonList');
+            reasonList.innerHTML = analysis.reasons.map(r => {
+                const cls = r.good === true ? 'good' : r.good === false ? 'bad' : 'neutral';
+                const icon = r.good === true ? '✓' : r.good === false ? '✗' : '•';
+                return `<li class="${cls}">${icon} ${r.text}</li>`;
+            }).join('');
+
+            // Play sound and add alert if signal changed
+            if (analysis.signalType !== lastSignal) {
+                if (analysis.signalType === 'LONG') {
+                    playSound(analysis.signalStrength === 2 ? 'long_strong' : 'long_ready');
+                    addAlert(analysis.signalStrength === 2 ? 'STRONG LONG signal!' : 'Long setup ready', 'long');
+                } else if (analysis.signalType === 'SHORT') {
+                    playSound(analysis.signalStrength === 2 ? 'short_strong' : 'short_ready');
+                    addAlert(analysis.signalStrength === 2 ? 'STRONG SHORT signal!' : 'Short setup ready', 'short');
+                } else if (analysis.signalType === 'BUILDING' && lastSignal === 'WAIT') {
+                    playSound('building');
+                    addAlert('Setup bygger...', 'info');
+                }
+                lastSignal = analysis.signalType;
+            }
+
+            // Update time
+            document.getElementById('updateTime').textContent = new Date().toLocaleTimeString('da-DK');
+            document.getElementById('liveDot').style.background = '#22c55e';
+        }
+
+        // ============ FETCH DATA ============
+        async function fetchData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    return data[keys[keys.length - 1]];
+                }
+                return null;
+            } catch (e) {
+                console.error('Fetch error:', e);
+                return null;
+            }
+        }
+
+        // ============ INIT ============
+        loadParams();
+        fetchData().then(updateUI);
+
+        // Refresh every 3 seconds
+        setInterval(() => fetchData().then(updateUI), 3000);
+
+        // Initial alert
+        addAlert('System klar - venter på signal', 'info');
+    </script>
+</body>
+</html>
