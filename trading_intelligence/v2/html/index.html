@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Trading Intelligence V2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .version-badge {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,140,0,0.05));
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .hero p { color: #a0a0a0; font-size: 1.1em; }
+        .hero .version {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-label { color: #6b7280; font-size: 0.85em; margin-bottom: 5px; }
+        .stat-value { font-size: 2em; font-weight: 700; font-family: monospace; }
+        .stat-value.gold { color: #ffd700; }
+        .stat-value.green { color: #22c55e; }
+        .stat-value.red { color: #ef4444; }
+        .stat-value.neutral { color: #6b7280; }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .feature-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,215,0,0.3);
+            transform: translateY(-3px);
+        }
+        .feature-icon { font-size: 2.5em; margin-bottom: 15px; }
+        .feature-title { font-size: 1.3em; font-weight: 600; color: #ffd700; margin-bottom: 8px; }
+        .feature-desc { color: #a0a0a0; font-size: 0.9em; line-height: 1.5; }
+        .feature-badge {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-top: 10px;
+        }
+        .feature-badge.new { background: rgba(255,215,0,0.2); color: #ffd700; }
+
+        /* Confluence Widget */
+        .confluence-widget {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .widget-title { color: #ffd700; font-size: 1.2em; margin-bottom: 20px; text-align: center; }
+        .confluence-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .confluence-side {
+            text-align: center;
+            min-width: 80px;
+        }
+        .confluence-count { font-size: 3em; font-weight: 700; font-family: monospace; }
+        .confluence-count.long { color: #22c55e; }
+        .confluence-count.short { color: #ef4444; }
+        .confluence-label { color: #6b7280; font-size: 0.9em; }
+        .confluence-bar-container {
+            width: 250px;
+            height: 30px;
+            background: #1a1a2e;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+        }
+        .confluence-bar-long {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        .confluence-bar-short {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        /* Signal Display */
+        .signal-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .signal-badge {
+            display: inline-block;
+            font-size: 1.8em;
+            font-weight: 800;
+            padding: 12px 35px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .signal-badge.LONG {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+        }
+        .signal-badge.SHORT {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+        }
+        .signal-badge.WAIT {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        /* What's New */
+        .whats-new {
+            background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(255,140,0,0.02));
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .whats-new h3 { color: #ffd700; margin-bottom: 15px; }
+        .whats-new ul { list-style: none; }
+        .whats-new li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .whats-new li:last-child { border-bottom: none; }
+        .whats-new .check { color: #22c55e; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 1.8em; }
+            .stat-value { font-size: 1.5em; }
+            .confluence-bar-container { width: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Intelligence</span>
+            <span class="version-badge">V2.0</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="active">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="strategies.html">&#128218; Strategier</a>
+            <a href="filters.html">&#9881; Filter</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="lab.html">&#128300; Lab</a>
+            <a href="history.html">&#128220; History</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>&#9889; Gold Trading Intelligence</h1>
+            <p>Multi-Strategy Real-Time Analysis for MGC1! Gold Futures</p>
+            <span class="version">VERSION 2.0</span>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-label">GOLD PRICE</div>
+                <div class="stat-value gold" id="price">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">SIGNAL</div>
+                <div class="stat-value neutral" id="signal">WAIT</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">LONG SCORE</div>
+                <div class="stat-value green" id="scoreLong">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">SHORT SCORE</div>
+                <div class="stat-value red" id="scoreShort">0</div>
+            </div>
+        </div>
+
+        <!-- Confluence Widget -->
+        <div class="confluence-widget">
+            <div class="widget-title">&#127919; Strategy Confluence</div>
+            <div class="confluence-display">
+                <div class="confluence-side">
+                    <div class="confluence-count long" id="longCount">0</div>
+                    <div class="confluence-label">BULLISH</div>
+                </div>
+                <div class="confluence-bar-container">
+                    <div class="confluence-bar-long" id="longBar" style="width: 50%;"></div>
+                    <div class="confluence-bar-short" id="shortBar" style="width: 50%;"></div>
+                </div>
+                <div class="confluence-side">
+                    <div class="confluence-count short" id="shortCount">0</div>
+                    <div class="confluence-label">BEARISH</div>
+                </div>
+            </div>
+            <div class="signal-display">
+                <div class="signal-badge WAIT" id="signalBadge">WAIT</div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="features-grid">
+            <a href="station.html" class="feature-card">
+                <div class="feature-icon">&#9889;</div>
+                <div class="feature-title">Trading Station</div>
+                <div class="feature-desc">Live multi-strategy monitor med real-time alerts. Se alle 13+ strategier aktivere samtidigt.</div>
+                <span class="feature-badge new">V2.0 UPGRADED</span>
+            </a>
+
+            <a href="strategies.html" class="feature-card">
+                <div class="feature-icon">&#128218;</div>
+                <div class="feature-title">Strategy Education</div>
+                <div class="feature-desc">Lær alle trading strategier. FVG, Order Blocks, Divergence, Breakouts og meget mere.</div>
+                <span class="feature-badge new">NY!</span>
+            </a>
+
+            <a href="filters.html" class="feature-card">
+                <div class="feature-icon">&#9881;</div>
+                <div class="feature-title">Alert Filter</div>
+                <div class="feature-desc">Tilpas hvilke strategier og alerts du vil modtage. Presets til scalping, swing og ICT.</div>
+                <span class="feature-badge new">NY!</span>
+            </a>
+
+            <a href="signal.html" class="feature-card">
+                <div class="feature-icon">&#127919;</div>
+                <div class="feature-title">Signal Analysis</div>
+                <div class="feature-desc">Detaljeret signal breakdown med entry, stop loss og target niveauer.</div>
+                <span class="feature-badge">CORE</span>
+            </a>
+
+            <a href="lab.html" class="feature-card">
+                <div class="feature-icon">&#128300;</div>
+                <div class="feature-title">Parameter Lab</div>
+                <div class="feature-desc">Test og juster signal parametre. Simuler forskellige setups.</div>
+                <span class="feature-badge">CORE</span>
+            </a>
+
+            <a href="history.html" class="feature-card">
+                <div class="feature-icon">&#128220;</div>
+                <div class="feature-title">Signal History</div>
+                <div class="feature-desc">Log over tidligere signals og deres resultater. Track performance.</div>
+                <span class="feature-badge">CORE</span>
+            </a>
+        </div>
+
+        <!-- What's New -->
+        <div class="whats-new">
+            <h3>&#127881; Nyt i Version 2.0</h3>
+            <ul>
+                <li><span class="check">&#10003;</span> 13+ nye trading strategier (ICT, Price Action, Classic TA)</li>
+                <li><span class="check">&#10003;</span> Strategy confluence meter - se hvor mange strategier er enige</li>
+                <li><span class="check">&#10003;</span> Uddannelses-tooltips for hver strategi</li>
+                <li><span class="check">&#10003;</span> Avanceret filter system med presets</li>
+                <li><span class="check">&#10003;</span> 50+ nye voice alerts</li>
+                <li><span class="check">&#10003;</span> Udvidet PineScript med FVG, Order Blocks, BOS detection</li>
+                <li><span class="check">&#10003;</span> Session awareness (Asia, London, NY)</li>
+                <li><span class="check">&#10003;</span> Round number og VWAP analyse</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            Gold Trading Intelligence V2.0 | MGC1! Gold Futures | Real-time Data via Firebase
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        async function fetchData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    return data[keys[keys.length - 1]];
+                }
+                return null;
+            } catch (e) {
+                console.error('Fetch failed:', e);
+                return null;
+            }
+        }
+
+        function updateUI(data) {
+            if (!data) {
+                document.getElementById('navLive').style.background = '#ef4444';
+                return;
+            }
+
+            // Price
+            const price = data.price || 0;
+            document.getElementById('price').textContent = '$' + price.toFixed(1);
+            document.getElementById('navPrice').textContent = '$' + price.toFixed(1);
+            document.getElementById('navLive').style.background = '#00d4aa';
+
+            // Scores
+            const scoreLong = data.score_long || 0;
+            const scoreShort = data.score_short || 0;
+            document.getElementById('scoreLong').textContent = scoreLong;
+            document.getElementById('scoreShort').textContent = scoreShort;
+
+            // Signal
+            let signal = 'WAIT';
+            if (scoreLong > 60 && scoreLong > scoreShort) signal = 'LONG';
+            else if (scoreShort > 60 && scoreShort > scoreLong) signal = 'SHORT';
+
+            const signalEl = document.getElementById('signal');
+            signalEl.textContent = signal;
+            signalEl.className = 'stat-value ' + (signal === 'LONG' ? 'green' : signal === 'SHORT' ? 'red' : 'neutral');
+
+            const signalBadge = document.getElementById('signalBadge');
+            signalBadge.textContent = signal;
+            signalBadge.className = 'signal-badge ' + signal;
+
+            // Confluence (simulated from available data)
+            let bullish = 0, bearish = 0;
+            if (data.rsi < 30) bullish++;
+            if (data.rsi > 70) bearish++;
+            if (data.stoch < 25) bullish++;
+            if (data.stoch > 75) bearish++;
+            if (data.trend === 'UP' || data.trend === 'BULLISH') bullish++;
+            if (data.trend === 'DOWN' || data.trend === 'BEARISH') bearish++;
+            if (scoreLong > 50) bullish++;
+            if (scoreShort > 50) bearish++;
+
+            document.getElementById('longCount').textContent = bullish;
+            document.getElementById('shortCount').textContent = bearish;
+
+            const total = bullish + bearish || 1;
+            document.getElementById('longBar').style.width = (bullish / total * 100) + '%';
+            document.getElementById('shortBar').style.width = (bearish / total * 100) + '%';
+        }
+
+        // Initial load
+        fetchData().then(updateUI);
+
+        // Auto-refresh every 5 seconds
+        setInterval(() => fetchData().then(updateUI), 5000);
+    </script>
+</body>
+</html>

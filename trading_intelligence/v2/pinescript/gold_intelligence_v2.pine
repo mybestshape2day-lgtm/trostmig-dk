@@ -1,0 +1,345 @@
+// ===========================================
+// GOLD TRADING INTELLIGENCE V2.0
+// Multi-Strategy Detection System
+// For MGC1! (Micro Gold Futures)
+// ===========================================
+// Dette script sender ALLE strategi-data til Firebase
+// HTML-siderne bruger disse data til alerts og uddannelse
+
+//@version=5
+indicator("Gold Intelligence V2.0", overlay=true)
+
+// ===========================================
+// INPUTS
+// ===========================================
+// Firebase endpoint
+firebase_url = input.string("YOUR_FIREBASE_URL", "Firebase URL")
+
+// Strategy toggles
+enable_fvg = input.bool(true, "Enable FVG Detection")
+enable_orderblocks = input.bool(true, "Enable Order Blocks")
+enable_breakouts = input.bool(true, "Enable Breakouts")
+enable_pivots = input.bool(true, "Enable Pivot Points")
+enable_divergence = input.bool(true, "Enable Divergence")
+enable_patterns = input.bool(true, "Enable Price Patterns")
+
+// ===========================================
+// CORE INDICATORS
+// ===========================================
+
+// --- RSI ---
+rsi_length = input.int(14, "RSI Length")
+rsi = ta.rsi(close, rsi_length)
+
+// --- Stochastic ---
+stoch_k = input.int(14, "Stoch K")
+stoch_d = input.int(3, "Stoch D")
+stoch_smooth = input.int(3, "Stoch Smooth")
+k = ta.stoch(close, high, low, stoch_k)
+d = ta.sma(k, stoch_d)
+
+// --- MACD ---
+macd_fast = input.int(12, "MACD Fast")
+macd_slow = input.int(26, "MACD Slow")
+macd_signal = input.int(9, "MACD Signal")
+[macdLine, signalLine, histLine] = ta.macd(close, macd_fast, macd_slow, macd_signal)
+
+// --- ATR ---
+atr_length = input.int(14, "ATR Length")
+atr = ta.atr(atr_length)
+
+// --- ADX ---
+adx_length = input.int(14, "ADX Length")
+[diplus, diminus, adx] = ta.dmi(adx_length, adx_length)
+
+// --- EMAs ---
+ema9 = ta.ema(close, 9)
+ema20 = ta.ema(close, 20)
+ema50 = ta.ema(close, 50)
+ema200 = ta.ema(close, 200)
+
+// --- VWAP ---
+vwap_value = ta.vwap(close)
+
+// ===========================================
+// 1. FAIR VALUE GAP (FVG) DETECTION
+// ICT Concept - Imbalance zones
+// ===========================================
+// Bullish FVG: Gap up between candle 1 high and candle 3 low
+// Bearish FVG: Gap down between candle 1 low and candle 3 high
+
+fvg_bullish = low > high[2] and close[1] > open[1]  // Gap up
+fvg_bearish = high < low[2] and close[1] < open[1]  // Gap down
+fvg_bull_level = fvg_bullish ? high[2] : na
+fvg_bear_level = fvg_bearish ? low[2] : na
+
+// ===========================================
+// 2. ORDER BLOCKS
+// ICT Concept - Institutional entry zones
+// ===========================================
+// Bullish OB: Last down candle before up move
+// Bearish OB: Last up candle before down move
+
+swing_lookback = 5
+is_swing_low = low == ta.lowest(low, swing_lookback)
+is_swing_high = high == ta.highest(high, swing_lookback)
+
+ob_bullish = is_swing_low and close[1] < open[1] and close > open
+ob_bearish = is_swing_high and close[1] > open[1] and close < open
+ob_bull_level = ob_bullish ? low[1] : na
+ob_bear_level = ob_bearish ? high[1] : na
+
+// ===========================================
+// 3. MARKET STRUCTURE
+// Break of Structure (BOS) / Change of Character (CHoCH)
+// ===========================================
+structure_lookback = 20
+highest_high = ta.highest(high, structure_lookback)
+lowest_low = ta.lowest(low, structure_lookback)
+
+// Structure break
+bos_bullish = close > highest_high[1] and close[1] <= highest_high[2]
+bos_bearish = close < lowest_low[1] and close[1] >= lowest_low[2]
+
+// ===========================================
+// 4. PREVIOUS DAY LEVELS
+// Classic support/resistance
+// ===========================================
+prev_day_high = request.security(syminfo.tickerid, "D", high[1])
+prev_day_low = request.security(syminfo.tickerid, "D", low[1])
+prev_day_close = request.security(syminfo.tickerid, "D", close[1])
+
+// Breakout detection
+breakout_high = close > prev_day_high and close[1] <= prev_day_high
+breakout_low = close < prev_day_low and close[1] >= prev_day_low
+
+// ===========================================
+// 5. PIVOT POINTS
+// Daily, Weekly pivots
+// ===========================================
+// Daily pivot
+daily_pivot = (prev_day_high + prev_day_low + prev_day_close) / 3
+daily_r1 = 2 * daily_pivot - prev_day_low
+daily_s1 = 2 * daily_pivot - prev_day_high
+daily_r2 = daily_pivot + (prev_day_high - prev_day_low)
+daily_s2 = daily_pivot - (prev_day_high - prev_day_low)
+
+// Weekly pivot
+prev_week_high = request.security(syminfo.tickerid, "W", high[1])
+prev_week_low = request.security(syminfo.tickerid, "W", low[1])
+prev_week_close = request.security(syminfo.tickerid, "W", close[1])
+weekly_pivot = (prev_week_high + prev_week_low + prev_week_close) / 3
+
+// Near pivot detection (within 0.1%)
+near_daily_pivot = math.abs(close - daily_pivot) / close < 0.001
+near_weekly_pivot = math.abs(close - weekly_pivot) / close < 0.001
+
+// ===========================================
+// 6. DIVERGENCE DETECTION
+// RSI and MACD divergence
+// ===========================================
+div_lookback = 14
+
+// RSI Divergence
+rsi_higher_high = high > ta.highest(high, div_lookback)[1]
+rsi_lower_low = low < ta.lowest(low, div_lookback)[1]
+rsi_lower_high = rsi < ta.highest(rsi, div_lookback)[1]
+rsi_higher_low = rsi > ta.lowest(rsi, div_lookback)[1]
+
+rsi_bull_div = rsi_lower_low and rsi_higher_low  // Price lower low, RSI higher low
+rsi_bear_div = rsi_higher_high and rsi_lower_high  // Price higher high, RSI lower high
+
+// MACD Divergence
+macd_bull_div = rsi_lower_low and macdLine > ta.lowest(macdLine, div_lookback)[1]
+macd_bear_div = rsi_higher_high and macdLine < ta.highest(macdLine, div_lookback)[1]
+
+// ===========================================
+// 7. CANDLESTICK PATTERNS
+// ===========================================
+// Engulfing
+bull_engulfing = close[1] < open[1] and close > open and close > open[1] and open < close[1]
+bear_engulfing = close[1] > open[1] and close < open and close < open[1] and open > close[1]
+
+// Pin Bar / Hammer
+body_size = math.abs(close - open)
+upper_wick = high - math.max(close, open)
+lower_wick = math.min(close, open) - low
+total_range = high - low
+
+hammer = lower_wick > body_size * 2 and upper_wick < body_size and close > open
+shooting_star = upper_wick > body_size * 2 and lower_wick < body_size and close < open
+
+// Doji
+doji = body_size < total_range * 0.1 and total_range > atr * 0.5
+
+// ===========================================
+// 8. ROUND NUMBERS
+// Psychological levels
+// ===========================================
+round_50 = math.floor(close / 50) * 50
+next_round_50 = round_50 + 50
+near_round_number = math.abs(close - round_50) < 5 or math.abs(close - next_round_50) < 5
+nearest_round = math.abs(close - round_50) < math.abs(close - next_round_50) ? round_50 : next_round_50
+
+// ===========================================
+// 9. SESSION DETECTION
+// ===========================================
+// UTC times
+hour_utc = hour(time, "UTC")
+london_open = hour_utc >= 8 and hour_utc < 9
+london_session = hour_utc >= 8 and hour_utc < 16
+ny_open = hour_utc >= 13 and hour_utc < 14
+ny_session = hour_utc >= 13 and hour_utc < 21
+asia_session = hour_utc >= 0 and hour_utc < 8
+
+session_name = asia_session ? "Asia" : london_session and ny_session ? "London/NY Overlap" : london_session ? "London" : ny_session ? "New York" : "Off Hours"
+
+// Minutes to next session
+mins_to_london = london_session ? 0 : hour_utc < 8 ? (8 - hour_utc) * 60 - minute : (24 - hour_utc + 8) * 60 - minute
+mins_to_ny = ny_session ? 0 : hour_utc < 13 ? (13 - hour_utc) * 60 - minute : (24 - hour_utc + 13) * 60 - minute
+
+// ===========================================
+// 10. MACD SIGNALS
+// ===========================================
+macd_cross_up = ta.crossover(macdLine, signalLine)
+macd_cross_down = ta.crossunder(macdLine, signalLine)
+macd_signal_type = macd_cross_up ? "cross_up" : macd_cross_down ? "cross_down" : "none"
+
+// ===========================================
+// 11. TREND DETECTION
+// ===========================================
+trend_up = ema9 > ema20 and ema20 > ema50 and close > ema9
+trend_down = ema9 < ema20 and ema20 < ema50 and close < ema9
+trend = trend_up ? "UPTREND" : trend_down ? "DOWNTREND" : "RANGING"
+
+// ===========================================
+// 12. CONFLUENCE SCORING
+// ===========================================
+// Long score
+score_long = 0
+score_long := score_long + (rsi < 30 ? 15 : rsi < 40 ? 10 : 0)
+score_long := score_long + (k < 20 ? 15 : k < 30 ? 10 : 0)
+score_long := score_long + (trend_up ? 15 : 0)
+score_long := score_long + (fvg_bullish ? 10 : 0)
+score_long := score_long + (ob_bullish ? 10 : 0)
+score_long := score_long + (bull_engulfing ? 10 : 0)
+score_long := score_long + (rsi_bull_div ? 10 : 0)
+score_long := score_long + (macd_cross_up ? 10 : 0)
+score_long := score_long + (close < daily_pivot ? 5 : 0)
+
+// Short score
+score_short = 0
+score_short := score_short + (rsi > 70 ? 15 : rsi > 60 ? 10 : 0)
+score_short := score_short + (k > 80 ? 15 : k > 70 ? 10 : 0)
+score_short := score_short + (trend_down ? 15 : 0)
+score_short := score_short + (fvg_bearish ? 10 : 0)
+score_short := score_short + (ob_bearish ? 10 : 0)
+score_short := score_short + (bear_engulfing ? 10 : 0)
+score_short := score_short + (rsi_bear_div ? 10 : 0)
+score_short := score_short + (macd_cross_down ? 10 : 0)
+score_short := score_short + (close > daily_pivot ? 5 : 0)
+
+// ===========================================
+// 13. ACTIVE STRATEGIES COUNT
+// ===========================================
+active_bull_strategies = (fvg_bullish ? 1 : 0) + (ob_bullish ? 1 : 0) + (bull_engulfing ? 1 : 0) + (rsi_bull_div ? 1 : 0) + (macd_cross_up ? 1 : 0) + (hammer ? 1 : 0) + (bos_bullish ? 1 : 0)
+active_bear_strategies = (fvg_bearish ? 1 : 0) + (ob_bearish ? 1 : 0) + (bear_engulfing ? 1 : 0) + (rsi_bear_div ? 1 : 0) + (macd_cross_down ? 1 : 0) + (shooting_star ? 1 : 0) + (bos_bearish ? 1 : 0)
+
+// ===========================================
+// PLOTTING
+// ===========================================
+// EMAs
+plot(ema9, "EMA 9", color=color.yellow, linewidth=1)
+plot(ema20, "EMA 20", color=color.blue, linewidth=1)
+plot(ema50, "EMA 50", color=color.purple, linewidth=1)
+
+// Pivots
+plot(daily_pivot, "Daily Pivot", color=color.gray, style=plot.style_circles)
+plot(prev_day_high, "Prev Day High", color=color.green, style=plot.style_cross)
+plot(prev_day_low, "Prev Day Low", color=color.red, style=plot.style_cross)
+
+// FVG zones
+bgcolor(fvg_bullish ? color.new(color.green, 90) : na)
+bgcolor(fvg_bearish ? color.new(color.red, 90) : na)
+
+// Signals
+plotshape(bull_engulfing, "Bull Engulfing", shape.triangleup, location.belowbar, color.green, size=size.small)
+plotshape(bear_engulfing, "Bear Engulfing", shape.triangledown, location.abovebar, color.red, size=size.small)
+
+// ===========================================
+// DATA TABLE (for debugging)
+// ===========================================
+var table dataTable = table.new(position.top_right, 2, 15, bgcolor=color.new(color.black, 80))
+if barstate.islast
+    table.cell(dataTable, 0, 0, "Score Long", text_color=color.white)
+    table.cell(dataTable, 1, 0, str.tostring(score_long), text_color=color.green)
+    table.cell(dataTable, 0, 1, "Score Short", text_color=color.white)
+    table.cell(dataTable, 1, 1, str.tostring(score_short), text_color=color.red)
+    table.cell(dataTable, 0, 2, "FVG Bull", text_color=color.white)
+    table.cell(dataTable, 1, 2, fvg_bullish ? "YES" : "no", text_color=fvg_bullish ? color.green : color.gray)
+    table.cell(dataTable, 0, 3, "FVG Bear", text_color=color.white)
+    table.cell(dataTable, 1, 3, fvg_bearish ? "YES" : "no", text_color=fvg_bearish ? color.red : color.gray)
+    table.cell(dataTable, 0, 4, "Session", text_color=color.white)
+    table.cell(dataTable, 1, 4, session_name, text_color=color.yellow)
+    table.cell(dataTable, 0, 5, "Trend", text_color=color.white)
+    table.cell(dataTable, 1, 5, trend, text_color=trend_up ? color.green : trend_down ? color.red : color.gray)
+
+// ===========================================
+// ALERTS (for webhook to Firebase)
+// ===========================================
+// Create JSON payload for Firebase
+// Note: In practice, you'd use a webhook service to send this data
+
+alertcondition(true, "Gold Intelligence V2 Data",
+    '{"price":' + str.tostring(close) +
+    ',"open":' + str.tostring(open) +
+    ',"high":' + str.tostring(high) +
+    ',"low":' + str.tostring(low) +
+    ',"rsi":' + str.tostring(math.round(rsi)) +
+    ',"stoch":' + str.tostring(math.round(k)) +
+    ',"stoch_d":' + str.tostring(math.round(d)) +
+    ',"macd":' + str.tostring(math.round(macdLine * 100) / 100) +
+    ',"macd_signal":' + str.tostring(math.round(signalLine * 100) / 100) +
+    ',"atr":' + str.tostring(math.round(atr * 10) / 10) +
+    ',"adx":' + str.tostring(math.round(adx)) +
+    ',"ema9":' + str.tostring(math.round(ema9 * 10) / 10) +
+    ',"ema20":' + str.tostring(math.round(ema20 * 10) / 10) +
+    ',"ema50":' + str.tostring(math.round(ema50 * 10) / 10) +
+    ',"vwap":' + str.tostring(math.round(vwap_value * 10) / 10) +
+    ',"trend":"' + trend + '"' +
+    ',"session":"' + session_name + '"' +
+    ',"score_long":' + str.tostring(score_long) +
+    ',"score_short":' + str.tostring(score_short) +
+    ',"fvg_bullish":' + (fvg_bullish ? 'true' : 'false') +
+    ',"fvg_bearish":' + (fvg_bearish ? 'true' : 'false') +
+    ',"fvg_bull_level":' + str.tostring(nz(fvg_bull_level, 0)) +
+    ',"fvg_bear_level":' + str.tostring(nz(fvg_bear_level, 0)) +
+    ',"ob_bullish":' + (ob_bullish ? 'true' : 'false') +
+    ',"ob_bearish":' + (ob_bearish ? 'true' : 'false') +
+    ',"ob_bull_level":' + str.tostring(nz(ob_bull_level, 0)) +
+    ',"ob_bear_level":' + str.tostring(nz(ob_bear_level, 0)) +
+    ',"bos_bullish":' + (bos_bullish ? 'true' : 'false') +
+    ',"bos_bearish":' + (bos_bearish ? 'true' : 'false') +
+    ',"prev_day_high":' + str.tostring(prev_day_high) +
+    ',"prev_day_low":' + str.tostring(prev_day_low) +
+    ',"breakout_high":' + (breakout_high ? 'true' : 'false') +
+    ',"breakout_low":' + (breakout_low ? 'true' : 'false') +
+    ',"daily_pivot":' + str.tostring(math.round(daily_pivot * 10) / 10) +
+    ',"weekly_pivot":' + str.tostring(math.round(weekly_pivot * 10) / 10) +
+    ',"near_daily_pivot":' + (near_daily_pivot ? 'true' : 'false') +
+    ',"near_weekly_pivot":' + (near_weekly_pivot ? 'true' : 'false') +
+    ',"rsi_bull_div":' + (rsi_bull_div ? 'true' : 'false') +
+    ',"rsi_bear_div":' + (rsi_bear_div ? 'true' : 'false') +
+    ',"macd_cross":"' + macd_signal_type + '"' +
+    ',"bull_engulfing":' + (bull_engulfing ? 'true' : 'false') +
+    ',"bear_engulfing":' + (bear_engulfing ? 'true' : 'false') +
+    ',"hammer":' + (hammer ? 'true' : 'false') +
+    ',"shooting_star":' + (shooting_star ? 'true' : 'false') +
+    ',"doji":' + (doji ? 'true' : 'false') +
+    ',"near_round_number":' + (near_round_number ? 'true' : 'false') +
+    ',"nearest_round":' + str.tostring(nearest_round) +
+    ',"mins_to_london":' + str.tostring(mins_to_london) +
+    ',"mins_to_ny":' + str.tostring(mins_to_ny) +
+    ',"active_bull_strategies":' + str.tostring(active_bull_strategies) +
+    ',"active_bear_strategies":' + str.tostring(active_bear_strategies) +
+    '}')

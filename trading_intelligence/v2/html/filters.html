@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Filters - Gold Trading Intelligence V2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+        .header { text-align: center; padding: 20px; margin-bottom: 20px; }
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: #9ca3af; margin-top: 10px; }
+
+        /* Presets */
+        .presets-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .presets-title {
+            font-size: 1.1em;
+            color: #ffd700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .preset-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #e8e8e8;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .preset-btn:hover { background: rgba(255,255,255,0.1); }
+        .preset-btn.active { background: #ffd700; color: #000; border-color: #ffd700; }
+        .preset-btn .emoji { font-size: 1.2em; margin-right: 8px; }
+
+        /* Filter Categories */
+        .filter-category {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .category-title {
+            font-size: 1.1em;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category-toggle {
+            display: flex;
+            gap: 5px;
+        }
+        .toggle-all-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .toggle-all-btn.on { background: #22c55e; color: white; }
+        .toggle-all-btn.off { background: #ef4444; color: white; }
+
+        /* Filter Items */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .filter-item.disabled { opacity: 0.5; }
+
+        .filter-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .filter-icon { font-size: 1.5em; }
+        .filter-name { font-weight: 500; }
+        .filter-desc { font-size: 0.8em; color: #6b7280; margin-top: 2px; }
+
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #4b5563;
+            border-radius: 26px;
+            transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        input:checked + .toggle-slider { background: #22c55e; }
+        input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Volume Slider */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .volume-icon { font-size: 1em; color: #6b7280; }
+        .volume-slider {
+            width: 60px;
+            height: 4px;
+            border-radius: 2px;
+            background: #4b5563;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+
+        /* Priority Dots */
+        .priority-dots {
+            display: flex;
+            gap: 3px;
+        }
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .priority-dot.active { background: #ffd700; }
+        .priority-dot:hover { background: #ffd700; opacity: 0.7; }
+
+        /* Save Section */
+        .save-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            margin-top: 25px;
+        }
+        .save-info { color: #9ca3af; font-size: 0.9em; }
+        .save-buttons { display: flex; gap: 10px; }
+        .save-btn {
+            padding: 12px 30px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .save-btn.primary { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+        .save-btn.secondary { background: rgba(255,255,255,0.1); color: #e8e8e8; }
+        .save-btn:hover { transform: scale(1.02); }
+
+        /* Status Message */
+        .status-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .status-message.show { display: block; }
+        .status-message.success { background: #22c55e; color: white; }
+        .status-message.error { background: #ef4444; color: white; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Active Count */
+        .active-count {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Intelligence V2.0</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="strategies.html">&#128218; Strategier</a>
+            <a href="filters.html" class="active">&#127918; Filters</a>
+            <a href="lab.html">&#128300; Lab</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#127918; Strategy Filters</h1>
+            <p>Vaelg hvilke strategier og alerts du vil modtage</p>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets-section">
+            <div class="presets-title">&#11088; Quick Presets</div>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="loadPreset('all')">
+                    <span class="emoji">&#128226;</span>Alle Alerts
+                </button>
+                <button class="preset-btn" onclick="loadPreset('scalping')">
+                    <span class="emoji">&#9889;</span>Scalping Mode
+                </button>
+                <button class="preset-btn" onclick="loadPreset('swing')">
+                    <span class="emoji">&#128200;</span>Swing Trading
+                </button>
+                <button class="preset-btn" onclick="loadPreset('ict')">
+                    <span class="emoji">&#128176;</span>Kun ICT
+                </button>
+                <button class="preset-btn" onclick="loadPreset('minimal')">
+                    <span class="emoji">&#128263;</span>Minimal
+                </button>
+                <button class="preset-btn" onclick="loadPreset('none')">
+                    <span class="emoji">&#128264;</span>Ingen Lyd
+                </button>
+            </div>
+        </div>
+
+        <!-- ICT Strategies -->
+        <div class="filter-category">
+            <div class="category-header">
+                <div class="category-title">
+                    &#128176; ICT Concepts
+                    <span class="active-count" id="ict-count">0/4</span>
+                </div>
+                <div class="category-toggle">
+                    <button class="toggle-all-btn on" onclick="toggleCategory('ict', true)">Alle til</button>
+                    <button class="toggle-all-btn off" onclick="toggleCategory('ict', false)">Alle fra</button>
+                </div>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128311;</span>
+                        <div>
+                            <div class="filter-name">Fair Value Gap</div>
+                            <div class="filter-desc">Imbalance zones i pris</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="fvg">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="fvg" data-category="ict" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#127975;</span>
+                        <div>
+                            <div class="filter-name">Order Blocks</div>
+                            <div class="filter-desc">Institutional entry zones</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="ob">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot active" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="ob" data-category="ict" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128200;</span>
+                        <div>
+                            <div class="filter-name">Break of Structure</div>
+                            <div class="filter-desc">Market structure shifts</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="bos">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot active" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="bos" data-category="ict" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128167;</span>
+                        <div>
+                            <div class="filter-name">Liquidity Sweep</div>
+                            <div class="filter-desc">Stop hunt detection</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="liquidity">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="liquidity" data-category="ict" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Classic TA -->
+        <div class="filter-category">
+            <div class="category-header">
+                <div class="category-title">
+                    &#128202; Klassisk Teknisk Analyse
+                    <span class="active-count" id="classic-count">0/4</span>
+                </div>
+                <div class="category-toggle">
+                    <button class="toggle-all-btn on" onclick="toggleCategory('classic', true)">Alle til</button>
+                    <button class="toggle-all-btn off" onclick="toggleCategory('classic', false)">Alle fra</button>
+                </div>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128640;</span>
+                        <div>
+                            <div class="filter-name">Breakouts</div>
+                            <div class="filter-desc">PDH/PDL breakouts</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="breakout">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="breakout" data-category="classic" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#127919;</span>
+                        <div>
+                            <div class="filter-name">Pivot Points</div>
+                            <div class="filter-desc">Daily/Weekly pivots</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="pivot">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="pivot" data-category="classic" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128202;</span>
+                        <div>
+                            <div class="filter-name">RSI/MACD Divergence</div>
+                            <div class="filter-desc">Momentum divergence</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="divergence">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot active" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="divergence" data-category="classic" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128200;</span>
+                        <div>
+                            <div class="filter-name">MACD Cross</div>
+                            <div class="filter-desc">Signal line crossovers</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="macd">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="macd" data-category="classic" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Action -->
+        <div class="filter-category">
+            <div class="category-header">
+                <div class="category-title">
+                    &#128293; Price Action Patterns
+                    <span class="active-count" id="patterns-count">0/4</span>
+                </div>
+                <div class="category-toggle">
+                    <button class="toggle-all-btn on" onclick="toggleCategory('patterns', true)">Alle til</button>
+                    <button class="toggle-all-btn off" onclick="toggleCategory('patterns', false)">Alle fra</button>
+                </div>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#127873;</span>
+                        <div>
+                            <div class="filter-name">Engulfing Patterns</div>
+                            <div class="filter-desc">Bull/Bear engulfing</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="engulfing">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="engulfing" data-category="patterns" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128204;</span>
+                        <div>
+                            <div class="filter-name">Pin Bar / Hammer</div>
+                            <div class="filter-desc">Rejection candles</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="pinbar">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="pinbar" data-category="patterns" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#10023;</span>
+                        <div>
+                            <div class="filter-name">Doji</div>
+                            <div class="filter-desc">Indecision candles</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="doji">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="doji" data-category="patterns">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128178;</span>
+                        <div>
+                            <div class="filter-name">Round Numbers</div>
+                            <div class="filter-desc">$50/$100 levels</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="round">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="round" data-category="patterns" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sessions -->
+        <div class="filter-category">
+            <div class="category-header">
+                <div class="category-title">
+                    &#127760; Session Alerts
+                    <span class="active-count" id="sessions-count">0/3</span>
+                </div>
+                <div class="category-toggle">
+                    <button class="toggle-all-btn on" onclick="toggleCategory('sessions', true)">Alle til</button>
+                    <button class="toggle-all-btn off" onclick="toggleCategory('sessions', false)">Alle fra</button>
+                </div>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#127468;&#127463;</span>
+                        <div>
+                            <div class="filter-name">London Session</div>
+                            <div class="filter-desc">08:00-16:00 UTC alerts</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="london">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="london" data-category="sessions" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#127482;&#127480;</span>
+                        <div>
+                            <div class="filter-name">New York Session</div>
+                            <div class="filter-desc">13:00-21:00 UTC alerts</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="ny">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot active" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="ny" data-category="sessions" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <div class="filter-info">
+                        <span class="filter-icon">&#128202;</span>
+                        <div>
+                            <div class="filter-name">High Confluence</div>
+                            <div class="filter-desc">3+ strategies agree</div>
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <div class="priority-dots" data-filter="confluence">
+                            <div class="priority-dot active" data-priority="1"></div>
+                            <div class="priority-dot active" data-priority="2"></div>
+                            <div class="priority-dot active" data-priority="3"></div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" data-filter="confluence" data-category="sessions" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Volume -->
+        <div class="filter-category">
+            <div class="category-header">
+                <div class="category-title">&#128266; Global Lydindstillinger</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>Master Volume:</span>
+                    <input type="range" class="volume-slider" id="masterVolume" min="0" max="100" value="70" style="width: 150px;">
+                    <span id="volumeValue">70%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>Cooldown:</span>
+                    <select id="cooldownTime" style="padding: 8px; border-radius: 6px; background: rgba(255,255,255,0.1); border: none; color: #e8e8e8;">
+                        <option value="30">30 sekunder</option>
+                        <option value="60" selected>1 minut</option>
+                        <option value="120">2 minutter</option>
+                        <option value="300">5 minutter</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Section -->
+        <div class="save-section">
+            <div class="save-info">
+                <span id="activeFilters">0</span> aktive filters | Sidst gemt: <span id="lastSaved">Aldrig</span>
+            </div>
+            <div class="save-buttons">
+                <button class="save-btn secondary" onclick="resetFilters()">&#128260; Reset</button>
+                <button class="save-btn primary" onclick="saveFilters()">&#128190; Gem Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-message" id="statusMessage"></div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+        const STORAGE_KEY = 'goldIntelligenceFilters';
+
+        // Presets
+        const presets = {
+            all: { filters: 'all', priority: 2, volume: 70 },
+            scalping: {
+                filters: ['fvg', 'ob', 'engulfing', 'pinbar', 'london', 'ny', 'confluence'],
+                priority: 3, volume: 80
+            },
+            swing: {
+                filters: ['bos', 'breakout', 'divergence', 'pivot', 'confluence'],
+                priority: 2, volume: 60
+            },
+            ict: {
+                filters: ['fvg', 'ob', 'bos', 'liquidity'],
+                priority: 3, volume: 70
+            },
+            minimal: {
+                filters: ['confluence', 'bos'],
+                priority: 3, volume: 50
+            },
+            none: { filters: [], priority: 1, volume: 0 }
+        };
+
+        function loadPreset(presetName) {
+            const preset = presets[presetName];
+            if (!preset) return;
+
+            // Update buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Apply preset
+            document.querySelectorAll('input[data-filter]').forEach(input => {
+                if (preset.filters === 'all') {
+                    input.checked = true;
+                } else {
+                    input.checked = preset.filters.includes(input.dataset.filter);
+                }
+                updateFilterItem(input);
+            });
+
+            // Volume
+            document.getElementById('masterVolume').value = preset.volume;
+            document.getElementById('volumeValue').textContent = preset.volume + '%';
+
+            updateCounts();
+            showStatus('Preset "' + presetName + '" loaded!', 'success');
+        }
+
+        function toggleCategory(category, state) {
+            document.querySelectorAll(`input[data-category="${category}"]`).forEach(input => {
+                input.checked = state;
+                updateFilterItem(input);
+            });
+            updateCounts();
+        }
+
+        function updateFilterItem(input) {
+            const item = input.closest('.filter-item');
+            if (item) {
+                item.classList.toggle('disabled', !input.checked);
+            }
+        }
+
+        function updateCounts() {
+            const categories = ['ict', 'classic', 'patterns', 'sessions'];
+            let totalActive = 0;
+
+            categories.forEach(cat => {
+                const inputs = document.querySelectorAll(`input[data-category="${cat}"]`);
+                const active = Array.from(inputs).filter(i => i.checked).length;
+                totalActive += active;
+                const countEl = document.getElementById(cat + '-count');
+                if (countEl) countEl.textContent = active + '/' + inputs.length;
+            });
+
+            document.getElementById('activeFilters').textContent = totalActive;
+        }
+
+        function saveFilters() {
+            const filters = {};
+            document.querySelectorAll('input[data-filter]').forEach(input => {
+                const priorityDots = document.querySelector(`.priority-dots[data-filter="${input.dataset.filter}"]`);
+                const priority = priorityDots ? Array.from(priorityDots.querySelectorAll('.priority-dot.active')).length : 1;
+
+                filters[input.dataset.filter] = {
+                    enabled: input.checked,
+                    priority: priority
+                };
+            });
+
+            const settings = {
+                filters: filters,
+                volume: parseInt(document.getElementById('masterVolume').value),
+                cooldown: parseInt(document.getElementById('cooldownTime').value),
+                savedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            document.getElementById('lastSaved').textContent = new Date().toLocaleString('da-DK');
+            showStatus('Filters gemt!', 'success');
+        }
+
+        function loadFilters() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+
+                    Object.keys(settings.filters || {}).forEach(key => {
+                        const input = document.querySelector(`input[data-filter="${key}"]`);
+                        if (input) {
+                            input.checked = settings.filters[key].enabled;
+                            updateFilterItem(input);
+                        }
+
+                        const dots = document.querySelector(`.priority-dots[data-filter="${key}"]`);
+                        if (dots) {
+                            const priority = settings.filters[key].priority || 1;
+                            dots.querySelectorAll('.priority-dot').forEach((dot, i) => {
+                                dot.classList.toggle('active', i < priority);
+                            });
+                        }
+                    });
+
+                    if (settings.volume !== undefined) {
+                        document.getElementById('masterVolume').value = settings.volume;
+                        document.getElementById('volumeValue').textContent = settings.volume + '%';
+                    }
+
+                    if (settings.cooldown) {
+                        document.getElementById('cooldownTime').value = settings.cooldown;
+                    }
+
+                    if (settings.savedAt) {
+                        document.getElementById('lastSaved').textContent = new Date(settings.savedAt).toLocaleString('da-DK');
+                    }
+
+                    updateCounts();
+                } catch (e) {
+                    console.error('Error loading filters:', e);
+                }
+            }
+        }
+
+        function resetFilters() {
+            if (confirm('Nulstil alle filters til standard?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
+        function showStatus(message, type) {
+            const el = document.getElementById('statusMessage');
+            el.textContent = message;
+            el.className = 'status-message show ' + type;
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // Priority dots click handler
+        document.querySelectorAll('.priority-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                const container = this.parentElement;
+                const priority = parseInt(this.dataset.priority);
+                container.querySelectorAll('.priority-dot').forEach((d, i) => {
+                    d.classList.toggle('active', i < priority);
+                });
+            });
+        });
+
+        // Toggle change handler
+        document.querySelectorAll('input[data-filter]').forEach(input => {
+            input.addEventListener('change', function() {
+                updateFilterItem(this);
+                updateCounts();
+            });
+        });
+
+        // Volume slider
+        document.getElementById('masterVolume').addEventListener('input', function() {
+            document.getElementById('volumeValue').textContent = this.value + '%';
+        });
+
+        // Update nav price
+        async function updateNavPrice() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    const latest = data[keys[keys.length - 1]];
+                    if (latest && latest.price) {
+                        document.getElementById('navPrice').textContent = '$' + latest.price.toFixed(1);
+                        document.getElementById('navLive').style.background = '#00d4aa';
+                    }
+                }
+            } catch (e) {
+                document.getElementById('navLive').style.background = '#ef4444';
+            }
+        }
+
+        // Init
+        loadFilters();
+        updateCounts();
+        updateNavPrice();
+        setInterval(updateNavPrice, 5000);
+    </script>
+</body>
+</html>

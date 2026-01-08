@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Monitor V2.0 - Gold Trading Intelligence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        .header { text-align: center; padding: 20px; margin-bottom: 20px; }
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: #9ca3af; margin-top: 10px; }
+
+        /* Sound Controls */
+        .sound-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .sound-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+            color: #e8e8e8;
+        }
+        .sound-btn:hover { background: rgba(255,255,255,0.1); }
+        .sound-btn.active { background: rgba(34, 197, 94, 0.3); border-color: #22c55e; color: #22c55e; }
+        .sound-btn.muted { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; color: #ef4444; }
+
+        /* Confluence Score */
+        .confluence-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .confluence-title { font-size: 1.2em; color: #ffd700; margin-bottom: 15px; }
+        .confluence-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .confluence-item {
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .confluence-item.bullish { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); }
+        .confluence-item.bearish { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .confluence-count { font-size: 3em; font-weight: 700; }
+        .confluence-count.bullish { color: #22c55e; }
+        .confluence-count.bearish { color: #ef4444; }
+        .confluence-label { color: #9ca3af; margin-top: 5px; }
+
+        /* Strategy Cards */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .strategy-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        .strategy-card.active-bull {
+            border-color: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+        .strategy-card.active-bear {
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .strategy-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .strategy-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .strategy-status.inactive { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+        .strategy-status.bullish { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .strategy-status.bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .strategy-description {
+            color: #9ca3af;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .strategy-indicators {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .strategy-indicators-title {
+            font-size: 0.8em;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .indicator-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .indicator-tag {
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            font-size: 0.75em;
+            color: #e8e8e8;
+        }
+        .indicator-tag.active { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+
+        .strategy-tips {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 12px;
+        }
+        .strategy-tips-title {
+            font-size: 0.8em;
+            color: #ffd700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .strategy-tips ul {
+            list-style: none;
+            font-size: 0.85em;
+            color: #9ca3af;
+        }
+        .strategy-tips li {
+            padding: 4px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+        .strategy-tips li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+        }
+
+        .strategy-level {
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+        .strategy-level span { color: #60a5fa; font-family: monospace; }
+
+        /* Alert Banner */
+        .alert-banner {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
+            animation: slideDown 0.3s ease;
+            max-width: 90%;
+        }
+        .alert-banner.show { display: block; }
+        .alert-banner.bullish { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+        .alert-banner.bearish { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .alert-banner.info { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .update-time {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 20px;
+            font-size: 0.85em;
+        }
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Category Headers */
+        .category-header {
+            font-size: 1.3em;
+            color: #ffd700;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Intelligence V2.0</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="strategies.html" class="active">&#128218; Strategier</a>
+            <a href="filters.html">&#127918; Filters</a>
+            <a href="lab.html">&#128300; Lab</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div id="alertBanner" class="alert-banner"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#128218; Strategy Monitor</h1>
+            <p>Live detection af kendte trading strategier med uddannelse</p>
+        </div>
+
+        <!-- Sound Controls -->
+        <div class="sound-controls">
+            <button class="sound-btn active" id="soundToggle" onclick="toggleSound()">&#128266; Lyd TIL</button>
+            <a href="filters.html" class="sound-btn">&#127918; Avancerede Filters</a>
+        </div>
+
+        <!-- Confluence Overview -->
+        <div class="confluence-card">
+            <div class="confluence-title">&#128202; Confluence Oversigt</div>
+            <div class="confluence-grid">
+                <div class="confluence-item bullish">
+                    <div class="confluence-count bullish" id="bullCount">0</div>
+                    <div class="confluence-label">Bullish Strategier Aktive</div>
+                </div>
+                <div class="confluence-item bearish">
+                    <div class="confluence-count bearish" id="bearCount">0</div>
+                    <div class="confluence-label">Bearish Strategier Aktive</div>
+                </div>
+            </div>
+            <div id="confluenceMessage" style="font-size: 1.1em; color: #9ca3af;">Indlaeser data...</div>
+        </div>
+
+        <!-- ICT Concepts -->
+        <div class="category-header">&#128176; ICT Concepts (Smart Money)</div>
+        <div class="strategy-grid" id="ictStrategies">
+            <!-- FVG -->
+            <div class="strategy-card" id="card-fvg">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#128311; Fair Value Gap (FVG)</div>
+                    <div class="strategy-status inactive" id="status-fvg">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> En FVG opstaar naar der er et "hul" i prisen - typisk mellem lys 1's hoej og lys 3's lav (bullish) eller omvendt (bearish). Dette viser en ubalance i markedet hvor institutionelle handlende ofte vender tilbage for at "fylde hullet".
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">3-candle pattern</span>
+                        <span class="indicator-tag">Imbalance zone</span>
+                        <span class="indicator-tag">Volume analysis</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Vent paa price return til FVG zonen</li>
+                        <li>Bedst i trending markets</li>
+                        <li>Kombiner med order blocks for hoejere sandsynlighed</li>
+                        <li>Guld respekterer ofte FVG paa 15min+ timeframes</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-fvg"></div>
+            </div>
+
+            <!-- Order Blocks -->
+            <div class="strategy-card" id="card-ob">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#127975; Order Blocks</div>
+                    <div class="strategy-status inactive" id="status-ob">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> Order blocks er det sidste modsat-farvede lys foer en stor bevægelse. Det repraesenterer hvor institutionelle handlende placerede deres ordrer. Prisen vender ofte tilbage til disse zoner.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">Last opposite candle</span>
+                        <span class="indicator-tag">Before impulse move</span>
+                        <span class="indicator-tag">Institutional zones</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Hoejere timeframe OBs er staerkere</li>
+                        <li>Se efter reaktion ved foerste touch</li>
+                        <li>Stop loss under/over order block</li>
+                        <li>Guld har staerke OBs ved session opens</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-ob"></div>
+            </div>
+
+            <!-- Break of Structure -->
+            <div class="strategy-card" id="card-bos">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#128200; Break of Structure (BOS)</div>
+                    <div class="strategy-status inactive" id="status-bos">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> En BOS sker naar prisen bryder en tidligere swing high/low. Dette signalerer potentiel trendaendring eller trend-fortsaettelse. Det er fundamentalt for at forstaa market structure.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">Swing highs/lows</span>
+                        <span class="indicator-tag">Structure break</span>
+                        <span class="indicator-tag">Trend confirmation</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Vent paa retest efter BOS</li>
+                        <li>Mere palidelig paa hoejere timeframes</li>
+                        <li>Kombiner med FVG for entry</li>
+                        <li>Se efter volume confirmation</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-bos"></div>
+            </div>
+        </div>
+
+        <!-- Classic TA -->
+        <div class="category-header">&#128202; Klassisk Teknisk Analyse</div>
+        <div class="strategy-grid" id="classicStrategies">
+            <!-- Breakouts -->
+            <div class="strategy-card" id="card-breakout">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#128640; Previous Day Breakout</div>
+                    <div class="strategy-status inactive" id="status-breakout">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> Naar prisen bryder over gaarsdagens hoejeste eller under gaarsdagens laveste punkt, signalerer det ofte en ny trend. Mange institutioner bruger disse niveauer.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag" id="tag-pdh">Prev Day High</span>
+                        <span class="indicator-tag" id="tag-pdl">Prev Day Low</span>
+                        <span class="indicator-tag">Volume spike</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Vent paa candle close over/under niveau</li>
+                        <li>Bedst i London eller NY session</li>
+                        <li>Vogt dig for false breakouts i Asia</li>
+                        <li>Guld bryder ofte PDH/PDL ved session opens</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-breakout"></div>
+            </div>
+
+            <!-- Pivot Points -->
+            <div class="strategy-card" id="card-pivot">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#127919; Pivot Points</div>
+                    <div class="strategy-status inactive" id="status-pivot">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> Pivot points er matematisk beregnede support/resistance niveauer baseret paa tidligere periods high, low og close. Brugt af floor traders i aartier.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag" id="tag-dp">Daily Pivot</span>
+                        <span class="indicator-tag" id="tag-wp">Weekly Pivot</span>
+                        <span class="indicator-tag">S1/R1 levels</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Price over pivot = bullish bias</li>
+                        <li>Price under pivot = bearish bias</li>
+                        <li>Se efter bounces ved S1/R1</li>
+                        <li>Weekly pivot er staerkere end daily</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-pivot"></div>
+            </div>
+
+            <!-- Divergence -->
+            <div class="strategy-card" id="card-divergence">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#128202; RSI/MACD Divergence</div>
+                    <div class="strategy-status inactive" id="status-divergence">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> Divergence opstaar naar pris og indikator bevaeger sig i modsatte retninger. Bullish: Pris laver lower low, RSI laver higher low. Signalerer potentiel vending.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag" id="tag-rsi">RSI (14)</span>
+                        <span class="indicator-tag" id="tag-macd">MACD</span>
+                        <span class="indicator-tag">Price action</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Hidden divergence = trend continuation</li>
+                        <li>Regular divergence = trend reversal</li>
+                        <li>Bedst ved extremes (RSI &lt;30 eller &gt;70)</li>
+                        <li>Kombiner med support/resistance</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-divergence"></div>
+            </div>
+        </div>
+
+        <!-- Price Patterns -->
+        <div class="category-header">&#128293; Price Action Patterns</div>
+        <div class="strategy-grid" id="patternStrategies">
+            <!-- Engulfing -->
+            <div class="strategy-card" id="card-engulfing">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#127873; Engulfing Pattern</div>
+                    <div class="strategy-status inactive" id="status-engulfing">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> Et engulfing pattern er naar det nuvaerende lys fuldstaendigt "sluger" det forrige lys. Bullish engulfing: Groent lys sluger rodt. Bearish: Rodt sluger groent.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">2-candle pattern</span>
+                        <span class="indicator-tag">Full body engulf</span>
+                        <span class="indicator-tag">Reversal signal</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Staerkere ved key levels</li>
+                        <li>Se efter volume confirmation</li>
+                        <li>Entry ved naeste candle open</li>
+                        <li>Stop under engulfing candle</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Pin Bar / Hammer -->
+            <div class="strategy-card" id="card-pinbar">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#128204; Pin Bar / Hammer</div>
+                    <div class="strategy-status inactive" id="status-pinbar">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> En pin bar har en lang vaege og lille krop. Hammer = lang lower wick (bullish). Shooting star = lang upper wick (bearish). Viser rejection af et prisniveau.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">Long wick</span>
+                        <span class="indicator-tag">Small body</span>
+                        <span class="indicator-tag">Rejection signal</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Wick skal vaere 2x body size</li>
+                        <li>Bedst ved S/R levels</li>
+                        <li>Entry over/under pin bar nose</li>
+                        <li>Guld viser ofte pin bars ved round numbers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Round Numbers -->
+            <div class="strategy-card" id="card-round">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#128178; Round Numbers</div>
+                    <div class="strategy-status inactive" id="status-round">INAKTIV</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> Psykologiske prisniveauer som $2650, $2700, $2750 etc. Mennesker taenker i runde tal, saa mange ordrer samles her. Funger som naturlige support/resistance.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Bestaaar af:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">$50 intervals</span>
+                        <span class="indicator-tag">$100 major levels</span>
+                        <span class="indicator-tag">Psychology</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>$100 levels staerkere end $50</li>
+                        <li>Forvent reaktion/bounce</li>
+                        <li>Se efter confluence med andre signals</li>
+                        <li>Guld respekterer round numbers godt</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-round"></div>
+            </div>
+        </div>
+
+        <!-- Sessions -->
+        <div class="category-header">&#127760; Session Strategier</div>
+        <div class="strategy-grid" id="sessionStrategies">
+            <!-- London Session -->
+            <div class="strategy-card" id="card-london">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#127468;&#127463; London Session</div>
+                    <div class="strategy-status inactive" id="status-london">VENTER</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> London (08:00-16:00 UTC) er den mest volatile session for guld. Ofte definerer den dagens retning. Mange breakouts sker ved London open.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Key Times:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">08:00 UTC Open</span>
+                        <span class="indicator-tag">13:00 NY Overlap</span>
+                        <span class="indicator-tag">16:00 UTC Close</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Se efter breakout af Asian range</li>
+                        <li>Hoejeste volume 08:00-10:00</li>
+                        <li>Overlap med NY = mest volatil</li>
+                        <li>Undgaa at trade foer London news</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-london"></div>
+            </div>
+
+            <!-- NY Session -->
+            <div class="strategy-card" id="card-ny">
+                <div class="strategy-header">
+                    <div class="strategy-name">&#127482;&#127480; New York Session</div>
+                    <div class="strategy-status inactive" id="status-ny">VENTER</div>
+                </div>
+                <div class="strategy-description">
+                    <strong>Hvad er det?</strong> NY session (13:00-21:00 UTC) bringer stor likviditet pga. US markets. Guld reagerer staerkt paa US economic data og Fed news.
+                </div>
+                <div class="strategy-indicators">
+                    <div class="strategy-indicators-title">Key Times:</div>
+                    <div class="indicator-tags">
+                        <span class="indicator-tag">13:30 UTC Open</span>
+                        <span class="indicator-tag">14:30 Data releases</span>
+                        <span class="indicator-tag">21:00 UTC Close</span>
+                    </div>
+                </div>
+                <div class="strategy-tips">
+                    <div class="strategy-tips-title">&#128161; Trading Tips</div>
+                    <ul>
+                        <li>Vogt dig for news spikes</li>
+                        <li>Ofte reversal af London move</li>
+                        <li>Fed announcements = stor volatilitet</li>
+                        <li>Volume falder efter 19:00 UTC</li>
+                    </ul>
+                </div>
+                <div class="strategy-level" id="level-ny"></div>
+            </div>
+        </div>
+
+        <div class="update-time">
+            <span class="live-dot"></span>
+            Sidst opdateret: <span id="updateTime">--</span>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        // Sound system
+        let soundEnabled = true;
+        let alertCooldowns = {};
+
+        const sounds = {
+            fvg_bullish: new Audio('fvg_bullish.mp3'),
+            fvg_bearish: new Audio('fvg_bearish.mp3'),
+            orderblock_support: new Audio('orderblock_support.mp3'),
+            orderblock_resistance: new Audio('orderblock_resistance.mp3'),
+            structure_break_bull: new Audio('structure_break_bull.mp3'),
+            structure_break_bear: new Audio('structure_break_bear.mp3'),
+            breakout_high: new Audio('breakout_high.mp3'),
+            breakout_low: new Audio('breakout_low.mp3'),
+            pivot_daily: new Audio('pivot_daily.mp3'),
+            pivot_weekly: new Audio('pivot_weekly.mp3'),
+            divergence_bull: new Audio('divergence_bull.mp3'),
+            divergence_bear: new Audio('divergence_bear.mp3'),
+            engulfing_bull: new Audio('engulfing_bull.mp3'),
+            engulfing_bear: new Audio('engulfing_bear.mp3'),
+            hammer: new Audio('hammer.mp3'),
+            shooting_star: new Audio('shooting_star.mp3'),
+            round_number: new Audio('round_number.mp3'),
+            london_soon: new Audio('london_soon.mp3'),
+            ny_soon: new Audio('ny_soon.mp3'),
+            confluence_bull: new Audio('confluence_bull.mp3'),
+            confluence_bear: new Audio('confluence_bear.mp3')
+        };
+
+        Object.values(sounds).forEach(audio => { audio.load(); audio.volume = 0.7; });
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '\u{1F50A} Lyd TIL' : '\u{1F507} Lyd FRA';
+            btn.classList.toggle('active', soundEnabled);
+            btn.classList.toggle('muted', !soundEnabled);
+        }
+
+        function playSound(soundName) {
+            if (!soundEnabled) return;
+            const now = Date.now();
+            if (alertCooldowns[soundName] && now - alertCooldowns[soundName] < 60000) return;
+            alertCooldowns[soundName] = now;
+            if (sounds[soundName]) sounds[soundName].play().catch(e => console.log('Audio:', e));
+        }
+
+        function showAlert(message, type = 'info') {
+            const banner = document.getElementById('alertBanner');
+            banner.textContent = message;
+            banner.className = 'alert-banner show ' + type;
+            setTimeout(() => banner.classList.remove('show'), 6000);
+        }
+
+        function setCardStatus(cardId, status, type = 'inactive') {
+            const card = document.getElementById('card-' + cardId);
+            const statusEl = document.getElementById('status-' + cardId);
+            if (card && statusEl) {
+                card.className = 'strategy-card' + (type !== 'inactive' ? ' active-' + type : '');
+                statusEl.textContent = status;
+                statusEl.className = 'strategy-status ' + type;
+            }
+        }
+
+        async function fetchData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    return data[keys[keys.length - 1]];
+                }
+            } catch (e) {
+                console.error('Fetch error:', e);
+            }
+            return null;
+        }
+
+        function updateStrategies(data) {
+            if (!data) return;
+
+            // Update nav
+            document.getElementById('navPrice').textContent = '$' + (data.price || 0).toFixed(1);
+            document.getElementById('navLive').style.background = '#00d4aa';
+            document.getElementById('updateTime').textContent = new Date().toLocaleString('da-DK');
+
+            // Count active strategies
+            let bullCount = 0;
+            let bearCount = 0;
+
+            // FVG
+            if (data.fvg_bullish) {
+                setCardStatus('fvg', 'BULLISH FVG', 'bull');
+                document.getElementById('level-fvg').innerHTML = 'Niveau: <span>$' + (data.fvg_bull_level || data.price).toFixed(1) + '</span>';
+                bullCount++;
+                playSound('fvg_bullish');
+                showAlert('Bullish Fair Value Gap opdaget!', 'bullish');
+            } else if (data.fvg_bearish) {
+                setCardStatus('fvg', 'BEARISH FVG', 'bear');
+                document.getElementById('level-fvg').innerHTML = 'Niveau: <span>$' + (data.fvg_bear_level || data.price).toFixed(1) + '</span>';
+                bearCount++;
+                playSound('fvg_bearish');
+                showAlert('Bearish Fair Value Gap opdaget!', 'bearish');
+            } else {
+                setCardStatus('fvg', 'INAKTIV', 'inactive');
+                document.getElementById('level-fvg').innerHTML = '';
+            }
+
+            // Order Blocks
+            if (data.ob_bullish) {
+                setCardStatus('ob', 'BULLISH OB', 'bull');
+                document.getElementById('level-ob').innerHTML = 'Support: <span>$' + (data.ob_bull_level || 0).toFixed(1) + '</span>';
+                bullCount++;
+                playSound('orderblock_support');
+            } else if (data.ob_bearish) {
+                setCardStatus('ob', 'BEARISH OB', 'bear');
+                document.getElementById('level-ob').innerHTML = 'Resistance: <span>$' + (data.ob_bear_level || 0).toFixed(1) + '</span>';
+                bearCount++;
+                playSound('orderblock_resistance');
+            } else {
+                setCardStatus('ob', 'INAKTIV', 'inactive');
+                document.getElementById('level-ob').innerHTML = '';
+            }
+
+            // BOS
+            if (data.bos_bullish) {
+                setCardStatus('bos', 'BULLISH BOS', 'bull');
+                bullCount++;
+                playSound('structure_break_bull');
+                showAlert('Bullish Break of Structure!', 'bullish');
+            } else if (data.bos_bearish) {
+                setCardStatus('bos', 'BEARISH BOS', 'bear');
+                bearCount++;
+                playSound('structure_break_bear');
+                showAlert('Bearish Break of Structure!', 'bearish');
+            } else {
+                setCardStatus('bos', 'INAKTIV', 'inactive');
+            }
+
+            // Breakouts
+            if (data.breakout_high) {
+                setCardStatus('breakout', 'BREAKOUT HIGH', 'bull');
+                document.getElementById('level-breakout').innerHTML = 'PDH: <span>$' + (data.prev_day_high || 0).toFixed(1) + '</span>';
+                bullCount++;
+                playSound('breakout_high');
+                showAlert('Breakout over Previous Day High!', 'bullish');
+            } else if (data.breakout_low) {
+                setCardStatus('breakout', 'BREAKDOWN LOW', 'bear');
+                document.getElementById('level-breakout').innerHTML = 'PDL: <span>$' + (data.prev_day_low || 0).toFixed(1) + '</span>';
+                bearCount++;
+                playSound('breakout_low');
+                showAlert('Breakdown under Previous Day Low!', 'bearish');
+            } else {
+                setCardStatus('breakout', 'INAKTIV', 'inactive');
+                document.getElementById('level-breakout').innerHTML = 'PDH: <span>$' + (data.prev_day_high || 0).toFixed(1) + '</span> | PDL: <span>$' + (data.prev_day_low || 0).toFixed(1) + '</span>';
+            }
+
+            // Pivots
+            if (data.near_daily_pivot || data.near_weekly_pivot) {
+                const pivotType = data.near_weekly_pivot ? 'WEEKLY PIVOT' : 'DAILY PIVOT';
+                setCardStatus('pivot', pivotType, 'info');
+                document.getElementById('level-pivot').innerHTML = 'Daily: <span>$' + (data.daily_pivot || 0).toFixed(1) + '</span> | Weekly: <span>$' + (data.weekly_pivot || 0).toFixed(1) + '</span>';
+                playSound(data.near_weekly_pivot ? 'pivot_weekly' : 'pivot_daily');
+            } else {
+                setCardStatus('pivot', 'INAKTIV', 'inactive');
+                document.getElementById('level-pivot').innerHTML = 'Daily: <span>$' + (data.daily_pivot || 0).toFixed(1) + '</span> | Weekly: <span>$' + (data.weekly_pivot || 0).toFixed(1) + '</span>';
+            }
+
+            // Divergence
+            if (data.rsi_bull_div) {
+                setCardStatus('divergence', 'BULLISH DIV', 'bull');
+                bullCount++;
+                playSound('divergence_bull');
+                showAlert('Bullish RSI Divergence opdaget!', 'bullish');
+            } else if (data.rsi_bear_div) {
+                setCardStatus('divergence', 'BEARISH DIV', 'bear');
+                bearCount++;
+                playSound('divergence_bear');
+                showAlert('Bearish RSI Divergence opdaget!', 'bearish');
+            } else {
+                setCardStatus('divergence', 'INAKTIV', 'inactive');
+            }
+
+            // Engulfing
+            if (data.bull_engulfing) {
+                setCardStatus('engulfing', 'BULL ENGULF', 'bull');
+                bullCount++;
+                playSound('engulfing_bull');
+            } else if (data.bear_engulfing) {
+                setCardStatus('engulfing', 'BEAR ENGULF', 'bear');
+                bearCount++;
+                playSound('engulfing_bear');
+            } else {
+                setCardStatus('engulfing', 'INAKTIV', 'inactive');
+            }
+
+            // Pin Bar
+            if (data.hammer) {
+                setCardStatus('pinbar', 'HAMMER', 'bull');
+                bullCount++;
+                playSound('hammer');
+            } else if (data.shooting_star) {
+                setCardStatus('pinbar', 'SHOOTING STAR', 'bear');
+                bearCount++;
+                playSound('shooting_star');
+            } else {
+                setCardStatus('pinbar', 'INAKTIV', 'inactive');
+            }
+
+            // Round Numbers
+            if (data.near_round_number) {
+                setCardStatus('round', 'NEAR $' + data.nearest_round, 'info');
+                document.getElementById('level-round').innerHTML = 'Naermeste: <span>$' + data.nearest_round + '</span>';
+                playSound('round_number');
+            } else {
+                setCardStatus('round', 'INAKTIV', 'inactive');
+                const roundLevel = Math.round(data.price / 50) * 50;
+                document.getElementById('level-round').innerHTML = 'Naermeste: <span>$' + roundLevel + '</span>';
+            }
+
+            // Sessions
+            const session = data.session || '';
+            if (session.includes('London')) {
+                setCardStatus('london', 'AKTIV', 'bull');
+            } else if (data.mins_to_london && data.mins_to_london < 15) {
+                setCardStatus('london', data.mins_to_london + ' MIN', 'info');
+                document.getElementById('level-london').innerHTML = 'Aabner om <span>' + data.mins_to_london + ' minutter</span>';
+                playSound('london_soon');
+            } else {
+                setCardStatus('london', 'VENTER', 'inactive');
+                document.getElementById('level-london').innerHTML = '';
+            }
+
+            if (session.includes('New York') || session.includes('NY')) {
+                setCardStatus('ny', 'AKTIV', 'bull');
+            } else if (data.mins_to_ny && data.mins_to_ny < 15) {
+                setCardStatus('ny', data.mins_to_ny + ' MIN', 'info');
+                document.getElementById('level-ny').innerHTML = 'Aabner om <span>' + data.mins_to_ny + ' minutter</span>';
+                playSound('ny_soon');
+            } else {
+                setCardStatus('ny', 'VENTER', 'inactive');
+                document.getElementById('level-ny').innerHTML = '';
+            }
+
+            // Update confluence
+            document.getElementById('bullCount').textContent = bullCount;
+            document.getElementById('bearCount').textContent = bearCount;
+
+            let confluenceMsg = '';
+            if (bullCount > bearCount && bullCount >= 3) {
+                confluenceMsg = 'Staerk BULLISH confluence! ' + bullCount + ' strategier peger op.';
+                playSound('confluence_bull');
+            } else if (bearCount > bullCount && bearCount >= 3) {
+                confluenceMsg = 'Staerk BEARISH confluence! ' + bearCount + ' strategier peger ned.';
+                playSound('confluence_bear');
+            } else if (bullCount > 0 || bearCount > 0) {
+                confluenceMsg = 'Mixed signals - vent paa bedre confluence.';
+            } else {
+                confluenceMsg = 'Ingen aktive strategier - markedet konsoliderer.';
+            }
+            document.getElementById('confluenceMessage').textContent = confluenceMsg;
+        }
+
+        // Initial load
+        fetchData().then(updateStrategies);
+
+        // Refresh every 5 seconds
+        setInterval(() => fetchData().then(updateStrategies), 5000);
+    </script>
+</body>
+</html>

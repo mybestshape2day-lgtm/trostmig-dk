@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Station V2.0 - Multi-Strategy Intelligence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-brand span:last-child { font-weight: 700; color: #ffd700; }
+        .version-badge {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 16px; color: #ffd700; }
+        #navLive { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 15px; }
+
+        .header { text-align: center; padding: 15px 0; }
+        .header h1 {
+            font-size: 1.6em;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { color: #6b7280; font-size: 0.9em; margin-top: 5px; }
+
+        /* Controls Row */
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .control-btn.sound-on { background: #22c55e; color: white; }
+        .control-btn.sound-off { background: #ef4444; color: white; }
+        .control-btn.settings { background: rgba(255,255,255,0.1); color: #e8e8e8; }
+        .control-btn.settings:hover { background: rgba(255,215,0,0.2); }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 700px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        /* Price Card */
+        .price-card { grid-column: 1 / -1; }
+        .price-section {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .price-main { text-align: center; }
+        .big-price {
+            font-size: 3em;
+            font-weight: 700;
+            color: #ffd700;
+            font-family: monospace;
+        }
+        .price-change {
+            font-size: 1.2em;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .price-change.positive { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .price-change.negative { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        /* Confluence Meter */
+        .confluence-section { text-align: center; }
+        .confluence-title { color: #6b7280; font-size: 0.8em; margin-bottom: 10px; }
+        .confluence-meter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        .confluence-bar {
+            width: 200px;
+            height: 20px;
+            background: #1a1a2e;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+        }
+        .confluence-long {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        .confluence-short {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        .confluence-count {
+            font-size: 1.5em;
+            font-weight: 700;
+            min-width: 30px;
+        }
+        .confluence-count.long { color: #22c55e; }
+        .confluence-count.short { color: #ef4444; }
+
+        /* Signal Badge */
+        .signal-section { text-align: center; }
+        .signal-badge {
+            font-size: 2em;
+            font-weight: 800;
+            padding: 15px 40px;
+            border-radius: 12px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .signal-badge.LONG {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+            animation: pulse-green 2s infinite;
+        }
+        .signal-badge.SHORT {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+            animation: pulse-red 2s infinite;
+        }
+        .signal-badge.WAIT {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(34, 197, 94, 0.6); }
+        }
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.6); }
+        }
+
+        /* Active Strategies Section */
+        .strategies-section { grid-column: 1 / -1; }
+        .section-title {
+            color: #ffd700;
+            font-size: 1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .strategy-chip {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .strategy-chip.active-long {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+            animation: glow-green 2s infinite;
+        }
+        .strategy-chip.active-short {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            animation: glow-red 2s infinite;
+        }
+        .strategy-chip.inactive {
+            opacity: 0.4;
+        }
+        @keyframes glow-green {
+            0%, 100% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
+        }
+        @keyframes glow-red {
+            0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+        }
+        .strategy-name { font-size: 0.85em; font-weight: 600; }
+        .strategy-level { font-size: 0.75em; color: #6b7280; margin-top: 3px; }
+        .strategy-icon { font-size: 1.2em; margin-bottom: 3px; }
+
+        /* Indicators Grid */
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .indicator-box {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        .indicator-label { color: #6b7280; font-size: 0.75em; }
+        .indicator-value { font-size: 1.3em; font-weight: 600; margin-top: 3px; }
+        .indicator-value.bullish { color: #22c55e; }
+        .indicator-value.bearish { color: #ef4444; }
+        .indicator-value.neutral { color: #ffd700; }
+
+        /* Session & Time */
+        .session-time-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .session-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .session-asia { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+        .session-london { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .session-newyork { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .session-closed { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+
+        .update-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 0.85em;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Strategy Tooltip */
+        .tooltip {
+            position: fixed;
+            background: rgba(20, 20, 35, 0.98);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 280px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .tooltip h4 { color: #ffd700; margin-bottom: 8px; }
+        .tooltip p { color: #a0a0a0; font-size: 0.85em; line-height: 1.4; }
+        .tooltip .tip { color: #22c55e; font-size: 0.8em; margin-top: 8px; font-style: italic; }
+
+        /* Alert Banner */
+        .alert-banner {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
+            animation: slideDown 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        .alert-banner.long { background: #22c55e; color: white; }
+        .alert-banner.short { background: #ef4444; color: white; }
+        .alert-banner.info { background: #3b82f6; color: white; }
+        .alert-banner.strategy { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; }
+        @keyframes slideDown {
+            from { top: 50px; opacity: 0; }
+            to { top: 70px; opacity: 1; }
+        }
+
+        /* Stochastic Bar */
+        .stoch-container { margin: 15px 0; }
+        .stoch-label { color: #6b7280; font-size: 0.8em; margin-bottom: 5px; }
+        .stoch-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #22c55e 0%, #22c55e 25%, #4b5563 25%, #4b5563 75%, #ef4444 75%, #ef4444 100%);
+            border-radius: 10px;
+            position: relative;
+        }
+        .stoch-marker {
+            position: absolute;
+            top: -3px;
+            width: 4px;
+            height: 26px;
+            background: #ffd700;
+            border-radius: 2px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .stoch-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7em;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        /* Scores */
+        .scores-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+        }
+        .score-item { text-align: center; }
+        .score-label { color: #6b7280; font-size: 0.8em; }
+        .score-value {
+            font-size: 2em;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .score-long { color: #22c55e; }
+        .score-short { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span>Gold Intelligence</span>
+            <span class="version-badge">V2.0</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html" class="active">&#9889; Station</a>
+            <a href="strategies.html">&#128218; Strategier</a>
+            <a href="filters.html">&#9881; Filter</a>
+            <a href="signal.html">&#127919; Signal</a>
+            <a href="lab.html">&#128300; Lab</a>
+            <a href="history.html">&#128220; History</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <!-- Alert Banner -->
+    <div class="alert-banner" id="alertBanner"></div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+        <h4 id="tooltipTitle">Strategy</h4>
+        <p id="tooltipDesc">Description</p>
+        <p class="tip" id="tooltipTip">Trading tip</p>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#9889; Multi-Strategy Station</h1>
+            <p class="subtitle">MGC1! Gold Futures - Real-time Strategy Detection</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-row">
+            <button class="control-btn sound-on" id="soundToggle" onclick="toggleSound()">
+                &#128266; Lyd TIL
+            </button>
+            <button class="control-btn settings" onclick="window.location.href='filters.html'">
+                &#9881; Filter Indstillinger
+            </button>
+            <button class="control-btn settings" onclick="window.location.href='strategies.html'">
+                &#128218; Lær Strategier
+            </button>
+        </div>
+
+        <!-- Price & Signal Card -->
+        <div class="card price-card">
+            <div class="price-section">
+                <div class="price-main">
+                    <div class="big-price" id="price">--</div>
+                    <div class="price-change positive" id="change">+0.00%</div>
+                </div>
+
+                <div class="confluence-section">
+                    <div class="confluence-title">STRATEGI CONFLUENCE</div>
+                    <div class="confluence-meter">
+                        <span class="confluence-count long" id="longCount">0</span>
+                        <div class="confluence-bar">
+                            <div class="confluence-long" id="longBar" style="width: 50%;"></div>
+                            <div class="confluence-short" id="shortBar" style="width: 50%;"></div>
+                        </div>
+                        <span class="confluence-count short" id="shortCount">0</span>
+                    </div>
+                </div>
+
+                <div class="signal-section">
+                    <div class="signal-badge WAIT" id="signal">WAIT</div>
+                </div>
+            </div>
+
+            <div class="scores-row">
+                <div class="score-item">
+                    <div class="score-label">LONG SCORE</div>
+                    <div class="score-value score-long" id="scoreLong">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">SHORT SCORE</div>
+                    <div class="score-value score-short" id="scoreShort">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Active Strategies -->
+            <div class="card strategies-section">
+                <div class="section-title">&#127919; Aktive Strategier</div>
+                <div class="strategy-grid" id="strategyGrid">
+                    <!-- ICT Concepts -->
+                    <div class="strategy-chip inactive" data-strategy="fvg" data-desc="Fair Value Gap - ubalance i pris der ofte fyldes igen" data-tip="Vent på FVG fill for bedre entry">
+                        <div class="strategy-icon">&#128200;</div>
+                        <div class="strategy-name">FVG</div>
+                        <div class="strategy-level" id="fvgLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="orderblock" data-desc="Order Block - zone hvor institutioner har handlet" data-tip="Stærkest på H1/H4 timeframes">
+                        <div class="strategy-icon">&#128230;</div>
+                        <div class="strategy-name">Order Block</div>
+                        <div class="strategy-level" id="orderblockLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="bos" data-desc="Break of Structure - trend bekræftelse" data-tip="Handl kun i BOS retningen">
+                        <div class="strategy-icon">&#128293;</div>
+                        <div class="strategy-name">BOS</div>
+                        <div class="strategy-level" id="bosLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="liquidity" data-desc="Liquidity Sweep - stop hunt zone" data-tip="Vent på reversal efter sweep">
+                        <div class="strategy-icon">&#128167;</div>
+                        <div class="strategy-name">Liquidity</div>
+                        <div class="strategy-level" id="liquidityLevel">-</div>
+                    </div>
+
+                    <!-- Classic TA -->
+                    <div class="strategy-chip inactive" data-strategy="divergence" data-desc="RSI/MACD Divergence - momentum vs pris" data-tip="Stærkt reversal signal">
+                        <div class="strategy-icon">&#8596;</div>
+                        <div class="strategy-name">Divergence</div>
+                        <div class="strategy-level" id="divergenceLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="breakout" data-desc="PDH/PDL Breakout - forrige dags high/low" data-tip="Bedst i London/NY session">
+                        <div class="strategy-icon">&#128640;</div>
+                        <div class="strategy-name">Breakout</div>
+                        <div class="strategy-level" id="breakoutLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="pivot" data-desc="Pivot Points - matematiske support/resistance" data-tip="Confluence med andre levels">
+                        <div class="strategy-icon">&#128204;</div>
+                        <div class="strategy-name">Pivot</div>
+                        <div class="strategy-level" id="pivotLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="vwap" data-desc="VWAP - gennemsnitspris vægtet med volume" data-tip="Institutionel reference pris">
+                        <div class="strategy-icon">&#127922;</div>
+                        <div class="strategy-name">VWAP</div>
+                        <div class="strategy-level" id="vwapLevel">-</div>
+                    </div>
+
+                    <!-- Price Action -->
+                    <div class="strategy-chip inactive" data-strategy="engulfing" data-desc="Engulfing Pattern - stærkt reversal mønster" data-tip="Bedst ved key levels">
+                        <div class="strategy-icon">&#128165;</div>
+                        <div class="strategy-name">Engulfing</div>
+                        <div class="strategy-level" id="engulfingLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="pinbar" data-desc="Pin Bar/Hammer - rejection pattern" data-tip="Se efter lang hale">
+                        <div class="strategy-icon">&#128205;</div>
+                        <div class="strategy-name">Pin Bar</div>
+                        <div class="strategy-level" id="pinbarLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="doji" data-desc="Doji - ubeslutsomhed i markedet" data-tip="Vent på bekræftelse">
+                        <div class="strategy-icon">&#10011;</div>
+                        <div class="strategy-name">Doji</div>
+                        <div class="strategy-level" id="dojiLevel">-</div>
+                    </div>
+                    <div class="strategy-chip inactive" data-strategy="roundnumber" data-desc="Round Numbers - psykologiske niveauer" data-tip="$10 og $50 intervaller">
+                        <div class="strategy-icon">&#128178;</div>
+                        <div class="strategy-name">Round #</div>
+                        <div class="strategy-level" id="roundnumberLevel">-</div>
+                    </div>
+
+                    <!-- Session -->
+                    <div class="strategy-chip inactive" data-strategy="session" data-desc="Session Timing - aktive handelstider" data-tip="London/NY overlap er bedst">
+                        <div class="strategy-icon">&#128337;</div>
+                        <div class="strategy-name">Session</div>
+                        <div class="strategy-level" id="sessionLevel">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicators -->
+            <div class="card">
+                <div class="section-title">&#128202; Indikatorer</div>
+                <div class="indicators-grid">
+                    <div class="indicator-box">
+                        <div class="indicator-label">RSI (14)</div>
+                        <div class="indicator-value neutral" id="rsi">--</div>
+                    </div>
+                    <div class="indicator-box">
+                        <div class="indicator-label">MACD</div>
+                        <div class="indicator-value neutral" id="macd">--</div>
+                    </div>
+                    <div class="indicator-box">
+                        <div class="indicator-label">ADX</div>
+                        <div class="indicator-value neutral" id="adx">--</div>
+                    </div>
+                    <div class="indicator-box">
+                        <div class="indicator-label">ATR</div>
+                        <div class="indicator-value" id="atr">--</div>
+                    </div>
+                    <div class="indicator-box">
+                        <div class="indicator-label">EMA TREND</div>
+                        <div class="indicator-value neutral" id="emaTrend">--</div>
+                    </div>
+                    <div class="indicator-box">
+                        <div class="indicator-label">VWAP DIST</div>
+                        <div class="indicator-value" id="vwapDist">--</div>
+                    </div>
+                </div>
+
+                <div class="stoch-container">
+                    <div class="stoch-label">Stochastic Position</div>
+                    <div class="stoch-bar">
+                        <div class="stoch-marker" id="stochMarker" style="left: 50%;"></div>
+                    </div>
+                    <div class="stoch-labels">
+                        <span>Oversold</span>
+                        <span>Neutral</span>
+                        <span>Overbought</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session & Update -->
+        <div class="session-time-row">
+            <span class="session-badge session-closed" id="sessionBadge">--</span>
+            <div class="update-info">
+                <span class="live-dot" id="liveDot"></span>
+                <span id="updateTime">--</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+
+        // State
+        let soundEnabled = true;
+        let lastSignal = 'WAIT';
+        let lastStrategies = {};
+        let alertCooldowns = {};
+        let filterSettings = {};
+
+        // Load filter settings
+        function loadFilters() {
+            try {
+                const saved = localStorage.getItem('goldFilters');
+                if (saved) filterSettings = JSON.parse(saved);
+            } catch (e) {
+                console.log('No saved filters');
+            }
+        }
+
+        // Strategy definitions with education
+        const strategyInfo = {
+            fvg: {
+                name: 'Fair Value Gap',
+                icon: '&#128200;',
+                desc: 'Fair Value Gap (FVG) er en ubalance i prisen skabt af hurtig bevægelse. Prisen har tendens til at vende tilbage og "fylde" disse gaps.',
+                tip: 'Vent på at prisen vender tilbage til FVG zonen for bedre entry. Bullish FVG = support, Bearish FVG = resistance.'
+            },
+            orderblock: {
+                name: 'Order Block',
+                icon: '&#128230;',
+                desc: 'Order Blocks er zoner hvor institutionelle tradere har placeret store ordrer. De fungerer som stærke support/resistance områder.',
+                tip: 'Order Blocks er stærkest på højere timeframes (H1, H4). Se efter reaction ved første touch.'
+            },
+            bos: {
+                name: 'Break of Structure',
+                icon: '&#128293;',
+                desc: 'Break of Structure (BOS) sker når prisen bryder en tidligere swing high/low. Det bekræfter trendretning.',
+                tip: 'Handl kun i BOS retningen. Bullish BOS = kun longs, Bearish BOS = kun shorts.'
+            },
+            liquidity: {
+                name: 'Liquidity Sweep',
+                icon: '&#128167;',
+                desc: 'Liquidity sweeps sker når prisen kortvarigt bryder et niveau for at udløse stop losses, derefter reverserer.',
+                tip: 'Vent på reversal candlestick efter sweep. Ofte forudgås af stop hunt.'
+            },
+            divergence: {
+                name: 'Divergence',
+                icon: '&#8596;',
+                desc: 'Divergence opstår når pris og momentum (RSI/MACD) bevæger sig i modsat retning. Signal om potentiel reversal.',
+                tip: 'Bullish divergence: pris laver lavere lows, RSI laver højere lows. Omvendt for bearish.'
+            },
+            breakout: {
+                name: 'PDH/PDL Breakout',
+                icon: '&#128640;',
+                desc: 'Previous Day High/Low breakouts er når prisen bryder forrige dags ekstreme priser. Indikerer momentum.',
+                tip: 'Bedst i London og NY session. Breakout + retest giver sikrere entry.'
+            },
+            pivot: {
+                name: 'Pivot Points',
+                icon: '&#128204;',
+                desc: 'Pivot Points er matematisk beregnede support/resistance niveauer baseret på forrige dags data.',
+                tip: 'Brug sammen med andre strategier for confluence. Daily og Weekly pivots er vigtigst.'
+            },
+            vwap: {
+                name: 'VWAP',
+                icon: '&#127922;',
+                desc: 'Volume Weighted Average Price - gennemsnitsprisen vægtet med volume. Institutionel benchmark.',
+                tip: 'Over VWAP = bullish bias, Under VWAP = bearish bias. Mean reversion til VWAP er common.'
+            },
+            engulfing: {
+                name: 'Engulfing',
+                icon: '&#128165;',
+                desc: 'Engulfing pattern hvor én candle helt omslutter den forrige. Stærkt reversal signal.',
+                tip: 'Mest effektiv ved key levels (support/resistance). Større candle = stærkere signal.'
+            },
+            pinbar: {
+                name: 'Pin Bar',
+                icon: '&#128205;',
+                desc: 'Pin Bar / Hammer har lang hale og lille krop. Viser rejection af et prisniveau.',
+                tip: 'Halen skal være mindst 2x kroppens størrelse. Retning afhænger af hvor halen peger.'
+            },
+            doji: {
+                name: 'Doji',
+                icon: '&#10011;',
+                desc: 'Doji har næsten samme åbnings- og lukkekurs. Viser ubeslutsomhed i markedet.',
+                tip: 'Doji alene er ikke nok - vent på bekræftelse fra næste candle.'
+            },
+            roundnumber: {
+                name: 'Round Numbers',
+                icon: '&#128178;',
+                desc: 'Psykologiske prisniveauer på runde tal (fx 2950, 3000). Ofte fungerer som S/R.',
+                tip: 'Guld reagerer ofte på $10 og $50 intervaller. $100 levels er meget stærke.'
+            },
+            session: {
+                name: 'Session',
+                icon: '&#128337;',
+                desc: 'Trading sessions - Asia, London, New York. Volatilitet varierer mellem sessions.',
+                tip: 'London/NY overlap (14:30-18:00 CET) har højest volatilitet. Asia er mere range-bound.'
+            }
+        };
+
+        // Sound definitions
+        const sounds = {
+            signal_long: new Audio('sounds/signal_long.mp3'),
+            signal_short: new Audio('sounds/signal_short.mp3'),
+            strategy_bullish: new Audio('sounds/strategy_bullish.mp3'),
+            strategy_bearish: new Audio('sounds/strategy_bearish.mp3'),
+            confluence_high: new Audio('sounds/confluence_high.mp3'),
+            session_open: new Audio('sounds/session_open.mp3')
+        };
+
+        function playSound(soundName) {
+            if (!soundEnabled) return;
+            const now = Date.now();
+            if (alertCooldowns[soundName] && now - alertCooldowns[soundName] < 30000) return;
+            alertCooldowns[soundName] = now;
+
+            if (sounds[soundName]) {
+                sounds[soundName].play().catch(e => console.log('Audio blocked'));
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const banner = document.getElementById('alertBanner');
+            banner.textContent = message;
+            banner.className = 'alert-banner ' + type;
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 4000);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            if (soundEnabled) {
+                btn.innerHTML = '&#128266; Lyd TIL';
+                btn.className = 'control-btn sound-on';
+            } else {
+                btn.innerHTML = '&#128263; Lyd FRA';
+                btn.className = 'control-btn sound-off';
+            }
+        }
+
+        // Tooltip
+        const tooltip = document.getElementById('tooltip');
+        document.querySelectorAll('.strategy-chip').forEach(chip => {
+            chip.addEventListener('mouseenter', (e) => {
+                const strategy = chip.dataset.strategy;
+                const info = strategyInfo[strategy];
+                if (info) {
+                    document.getElementById('tooltipTitle').textContent = info.name;
+                    document.getElementById('tooltipDesc').textContent = info.desc;
+                    document.getElementById('tooltipTip').textContent = '💡 ' + info.tip;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.pageX + 10 + 'px';
+                    tooltip.style.top = e.pageY + 10 + 'px';
+                }
+            });
+            chip.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+
+        async function fetchData() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    return data[keys[keys.length - 1]];
+                }
+                return null;
+            } catch (e) {
+                console.error('Fetch failed:', e);
+                return null;
+            }
+        }
+
+        function getSessionClass(session) {
+            if (!session) return 'session-closed';
+            const s = session.toLowerCase();
+            if (s.includes('asia')) return 'session-asia';
+            if (s.includes('london')) return 'session-london';
+            if (s.includes('new york') || s.includes('newyork') || s.includes('ny')) return 'session-newyork';
+            return 'session-closed';
+        }
+
+        function updateStrategies(data) {
+            let bullishCount = 0;
+            let bearishCount = 0;
+
+            // Update each strategy chip based on data
+            const strategies = [
+                { id: 'fvg', bullish: data.fvg_bullish, bearish: data.fvg_bearish, level: data.fvg_level },
+                { id: 'orderblock', bullish: data.ob_bullish, bearish: data.ob_bearish, level: data.ob_level },
+                { id: 'bos', bullish: data.bos_bullish, bearish: data.bos_bearish, level: '-' },
+                { id: 'liquidity', bullish: data.liq_bullish, bearish: data.liq_bearish, level: data.liq_level },
+                { id: 'divergence', bullish: data.div_bullish, bearish: data.div_bearish, level: '-' },
+                { id: 'breakout', bullish: data.breakout_bullish, bearish: data.breakout_bearish, level: data.breakout_level },
+                { id: 'pivot', bullish: data.pivot_bullish, bearish: data.pivot_bearish, level: data.pivot_level },
+                { id: 'vwap', bullish: data.price > data.vwap, bearish: data.price < data.vwap, level: data.vwap ? data.vwap.toFixed(1) : '-' },
+                { id: 'engulfing', bullish: data.engulfing_bullish, bearish: data.engulfing_bearish, level: '-' },
+                { id: 'pinbar', bullish: data.pinbar_bullish, bearish: data.pinbar_bearish, level: '-' },
+                { id: 'doji', bullish: false, bearish: false, level: data.doji ? 'Active' : '-' },
+                { id: 'roundnumber', bullish: data.round_support, bearish: data.round_resistance, level: data.round_level },
+                { id: 'session', bullish: data.session_active, bearish: false, level: data.session || '-' }
+            ];
+
+            strategies.forEach(strat => {
+                const chip = document.querySelector(`[data-strategy="${strat.id}"]`);
+                const levelEl = document.getElementById(strat.id + 'Level');
+
+                if (strat.bullish) {
+                    chip.className = 'strategy-chip active-long';
+                    bullishCount++;
+                    if (!lastStrategies[strat.id + '_bull']) {
+                        showAlert(strategyInfo[strat.id].name + ' BULLISH signal!', 'long');
+                        playSound('strategy_bullish');
+                    }
+                    lastStrategies[strat.id + '_bull'] = true;
+                } else if (strat.bearish) {
+                    chip.className = 'strategy-chip active-short';
+                    bearishCount++;
+                    if (!lastStrategies[strat.id + '_bear']) {
+                        showAlert(strategyInfo[strat.id].name + ' BEARISH signal!', 'short');
+                        playSound('strategy_bearish');
+                    }
+                    lastStrategies[strat.id + '_bear'] = true;
+                } else {
+                    chip.className = 'strategy-chip inactive';
+                    lastStrategies[strat.id + '_bull'] = false;
+                    lastStrategies[strat.id + '_bear'] = false;
+                }
+
+                if (levelEl) levelEl.textContent = strat.level || '-';
+            });
+
+            // Update confluence meter
+            const total = bullishCount + bearishCount;
+            const longPct = total > 0 ? (bullishCount / total * 100) : 50;
+            document.getElementById('longCount').textContent = bullishCount;
+            document.getElementById('shortCount').textContent = bearishCount;
+            document.getElementById('longBar').style.width = longPct + '%';
+            document.getElementById('shortBar').style.width = (100 - longPct) + '%';
+
+            // High confluence alert
+            if (bullishCount >= 5 || bearishCount >= 5) {
+                playSound('confluence_high');
+            }
+
+            return { bullish: bullishCount, bearish: bearishCount };
+        }
+
+        function updateUI(data) {
+            if (!data) {
+                document.getElementById('liveDot').style.background = '#ef4444';
+                return;
+            }
+
+            // Price
+            const price = data.price || 0;
+            document.getElementById('price').textContent = '$' + price.toFixed(1);
+            document.getElementById('navPrice').textContent = '$' + price.toFixed(1);
+            document.getElementById('navLive').style.background = '#00d4aa';
+
+            // Change
+            const changePct = data.open ? ((price - data.open) / data.open * 100) : 0;
+            const changeEl = document.getElementById('change');
+            changeEl.textContent = (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%';
+            changeEl.className = 'price-change ' + (changePct >= 0 ? 'positive' : 'negative');
+
+            // Scores
+            const scoreLong = data.score_long || 0;
+            const scoreShort = data.score_short || 0;
+            document.getElementById('scoreLong').textContent = scoreLong;
+            document.getElementById('scoreShort').textContent = scoreShort;
+
+            // Update strategies and get confluence
+            const confluence = updateStrategies(data);
+
+            // Signal
+            let signal = 'WAIT';
+            if (scoreLong > 60 && scoreLong > scoreShort) signal = 'LONG';
+            else if (scoreShort > 60 && scoreShort > scoreLong) signal = 'SHORT';
+            // Also consider confluence
+            if (confluence.bullish >= 4 && confluence.bullish > confluence.bearish) signal = 'LONG';
+            if (confluence.bearish >= 4 && confluence.bearish > confluence.bullish) signal = 'SHORT';
+
+            const signalEl = document.getElementById('signal');
+            signalEl.textContent = signal;
+            signalEl.className = 'signal-badge ' + signal;
+
+            if (signal !== lastSignal) {
+                if (signal === 'LONG') {
+                    playSound('signal_long');
+                    showAlert('LONG SIGNAL AKTIVT!', 'long');
+                } else if (signal === 'SHORT') {
+                    playSound('signal_short');
+                    showAlert('SHORT SIGNAL AKTIVT!', 'short');
+                }
+                lastSignal = signal;
+            }
+
+            // Indicators
+            const rsiEl = document.getElementById('rsi');
+            rsiEl.textContent = data.rsi ? data.rsi.toFixed(0) : '--';
+            rsiEl.className = 'indicator-value ' + (data.rsi > 70 ? 'bearish' : data.rsi < 30 ? 'bullish' : 'neutral');
+
+            const macdEl = document.getElementById('macd');
+            const macdVal = data.macd || 0;
+            macdEl.textContent = macdVal > 0 ? '+' + macdVal.toFixed(2) : macdVal.toFixed(2);
+            macdEl.className = 'indicator-value ' + (macdVal > 0 ? 'bullish' : 'bearish');
+
+            const adxEl = document.getElementById('adx');
+            adxEl.textContent = data.adx ? data.adx.toFixed(0) : '--';
+            adxEl.className = 'indicator-value ' + (data.adx > 25 ? 'bullish' : 'neutral');
+
+            document.getElementById('atr').textContent = data.atr ? '$' + data.atr.toFixed(1) : '--';
+
+            const emaTrendEl = document.getElementById('emaTrend');
+            emaTrendEl.textContent = data.ema_trend || '--';
+            emaTrendEl.className = 'indicator-value ' + (data.ema_trend === 'UP' ? 'bullish' : data.ema_trend === 'DOWN' ? 'bearish' : 'neutral');
+
+            const vwapDist = data.vwap ? ((data.price - data.vwap) / data.vwap * 100) : 0;
+            document.getElementById('vwapDist').textContent = (vwapDist >= 0 ? '+' : '') + vwapDist.toFixed(2) + '%';
+
+            // Stochastic
+            const stoch = data.stoch || 50;
+            document.getElementById('stochMarker').style.left = stoch + '%';
+
+            // Session
+            const sessionEl = document.getElementById('sessionBadge');
+            sessionEl.textContent = data.session || 'Closed';
+            sessionEl.className = 'session-badge ' + getSessionClass(data.session);
+
+            // Update time
+            document.getElementById('updateTime').textContent = new Date().toLocaleString('da-DK');
+            document.getElementById('liveDot').style.background = '#22c55e';
+        }
+
+        // Initialize
+        loadFilters();
+        fetchData().then(updateUI);
+
+        // Auto-refresh every 3 seconds
+        setInterval(() => fetchData().then(updateUI), 3000);
+    </script>
+</body>
+</html>
