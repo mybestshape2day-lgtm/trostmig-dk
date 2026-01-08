@@ -1,0 +1,42 @@
+{
+  "round_numbers": {
+    "major_100": [2600, 2650, 2700, 2750, 2800],
+    "minor_50": [2625, 2675, 2725, 2775],
+    "minor_10": [2640, 2660, 2680, 2690, 2710, 2720]
+  },
+  "historical_levels": {
+    "strong_resistance": [
+      {"price": 2790, "description": "All-time high zone", "strength": 5},
+      {"price": 2720, "description": "October 2024 high", "strength": 4},
+      {"price": 2685, "description": "Recent swing high", "strength": 3}
+    ],
+    "strong_support": [
+      {"price": 2600, "description": "Major psychological + swing low", "strength": 5},
+      {"price": 2620, "description": "November support", "strength": 4},
+      {"price": 2650, "description": "Recent consolidation", "strength": 3}
+    ]
+  },
+  "dynamic_levels": {
+    "description": "Update these daily from TradingView",
+    "pdh": 2678.5,
+    "pdl": 2658.2,
+    "pwh": 2695.0,
+    "pwl": 2642.0,
+    "daily_pivot": 2668.5,
+    "weekly_pivot": 2665.0,
+    "vwap_estimate": 2670.0
+  },
+  "liquidity_zones": [
+    {"type": "buy_stops", "above": 2680, "description": "Stops above swing high", "priority": "high"},
+    {"type": "sell_stops", "below": 2655, "description": "Stops below recent low", "priority": "high"},
+    {"type": "buy_stops", "above": 2700, "description": "Round number stops", "priority": "medium"}
+  ],
+  "order_blocks": [
+    {"type": "bullish", "zone_top": 2665, "zone_bottom": 2658, "timeframe": "H4", "valid": true},
+    {"type": "bearish", "zone_top": 2688, "zone_bottom": 2682, "timeframe": "H1", "valid": true}
+  ],
+  "metadata": {
+    "last_updated": "2026-01-08",
+    "note": "Update round_numbers based on current price. Update dynamic_levels daily."
+  }
+}

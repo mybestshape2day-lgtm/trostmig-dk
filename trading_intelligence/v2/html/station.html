@@ -490,6 +490,59 @@
             color: #6b7280;
             margin-top: 3px;
         }
+
+        /* Key Levels Panel */
+        .levels-panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .levels-title {
+            color: #ffd700;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .level-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        .level-item.resistance { background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; }
+        .level-item.support { background: rgba(34, 197, 94, 0.15); border-left: 3px solid #22c55e; }
+        .level-item.round { background: rgba(255, 215, 0, 0.15); border-left: 3px solid #ffd700; }
+        .level-item.near {
+            animation: pulse-level 1s infinite;
+            font-weight: 600;
+        }
+        @keyframes pulse-level {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .level-price { font-family: monospace; font-weight: 600; }
+        .level-distance { color: #6b7280; font-size: 0.8em; }
+        .level-desc { color: #a0a0a0; font-size: 0.75em; }
+
+        /* News Sentiment */
+        .sentiment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .sentiment-badge.bullish { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .sentiment-badge.bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .sentiment-badge.neutral { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
     </style>
 </head>
 <body>
@@ -714,6 +767,18 @@
             <div id="eventsList"></div>
         </div>
 
+        <!-- Key Levels Panel -->
+        <div class="levels-panel">
+            <div class="levels-title">
+                <span>&#128204;</span>
+                <span>Key Levels</span>
+                <span class="sentiment-badge neutral" id="newsSentiment">Loading...</span>
+            </div>
+            <div id="keyLevelsList">
+                <div class="level-item round">Loading key levels...</div>
+            </div>
+        </div>
+
         <!-- Signal History Stats -->
         <div class="stats-panel">
             <div class="stats-title">
@@ -762,6 +827,10 @@
         let filterSettings = {};
         let economicEvents = [];
         let signalHistory = [];
+        let keyLevels = null;
+        let newsEvents = [];
+        let lastPrice = 0;
+        let lastLevelAlerts = {};
 
         // Load Lab params from localStorage
         let params = {
@@ -925,6 +994,181 @@
                 ? Math.min(...completed.map(s => s.outcome ? s.outcome.max_drawdown : 0))
                 : 0;
             document.getElementById('statMaxDD').textContent = '$' + Math.abs(maxDD).toFixed(0);
+        }
+
+        // ========== KEY LEVELS & NEWS INTEGRATION ==========
+
+        // Load key levels from JSON
+        async function loadKeyLevels() {
+            try {
+                const res = await fetch(DATA_PATH + 'key_levels.json');
+                keyLevels = await res.json();
+                console.log('Loaded key levels:', keyLevels);
+            } catch (e) {
+                console.log('Could not load key levels:', e);
+            }
+        }
+
+        // Load news events from JSON
+        async function loadNewsEvents() {
+            try {
+                const res = await fetch(DATA_PATH + 'news_events.json');
+                const data = await res.json();
+                if (data && data.events) {
+                    newsEvents = data.events;
+                    updateNewsSentiment();
+                }
+            } catch (e) {
+                console.log('Could not load news events:', e);
+            }
+        }
+
+        // Update news sentiment badge
+        function updateNewsSentiment() {
+            const badge = document.getElementById('newsSentiment');
+            if (!newsEvents || newsEvents.length === 0) {
+                badge.textContent = 'No News';
+                badge.className = 'sentiment-badge neutral';
+                return;
+            }
+
+            // Get most recent news
+            const recent = newsEvents[0];
+            const sentiment = recent.gold_impact || 'NEUTRAL';
+
+            if (sentiment === 'BULLISH') {
+                badge.innerHTML = '&#128200; BULLISH';
+                badge.className = 'sentiment-badge bullish';
+            } else if (sentiment === 'BEARISH') {
+                badge.innerHTML = '&#128201; BEARISH';
+                badge.className = 'sentiment-badge bearish';
+            } else {
+                badge.textContent = 'NEUTRAL';
+                badge.className = 'sentiment-badge neutral';
+            }
+        }
+
+        // Check price against key levels and show alerts
+        function checkKeyLevels(currentPrice) {
+            if (!keyLevels || !currentPrice) return;
+
+            const list = document.getElementById('keyLevelsList');
+            const nearbyLevels = [];
+            const threshold = 5; // $5 proximity
+
+            // Check round numbers
+            const allRounds = [
+                ...(keyLevels.round_numbers?.major_100 || []),
+                ...(keyLevels.round_numbers?.minor_50 || [])
+            ];
+            allRounds.forEach(level => {
+                const distance = currentPrice - level;
+                if (Math.abs(distance) < 20) {
+                    nearbyLevels.push({
+                        price: level,
+                        type: 'round',
+                        desc: 'Round Number',
+                        distance: distance,
+                        isNear: Math.abs(distance) < threshold
+                    });
+                }
+            });
+
+            // Check historical resistance
+            (keyLevels.historical_levels?.strong_resistance || []).forEach(r => {
+                const distance = currentPrice - r.price;
+                if (Math.abs(distance) < 30) {
+                    nearbyLevels.push({
+                        price: r.price,
+                        type: 'resistance',
+                        desc: r.description,
+                        distance: distance,
+                        isNear: Math.abs(distance) < threshold
+                    });
+                }
+            });
+
+            // Check historical support
+            (keyLevels.historical_levels?.strong_support || []).forEach(s => {
+                const distance = currentPrice - s.price;
+                if (Math.abs(distance) < 30) {
+                    nearbyLevels.push({
+                        price: s.price,
+                        type: 'support',
+                        desc: s.description,
+                        distance: distance,
+                        isNear: Math.abs(distance) < threshold
+                    });
+                }
+            });
+
+            // Check dynamic levels (PDH, PDL, etc.)
+            const dynamic = keyLevels.dynamic_levels;
+            if (dynamic) {
+                ['pdh', 'pdl', 'daily_pivot'].forEach(key => {
+                    if (dynamic[key]) {
+                        const distance = currentPrice - dynamic[key];
+                        if (Math.abs(distance) < 15) {
+                            const typeMap = { pdh: 'resistance', pdl: 'support', daily_pivot: 'round' };
+                            const descMap = { pdh: 'Previous Day High', pdl: 'Previous Day Low', daily_pivot: 'Daily Pivot' };
+                            nearbyLevels.push({
+                                price: dynamic[key],
+                                type: typeMap[key],
+                                desc: descMap[key],
+                                distance: distance,
+                                isNear: Math.abs(distance) < threshold
+                            });
+                        }
+                    }
+                });
+            }
+
+            // Sort by distance
+            nearbyLevels.sort((a, b) => Math.abs(a.distance) - Math.abs(b.distance));
+
+            // Update UI
+            if (nearbyLevels.length === 0) {
+                list.innerHTML = '<div class="level-item round">No key levels nearby</div>';
+            } else {
+                list.innerHTML = nearbyLevels.slice(0, 5).map(level => {
+                    const distStr = level.distance > 0 ? '+' + level.distance.toFixed(1) : level.distance.toFixed(1);
+                    const nearClass = level.isNear ? ' near' : '';
+                    return `
+                        <div class="level-item ${level.type}${nearClass}">
+                            <div>
+                                <span class="level-price">$${level.price.toFixed(1)}</span>
+                                <span class="level-desc">${level.desc}</span>
+                            </div>
+                            <span class="level-distance">${distStr}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                // Alert if price is very close to a level
+                nearbyLevels.forEach(level => {
+                    if (level.isNear && !lastLevelAlerts[level.price]) {
+                        if (level.type === 'resistance') {
+                            playSound('pivot_resistance');
+                            showAlert('Nær RESISTANCE: $' + level.price.toFixed(0), 'short');
+                        } else if (level.type === 'support') {
+                            playSound('pivot_support');
+                            showAlert('Nær SUPPORT: $' + level.price.toFixed(0), 'long');
+                        } else {
+                            playSound('round_number_50');
+                            showAlert('Nær ROUND NUMBER: $' + level.price.toFixed(0), 'info');
+                        }
+                        lastLevelAlerts[level.price] = Date.now();
+                    }
+                });
+
+                // Clear old alerts after 5 minutes
+                const now = Date.now();
+                Object.keys(lastLevelAlerts).forEach(key => {
+                    if (now - lastLevelAlerts[key] > 5 * 60 * 1000) {
+                        delete lastLevelAlerts[key];
+                    }
+                });
+            }
         }
 
         // Strategy definitions with education
@@ -1276,6 +1520,9 @@
             document.getElementById('navPrice').textContent = '$' + price.toFixed(1);
             document.getElementById('navLive').style.background = '#00d4aa';
 
+            // Check key levels (from JSON)
+            checkKeyLevels(price);
+
             // Change
             const changePct = data.open ? ((price - data.open) / data.open * 100) : 0;
             const changeEl = document.getElementById('change');
@@ -1371,6 +1618,8 @@
         loadFilters();
         loadEconomicEvents();  // Load economic events from JSON
         loadSignalHistory();   // Load signal history from JSON
+        loadKeyLevels();       // Load key price levels from JSON
+        loadNewsEvents();      // Load news events for sentiment
 
         fetchData().then(updateUI);
 

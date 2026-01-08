@@ -1,0 +1,93 @@
+{
+  "strategies": {
+    "fvg": {
+      "name": "Fair Value Gap",
+      "entry_rules": [
+        "Wait for price to return to FVG zone",
+        "Bullish FVG: Enter long when price touches top of gap",
+        "Bearish FVG: Enter short when price touches bottom of gap",
+        "Best on M15/H1 timeframes"
+      ],
+      "exit_rules": [
+        "TP: 1.5-2x the FVG size",
+        "SL: Below/above the FVG zone"
+      ],
+      "filters": ["Must be in trend direction", "Higher timeframe confirmation"],
+      "win_rate_typical": 55,
+      "risk_reward": 1.5
+    },
+    "orderblock": {
+      "name": "Order Block",
+      "entry_rules": [
+        "Identify OB from impulsive move",
+        "Wait for price to return to OB zone",
+        "Enter on first touch with confirmation candle",
+        "Best on H1/H4 timeframes"
+      ],
+      "exit_rules": [
+        "TP: Previous swing high/low",
+        "SL: Beyond the order block"
+      ],
+      "filters": ["BOS must confirm direction", "OB must be unmitigated"],
+      "win_rate_typical": 60,
+      "risk_reward": 2.0
+    },
+    "breakout": {
+      "name": "PDH/PDL Breakout",
+      "entry_rules": [
+        "Wait for break of previous day high or low",
+        "Enter on retest of broken level",
+        "Best during London/NY session"
+      ],
+      "exit_rules": [
+        "TP: 1.5x the daily range",
+        "SL: Back inside the range"
+      ],
+      "filters": ["Avoid during news events", "Volume confirmation"],
+      "win_rate_typical": 50,
+      "risk_reward": 1.5
+    },
+    "divergence": {
+      "name": "RSI/MACD Divergence",
+      "entry_rules": [
+        "Price makes new high/low",
+        "Indicator does NOT make new high/low",
+        "Enter after confirmation candle"
+      ],
+      "exit_rules": [
+        "TP: Previous swing",
+        "SL: Beyond the divergence extreme"
+      ],
+      "filters": ["Best at key S/R levels", "Higher timeframe trend alignment"],
+      "win_rate_typical": 58,
+      "risk_reward": 2.0
+    },
+    "liquidity_sweep": {
+      "name": "Liquidity Sweep",
+      "entry_rules": [
+        "Price sweeps above/below key level",
+        "Immediate rejection (wick)",
+        "Enter on close back inside range"
+      ],
+      "exit_rules": [
+        "TP: Opposite side of range",
+        "SL: Beyond the sweep wick"
+      ],
+      "filters": ["Must be at known liquidity zone", "Quick reversal required"],
+      "win_rate_typical": 62,
+      "risk_reward": 2.5
+    }
+  },
+  "confluence_matrix": {
+    "description": "Points added when strategies align",
+    "fvg_at_orderblock": 15,
+    "breakout_with_bos": 12,
+    "divergence_at_liquidity": 18,
+    "round_number_confluence": 8,
+    "session_timing_bonus": 5
+  },
+  "metadata": {
+    "last_updated": "2026-01-08",
+    "version": "2.0"
+  }
+}
