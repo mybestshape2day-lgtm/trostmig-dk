@@ -1,0 +1,191 @@
+{
+  "meta": {
+    "indicator": "RSI",
+    "settings": "14",
+    "instrument": "MGC Gold Futures",
+    "note": "RSI bruges som sekundær bekræftelse til stokastik"
+  },
+  "zones": {
+    "extreme_oversold": {
+      "range": [0, 20],
+      "description": "Ekstrem oversolgt - stor sandsynlighed for bounce",
+      "up_multiplier": 1.38,
+      "down_multiplier": 0.60,
+      "avg_bounce_points": 8,
+      "win_rate_long": 70,
+      "best_action": "prepare_long",
+      "note": "Stærkere signal hvis stokastik også oversolgt"
+    },
+    "oversold": {
+      "range": [20, 30],
+      "description": "Oversolgt zone - bullish bias",
+      "up_multiplier": 1.20,
+      "down_multiplier": 0.75,
+      "avg_bounce_points": 5,
+      "win_rate_long": 64,
+      "best_action": "look_for_long"
+    },
+    "neutral_low": {
+      "range": [30, 45],
+      "description": "Neutral med svag bullish bias",
+      "up_multiplier": 1.05,
+      "down_multiplier": 0.95,
+      "best_action": "follow_trend"
+    },
+    "neutral": {
+      "range": [45, 55],
+      "description": "Helt neutral - ingen bias",
+      "up_multiplier": 1.00,
+      "down_multiplier": 1.00,
+      "best_action": "wait_for_direction"
+    },
+    "neutral_high": {
+      "range": [55, 70],
+      "description": "Neutral med svag bearish bias",
+      "up_multiplier": 0.95,
+      "down_multiplier": 1.05,
+      "best_action": "follow_trend"
+    },
+    "overbought": {
+      "range": [70, 80],
+      "description": "Overkøbt zone - bearish bias",
+      "up_multiplier": 0.75,
+      "down_multiplier": 1.18,
+      "avg_drop_points": 5,
+      "win_rate_short": 62,
+      "best_action": "look_for_short"
+    },
+    "extreme_overbought": {
+      "range": [80, 100],
+      "description": "Ekstrem overkøbt - stor sandsynlighed for drop",
+      "up_multiplier": 0.62,
+      "down_multiplier": 1.35,
+      "avg_drop_points": 7,
+      "win_rate_short": 68,
+      "best_action": "prepare_short",
+      "note": "Stærkere signal hvis stokastik også overkøbt"
+    }
+  },
+  "divergence": {
+    "bullish_regular": {
+      "description": "Pris laver lower low, RSI laver higher low",
+      "type": "reversal",
+      "direction": "bullish",
+      "probability_reversal": 70,
+      "avg_move_points": 10,
+      "reliability": "high",
+      "best_timeframe": "5-15 min",
+      "confirmation": "wait for price to turn up"
+    },
+    "bullish_hidden": {
+      "description": "Pris laver higher low, RSI laver lower low (continuation)",
+      "type": "continuation",
+      "direction": "bullish",
+      "probability_continuation": 65,
+      "avg_move_points": 6,
+      "reliability": "medium",
+      "best_context": "in established uptrend"
+    },
+    "bearish_regular": {
+      "description": "Pris laver higher high, RSI laver lower high",
+      "type": "reversal",
+      "direction": "bearish",
+      "probability_reversal": 68,
+      "avg_move_points": 9,
+      "reliability": "high",
+      "best_timeframe": "5-15 min",
+      "confirmation": "wait for price to turn down"
+    },
+    "bearish_hidden": {
+      "description": "Pris laver lower high, RSI laver higher high (continuation)",
+      "type": "continuation",
+      "direction": "bearish",
+      "probability_continuation": 63,
+      "avg_move_points": 6,
+      "reliability": "medium",
+      "best_context": "in established downtrend"
+    }
+  },
+  "momentum_signals": {
+    "rsi_50_cross_up": {
+      "description": "RSI krydser over 50 niveau (bullish momentum)",
+      "direction": "bullish",
+      "probability_continuation": 62,
+      "avg_move_points": 5,
+      "best_context": "in uptrend or after consolidation",
+      "multiplier": 1.12
+    },
+    "rsi_50_cross_down": {
+      "description": "RSI krydser under 50 niveau (bearish momentum)",
+      "direction": "bearish",
+      "probability_continuation": 60,
+      "avg_move_points": 5,
+      "best_context": "in downtrend or after consolidation",
+      "multiplier": 1.10
+    },
+    "rsi_breakout_from_range": {
+      "description": "RSI bryder ud af tight range (momentum starter)",
+      "probability_strong_move": 58,
+      "avg_move_points": 7,
+      "note": "Retning afhænger af breakout direction"
+    },
+    "rsi_failure_swing_bullish": {
+      "description": "RSI failer at nå nyt low under 30, derefter bryder over previous high",
+      "direction": "bullish",
+      "probability_reversal": 66,
+      "avg_move_points": 8,
+      "reliability": "medium-high"
+    },
+    "rsi_failure_swing_bearish": {
+      "description": "RSI failer at nå nyt high over 70, derefter bryder under previous low",
+      "direction": "bearish",
+      "probability_reversal": 64,
+      "avg_move_points": 7,
+      "reliability": "medium-high"
+    }
+  },
+  "combined_with_stochastic": {
+    "both_oversold": {
+      "description": "RSI under 30 OG stokastik under 20",
+      "multiplier_boost": 1.40,
+      "win_rate": 75,
+      "avg_bounce_points": 9,
+      "note": "Meget stærkt bullish signal"
+    },
+    "both_overbought": {
+      "description": "RSI over 70 OG stokastik over 80",
+      "multiplier_boost": 1.35,
+      "win_rate": 72,
+      "avg_drop_points": 8,
+      "note": "Meget stærkt bearish signal"
+    },
+    "conflicting_signals": {
+      "description": "RSI og stokastik viser forskellige zoner",
+      "multiplier_reduction": 0.80,
+      "note": "Reducer confidence, vent på alignment",
+      "best_action": "wait_for_confirmation"
+    },
+    "both_divergence": {
+      "description": "Både RSI og stokastik viser samme divergence",
+      "multiplier_boost": 1.50,
+      "reliability": "very high",
+      "note": "Stærkeste reversal signal"
+    },
+    "rsi_neutral_stoch_extreme": {
+      "description": "RSI neutral men stokastik ekstrem",
+      "note": "Stokastik er primary signal",
+      "follow": "stochastic"
+    }
+  },
+  "time_considerations": {
+    "rsi_stays_extreme_long_time": {
+      "description": "RSI forbliver over 70 eller under 30 i længere tid",
+      "note": "Stærk trend - kan fortsætte længere end forventet",
+      "action": "vent på divergence eller reversal candle"
+    },
+    "quick_return_to_neutral": {
+      "description": "RSI hurtigt tilbage til 50 efter ekstrem",
+      "note": "Svag momentum - sandsynligvis range bound"
+    }
+  }
+}

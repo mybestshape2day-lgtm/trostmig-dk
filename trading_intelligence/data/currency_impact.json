@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "eurusd": {"correlation": 0.76, "positive": true, "eur_up": "gold up typically", "multiplier": 1.20},
+  "usdjpy": {"yen_strength": "risk-off = gold up", "yen_weakness": "risk-on = gold pressure"},
+  "usdcnh": {"yuan_weakness": "gold support", "note": "China gold buying"},
+  "currency_events": {"ecb": "EUR moves = gold moves", "boj": "Yen moves = risk sentiment = gold", "pboc": "Yuan fixing affects gold"}
+}

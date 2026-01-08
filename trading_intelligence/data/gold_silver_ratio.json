@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures", "ratio": "Gold price / Silver price"},
+  "current_context": {"normal_range": "70-85", "mean": 78},
+  "ratio_high": {"threshold": ">85", "interpretation": "Silver undervalued", "mean_reversion_probability": 68, "gold_implication": "May underperform silver"},
+  "ratio_low": {"threshold": "<70", "interpretation": "Silver overvalued", "gold_implication": "May outperform silver"},
+  "leading_indicator": {"note": "Silver more volatile, often leads gold", "lag_time": "2-5 minutes"}
+}

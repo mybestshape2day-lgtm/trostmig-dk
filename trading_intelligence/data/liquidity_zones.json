@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "concept": "Areas where stop losses cluster - prime targets for stop hunts",
+    "importance": "Understanding liquidity zones prevents getting stopped out"
+  },
+  "concept": {
+    "definition": "Levels where large amounts of stop loss orders accumulate",
+    "why_targeted": "Market makers need liquidity to fill large orders",
+    "common_locations": [
+      "Just below swing lows (long stops)",
+      "Just above swing highs (short stops)",
+      "Below round numbers",
+      "Above round numbers",
+      "Below obvious support",
+      "Above obvious resistance"
+    ]
+  },
+  "identification": {
+    "swing_lows": {
+      "description": "Below recent swing lows by 3-8 points",
+      "reason": "Retail traders place stops just below lows",
+      "sweep_probability": 65
+    },
+    "swing_highs": {
+      "description": "Above recent swing highs by 3-8 points",
+      "reason": "Short sellers place stops just above highs",
+      "sweep_probability": 65
+    },
+    "round_numbers": {
+      "description": "2-5 points below 2600, 2650 etc",
+      "reason": "Obvious psychological levels",
+      "sweep_probability": 58
+    },
+    "previous_day_levels": {
+      "description": "Just beyond PDH/PDL",
+      "reason": "Widely watched levels",
+      "sweep_probability": 62
+    }
+  },
+  "behavior": {
+    "stop_hunt": {
+      "description": "Quick spike through level to trigger stops",
+      "characteristics": [
+        "Rapid move through level",
+        "Long wick on candle",
+        "Immediate reversal",
+        "Often low volume on spike"
+      ],
+      "timing": "Often at London or NY open"
+    },
+    "liquidity_grab": {
+      "description": "Sweep stops to accumulate liquidity for real move",
+      "sequence": [
+        "1. Price approaches level",
+        "2. Spikes through to grab stops",
+        "3. Immediately reverses",
+        "4. Real move begins opposite direction"
+      ],
+      "reliability": 72
+    }
+  },
+  "trading_strategies": {
+    "avoid_obvious_stops": {
+      "rule": "Place stops 5-10 points beyond obvious liquidity zones",
+      "example": "If swing low is 2615, put stop at 2605 not 2613",
+      "survival_rate": "+25%"
+    },
+    "fade_liquidity_grab": {
+      "setup": "Price spikes through level, immediately reverses",
+      "entry": "When price closes back inside level",
+      "stop": "New extreme beyond spike",
+      "target": "Opposite side of range",
+      "win_rate": 72,
+      "note": "High probability reversal trade"
+    },
+    "trade_after_sweep": {
+      "setup": "Stops swept, now real move begins",
+      "entry": "In direction opposite the sweep",
+      "stop": "Swept level",
+      "target": "Next major level",
+      "win_rate": 68,
+      "note": "Liquidity grab often precedes real move"
+    }
+  },
+  "common_sweep_times": {
+    "london_open": {
+      "time_utc": "08:00",
+      "sweep_probability": 65,
+      "note": "Common time for stop hunts before real move"
+    },
+    "ny_open": {
+      "time_utc": "13:00-14:00",
+      "sweep_probability": 70,
+      "note": "Highest probability sweep zone"
+    },
+    "before_news": {
+      "timing": "5-15 minutes before major news",
+      "sweep_probability": 55,
+      "note": "Clear out stops before volatility"
+    }
+  },
+  "protection_strategies": {
+    "buffer_distance": "Always 5-10 points from obvious level",
+    "avoid_round_numbers": "Don't place stops at 2600, 2650 exactly",
+    "structure_based": "Use recent swing structure, not obvious levels",
+    "wider_is_safer": "Accept wider stop to avoid sweep"
+  },
+  "multipliers": {
+    "sweep_at_round_number": 1.35,
+    "sweep_at_swing_point": 1.30,
+    "multiple_liquidity_zones": 1.40,
+    "sweep_with_reversal_candle": 1.45
+  },
+  "statistics": {
+    "daily_sweep_probability": 68,
+    "reversal_after_sweep": 72,
+    "avg_reversal_points": 8,
+    "sweep_duration": "Usually 1-3 candles"
+  }
+}

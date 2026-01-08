@@ -1,0 +1,10 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "flash_crash": {"preparation": "Always use hard stops", "circuit_breakers": "Know exchange limits", "action": "Don't panic, honor stops"},
+  "gap_against": {"weekend_gap_risk": "Reduce size on Friday", "stop_beyond": "Use catastrophic stops for overnight"},
+  "news_spike": {"unexpected_news": "Freeze, don't chase", "wait": "Let volatility settle"},
+  "liquidity_crisis": {"signs": "Wide spreads, slippage", "action": "Reduce size or stop"},
+  "max_adverse_excursion": {"typical": "5-8 points before winning trade", "use": "Set appropriate stops"},
+  "black_swan": {"preparation": "Never risk >2% per trade", "position_limits": "Max 5 positions"},
+  "account_protection": {"daily_limit": "3%", "weekly_limit": "6%", "monthly_limit": "10%"}
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {"instrument": "MGC Gold Futures", "concept": "Risk-on vs risk-off regime detection"},
+  "risk_on_indicators": {"spx": "up", "vix": "down", "yields": "up", "usd": "up", "gold_behavior": "pressure", "multiplier": 0.80},
+  "risk_off_indicators": {"spx": "down", "vix": "up", "yields": "down", "usd": "mixed", "gold_behavior": "safe_haven_bid", "multiplier": 1.35},
+  "vix_levels": {"below_15": "Complacent - risk on", "15_to_20": "Normal", "20_to_30": "Elevated - risk off starting", "above_30": "Fear - strong gold bid"}
+}

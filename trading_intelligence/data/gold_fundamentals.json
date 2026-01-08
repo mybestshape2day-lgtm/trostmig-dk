@@ -1,0 +1,167 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-29",
+    "sources": [
+      "World Gold Council",
+      "CFTC COT Reports",
+      "CME Group",
+      "Visual Capitalist",
+      "BullionVault"
+    ]
+  },
+  
+  "global_supply": {
+    "total_above_ground_tonnes": 216265,
+    "total_below_ground_tonnes": 132110,
+    "total_known_gold_tonnes": 348375,
+    "above_ground_value_usd_trillion": 29,
+    "years_of_reserves_remaining": 36,
+    "cube_size_meters": 22.3,
+    "data_as_of": "2024-12-31"
+  },
+  
+  "annual_production": {
+    "mine_production_2024_tonnes": 3661,
+    "recycled_gold_2024_tonnes": 1369,
+    "total_supply_2024_tonnes": 4974,
+    "production_trend": "slight_increase",
+    "peak_production_year": 2024,
+    "production_growth_since_2016_percent": 4.5
+  },
+  
+  "above_ground_distribution": {
+    "jewelry_tonnes": 97149,
+    "jewelry_percent": 45,
+    "bars_coins_etf_tonnes": 48634,
+    "bars_coins_etf_percent": 22,
+    "central_banks_tonnes": 37755,
+    "central_banks_percent": 17,
+    "industrial_other_tonnes": 32727,
+    "industrial_other_percent": 16
+  },
+  
+  "top_gold_producing_countries": {
+    "china_percent": 10,
+    "africa_percent": 28,
+    "asia_percent": 18,
+    "central_south_america_percent": 15,
+    "north_america_percent": 13,
+    "australia_russia_percent": 8
+  },
+  
+  "central_bank_holdings": {
+    "total_central_bank_tonnes": 37755,
+    "top_holders": [
+      {"country": "United States", "tonnes": 8133.5, "percent_of_reserves": 72, "grams_per_capita": 23.9},
+      {"country": "Germany", "tonnes": 3351.6, "percent_of_reserves": 72, "grams_per_capita": 40.2},
+      {"country": "Italy", "tonnes": 2451.9, "percent_of_reserves": 68, "grams_per_capita": 41.3},
+      {"country": "France", "tonnes": 2437.0, "percent_of_reserves": 68, "grams_per_capita": 36.1},
+      {"country": "Russia", "tonnes": 2329.0, "percent_of_reserves": 30, "grams_per_capita": 16.0},
+      {"country": "China", "tonnes": 2296.0, "percent_of_reserves": 5, "grams_per_capita": 1.6},
+      {"country": "Switzerland", "tonnes": 1039.9, "percent_of_reserves": 6, "grams_per_capita": 118.2},
+      {"country": "Japan", "tonnes": 846.0, "percent_of_reserves": 4, "grams_per_capita": 6.9},
+      {"country": "India", "tonnes": 879.6, "percent_of_reserves": 11, "grams_per_capita": 0.6},
+      {"country": "Turkey", "tonnes": 623.9, "percent_of_reserves": 34, "grams_per_capita": 7.4},
+      {"country": "Poland", "tonnes": 515.0, "percent_of_reserves": 22, "grams_per_capita": 13.6}
+    ],
+    "buying_trend_2022_2024_tonnes": 3220,
+    "annual_average_purchases_tonnes": 1000,
+    "percent_expecting_increase_2025": 95
+  },
+  
+  "central_bank_buying_2025": {
+    "top_buyers_ytd": [
+      {"country": "Poland", "tonnes": 83, "months_consecutive": 0, "note": "Paused after reaching 20% target, now targeting 30%"},
+      {"country": "Kazakhstan", "tonnes": 41, "months_consecutive": 6},
+      {"country": "Azerbaijan", "tonnes": 34.5},
+      {"country": "Turkey", "tonnes": 25, "months_consecutive": 26},
+      {"country": "China", "tonnes": 36, "months_consecutive": 9, "note": "Resumed buying after 6-month pause"},
+      {"country": "Czech Republic", "tonnes": 15, "months_consecutive": 30, "target": "100 tonnes by 2028"},
+      {"country": "India", "tonnes": 73, "rank": 2}
+    ],
+    "key_trend": "Emerging markets leading, de-dollarization theme"
+  },
+  
+  "price_drivers": {
+    "primary": [
+      {
+        "factor": "Real Interest Rates",
+        "correlation": -0.82,
+        "mechanism": "Higher real rates increase opportunity cost of holding non-yielding gold",
+        "note": "Correlation has weakened since 2022 due to central bank buying"
+      },
+      {
+        "factor": "US Dollar (DXY)",
+        "correlation": -0.45,
+        "mechanism": "Weaker dollar makes gold cheaper for foreign buyers",
+        "note": "DXY fell 10.8% in H1 2025, gold hit record highs"
+      },
+      {
+        "factor": "Central Bank Buying",
+        "impact": "structural_floor",
+        "mechanism": "1000+ tonnes annual purchases since 2022 create sustained demand",
+        "note": "Overriding traditional rate sensitivity"
+      },
+      {
+        "factor": "Geopolitical Uncertainty",
+        "impact": "safe_haven_demand",
+        "mechanism": "Crisis events drive flight to gold regardless of other factors"
+      },
+      {
+        "factor": "Inflation Expectations",
+        "impact": "bullish",
+        "mechanism": "Gold as hedge against currency debasement"
+      },
+      {
+        "factor": "US Fiscal Concerns",
+        "impact": "emerging_driver",
+        "mechanism": "Debt sustainability concerns drive gold as alternative store of value"
+      }
+    ],
+    "2024_2025_anomaly": {
+      "description": "Gold rallied alongside strong dollar - traditional inverse correlation broke",
+      "reason": "Central bank buying and geopolitical factors overpowered rate/dollar dynamics"
+    }
+  },
+  
+  "market_structure": {
+    "primary_exchanges": [
+      {"name": "COMEX/CME", "location": "New York", "product": "Gold Futures (GC, MGC)"},
+      {"name": "LBMA", "location": "London", "product": "Spot Gold, Physical"},
+      {"name": "Shanghai Gold Exchange", "location": "Shanghai", "product": "Physical, Futures"},
+      {"name": "TOCOM", "location": "Tokyo", "product": "Futures"}
+    ],
+    "micro_gold_futures": {
+      "symbol": "MGC",
+      "contract_size_oz": 10,
+      "tick_size": 0.10,
+      "tick_value_usd": 1.00,
+      "trading_hours": "Sunday 6pm - Friday 5pm ET",
+      "daily_break": "5pm - 6pm ET"
+    }
+  },
+  
+  "cot_positioning": {
+    "latest_data": "2025-12-16",
+    "speculative_net_long_contracts": 252206,
+    "commercial_net_short_contracts": 375794,
+    "interpretation": {
+      "signal": "contrarian_warning",
+      "description": "Record speculative longs + extreme commercial shorts = potential for pullback",
+      "historical_pattern": "When spec longs exceed 200k for 3+ weeks, defensive sectors outperform"
+    },
+    "usage_tips": [
+      "Extreme speculative longs = caution on new long positions",
+      "Commercial short covering = potential trend reversal signal",
+      "Watch managed money position changes week-over-week"
+    ]
+  },
+  
+  "indian_gold": {
+    "women_holdings_tonnes": 24000,
+    "percent_of_world_gold": 11,
+    "value_march_2025_usd_trillion": 2.02,
+    "cultural_significance": "Major life events, weddings, cultural traditions"
+  }
+}

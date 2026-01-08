@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "concept": "Score each setup by number of confirming factors",
+    "purpose": "Objective system to rank trade quality"
+  },
+  "scoring_factors": {
+    "trend": {
+      "with_strong_trend": 3,
+      "with_moderate_trend": 2,
+      "with_weak_trend": 1,
+      "against_trend": -1,
+      "ranging": 0,
+      "description": "Higher timeframe trend alignment"
+    },
+    "momentum": {
+      "strong_momentum_confirming": 2,
+      "moderate_momentum": 1,
+      "weak_momentum": 0,
+      "divergence_warning": -1,
+      "description": "Stochastic, RSI, MACD alignment"
+    },
+    "stochastic_position": {
+      "extreme_oversold_going_long": 2,
+      "oversold_going_long": 1,
+      "neutral": 0,
+      "overbought_going_long": -1,
+      "extreme_overbought_going_long": -2,
+      "description": "Stochastic zone and direction"
+    },
+    "price_level": {
+      "at_major_support_resistance": 3,
+      "at_minor_level": 2,
+      "at_round_number": 2,
+      "at_fibonacci_level": 2,
+      "at_pivot_point": 2,
+      "mid_range": 0,
+      "description": "Confluence of price levels"
+    },
+    "session": {
+      "ny_overlap_peak": 2,
+      "london_ny_overlap": 2,
+      "london_open": 1,
+      "asia_session": -1,
+      "after_hours": -2,
+      "description": "Time of day / liquidity"
+    },
+    "news_timing": {
+      "no_news_60min": 2,
+      "no_news_30min": 1,
+      "news_within_15min": -3,
+      "news_within_5min": -5,
+      "description": "Proximity to economic events"
+    },
+    "correlation_confirmation": {
+      "all_4_correlations_confirm": 3,
+      "3_of_4_confirm": 2,
+      "2_of_4_confirm": 1,
+      "mixed_signals": 0,
+      "correlations_against": -2,
+      "description": "DXY, yields, EUR, silver alignment"
+    },
+    "volume": {
+      "high_volume_confirming": 2,
+      "above_average_volume": 1,
+      "average_volume": 0,
+      "below_average_volume": -1,
+      "very_low_volume": -2,
+      "description": "Volume supporting move"
+    },
+    "pattern": {
+      "major_pattern_confirmed": 2,
+      "minor_pattern": 1,
+      "no_pattern": 0,
+      "failed_pattern_setup": 2,
+      "description": "Chart patterns present"
+    },
+    "candle_signal": {
+      "strong_reversal_candle": 2,
+      "moderate_signal": 1,
+      "weak_signal": 0,
+      "conflicting_candle": -1,
+      "description": "Single candle patterns"
+    }
+  },
+  "score_calculation": {
+    "method": "Add all factor scores",
+    "example_calculation": {
+      "trend": 3,
+      "momentum": 2,
+      "stochastic": 2,
+      "level": 3,
+      "session": 2,
+      "news": 2,
+      "correlation": 2,
+      "volume": 2,
+      "pattern": 2,
+      "candle": 2,
+      "total": 22,
+      "grade": "A+"
+    }
+  },
+  "score_thresholds": {
+    "18_plus": {
+      "grade": "A+",
+      "quality": "exceptional",
+      "win_rate": "75-85%",
+      "position_size": "150% of normal (max allowed)",
+      "action": "Trade aggressively",
+      "frequency": "Rare - 1-2 per week"
+    },
+    "14_to_17": {
+      "grade": "A",
+      "quality": "excellent",
+      "win_rate": "68-75%",
+      "position_size": "125% of normal",
+      "action": "Trade with confidence",
+      "frequency": "2-4 per week"
+    },
+    "10_to_13": {
+      "grade": "B",
+      "quality": "good",
+      "win_rate": "60-68%",
+      "position_size": "100% normal",
+      "action": "Trade standard size",
+      "frequency": "4-8 per week"
+    },
+    "6_to_9": {
+      "grade": "C",
+      "quality": "marginal",
+      "win_rate": "52-60%",
+      "position_size": "75% of normal",
+      "action": "Trade reduced size or skip",
+      "frequency": "Common but low edge"
+    },
+    "3_to_5": {
+      "grade": "D",
+      "quality": "poor",
+      "win_rate": "45-52%",
+      "position_size": "50% or skip",
+      "action": "Likely skip",
+      "frequency": "Should avoid"
+    },
+    "below_3": {
+      "grade": "F",
+      "quality": "very_poor",
+      "win_rate": "<45%",
+      "position_size": "0%",
+      "action": "DO NOT TRADE",
+      "frequency": "Common - most setups"
+    }
+  },
+  "perfect_setup_example": {
+    "description": "All factors aligned - rare but powerful",
+    "factors": {
+      "trend": "Strong uptrend on daily (3 points)",
+      "momentum": "Stochastic crossing up from oversold, RSI confirming (2 points)",
+      "stochastic": "Just turned up from extreme oversold (2 points)",
+      "level": "At 0.618 fib + round number + weekly S1 confluence (3 points)",
+      "session": "NY overlap peak (2 points)",
+      "news": "No news for 90 minutes (2 points)",
+      "correlation": "DXY down, yields down, EUR up, silver up - all confirm (3 points)",
+      "volume": "Volume spike on bounce (2 points)",
+      "pattern": "Bullish engulfing at support (2 points)",
+      "candle": "Hammer with long lower wick (2 points)"
+    },
+    "total_score": 23,
+    "grade": "A+",
+    "expected_win_rate": 80,
+    "position_size": "Maximum allowed (150%)",
+    "note": "These setups rare but account for majority of profits"
+  },
+  "danger_setup_example": {
+    "description": "Multiple conflicts - avoid",
+    "factors": {
+      "trend": "Against strong downtrend (-1 points)",
+      "momentum": "Bearish divergence (-1 points)",
+      "stochastic": "Trying to long in extreme overbought (-2 points)",
+      "level": "Mid-range, no support (0 points)",
+      "session": "Asia session low liquidity (-1 points)",
+      "news": "FOMC in 10 minutes (-5 points)",
+      "correlation": "DXY up, yields up, EUR down - all against (- 2 points)",
+      "volume": "Very low volume (-2 points)",
+      "pattern": "No pattern (0 points)",
+      "candle": "Doji - indecision (0 points)"
+    },
+    "total_score": -14,
+    "grade": "F",
+    "expected_win_rate": 25,
+    "position_size": "0%",
+    "action": "DO NOT TRADE",
+    "note": "Everything wrong - certain loser"
+  },
+  "position_sizing_by_score": {
+    "concept": "Larger size on better setups",
+    "base_contracts": 10,
+    "score_18_plus": "15 contracts (150%)",
+    "score_14_to_17": "12-13 contracts (125%)",
+    "score_10_to_13": "10 contracts (100%)",
+    "score_6_to_9": "7-8 contracts (75%)",
+    "score_below_6": "0 contracts (0%)",
+    "rationale": "Compound edge by sizing into best setups"
+  },
+  "real_time_scoring": {
+    "process": [
+      "1. Identify potential setup",
+      "2. Go through each factor systematically",
+      "3. Assign score for each factor",
+      "4. Calculate total score",
+      "5. Determine position size",
+      "6. Execute if score ≥10, skip if <10"
+    ],
+    "checklist_approach": "Use checklist to avoid bias",
+    "objectivity": "Numbers remove emotion",
+    "discipline": "Only trade setups that meet threshold"
+  },
+  "score_tracking": {
+    "record_all_trades": "Log score for every trade taken",
+    "analyze_results": "Compare actual vs expected win rates",
+    "refine_system": "Adjust point values based on results",
+    "identify_patterns": "Which factors most predictive?",
+    "continuous_improvement": "System evolves with data"
+  },
+  "factor_weights": {
+    "most_important": [
+      "Trend (3 points max)",
+      "Correlation (3 points max)",
+      "Price Level (3 points max)"
+    ],
+    "very_important": [
+      "Momentum (2 points max)",
+      "Stochastic (2 points max)",
+      "Session (2 points max)",
+      "News Timing (2 points max)",
+      "Volume (2 points max)",
+      "Pattern (2 points max)",
+      "Candle (2 points max)"
+    ],
+    "rationale": "Some factors more predictive than others"
+  },
+  "negative_scores": {
+    "importance": "Negative factors can kill a trade",
+    "examples": [
+      "News within 15 min: -3 to -5",
+      "Against trend: -1",
+      "Correlations against: -2",
+      "Low volume: -1 to -2",
+      "Wrong stochastic zone: -1 to -2"
+    ],
+    "rule": "Single -3 or worse factor = skip trade"
+  },
+  "score_distribution": {
+    "typical_setups": "Most scores will be 5-12",
+    "good_setups": "Score 13+ is minority (~20%)",
+    "great_setups": "Score 18+ is rare (~5%)",
+    "implication": "Be patient for high-scoring setups",
+    "discipline": "Don't force trades - wait for quality"
+  },
+  "backtesting_scores": {
+    "method": "Score historical trades retroactively",
+    "validate_system": "Do high scores correlate with wins?",
+    "optimize_thresholds": "Adjust cutoffs based on data",
+    "factor_importance": "Which factors most predictive?",
+    "expectancy_by_score": "Calculate expectancy per score band"
+  },
+  "common_mistakes": {
+    "ignoring_negative_factors": "Focusing only on positives",
+    "subjective_scoring": "Being generous with points",
+    "trading_low_scores": "Taking trades below threshold",
+    "not_tracking": "Not logging scores to verify system",
+    "overriding_system": "Taking low score trades on 'gut feel'"
+  },
+  "best_practices": {
+    "be_strict": "Don't give points generously",
+    "use_checklist": "Systematic approach every time",
+    "track_results": "Log scores and outcomes",
+    "be_patient": "Wait for score ≥10 minimum",
+    "size_accordingly": "Bigger size on higher scores",
+    "review_weekly": "Analyze which scores performed best"
+  }
+}

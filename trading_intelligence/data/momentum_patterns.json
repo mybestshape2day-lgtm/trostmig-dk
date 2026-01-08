@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "momentum_exhaustion": {"signs": ["RSI divergence", "Decreasing volume", "Smaller candles"], "trading": "Prepare for reversal", "probability": 68},
+  "momentum_divergence": {"price_up_momentum_down": "Bearish divergence", "price_down_momentum_up": "Bullish divergence", "reliability": 72},
+  "momentum_thrust": {"description": "Strong initiation signal", "indicators": ["Steep EMA angle", "Volume surge", "Large candles"], "continuation_probability": 75},
+  "momentum_continuation": {"strategy": "Adding to winners", "when": "Pullback to EMA in strong trend", "win_rate": 70}
+}

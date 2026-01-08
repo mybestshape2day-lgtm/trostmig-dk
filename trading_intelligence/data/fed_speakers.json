@@ -1,0 +1,8 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "powell": {"role": "Fed Chair", "impact": "very_high", "typical_move": 8, "avoid_minutes": 20},
+  "voting_members": {"impact": "medium", "typical_move": 4},
+  "non_voting": {"impact": "low", "typical_move": 2},
+  "speech_types": {"prepared_remarks": "Lower impact", "q_and_a": "Higher impact - unpredictable", "testimony": "Highest impact"},
+  "trading_rules": {"avoid_during": "Stay out during speeches", "fade_spikes": "Often mean revert after initial spike"}
+}

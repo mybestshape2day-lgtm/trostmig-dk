@@ -1,0 +1,202 @@
+{
+  "events": [
+    {
+      "name": "FOMC Rate Decision",
+      "date": "2025-01-29",
+      "time_utc": "19:00",
+      "impact": "high",
+      "typical_move_points": 15,
+      "avoid_trading_minutes_before": 30,
+      "avoid_trading_minutes_after": 60
+    },
+    {
+      "name": "FOMC Rate Decision",
+      "date": "2025-03-19",
+      "time_utc": "18:00",
+      "impact": "high",
+      "typical_move_points": 15,
+      "avoid_trading_minutes_before": 30,
+      "avoid_trading_minutes_after": 60
+    },
+    {
+      "name": "FOMC Rate Decision",
+      "date": "2025-05-07",
+      "time_utc": "18:00",
+      "impact": "high",
+      "typical_move_points": 15,
+      "avoid_trading_minutes_before": 30,
+      "avoid_trading_minutes_after": 60
+    },
+    {
+      "name": "FOMC Rate Decision",
+      "date": "2025-06-18",
+      "time_utc": "18:00",
+      "impact": "high",
+      "typical_move_points": 15,
+      "avoid_trading_minutes_before": 30,
+      "avoid_trading_minutes_after": 60
+    },
+    {
+      "name": "NFP (Non-Farm Payrolls)",
+      "date": "2025-01-10",
+      "time_utc": "13:30",
+      "impact": "high",
+      "typical_move_points": 12,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 45
+    },
+    {
+      "name": "NFP (Non-Farm Payrolls)",
+      "date": "2025-02-07",
+      "time_utc": "13:30",
+      "impact": "high",
+      "typical_move_points": 12,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 45
+    },
+    {
+      "name": "NFP (Non-Farm Payrolls)",
+      "date": "2025-03-07",
+      "time_utc": "13:30",
+      "impact": "high",
+      "typical_move_points": 12,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 45
+    },
+    {
+      "name": "NFP (Non-Farm Payrolls)",
+      "date": "2025-04-04",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 12,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 45
+    },
+    {
+      "name": "NFP (Non-Farm Payrolls)",
+      "date": "2025-05-02",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 12,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 45
+    },
+    {
+      "name": "NFP (Non-Farm Payrolls)",
+      "date": "2025-06-06",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 12,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 45
+    },
+    {
+      "name": "CPI (Consumer Price Index)",
+      "date": "2025-01-15",
+      "time_utc": "13:30",
+      "impact": "high",
+      "typical_move_points": 10,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 30
+    },
+    {
+      "name": "CPI (Consumer Price Index)",
+      "date": "2025-02-12",
+      "time_utc": "13:30",
+      "impact": "high",
+      "typical_move_points": 10,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 30
+    },
+    {
+      "name": "CPI (Consumer Price Index)",
+      "date": "2025-03-12",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 10,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 30
+    },
+    {
+      "name": "CPI (Consumer Price Index)",
+      "date": "2025-04-10",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 10,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 30
+    },
+    {
+      "name": "CPI (Consumer Price Index)",
+      "date": "2025-05-13",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 10,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 30
+    },
+    {
+      "name": "CPI (Consumer Price Index)",
+      "date": "2025-06-11",
+      "time_utc": "12:30",
+      "impact": "high",
+      "typical_move_points": 10,
+      "avoid_trading_minutes_before": 15,
+      "avoid_trading_minutes_after": 30
+    },
+    {
+      "name": "Fed Chair Powell Speech",
+      "date": "2025-01-14",
+      "time_utc": "18:30",
+      "impact": "medium",
+      "typical_move_points": 8,
+      "avoid_trading_minutes_before": 10,
+      "avoid_trading_minutes_after": 20
+    },
+    {
+      "name": "Fed Chair Powell Speech",
+      "date": "2025-02-25",
+      "time_utc": "15:00",
+      "impact": "medium",
+      "typical_move_points": 8,
+      "avoid_trading_minutes_before": 10,
+      "avoid_trading_minutes_after": 20
+    },
+    {
+      "name": "PPI (Producer Price Index)",
+      "date": "2025-01-14",
+      "time_utc": "13:30",
+      "impact": "medium",
+      "typical_move_points": 6,
+      "avoid_trading_minutes_before": 10,
+      "avoid_trading_minutes_after": 20
+    },
+    {
+      "name": "PPI (Producer Price Index)",
+      "date": "2025-02-13",
+      "time_utc": "13:30",
+      "impact": "medium",
+      "typical_move_points": 6,
+      "avoid_trading_minutes_before": 10,
+      "avoid_trading_minutes_after": 20
+    },
+    {
+      "name": "GDP Preliminary",
+      "date": "2025-01-30",
+      "time_utc": "13:30",
+      "impact": "medium",
+      "typical_move_points": 7,
+      "avoid_trading_minutes_before": 10,
+      "avoid_trading_minutes_after": 20
+    },
+    {
+      "name": "GDP Preliminary",
+      "date": "2025-04-30",
+      "time_utc": "12:30",
+      "impact": "medium",
+      "typical_move_points": 7,
+      "avoid_trading_minutes_before": 10,
+      "avoid_trading_minutes_after": 20
+    }
+  ]
+}

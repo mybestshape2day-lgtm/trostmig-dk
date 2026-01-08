@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "week_1": {"characteristics": "Month start positioning", "nfp_week": "Often first Friday", "volatility": "high"},
+  "week_2": {"characteristics": "CPI data typically", "volatility": "high"},
+  "week_3": {"characteristics": "OPEX week", "behavior": "Pin risk to strikes", "volatility": "medium"},
+  "week_4": {"characteristics": "Month end rebalancing", "behavior": "Portfolio adjustments", "volatility": "medium"}
+}

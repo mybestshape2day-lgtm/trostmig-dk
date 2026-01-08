@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-29",
+    "designed_for": "Thomas - Few hours trading, out before close, trend + range"
+  },
+  
+  "strategy_framework": {
+    "core_principles": [
+      "Always exit before market close (5 PM ET / 23:00 CET)",
+      "Trade only 2-4 hours per day (London-NY overlap preferred)",
+      "With trend on higher timeframe, range scalp on lower",
+      "Risk max 1% per trade on $150k account = $1500 max risk"
+    ],
+    "position_sizing": {
+      "account_size": 150000,
+      "max_risk_percent": 1,
+      "max_risk_usd": 1500,
+      "formula": "contracts = max_risk_usd / (stop_ticks * tick_value)",
+      "example": "15 tick stop = $1500 / 15 = 100 contracts max"
+    }
+  },
+  
+  "strategies": {
+    "opening_range_breakout": {
+      "name": "Opening Range Breakout (ORB)",
+      "timeframe": "5min",
+      "session": "NY Open",
+      "description": "Trade breakout of first 15-30 min range after 9:30 AM ET",
+      "entry_rules": [
+        "Wait for first 15-30 min to establish range",
+        "Mark high and low of range",
+        "Enter on break above high (long) or below low (short)",
+        "Confirm with volume spike (1.5x average)",
+        "Daily bias should align (use daily trend)"
+      ],
+      "exit_rules": [
+        "Target: 1.5-2x range height",
+        "Stop: Opposite side of range",
+        "Time stop: Exit by 12:00 PM ET if target not hit"
+      ],
+      "filters": [
+        "Avoid on major news days (CPI, NFP) - too volatile",
+        "Range should be 0.3-0.6x daily ATR for quality",
+        "Best on Tuesday-Thursday"
+      ],
+      "expected_win_rate": "55-60%",
+      "avg_rr": "1.5:1",
+      "edge": "NY open brings fresh volume and often establishes day's direction"
+    },
+    
+    "london_breakout": {
+      "name": "London Session Breakout",
+      "timeframe": "15min",
+      "session": "London Open",
+      "description": "Trade breakout from Asian session range at London open",
+      "entry_rules": [
+        "Identify Asian session high/low (7 PM - 3 AM ET)",
+        "At London open (3 AM ET), wait for clean break",
+        "Enter on first 15min close beyond Asian range",
+        "Volume should increase on breakout"
+      ],
+      "exit_rules": [
+        "Target 1: Asian range height projected from breakout",
+        "Target 2: Previous day high/low",
+        "Stop: 10-15 ticks inside Asian range",
+        "Trail stop after 1R profit"
+      ],
+      "filters": [
+        "Asian range should be relatively tight (< 0.5x ATR)",
+        "Check daily trend direction - trade with it"
+      ],
+      "expected_win_rate": "50-55%",
+      "avg_rr": "2:1",
+      "edge": "Asian consolidation often precedes London expansion"
+    },
+    
+    "range_scalp": {
+      "name": "Intraday Range Scalp",
+      "timeframe": "1min-5min",
+      "session": "Any (best in NY)",
+      "description": "Scalp between clearly defined support/resistance in ranging market",
+      "identification": {
+        "range_criteria": [
+          "Price has touched support/resistance 2+ times each",
+          "Range has held for at least 30 min",
+          "Range width is 15-40 ticks (optimal for scalping)",
+          "Volume decreasing inside range (coiling)"
+        ],
+        "quality_score": {
+          "touches_per_level": "More = better (3+ ideal)",
+          "time_in_range": "Longer = more reliable",
+          "false_breakouts": "Prior failed breaks strengthen levels"
+        }
+      },
+      "entry_rules": [
+        "Long: At support with bullish reversal candle (hammer, engulfing)",
+        "Short: At resistance with bearish reversal candle",
+        "Confirm with volume spike at level (rejection)",
+        "Entry within 20% of range boundary"
+      ],
+      "exit_rules": [
+        "Target: Opposite boundary minus 10%",
+        "Stop: 5-10 ticks beyond range boundary",
+        "Time stop: 15-20 min max hold"
+      ],
+      "risk_management": [
+        "If range breaks, DO NOT average in",
+        "Cut immediately on confirmed break",
+        "Can reverse if breakout is clean"
+      ],
+      "expected_win_rate": "65-70%",
+      "avg_rr": "1.5:1",
+      "edge": "High probability when range is clearly defined"
+    },
+    
+    "trend_pullback": {
+      "name": "Trend Pullback Entry",
+      "timeframe": "15min entry, 1H/4H trend",
+      "session": "London-NY overlap",
+      "description": "Enter with trend on pullback to key level",
+      "setup": {
+        "trend_identification": [
+          "1H/4H showing clear higher highs/lows (uptrend) or lower highs/lows (downtrend)",
+          "Price above/below 20 EMA on 1H",
+          "Recent swing confirmed"
+        ],
+        "pullback_criteria": [
+          "Pullback to 20/50 EMA zone on 15min",
+          "Pullback to prior breakout level (support becomes resistance)",
+          "RSI pullback to 40-50 zone (uptrend) or 50-60 (downtrend)",
+          "Volume decreasing on pullback"
+        ]
+      },
+      "entry_rules": [
+        "Wait for bullish/bearish engulfing at pullback zone",
+        "Enter on close of reversal candle",
+        "Or enter on break of pullback swing high/low"
+      ],
+      "exit_rules": [
+        "Target 1: Previous swing high/low",
+        "Target 2: 1.5x distance from entry to swing",
+        "Stop: Below/above pullback low/high + buffer"
+      ],
+      "expected_win_rate": "55-60%",
+      "avg_rr": "2:1",
+      "edge": "Trading with momentum, entering at discount"
+    },
+    
+    "liquidity_grab_fade": {
+      "name": "Liquidity Grab Fade (Stop Hunt)",
+      "timeframe": "1min-5min",
+      "session": "NY session",
+      "description": "Fade false breakouts that grab liquidity above/below obvious levels",
+      "identification": {
+        "setup": [
+          "Clear level where stops are clustered (obvious high/low)",
+          "Price spikes through level quickly",
+          "Immediate rejection (long wick candle)",
+          "Volume spike on rejection"
+        ]
+      },
+      "entry_rules": [
+        "Wait for price to return inside prior range",
+        "Enter on first candle close back inside",
+        "Aggressive: Enter immediately on rejection wick"
+      ],
+      "exit_rules": [
+        "Target: Opposite side of range",
+        "Stop: Beyond the false breakout high/low",
+        "Tight stop acceptable due to clear invalidation"
+      ],
+      "expected_win_rate": "60-65%",
+      "avg_rr": "2:1",
+      "edge": "Fading retail stop hunts, institutional entry zones"
+    }
+  },
+  
+  "regime_classification": {
+    "trending": {
+      "indicators": [
+        "ADX > 25",
+        "Clear higher highs/lows or lower highs/lows",
+        "Price respecting 20 EMA",
+        "Volume increasing with trend"
+      ],
+      "preferred_strategies": ["trend_pullback", "london_breakout", "opening_range_breakout"]
+    },
+    "ranging": {
+      "indicators": [
+        "ADX < 20",
+        "Price oscillating between clear levels",
+        "Equal highs and lows",
+        "Volume decreasing"
+      ],
+      "preferred_strategies": ["range_scalp", "liquidity_grab_fade"]
+    },
+    "choppy": {
+      "indicators": [
+        "No clear structure",
+        "Random spikes and reversals",
+        "Wide wicks everywhere"
+      ],
+      "action": "STAY OUT - No edge"
+    }
+  },
+  
+  "daily_checklist": {
+    "pre_session": [
+      "Check economic calendar for high-impact events",
+      "Identify daily/weekly key levels",
+      "Note Asian session high/low",
+      "Determine daily bias (trend up/down/range)",
+      "Calculate position size based on planned stop"
+    ],
+    "during_session": [
+      "Wait for clear setup - no FOMO entries",
+      "Confirm entry with multiple factors",
+      "Set stop immediately after entry",
+      "Follow exit rules without exception"
+    ],
+    "post_session": [
+      "Log trade with all details",
+      "Screenshot chart with annotations",
+      "Note what worked / didn't work",
+      "Calculate daily P&L"
+    ]
+  }
+}

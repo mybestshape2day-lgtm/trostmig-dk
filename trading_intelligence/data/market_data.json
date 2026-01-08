@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "instrument": "MGCG2026",
+    "description": "Micro Gold Futures Feb 2026",
+    "tick_size": 0.1,
+    "tick_value": 1.00,
+    "currency": "USD",
+    "exchange": "COMEX",
+    "last_updated": "2025-12-29T14:05:00+01:00"
+  },
+  "daily": [
+    {
+      "date": "2025-12-29",
+      "open": 4536.0,
+      "high": 4545.0,
+      "low": 4464.4,
+      "close": 4485.2,
+      "range_ticks": 806,
+      "trend": "bearish",
+      "day_of_week": "Monday",
+      "notes": "Strong selloff from 4580 resistance"
+    }
+  ],
+  "sessions": [
+    {
+      "date": "2025-12-29",
+      "session": "asia",
+      "open": 4536.0,
+      "high": 4545.0,
+      "low": 4476.3,
+      "close": 4485.0,
+      "range_ticks": 687,
+      "trend": "bearish",
+      "start_time": "01:00",
+      "end_time": "10:00"
+    },
+    {
+      "date": "2025-12-29",
+      "session": "london",
+      "open": null,
+      "high": null,
+      "low": null,
+      "close": null,
+      "range_ticks": null,
+      "trend": null,
+      "start_time": "09:00",
+      "end_time": "17:30"
+    },
+    {
+      "date": "2025-12-29",
+      "session": "new_york",
+      "open": null,
+      "high": null,
+      "low": null,
+      "close": null,
+      "range_ticks": null,
+      "trend": null,
+      "start_time": "14:00",
+      "end_time": "23:00"
+    }
+  ],
+  "candles_5min": []
+}

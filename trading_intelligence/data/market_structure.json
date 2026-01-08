@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "higher_highs_higher_lows": {"definition": "Uptrend structure", "continuation_probability": 72, "trading": "Buy dips"},
+  "lower_highs_lower_lows": {"definition": "Downtrend structure", "continuation_probability": 70, "trading": "Sell rallies"},
+  "break_of_structure": {"description": "Trend change signal", "reliability": 68, "action": "Reverse bias"},
+  "change_of_character": {"description": "Momentum shift before structure break", "early_warning": true, "probability_reversal_soon": 65}
+}

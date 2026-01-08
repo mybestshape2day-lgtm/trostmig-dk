@@ -1,0 +1,132 @@
+{
+  "system": {
+    "version": "2.0",
+    "last_updated": "2025-12-29T14:05:00+01:00"
+  },
+  "account": {
+    "size": 150000,
+    "currency": "USD",
+    "broker": "Tradovate",
+    "account_type": "eval",
+    "risk_per_trade_pct": 1,
+    "max_risk_per_trade": 1500,
+    "max_daily_loss": 3000,
+    "max_contracts": 150
+  },
+  "instrument": {
+    "symbol": "MGCG2026",
+    "name": "Micro Gold Futures Feb 2026",
+    "tick_size": 0.1,
+    "tick_value": 1.00,
+    "contract_size": 10,
+    "margin": 1320
+  },
+  "sessions": {
+    "asia": {
+      "start_utc": "00:00",
+      "end_utc": "09:00",
+      "start_dk": "01:00",
+      "end_dk": "10:00",
+      "quality": "poor",
+      "trade": false,
+      "notes": "Low volume, wide spreads"
+    },
+    "london": {
+      "start_utc": "08:00",
+      "end_utc": "16:30",
+      "start_dk": "09:00",
+      "end_dk": "17:30",
+      "quality": "good",
+      "trade": true,
+      "notes": "Trend initiation, LBMA fix"
+    },
+    "new_york": {
+      "start_utc": "13:00",
+      "end_utc": "22:00",
+      "start_dk": "14:00",
+      "end_dk": "23:00",
+      "quality": "best",
+      "trade": true,
+      "notes": "Highest volume, tightest spreads"
+    },
+    "overlap": {
+      "start_utc": "13:00",
+      "end_utc": "16:30",
+      "start_dk": "14:00",
+      "end_dk": "17:30",
+      "quality": "optimal",
+      "trade": true,
+      "notes": "Peak liquidity, best conditions"
+    }
+  },
+  "rules": {
+    "exit_before_dk": "23:00",
+    "no_trade_before_news_minutes": 30,
+    "min_rr": 1.5,
+    "max_trades_per_day": 5,
+    "required_confirmations": 2
+  },
+  "strategies": {
+    "scalp_5": {
+      "name": "$5 Scalp",
+      "target_ticks": 50,
+      "stop_ticks": 30,
+      "rr": 1.67,
+      "max_contracts": 30,
+      "max_time_minutes": 5,
+      "sessions": ["overlap", "new_york"],
+      "min_probability": 60,
+      "description": "Quick $5 moves at key levels"
+    },
+    "scalp_10": {
+      "name": "$10 Scalp",
+      "target_ticks": 100,
+      "stop_ticks": 50,
+      "rr": 2.0,
+      "max_contracts": 20,
+      "max_time_minutes": 15,
+      "sessions": ["overlap", "new_york"],
+      "min_probability": 65,
+      "description": "Larger moves with confirmation"
+    },
+    "range_scalp": {
+      "name": "Range Scalp",
+      "target_pct_of_range": 80,
+      "stop_beyond_range_ticks": 10,
+      "rr": 1.5,
+      "max_contracts": 100,
+      "max_time_minutes": 20,
+      "sessions": ["london", "new_york", "overlap"],
+      "min_probability": 55,
+      "description": "Support/resistance bounces"
+    },
+    "trend_pullback": {
+      "name": "Trend Pullback",
+      "target_swing": true,
+      "stop_beyond_pullback_ticks": 15,
+      "rr": 2.0,
+      "max_contracts": 75,
+      "max_time_minutes": 60,
+      "sessions": ["overlap"],
+      "min_probability": 55,
+      "description": "With trend after pullback"
+    }
+  },
+  "signals": {
+    "min_probability_to_show": 55,
+    "high_probability_threshold": 70,
+    "data_points_required": 5,
+    "weights": {
+      "session_pattern": 1.0,
+      "day_pattern": 0.8,
+      "level_proximity": 1.5,
+      "volatility_pattern": 0.7,
+      "recent_trend": 1.2
+    }
+  },
+  "alerts": {
+    "price_near_level_ticks": 10,
+    "high_probability_signal": 70,
+    "session_change": true
+  }
+}

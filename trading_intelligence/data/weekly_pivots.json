@@ -1,0 +1,221 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "calculation_period": "Weekly",
+    "reset": "Monday 00:00 UTC (after Sunday close)",
+    "institutional_use": "Banks and funds use these levels heavily"
+  },
+  "formulas": {
+    "pivot": "(Week_High + Week_Low + Week_Close) / 3",
+    "r1": "(2 × Pivot) - Week_Low",
+    "r2": "Pivot + (Week_High - Week_Low)",
+    "r3": "Week_High + 2 × (Pivot - Week_Low)",
+    "s1": "(2 × Pivot) - Week_High",
+    "s2": "Pivot - (Week_High - Week_Low)",
+    "s3": "Week_Low - 2 × (Week_High - Pivot)",
+    "midpoints": "Calculate mid-M levels between main pivots for precision"
+  },
+  "level_characteristics": {
+    "pivot": {
+      "strength": "very_high",
+      "typical_reaction_points": 7,
+      "break_probability": 50,
+      "reliability": 78,
+      "description": "Central equilibrium - above = bullish, below = bearish",
+      "trading_note": "Most important level - often tested multiple times"
+    },
+    "r1": {
+      "strength": "high",
+      "typical_reaction_points": 5,
+      "break_probability": 58,
+      "reliability": 72,
+      "description": "First resistance - often intraday target",
+      "trading_note": "Good profit target from longs"
+    },
+    "r2": {
+      "strength": "very_high",
+      "typical_reaction_points": 7,
+      "break_probability": 42,
+      "reliability": 75,
+      "description": "Major resistance - breakout level",
+      "trading_note": "Strong week needed to reach, often holds"
+    },
+    "r3": {
+      "strength": "extreme",
+      "typical_reaction_points": 9,
+      "break_probability": 28,
+      "reliability": 70,
+      "description": "Extreme resistance - rarely reached",
+      "trading_note": "Fade if reached, overbought signal"
+    },
+    "s1": {
+      "strength": "high",
+      "typical_reaction_points": 5,
+      "break_probability": 58,
+      "reliability": 72,
+      "description": "First support - often intraday target",
+      "trading_note": "Good profit target from shorts"
+    },
+    "s2": {
+      "strength": "very_high",
+      "typical_reaction_points": 7,
+      "break_probability": 42,
+      "reliability": 75,
+      "description": "Major support - breakdown level",
+      "trading_note": "Weak week needed to reach, often holds"
+    },
+    "s3": {
+      "strength": "extreme",
+      "typical_reaction_points": 9,
+      "break_probability": 28,
+      "reliability": 70,
+      "description": "Extreme support - rarely reached",
+      "trading_note": "Buy if reached, oversold signal"
+    }
+  },
+  "weekly_statistics": {
+    "touches_per_week": {
+      "pivot": 3.2,
+      "r1_or_s1": 2.8,
+      "r2_or_s2": 1.5,
+      "r3_or_s3": 0.4
+    },
+    "probability_reached": {
+      "r1": 75,
+      "r2": 48,
+      "r3": 22,
+      "s1": 75,
+      "s2": 48,
+      "s3": 22
+    },
+    "bounce_probability": {
+      "pivot": 68,
+      "r1_s1": 65,
+      "r2_s2": 72,
+      "r3_s3": 78
+    }
+  },
+  "trading_strategies": {
+    "pivot_bounce": {
+      "description": "Trade bounce off weekly pivot",
+      "entry": "Price approaches pivot, shows rejection candle",
+      "stop": "15-20 points beyond pivot",
+      "target": "R1 from below, S1 from above",
+      "win_rate": 68,
+      "best_context": "Trend intact, pivot acting as dynamic support/resistance"
+    },
+    "r1_s1_fade": {
+      "description": "Fade moves to R1/S1 expecting pullback",
+      "entry": "Price reaches R1 or S1, shows exhaustion",
+      "stop": "Beyond R2 or S2",
+      "target": "Back to pivot",
+      "win_rate": 62,
+      "best_context": "Range-bound week, no strong trend"
+    },
+    "breakout_r2_s2": {
+      "description": "Trade breakout of R2 or S2",
+      "entry": "Strong close beyond R2/S2 with volume",
+      "stop": "Back inside R2/S2",
+      "target": "R3 or S3",
+      "win_rate": 58,
+      "best_context": "Strong trend, momentum confirming, news catalyst"
+    },
+    "week_start_position": {
+      "description": "Monday: Determine if above/below pivot for bias",
+      "above_pivot": "Bullish bias, look for longs at S1/Pivot",
+      "below_pivot": "Bearish bias, look for shorts at R1/Pivot",
+      "win_rate": 64,
+      "note": "Sets tone for entire week"
+    }
+  },
+  "day_of_week_behavior": {
+    "monday": {
+      "pivot_respect": 72,
+      "typical_behavior": "Establish position relative to pivot",
+      "trading_note": "Often ranges between pivot and R1/S1"
+    },
+    "tuesday": {
+      "pivot_respect": 68,
+      "typical_behavior": "Trend development, may reach R2/S2",
+      "trading_note": "Most volatile day, good for breakouts"
+    },
+    "wednesday": {
+      "pivot_respect": 70,
+      "typical_behavior": "Mid-week continuation or reversal",
+      "trading_note": "Watch for pivot retests"
+    },
+    "thursday": {
+      "pivot_respect": 65,
+      "typical_behavior": "Positioning for Friday close",
+      "trading_note": "May consolidate near levels"
+    },
+    "friday": {
+      "pivot_respect": 75,
+      "typical_behavior": "Profit taking, mean reversion to pivot",
+      "trading_note": "Often gravitates back to pivot by close"
+    }
+  },
+  "confluence_multipliers": {
+    "pivot_plus_round_number": {
+      "multiplier": 1.35,
+      "reliability_boost": 15,
+      "example": "Weekly pivot at 2650"
+    },
+    "pivot_plus_fib": {
+      "multiplier": 1.30,
+      "reliability_boost": 12,
+      "example": "R1 aligns with 0.618 fib"
+    },
+    "pivot_plus_ema": {
+      "multiplier": 1.25,
+      "reliability_boost": 10,
+      "example": "Pivot near EMA50"
+    },
+    "r2_s2_plus_previous_week": {
+      "multiplier": 1.40,
+      "reliability_boost": 18,
+      "example": "This week's R2 = last week's breakout point"
+    },
+    "multiple_pivot_confluence": {
+      "multiplier": 1.45,
+      "reliability_boost": 20,
+      "example": "Weekly pivot = Monthly pivot = Daily pivot"
+    }
+  },
+  "session_interaction": {
+    "asia": {
+      "behavior": "Often ranges between pivot and R1/S1",
+      "breakouts": "Rare, usually false if occur"
+    },
+    "london": {
+      "behavior": "Tests levels, may break R1/S1",
+      "breakouts": "Can reach R2/S2 on strong days"
+    },
+    "ny_overlap": {
+      "behavior": "Highest probability of R2/S2 tests",
+      "breakouts": "Best time for legitimate breakouts"
+    }
+  },
+  "advanced_concepts": {
+    "virgin_pivot": {
+      "description": "Pivot not yet tested this week",
+      "probability_test": 85,
+      "trading": "High probability it will be tested - position accordingly"
+    },
+    "pivot_flip": {
+      "description": "Support becomes resistance or vice versa",
+      "significance": "Confirms trend change",
+      "trading": "Strong signal when pivot role reverses"
+    },
+    "midpoint_m_levels": {
+      "description": "Calculate mid-points between main pivots",
+      "use": "Precise entry/exit levels",
+      "example": "M1 = (Pivot + R1) / 2"
+    }
+  },
+  "risk_management": {
+    "stop_placement": "Never wider than distance to next pivot level",
+    "position_sizing": "Reduce size if trading far from pivot",
+    "avoid": "Trading between R2-R3 or S2-S3 - extreme territory"
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-29",
+    "purpose": "Track instruments that influence or correlate with gold price movements"
+  },
+  
+  "primary_correlations": {
+    "us_dollar_index": {
+      "symbol": "DXY",
+      "correlation_with_gold": -0.45,
+      "correlation_range": "-0.72 to +0.05 (volatile in 2025)",
+      "relationship": "inverse",
+      "mechanism": "Gold priced in USD - weaker dollar = cheaper gold for foreign buyers",
+      "trading_use": {
+        "strong_signal": "When DXY breaks key level, anticipate gold move opposite direction",
+        "confluence": "Gold long + DXY weakness = stronger setup",
+        "divergence_warning": "Gold and DXY moving same direction = unusual, caution"
+      },
+      "key_levels_2025": {
+        "support": 96.35,
+        "resistance": 110,
+        "20_year_avg": 90.35,
+        "10_year_avg": 98.50
+      },
+      "2025_note": "DXY fell 10.8% in H1 2025 while gold hit record highs"
+    },
+    
+    "us_10y_treasury_yield": {
+      "symbol": "US10Y / TNX",
+      "correlation_with_gold": "historically inverse, breaking down",
+      "relationship": "complex",
+      "mechanism": "Higher yields = higher opportunity cost of holding gold",
+      "trading_use": {
+        "traditional": "Rising yields = gold weakness",
+        "2024_2025_shift": "Correlation weakened - gold rallied despite high rates",
+        "key_watch": "Real yields (nominal - inflation) more important than nominal"
+      },
+      "why_correlation_broke": [
+        "Central bank buying overwhelming",
+        "Fiscal sustainability concerns",
+        "De-dollarization trend",
+        "Geopolitical premium"
+      ]
+    },
+    
+    "real_interest_rates": {
+      "symbol": "TIPS yields / US10Y - Breakeven",
+      "correlation_with_gold": -0.82,
+      "relationship": "strong inverse",
+      "mechanism": "Negative real rates = gold very attractive (no opportunity cost)",
+      "trading_use": {
+        "bullish_gold": "Real rates declining or negative",
+        "bearish_gold": "Real rates rising significantly",
+        "key_threshold": "Real rates turning negative = strong gold tailwind"
+      }
+    },
+    
+    "vix": {
+      "symbol": "VIX",
+      "correlation_with_gold": "positive during crises",
+      "relationship": "conditional",
+      "mechanism": "Fear drives both gold and VIX higher",
+      "trading_use": {
+        "VIX_spike": "Often coincides with gold bid",
+        "VIX_collapse": "Risk-on, gold may face headwinds",
+        "divergence": "High VIX + gold falling = unusual, investigate"
+      }
+    },
+    
+    "sp500": {
+      "symbol": "ES / SPX",
+      "correlation_with_gold": "variable",
+      "relationship": "context_dependent",
+      "mechanism": "Risk-on vs risk-off dynamics",
+      "trading_use": {
+        "equity_crash": "Gold often rallies (safe haven)",
+        "equity_rally": "Gold can still rally if driven by inflation/dollar weakness",
+        "both_falling": "Deflationary signal, unusual for gold"
+      }
+    }
+  },
+  
+  "secondary_correlations": {
+    "silver": {
+      "symbol": "SI / XAGUSD",
+      "correlation_with_gold": 0.85,
+      "relationship": "strong positive",
+      "trading_use": {
+        "confirmation": "Silver moving with gold confirms move",
+        "divergence": "Silver lagging gold = potential gold weakness ahead",
+        "gold_silver_ratio": {
+          "average": 65,
+          "high_ratio": ">80 = silver cheap relative to gold",
+          "low_ratio": "<50 = silver expensive relative to gold"
+        }
+      }
+    },
+    
+    "crude_oil": {
+      "symbol": "CL / WTI",
+      "correlation_with_gold": "moderate positive",
+      "relationship": "both inflation hedges",
+      "trading_use": {
+        "inflation_signal": "Oil + gold rising = inflation theme in play",
+        "divergence": "Can diverge on supply/demand specifics"
+      }
+    },
+    
+    "bitcoin": {
+      "symbol": "BTC",
+      "correlation_with_gold": "variable, increasing",
+      "relationship": "both 'alternative assets'",
+      "trading_use": {
+        "institutional_flow": "Some rotation between crypto and gold",
+        "risk_sentiment": "BTC rally sometimes coincides with gold weakness (risk-on)",
+        "note": "Correlation strengthening as BTC matures"
+      }
+    },
+    
+    "copper": {
+      "symbol": "HG",
+      "correlation_with_gold": "positive in growth/inflation",
+      "relationship": "industrial vs monetary",
+      "trading_use": {
+        "copper_gold_ratio": "Rising = growth expectations, falling = safety concerns",
+        "divergence_signal": "Gold rising, copper falling = recession fears"
+      }
+    }
+  },
+  
+  "central_bank_proxies": {
+    "china_pboc": {
+      "importance": "critical",
+      "watch_for": [
+        "Monthly gold reserve updates",
+        "Yuan strength/weakness",
+        "US Treasury holdings changes"
+      ],
+      "gold_impact": "China buying = strong floor under gold prices"
+    },
+    
+    "fed_policy": {
+      "importance": "critical",
+      "watch_for": [
+        "Rate decisions",
+        "Dot plot changes",
+        "Balance sheet policy",
+        "Inflation commentary"
+      ],
+      "gold_impact": {
+        "dovish_surprise": "Gold bullish",
+        "hawkish_surprise": "Gold bearish (short-term)",
+        "note": "2024-2025 showed gold can rally despite hawkish Fed"
+      }
+    }
+  },
+  
+  "tradingview_watchlist": {
+    "essential": [
+      "GC1! (Gold Futures)",
+      "MGC1! (Micro Gold)",
+      "DXY (Dollar Index)",
+      "US10Y (10Y Yield)",
+      "SI1! (Silver)",
+      "ES1! (S&P 500 Futures)",
+      "VIX (Volatility)"
+    ],
+    "secondary": [
+      "CL1! (Crude Oil)",
+      "HG1! (Copper)",
+      "EURUSD",
+      "USDJPY",
+      "TLT (Bond ETF)"
+    ]
+  },
+  
+  "multi_asset_signals": {
+    "gold_bullish_setup": {
+      "description": "Multiple assets confirming gold strength",
+      "conditions": [
+        "DXY breaking down / weak",
+        "Real yields declining",
+        "Silver outperforming gold",
+        "VIX elevated or rising",
+        "Equities under pressure"
+      ],
+      "strength": "3+ conditions = strong confluence"
+    },
+    
+    "gold_bearish_setup": {
+      "description": "Multiple assets suggesting gold weakness",
+      "conditions": [
+        "DXY breaking out / strong",
+        "Real yields rising sharply",
+        "Silver underperforming gold",
+        "VIX collapsing",
+        "Equities in strong risk-on rally"
+      ],
+      "strength": "3+ conditions = reduce gold exposure"
+    }
+  }
+}

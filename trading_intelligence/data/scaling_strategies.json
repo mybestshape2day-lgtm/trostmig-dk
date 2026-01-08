@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "scale_in": {"method": "Add to winners at predefined levels", "max_additions": "2-3 times", "risk_control": "Keep total risk <3%", "when": "Strong trend, clear levels"},
+  "scale_out": {"method": "Exit in portions at targets", "typical": "1/3 at each target", "pros": "Locks profits gradually"},
+  "pyramid": {"method": "Increasing size in trend", "risk": "Each addition smaller position", "max_size": "150% of initial"},
+  "reverse_pyramid": {"method": "Decreasing size as profit grows", "when": "Trend mature, take chips off table"}
+}

@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "calculation_period": "Daily",
+    "reset": "00:00 UTC each day",
+    "use": "Intraday support/resistance levels"
+  },
+  "formulas": {
+    "pivot": "(Previous_Day_High + Previous_Day_Low + Previous_Day_Close) / 3",
+    "r1": "(2 × Pivot) - Previous_Day_Low",
+    "r2": "Pivot + (Previous_Day_High - Previous_Day_Low)",
+    "r3": "Previous_Day_High + 2 × (Pivot - Previous_Day_Low)",
+    "s1": "(2 × Pivot) - Previous_Day_High",
+    "s2": "Pivot - (Previous_Day_High - Previous_Day_Low)",
+    "s3": "Previous_Day_Low - 2 × (Previous_Day_High - Pivot)"
+  },
+  "level_characteristics": {
+    "pivot": {
+      "strength": "high",
+      "typical_reaction_points": 5,
+      "reliability": 72,
+      "description": "Day's central pivot - above bullish, below bearish",
+      "touches_per_day": 2.5
+    },
+    "r1": {
+      "strength": "medium-high",
+      "typical_reaction_points": 4,
+      "reliability": 68,
+      "probability_reached": 68,
+      "description": "First resistance target"
+    },
+    "r2": {
+      "strength": "high",
+      "typical_reaction_points": 5,
+      "reliability": 70,
+      "probability_reached": 42,
+      "description": "Strong resistance"
+    },
+    "r3": {
+      "strength": "very_high",
+      "typical_reaction_points": 6,
+      "reliability": 72,
+      "probability_reached": 18,
+      "description": "Extreme resistance - rarely reached"
+    },
+    "s1": {
+      "strength": "medium-high",
+      "typical_reaction_points": 4,
+      "reliability": 68,
+      "probability_reached": 68,
+      "description": "First support target"
+    },
+    "s2": {
+      "strength": "high",
+      "typical_reaction_points": 5,
+      "reliability": 70,
+      "probability_reached": 42,
+      "description": "Strong support"
+    },
+    "s3": {
+      "strength": "very_high",
+      "typical_reaction_points": 6,
+      "reliability": 72,
+      "probability_reached": 18,
+      "description": "Extreme support - rarely reached"
+    }
+  },
+  "intraday_behavior": {
+    "morning": "Often tests pivot in first 2 hours",
+    "midday": "Levels hold during consolidation",
+    "afternoon": "May push to R2/S2 or revert to pivot",
+    "close": "Gravitates toward pivot before close"
+  },
+  "session_specific": {
+    "asia": {
+      "typical_range": "Pivot to R1/S1",
+      "breakout_probability": 25,
+      "note": "Low volume, levels hold well"
+    },
+    "london": {
+      "typical_range": "R1 to S1, sometimes R2/S2",
+      "breakout_probability": 48,
+      "note": "Can test and break R1/S1"
+    },
+    "ny": {
+      "typical_range": "Full range possible",
+      "breakout_probability": 62,
+      "note": "Most likely to reach R2/S2"
+    }
+  },
+  "trading_strategies": {
+    "pivot_bounce": {
+      "entry": "Price approaches pivot, shows rejection",
+      "stop": "10 points beyond pivot",
+      "target": "R1 or S1",
+      "win_rate": 65
+    },
+    "r1_s1_fade": {
+      "entry": "Price reaches R1/S1, shows rejection",
+      "stop": "Beyond R2/S2",
+      "target": "Pivot",
+      "win_rate": 60
+    },
+    "breakout_r2_s2": {
+      "entry": "Strong close beyond R2/S2",
+      "stop": "Back inside",
+      "target": "R3/S3",
+      "win_rate": 55
+    }
+  },
+  "confluence_multipliers": {
+    "pivot_at_round_number": 1.30,
+    "pivot_at_previous_day_close": 1.25,
+    "r1_s1_at_fib": 1.20,
+    "multiple_pivot_alignment": 1.35
+  }
+}

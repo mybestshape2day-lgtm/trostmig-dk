@@ -1,0 +1,248 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "importance": "Widely watched patterns create self-fulfilling prophecies",
+    "note": "Combine with volume and other indicators for best results"
+  },
+  "head_and_shoulders": {
+    "type": "reversal",
+    "direction": "bearish",
+    "identification": {
+      "left_shoulder": "Rally to peak",
+      "head": "Rally to higher peak",
+      "right_shoulder": "Rally to peak similar to left shoulder",
+      "neckline": "Line connecting lows between shoulders and head"
+    },
+    "confirmation": "Break and close below neckline with volume",
+    "target_calculation": "Distance from head to neckline, projected below neckline",
+    "reliability": 72,
+    "failure_rate": 28,
+    "avg_move_points": 18,
+    "time_to_form": "Several days to weeks",
+    "failure_signals": ["Neckline holds", "Right shoulder higher than left", "No volume on breakdown"],
+    "best_context": "After extended uptrend, overbought conditions",
+    "win_rate": 68
+  },
+  "inverse_head_and_shoulders": {
+    "type": "reversal",
+    "direction": "bullish",
+    "identification": {
+      "left_shoulder": "Decline to low",
+      "head": "Decline to lower low",
+      "right_shoulder": "Decline to low similar to left shoulder",
+      "neckline": "Line connecting highs between shoulders and head"
+    },
+    "confirmation": "Break and close above neckline with volume",
+    "target_calculation": "Distance from head to neckline, projected above neckline",
+    "reliability": 70,
+    "failure_rate": 30,
+    "avg_move_points": 17,
+    "time_to_form": "Several days to weeks",
+    "failure_signals": ["Neckline rejected", "Right shoulder lower than left", "No volume on breakout"],
+    "best_context": "After extended downtrend, oversold conditions",
+    "win_rate": 66
+  },
+  "double_top": {
+    "type": "reversal",
+    "direction": "bearish",
+    "identification": "Two peaks at approximately same level",
+    "confirmation": "Break below support/valley between peaks",
+    "target": "Distance from peaks to valley, projected below valley",
+    "reliability": 68,
+    "avg_move_points": 15,
+    "time_between_peaks": "Days to weeks",
+    "volume_behavior": "Lower volume on second peak = stronger signal",
+    "failure_signals": ["Support holds", "Third peak forms", "Breakout above peaks"],
+    "best_context": "Resistance level, overbought",
+    "win_rate": 64
+  },
+  "double_bottom": {
+    "type": "reversal",
+    "direction": "bullish",
+    "identification": "Two lows at approximately same level",
+    "confirmation": "Break above resistance/peak between lows",
+    "target": "Distance from lows to peak, projected above peak",
+    "reliability": 66,
+    "avg_move_points": 14,
+    "time_between_lows": "Days to weeks",
+    "volume_behavior": "Higher volume on second low = stronger signal",
+    "failure_signals": ["Resistance holds", "Third low forms", "Breakdown below lows"],
+    "best_context": "Support level, oversold",
+    "win_rate": 62
+  },
+  "ascending_triangle": {
+    "type": "continuation",
+    "direction": "bullish",
+    "identification": "Flat top (resistance), rising lows (higher lows)",
+    "breakout_direction": "Usually upward (75%)",
+    "confirmation": "Close above flat resistance with volume",
+    "target": "Height of triangle base, projected from breakout",
+    "reliability": 70,
+    "avg_move_points": 16,
+    "volume_pattern": "Declining during formation, spike on breakout",
+    "failure_rate": 30,
+    "best_context": "Uptrend, consolidation before next leg",
+    "win_rate": 68
+  },
+  "descending_triangle": {
+    "type": "continuation",
+    "direction": "bearish",
+    "identification": "Flat bottom (support), lower highs",
+    "breakout_direction": "Usually downward (72%)",
+    "confirmation": "Close below flat support with volume",
+    "target": "Height of triangle base, projected from breakout",
+    "reliability": 68,
+    "avg_move_points": 15,
+    "volume_pattern": "Declining during formation, spike on breakdown",
+    "failure_rate": 32,
+    "best_context": "Downtrend, consolidation before next leg",
+    "win_rate": 66
+  },
+  "symmetrical_triangle": {
+    "type": "continuation",
+    "direction": "direction_of_prior_trend",
+    "identification": "Converging trendlines - higher lows AND lower highs",
+    "breakout_direction": "50-50 (can go either way)",
+    "confirmation": "Volume surge on breakout",
+    "target": "Widest part of triangle, projected from breakout",
+    "reliability": 62,
+    "avg_move_points": 14,
+    "time_to_breakout": "2/3 to 3/4 along triangle",
+    "late_breakout": "If breaks near apex, less reliable",
+    "best_context": "Consolidation within trend",
+    "win_rate": 60
+  },
+  "rising_wedge": {
+    "type": "reversal",
+    "direction": "bearish",
+    "identification": "Both trendlines rising, converging (higher lows, higher highs but narrowing)",
+    "breakout_direction": "Downward (78%)",
+    "confirmation": "Break below lower trendline",
+    "target": "Start of wedge",
+    "reliability": 72,
+    "volume_pattern": "Declining volume during rise = stronger signal",
+    "avg_move_points": 12,
+    "best_context": "After uptrend, showing exhaustion",
+    "win_rate": 70
+  },
+  "falling_wedge": {
+    "type": "reversal",
+    "direction": "bullish",
+    "identification": "Both trendlines falling, converging (lower highs, lower lows but narrowing)",
+    "breakout_direction": "Upward (75%)",
+    "confirmation": "Break above upper trendline",
+    "target": "Start of wedge",
+    "reliability": 70,
+    "volume_pattern": "Declining volume during fall = stronger signal",
+    "avg_move_points": 11,
+    "best_context": "After downtrend, showing exhaustion",
+    "win_rate": 68
+  },
+  "bull_flag": {
+    "type": "continuation",
+    "direction": "bullish",
+    "identification": "Strong rally (flagpole), tight downward consolidation (flag)",
+    "confirmation": "Break above flag's upper trendline",
+    "target": "Length of flagpole, projected from breakout",
+    "reliability": 75,
+    "avg_move_points": 12,
+    "time_to_form": "Short - days to 1 week",
+    "volume_pattern": "High on flagpole, low during flag, surge on breakout",
+    "best_context": "Strong uptrend",
+    "win_rate": 72
+  },
+  "bear_flag": {
+    "type": "continuation",
+    "direction": "bearish",
+    "identification": "Strong decline (flagpole), tight upward consolidation (flag)",
+    "confirmation": "Break below flag's lower trendline",
+    "target": "Length of flagpole, projected from breakdown",
+    "reliability": 73,
+    "avg_move_points": 11,
+    "time_to_form": "Short - days to 1 week",
+    "volume_pattern": "High on flagpole, low during flag, surge on breakdown",
+    "best_context": "Strong downtrend",
+    "win_rate": 70
+  },
+  "pennant": {
+    "type": "continuation",
+    "direction": "direction_of_prior_move",
+    "identification": "Strong move (pole), symmetrical triangle (pennant)",
+    "confirmation": "Break in direction of pole",
+    "target": "Length of pole, projected from breakout",
+    "reliability": 70,
+    "avg_move_points": 10,
+    "time_to_form": "Very short - 1-3 weeks",
+    "volume_pattern": "High on pole, declining in pennant, surge on breakout",
+    "best_context": "Mid-trend continuation",
+    "win_rate": 68
+  },
+  "rectangle": {
+    "type": "continuation",
+    "direction": "direction_of_prior_trend",
+    "identification": "Price oscillates between parallel support and resistance",
+    "confirmation": "Break of support or resistance with volume",
+    "target": "Height of rectangle, projected from breakout",
+    "reliability": 65,
+    "avg_move_points": 12,
+    "breakout_direction": {
+      "with_trend": 70,
+      "against_trend": 30
+    },
+    "best_context": "Consolidation period in trend",
+    "win_rate": 62
+  },
+  "cup_and_handle": {
+    "type": "continuation",
+    "direction": "bullish",
+    "identification": "U-shaped consolidation (cup), small downward drift (handle)",
+    "confirmation": "Break above handle's resistance",
+    "target": "Depth of cup, projected from breakout",
+    "reliability": 68,
+    "avg_move_points": 15,
+    "time_to_form": "Weeks to months",
+    "volume_pattern": "Lower in cup, declining in handle, surge on breakout",
+    "best_context": "After uptrend, bullish continuation",
+    "win_rate": 65
+  },
+  "pattern_trading_guidelines": {
+    "volume_is_critical": "Pattern without volume confirmation has 30%+ higher failure rate",
+    "wait_for_confirmation": "Don't anticipate - wait for actual break",
+    "measure_targets": "Use pattern height for target calculation",
+    "context_matters": "Pattern in trend direction more reliable",
+    "failed_patterns": "When pattern fails, often strong move opposite direction"
+  },
+  "confluence_multipliers": {
+    "pattern_at_round_number": {
+      "multiplier": 1.25,
+      "note": "Pattern breakout at major round number strengthens signal"
+    },
+    "pattern_at_fib_level": {
+      "multiplier": 1.20,
+      "note": "Pattern + fibonacci confluence"
+    },
+    "pattern_with_divergence": {
+      "multiplier": 1.30,
+      "note": "Pattern + RSI/MACD divergence very strong"
+    },
+    "multiple_timeframe_pattern": {
+      "multiplier": 1.35,
+      "note": "Same pattern on multiple timeframes"
+    }
+  },
+  "failure_probability": {
+    "no_volume": 55,
+    "against_strong_trend": 48,
+    "late_in_pattern": 42,
+    "at_major_resistance": 40,
+    "news_interference": 45
+  },
+  "best_practices": {
+    "identify_early": "Recognize pattern as it forms",
+    "wait_confirmation": "Never trade before confirmed break",
+    "set_alerts": "Alert at breakout levels",
+    "volume_check": "Verify volume surge on breakout",
+    "target_realistic": "Use measured move for targets",
+    "stop_logical": "Stop inside pattern or at pattern boundary"
+  }
+}

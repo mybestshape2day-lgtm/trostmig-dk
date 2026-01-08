@@ -1,0 +1,236 @@
+{
+  "meta": {
+    "instrument": "MGC Micro Gold Futures",
+    "contract_value": "$10 per point",
+    "example": "10 point move = $100 profit/loss per contract",
+    "critical": "Proper sizing prevents account blowup"
+  },
+  "basic_rules": {
+    "max_risk_per_trade_percent": 1.5,
+    "conservative_risk_percent": 1.0,
+    "aggressive_risk_percent": 2.0,
+    "daily_loss_limit_percent": 3.0,
+    "weekly_loss_limit_percent": 6.0,
+    "monthly_loss_limit_percent": 10.0,
+    "note": "These are MAXIMUM limits - actual risk should be lower"
+  },
+  "position_sizing_formula": {
+    "basic": "Contracts = (Account × Risk%) / (Stop_Points × $10)",
+    "example": {
+      "account": 100000,
+      "risk_percent": 1.5,
+      "stop_points": 15,
+      "calculation": "(100000 × 0.015) / (15 × 10) = 1500 / 150 = 10 contracts",
+      "max_loss": "$1,500 (1.5% of account)"
+    }
+  },
+  "atr_based_sizing": {
+    "description": "Size based on current ATR for volatility adjustment",
+    "formula": "Contracts = (Account × Risk%) / (ATR × Multiplier × $10)",
+    "atr_multipliers": {
+      "tight_stop": 1.0,
+      "normal_stop": 1.5,
+      "wide_stop": 2.0
+    },
+    "example_low_vol": {
+      "account": 100000,
+      "risk_percent": 1.5,
+      "atr": 8,
+      "multiplier": 1.5,
+      "calculation": "(100000 × 0.015) / (8 × 1.5 × 10) = 1500 / 120 = 12 contracts",
+      "note": "Smaller ATR allows more contracts"
+    },
+    "example_high_vol": {
+      "account": 100000,
+      "risk_percent": 1.5,
+      "atr": 14,
+      "multiplier": 1.5,
+      "calculation": "(100000 × 0.015) / (14 × 1.5 × 10) = 1500 / 210 = 7 contracts",
+      "note": "Larger ATR requires fewer contracts"
+    }
+  },
+  "volatility_adjustments": {
+    "low_volatility": {
+      "atr_range": "<8 points",
+      "size_multiplier": 1.20,
+      "rationale": "Smaller stops possible, can increase size slightly"
+    },
+    "normal_volatility": {
+      "atr_range": "8-12 points",
+      "size_multiplier": 1.00,
+      "rationale": "Standard sizing applies"
+    },
+    "high_volatility": {
+      "atr_range": "12-16 points",
+      "size_multiplier": 0.75,
+      "rationale": "Wider stops needed, reduce size"
+    },
+    "extreme_volatility": {
+      "atr_range": ">16 points",
+      "size_multiplier": 0.50,
+      "rationale": "Major event volatility, significantly reduce size"
+    }
+  },
+  "session_adjustments": {
+    "asia": {
+      "size_multiplier": 0.70,
+      "rationale": "Low liquidity, wider spreads, choppy - reduce size"
+    },
+    "london": {
+      "size_multiplier": 1.00,
+      "rationale": "Good liquidity, standard sizing"
+    },
+    "ny_overlap": {
+      "size_multiplier": 1.10,
+      "rationale": "Best liquidity, can slightly increase"
+    },
+    "after_hours": {
+      "size_multiplier": 0.50,
+      "rationale": "Very low liquidity - avoid or minimal size"
+    },
+    "news_event": {
+      "size_multiplier": 0.60,
+      "rationale": "High risk, unpredictable - reduce size",
+      "note": "Or stay out completely"
+    }
+  },
+  "account_size_guidelines": {
+    "micro_account": {
+      "range": "$5,000-$15,000",
+      "recommended_contracts": "1-2",
+      "max_contracts": 3,
+      "risk_per_trade": "$50-$150",
+      "note": "Focus on learning, not profit"
+    },
+    "small_account": {
+      "range": "$15,000-$50,000",
+      "recommended_contracts": "2-5",
+      "max_contracts": 8,
+      "risk_per_trade": "$150-$500",
+      "note": "Building account steadily"
+    },
+    "medium_account": {
+      "range": "$50,000-$150,000",
+      "recommended_contracts": "5-15",
+      "max_contracts": 25,
+      "risk_per_trade": "$500-$1,500",
+      "note": "Professional sizing possible"
+    },
+    "large_account": {
+      "range": "$150,000+",
+      "recommended_contracts": "10-30",
+      "max_contracts": 50,
+      "risk_per_trade": "$1,500-$3,000",
+      "note": "Scale carefully, watch slippage"
+    }
+  },
+  "scaling_strategies": {
+    "fixed_fractional": {
+      "description": "Risk same % on every trade",
+      "formula": "Always risk 1-2% per trade regardless of account size",
+      "pros": "Simple, consistent, compounds gains",
+      "cons": "None - recommended method",
+      "use": "DEFAULT strategy"
+    },
+    "kelly_criterion": {
+      "description": "Optimal sizing based on edge",
+      "formula": "f = (W × R - L) / R where W=win%, R=avg win/loss, L=loss%",
+      "example": {
+        "win_rate": 60,
+        "avg_win_loss_ratio": 1.5,
+        "calculation": "(0.60 × 1.5 - 0.40) / 1.5 = 0.267 = 26.7% per trade"
+      },
+      "reality": "NEVER use full Kelly - too aggressive",
+      "recommended": "Use 25-33% of Kelly result",
+      "note": "Only for very experienced traders"
+    },
+    "anti_martingale": {
+      "description": "Increase size after wins, decrease after losses",
+      "rationale": "Ride winning streaks, protect during drawdowns",
+      "implementation": "After 2 wins: +25% size, After 2 losses: -25% size",
+      "pros": "Compounds wins, limits damage",
+      "cons": "Can miss opportunities after losses"
+    }
+  },
+  "drawdown_management": {
+    "at_daily_limit": {
+      "trigger": "-3% for the day",
+      "action": "STOP TRADING for the day",
+      "rationale": "Prevent revenge trading, clear head"
+    },
+    "at_weekly_limit": {
+      "trigger": "-6% for the week",
+      "action": "STOP TRADING for the week, review all trades",
+      "rationale": "Something is wrong - need analysis"
+    },
+    "in_drawdown": {
+      "drawdown_5_percent": "Reduce size to 75%",
+      "drawdown_10_percent": "Reduce size to 50%",
+      "drawdown_15_percent": "STOP trading, full review required",
+      "rationale": "Protect capital during losing periods"
+    }
+  },
+  "quick_reference_table": {
+    "$10k_account": {
+      "1_percent_risk": {
+        "risk_dollars": 100,
+        "10_point_stop": "1 contract",
+        "15_point_stop": "0 contracts (too tight)",
+        "20_point_stop": "0 contracts"
+      },
+      "note": "Account too small for comfortable MGC trading"
+    },
+    "$25k_account": {
+      "1_percent_risk": {
+        "risk_dollars": 250,
+        "10_point_stop": "2 contracts",
+        "15_point_stop": "1 contract",
+        "20_point_stop": "1 contract"
+      }
+    },
+    "$50k_account": {
+      "1.5_percent_risk": {
+        "risk_dollars": 750,
+        "10_point_stop": "7 contracts",
+        "15_point_stop": "5 contracts",
+        "20_point_stop": "3 contracts"
+      }
+    },
+    "$100k_account": {
+      "1.5_percent_risk": {
+        "risk_dollars": 1500,
+        "10_point_stop": "15 contracts",
+        "15_point_stop": "10 contracts",
+        "20_point_stop": "7 contracts"
+      }
+    },
+    "$150k_account": {
+      "1.5_percent_risk": {
+        "risk_dollars": 2250,
+        "10_point_stop": "22 contracts",
+        "15_point_stop": "15 contracts",
+        "20_point_stop": "11 contracts"
+      }
+    }
+  },
+  "psychological_considerations": {
+    "comfort_zone": "If position makes you nervous, it's too big",
+    "sleep_test": "If you can't sleep, position is too large",
+    "emotional_detachment": "Should feel neutral about any single trade",
+    "scaling_up": "Increase size gradually as account grows",
+    "scaling_down": "Never hesitate to reduce size if uncertain"
+  },
+  "common_mistakes": {
+    "over_leveraging": "Trading too many contracts for account",
+    "ignoring_volatility": "Same size in all market conditions",
+    "revenge_sizing": "Increasing size after loss to 'make it back'",
+    "fear_sizing": "Trading too small to make meaningful progress",
+    "no_limits": "Not respecting daily/weekly loss limits"
+  },
+  "advanced_concepts": {
+    "correlation_adjustment": "If trading multiple correlated markets, reduce total risk",
+    "time_of_day": "Consider reducing size in less liquid hours",
+    "setup_quality": "Bigger size on A+ setups, smaller on B setups",
+    "heat_map": "Track total portfolio risk across all positions"
+  }
+}

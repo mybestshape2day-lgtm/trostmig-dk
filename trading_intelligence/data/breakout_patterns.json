@@ -1,0 +1,264 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "importance": "Filtering false breakouts prevents majority of losing trades",
+    "key_stat": "70% of breakouts fail without proper confirmation"
+  },
+  "range_breakout": {
+    "description": "Price breaks out of consolidation range",
+    "success_with_volume": {
+      "probability": 72,
+      "volume_threshold": ">1.5x average",
+      "avg_follow_through_points": 12,
+      "characteristics": "Strong momentum, decisive break, volume surge"
+    },
+    "success_without_volume": {
+      "probability": 38,
+      "failure_rate": 62,
+      "avg_follow_through_points": 4,
+      "note": "High failure rate - AVOID trading these"
+    },
+    "false_breakout_rate": {
+      "with_volume": 28,
+      "without_volume": 62,
+      "at_round_number": 45,
+      "against_trend": 55
+    }
+  },
+  "consolidation_breakout": {
+    "description": "Tight consolidation after trend move",
+    "characteristics": "Decreasing range, tightening bollinger bands, low ATR",
+    "success_rate": 68,
+    "direction_probability": {
+      "with_trend": 72,
+      "against_trend": 28
+    },
+    "avg_move_after_breakout": 15,
+    "timeframe": "Builds over 8-20 candles typically"
+  },
+  "support_resistance_breakout": {
+    "first_attempt": {
+      "success_rate": 45,
+      "note": "Often fails first time - be cautious"
+    },
+    "second_attempt": {
+      "success_rate": 62,
+      "note": "Second test more likely to break"
+    },
+    "third_attempt": {
+      "success_rate": 75,
+      "note": "Three tests weakens level significantly"
+    },
+    "multiple_tests": "Each failed breakout weakens the level",
+    "time_at_level": "Longer consolidation = more decisive break"
+  },
+  "opening_range_breakout": {
+    "description": "Break of first 15-30 min range",
+    "15min_range": {
+      "success_rate": 58,
+      "best_session": "London open (68%)",
+      "worst_session": "Asia (42%)"
+    },
+    "30min_range": {
+      "success_rate": 65,
+      "best_session": "NY open (72%)",
+      "note": "More reliable than 15min"
+    },
+    "asian_range_breakout": {
+      "description": "Break of entire Asia session range",
+      "success_rate": 72,
+      "timing": "Usually at London open",
+      "avg_move": 10
+    }
+  },
+  "confirmation_criteria": {
+    "volume_confirmation": {
+      "threshold": ">1.5x average volume",
+      "importance": "CRITICAL - most important filter",
+      "reliability_boost": 25,
+      "note": "No volume = likely false breakout"
+    },
+    "close_beyond_level": {
+      "requirement": "Candle must close beyond level, not just wick",
+      "reliability_boost": 18,
+      "note": "Wicks can be stop hunts"
+    },
+    "retest_hold": {
+      "description": "Price breaks, pulls back to test level, holds and continues",
+      "success_rate": 78,
+      "reliability_boost": 20,
+      "entry": "Best entry is on successful retest",
+      "note": "Highest probability entry method"
+    },
+    "momentum_confirmation": {
+      "indicators": "Strong candle, stochastic confirming, RSI > 50 (bullish) or < 50 (bearish)",
+      "reliability_boost": 15,
+      "note": "Multiple momentum factors aligning"
+    },
+    "time_confirmation": {
+      "description": "Wait 2-3 candles after break to confirm",
+      "reliability_boost": 12,
+      "note": "Patience filters false breaks"
+    }
+  },
+  "false_breakout_indicators": {
+    "low_volume": {
+      "threshold": "<1.0x average",
+      "false_breakout_probability": 72,
+      "action": "DO NOT TRADE - likely trap",
+      "note": "Single best filter for false breaks"
+    },
+    "wick_only": {
+      "description": "Price spikes through level but closes back inside",
+      "false_breakout_probability": 68,
+      "interpretation": "Stop hunt, liquidity grab",
+      "action": "Fade the false break"
+    },
+    "exhaustion_signs": {
+      "description": "Break occurs after extended move without pullback",
+      "indicators": "RSI >70 or <30, stochastic extreme, decreasing momentum",
+      "false_breakout_probability": 65,
+      "action": "Wait for pullback before entering"
+    },
+    "against_major_trend": {
+      "description": "Breakout opposite to higher timeframe trend",
+      "false_breakout_probability": 62,
+      "action": "Require extra confirmation"
+    },
+    "round_number_resistance": {
+      "description": "Breakout attempts at major round numbers",
+      "false_breakout_probability": 58,
+      "note": "Round numbers have hidden liquidity"
+    },
+    "news_imminent": {
+      "description": "Major news event within 30 minutes",
+      "false_breakout_probability": 55,
+      "action": "Wait for news first"
+    }
+  },
+  "trading_strategies": {
+    "aggressive_breakout": {
+      "description": "Enter immediately on break",
+      "entry": "Market order on break",
+      "stop": "Back inside range/level",
+      "target": "Range height or measured move",
+      "win_rate": 52,
+      "pros": "Catch full move",
+      "cons": "More false breakouts",
+      "use_when": "Very strong confirmation signals"
+    },
+    "retest_entry": {
+      "description": "Wait for pullback to broken level",
+      "entry": "Price pulls back to level, shows support/resistance flip, continue",
+      "stop": "Break back through level",
+      "target": "Same as aggressive",
+      "win_rate": 72,
+      "pros": "Filter false breaks, better R:R",
+      "cons": "May miss some moves",
+      "use_when": "RECOMMENDED - best method"
+    },
+    "two_stage_entry": {
+      "description": "Partial position on break, add on retest",
+      "entry": "50% at break, 50% at retest",
+      "stop": "Average of two entries",
+      "target": "Same targets",
+      "win_rate": 65,
+      "pros": "Balanced approach",
+      "cons": "More complex",
+      "use_when": "High conviction setups"
+    }
+  },
+  "failed_breakout_strategy": {
+    "description": "How to profit from false breakouts",
+    "identification": {
+      "breaks_level": true,
+      "low_volume": true,
+      "quickly_reverses": true,
+      "closes_back_inside": true
+    },
+    "entry": "When price clearly rejects and closes back inside",
+    "stop": "New high/low beyond the false break",
+    "target": "Opposite side of range or previous swing",
+    "win_rate": 68,
+    "avg_move": 8,
+    "note": "Fading false breaks is very profitable"
+  },
+  "breakout_types": {
+    "clean_break": {
+      "description": "Decisive break with strong candle and volume",
+      "success_rate": 75,
+      "characteristics": "No hesitation, immediate follow-through"
+    },
+    "grinding_break": {
+      "description": "Multiple attempts, slowly grinds through level",
+      "success_rate": 58,
+      "characteristics": "Shows strength but slower",
+      "note": "Still valid but less explosive"
+    },
+    "spike_break": {
+      "description": "Violent spike through level",
+      "success_rate": 62,
+      "characteristics": "Fast move, often retraces",
+      "note": "Wait for retest - often too fast"
+    }
+  },
+  "session_specific": {
+    "asia": {
+      "breakout_success_rate": 42,
+      "note": "Low volume, false breaks common - AVOID"
+    },
+    "london": {
+      "breakout_success_rate": 68,
+      "note": "Good for range breakouts, strong follow-through"
+    },
+    "ny_open": {
+      "breakout_success_rate": 72,
+      "note": "Best session for breakouts, high volume"
+    },
+    "overlap": {
+      "breakout_success_rate": 75,
+      "note": "Highest success rate - maximum liquidity"
+    }
+  },
+  "measured_move_targets": {
+    "equal_move": {
+      "description": "Expect move equal to range height",
+      "calculation": "Range_High - Range_Low = Target from breakout",
+      "probability_reached": 65
+    },
+    "1.5x_move": {
+      "description": "Extended target in strong trends",
+      "calculation": "1.5 × range height",
+      "probability_reached": 45
+    },
+    "2x_move": {
+      "description": "Extreme move in very strong trends",
+      "calculation": "2 × range height",
+      "probability_reached": 28
+    }
+  },
+  "multipliers": {
+    "breakout_with_volume": 1.40,
+    "breakout_without_volume": 0.50,
+    "with_trend": 1.30,
+    "against_trend": 0.60,
+    "retest_hold": 1.35,
+    "third_attempt": 1.25,
+    "first_attempt": 0.75,
+    "round_number_break": 0.80,
+    "at_news_time": 0.70
+  },
+  "risk_management": {
+    "position_sizing": "Reduce size on first attempt breakouts",
+    "stop_placement": "Must be back inside range/level",
+    "time_stop": "Exit if no follow-through within 3-5 candles",
+    "avoid": "Trading breakouts before major news"
+  },
+  "key_principles": {
+    "volume_is_king": "Never trade breakout without volume confirmation",
+    "retest_is_safest": "Best entry is on successful retest",
+    "patience_pays": "Waiting filters 50%+ of false breaks",
+    "context_matters": "Check trend, session, news calendar",
+    "fade_false_breaks": "Failed breakouts = profit opportunity"
+  }
+}

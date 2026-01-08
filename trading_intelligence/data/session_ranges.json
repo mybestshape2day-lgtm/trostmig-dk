@@ -1,0 +1,95 @@
+{
+  "sessions": {
+    "asia": {
+      "start_utc": "00:00",
+      "end_utc": "09:00",
+      "avg_range_points": 8,
+      "min_range_points": 4,
+      "max_range_points": 15,
+      "breakout_probability": 35,
+      "continuation_probability": 45,
+      "reversal_probability": 20,
+      "description": "Tokyo/Sydney - Lav volatilitet, range-bound"
+    },
+    "london": {
+      "start_utc": "08:00",
+      "end_utc": "16:00",
+      "avg_range_points": 12,
+      "min_range_points": 6,
+      "max_range_points": 22,
+      "breakout_probability": 55,
+      "continuation_probability": 60,
+      "reversal_probability": 30,
+      "description": "London open - Høj volatilitet, trend-bevægelser"
+    },
+    "ny": {
+      "start_utc": "13:00",
+      "end_utc": "21:00",
+      "avg_range_points": 15,
+      "min_range_points": 8,
+      "max_range_points": 30,
+      "breakout_probability": 65,
+      "continuation_probability": 55,
+      "reversal_probability": 35,
+      "description": "New York open - Højeste volatilitet"
+    },
+    "overlap_london_ny": {
+      "start_utc": "13:00",
+      "end_utc": "16:00",
+      "avg_range_points": 18,
+      "min_range_points": 10,
+      "max_range_points": 35,
+      "breakout_probability": 75,
+      "continuation_probability": 65,
+      "reversal_probability": 25,
+      "description": "London-NY overlap - Mest volatile periode"
+    },
+    "after_hours": {
+      "start_utc": "21:00",
+      "end_utc": "23:59",
+      "avg_range_points": 5,
+      "min_range_points": 2,
+      "max_range_points": 10,
+      "breakout_probability": 25,
+      "continuation_probability": 40,
+      "reversal_probability": 35,
+      "description": "Efter US close - Meget lav volatilitet"
+    }
+  },
+  "daily_patterns": {
+    "monday": {
+      "avg_range_points": 18,
+      "note": "Gap fra weekend, ofte range expansion"
+    },
+    "tuesday": {
+      "avg_range_points": 20,
+      "note": "Ofte den mest volatile dag"
+    },
+    "wednesday": {
+      "avg_range_points": 19,
+      "note": "Høj aktivitet, mid-week momentum"
+    },
+    "thursday": {
+      "avg_range_points": 17,
+      "note": "Moderat volatilitet"
+    },
+    "friday": {
+      "avg_range_points": 15,
+      "note": "Profit-taking, lavere range mod close"
+    }
+  },
+  "monthly_patterns": {
+    "first_week": {
+      "avg_range_multiplier": 1.15,
+      "note": "NFP, økonomisk data"
+    },
+    "mid_month": {
+      "avg_range_multiplier": 1.0,
+      "note": "Normal volatilitet"
+    },
+    "last_week": {
+      "avg_range_multiplier": 0.95,
+      "note": "Month-end positioning, lavere volatilitet"
+    }
+  }
+}

@@ -1,0 +1,263 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "note": "Probabilities er for 5-point moves inden for 15 minutter"
+  },
+  "single_candle_patterns": {
+    "hammer": {
+      "description": "Lille body nederst, lang lower wick (min 2x body), minimal upper wick",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 65,
+      "best_context": ["at support", "after downtrend", "oversold conditions"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 10
+    },
+    "inverted_hammer": {
+      "description": "Lille body nederst, lang upper wick, minimal lower wick",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 60,
+      "best_context": ["at support", "after downtrend"],
+      "avg_move_points": 4,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 12
+    },
+    "shooting_star": {
+      "description": "Lille body øverst, lang upper wick (min 2x body), minimal lower wick",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 63,
+      "best_context": ["at resistance", "after uptrend", "overbought conditions"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 10
+    },
+    "hanging_man": {
+      "description": "Lille body øverst, lang lower wick, efter uptrend",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 58,
+      "best_context": ["at resistance", "after strong uptrend"],
+      "avg_move_points": 4,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 12
+    },
+    "doji": {
+      "description": "Open og close identisk eller næsten identisk",
+      "type": "indecision",
+      "direction": "neutral",
+      "reliability_base": 50,
+      "best_context": ["at key levels", "after strong moves"],
+      "avg_move_points": 3,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 8
+    },
+    "dragonfly_doji": {
+      "description": "Doji med lang lower wick, ingen upper wick",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 68,
+      "best_context": ["at support", "oversold"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 10
+    },
+    "gravestone_doji": {
+      "description": "Doji med lang upper wick, ingen lower wick",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 66,
+      "best_context": ["at resistance", "overbought"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 10
+    },
+    "spinning_top": {
+      "description": "Lille body centreret, wicks på begge sider",
+      "type": "indecision",
+      "direction": "neutral",
+      "reliability_base": 45,
+      "best_context": ["transition zones"],
+      "avg_move_points": 3,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 15
+    },
+    "marubozu_bullish": {
+      "description": "Stor grøn candle, ingen eller minimal wicks",
+      "type": "continuation",
+      "direction": "bullish",
+      "reliability_base": 72,
+      "best_context": ["in uptrend", "breakout", "strong momentum"],
+      "avg_move_points": 6,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 8
+    },
+    "marubozu_bearish": {
+      "description": "Stor rød candle, ingen eller minimal wicks",
+      "type": "continuation",
+      "direction": "bearish",
+      "reliability_base": 70,
+      "best_context": ["in downtrend", "breakdown", "strong momentum"],
+      "avg_move_points": 6,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 8
+    }
+  },
+  "double_candle_patterns": {
+    "bullish_engulfing": {
+      "description": "Stor grøn candle engulfer hele forrige rød candle",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 68,
+      "best_context": ["at support", "after downtrend", "oversold"],
+      "avg_move_points": 7,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 12
+    },
+    "bearish_engulfing": {
+      "description": "Stor rød candle engulfer hele forrige grøn candle",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 66,
+      "best_context": ["at resistance", "after uptrend", "overbought"],
+      "avg_move_points": 6,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 12
+    },
+    "bullish_harami": {
+      "description": "Lille grøn candle indeholdt i forrige stor rød candle",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 62,
+      "best_context": ["at support", "after downtrend"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 15
+    },
+    "bearish_harami": {
+      "description": "Lille rød candle indeholdt i forrige stor grøn candle",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 60,
+      "best_context": ["at resistance", "after uptrend"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 15
+    },
+    "piercing_line": {
+      "description": "Grøn candle lukker over midpoint af forrige rød candle",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 64,
+      "best_context": ["at support", "downtrend"],
+      "avg_move_points": 6,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 12
+    },
+    "dark_cloud_cover": {
+      "description": "Rød candle lukker under midpoint af forrige grøn candle",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 62,
+      "best_context": ["at resistance", "uptrend"],
+      "avg_move_points": 5,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 12
+    },
+    "tweezer_bottom": {
+      "description": "To candles med identisk low efter downtrend",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 58,
+      "best_context": ["at support", "after downtrend"],
+      "avg_move_points": 4,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 15
+    },
+    "tweezer_top": {
+      "description": "To candles med identisk high efter uptrend",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 56,
+      "best_context": ["at resistance", "after uptrend"],
+      "avg_move_points": 4,
+      "confirmation_needed": true,
+      "time_to_play_out_minutes": 15
+    }
+  },
+  "triple_candle_patterns": {
+    "morning_star": {
+      "description": "Stor rød, lille candle (doji), stor grøn",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 75,
+      "best_context": ["at support", "after downtrend", "oversold"],
+      "avg_move_points": 8,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 15
+    },
+    "evening_star": {
+      "description": "Stor grøn, lille candle (doji), stor rød",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 73,
+      "best_context": ["at resistance", "after uptrend", "overbought"],
+      "avg_move_points": 7,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 15
+    },
+    "three_white_soldiers": {
+      "description": "Tre consecutive stigende grønne candles med højere close",
+      "type": "continuation",
+      "direction": "bullish",
+      "reliability_base": 78,
+      "best_context": ["early uptrend", "after consolidation"],
+      "avg_move_points": 9,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 18
+    },
+    "three_black_crows": {
+      "description": "Tre consecutive faldende røde candles med lavere close",
+      "type": "continuation",
+      "direction": "bearish",
+      "reliability_base": 76,
+      "best_context": ["early downtrend", "after consolidation"],
+      "avg_move_points": 8,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 18
+    },
+    "three_inside_up": {
+      "description": "Bullish harami efterfulgt af grøn confirmation candle",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_base": 70,
+      "best_context": ["at support", "downtrend"],
+      "avg_move_points": 7,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 15
+    },
+    "three_inside_down": {
+      "description": "Bearish harami efterfulgt af rød confirmation candle",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_base": 68,
+      "best_context": ["at resistance", "uptrend"],
+      "avg_move_points": 6,
+      "confirmation_needed": false,
+      "time_to_play_out_minutes": 15
+    }
+  },
+  "context_multipliers": {
+    "at_support": 1.25,
+    "at_resistance": 1.25,
+    "with_trend": 1.15,
+    "against_trend": 0.80,
+    "with_volume_spike": 1.20,
+    "oversold_stochastic": 1.15,
+    "overbought_stochastic": 1.15,
+    "at_ema20": 1.10,
+    "confluence_multiple_signals": 1.30
+  }
+}

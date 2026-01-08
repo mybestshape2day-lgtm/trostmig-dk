@@ -1,0 +1,9 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "us_elections": {"presidential": "Every 4 years", "impact": "Uncertainty = gold bid", "multiplier": 1.15},
+  "g7_g20_summits": {"impact": "medium", "note": "Policy announcements"},
+  "fed_chair_testimony": {"congress": "Twice yearly", "impact": "high"},
+  "debt_ceiling": {"us_fiscal_deadlines": "Periodic", "impact": "Safe haven flows"},
+  "war_escalation": {"impact": "very_high", "behavior": "Immediate safe haven rally", "multiplier": 1.40},
+  "trading_rules": {"increased_risk": true, "reduce_size": "25-50%"}
+}

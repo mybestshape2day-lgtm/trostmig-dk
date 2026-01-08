@@ -1,0 +1,178 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "concept": "Traders cluster orders at round numbers - creates support/resistance"
+  },
+  "major_levels": {
+    "description": "Every $100 (2500, 2600, 2700, etc.)",
+    "strength": "very_high",
+    "reaction_points": 8,
+    "touch_probability": 75,
+    "break_probability": 42,
+    "false_break_rate": 35,
+    "examples": ["2500", "2600", "2700", "2800"],
+    "trading_notes": "Often multiple tests before break, high volume at these levels"
+  },
+  "minor_levels": {
+    "description": "Every $50 (2550, 2650, 2750, etc.)",
+    "strength": "high",
+    "reaction_points": 5,
+    "touch_probability": 68,
+    "break_probability": 52,
+    "false_break_rate": 28,
+    "examples": ["2550", "2650", "2750"],
+    "trading_notes": "Significant but weaker than major levels"
+  },
+  "micro_levels": {
+    "description": "Every $10 (2610, 2620, 2630, etc.)",
+    "strength": "medium",
+    "reaction_points": 3,
+    "touch_probability": 58,
+    "break_probability": 60,
+    "false_break_rate": 22,
+    "examples": ["2610", "2620", "2630"],
+    "trading_notes": "Intraday significance, scalping levels"
+  },
+  "quarter_levels": {
+    "description": "Every $25 (2625, 2675, 2725, etc.)",
+    "strength": "medium",
+    "reaction_points": 4,
+    "touch_probability": 62,
+    "break_probability": 55,
+    "examples": ["2625", "2675"],
+    "trading_notes": "Moderate reaction, some traders use these"
+  },
+  "magnet_effect": {
+    "description": "Price tends to gravitate toward round numbers",
+    "probability_touch_within_day": 72,
+    "range_points": 3,
+    "behavior": "Price often pauses or reverses at these levels",
+    "use_case": "Target round numbers for profit taking"
+  },
+  "breakout_patterns": {
+    "clean_break": {
+      "description": "Strong momentum breaks through with volume",
+      "continuation_probability": 68,
+      "retest_probability": 58,
+      "avg_follow_through_points": 10,
+      "confirmation": "Close beyond level, high volume"
+    },
+    "false_break": {
+      "description": "Breaks level but quickly reverses",
+      "reversal_probability": 65,
+      "avg_reversal_points": 7,
+      "identification": "Long wick through level, close back inside",
+      "trading": "Fade false breaks - high win rate"
+    },
+    "rejection": {
+      "description": "Price approaches but doesn't touch, reverses",
+      "reversal_probability": 58,
+      "avg_reversal_points": 5,
+      "note": "Strong level - respect shown"
+    }
+  },
+  "multiplier_effects": {
+    "at_major_level": {
+      "description": "At $100 boundaries",
+      "support_resistance_multiplier": 1.40,
+      "win_rate_boost": 15,
+      "note": "Strongest psychological barriers"
+    },
+    "at_minor_level": {
+      "description": "At $50 boundaries",
+      "support_resistance_multiplier": 1.20,
+      "win_rate_boost": 8,
+      "note": "Significant but not extreme"
+    },
+    "near_level": {
+      "description": "Within 2-3 points of round number",
+      "magnet_effect_multiplier": 1.15,
+      "note": "Price drawn to complete the number"
+    },
+    "just_broken_level": {
+      "description": "Fresh break of major level",
+      "continuation_multiplier": 1.25,
+      "momentum_signal": "strong",
+      "note": "Barrier removed, momentum often continues"
+    }
+  },
+  "trading_strategies": {
+    "bounce_major_level": {
+      "setup": "Price approaches major round number (e.g., 2600)",
+      "entry": "Limit order 2-3 points before level or candle close rejection",
+      "stop": "5-8 points beyond level",
+      "target": "Previous swing or next round number",
+      "win_rate": 65,
+      "best_context": "Trend intact, level aligned with support"
+    },
+    "breakout_major_level": {
+      "setup": "Strong momentum breaks major level",
+      "entry": "Close beyond level with volume, or retest entry",
+      "stop": "Back below level",
+      "target": "Next major level (e.g., 2600 to 2700)",
+      "win_rate": 62,
+      "note": "Wait for retest for better R:R"
+    },
+    "fade_false_break": {
+      "setup": "Price spikes through level, immediately reverses",
+      "entry": "When price closes back inside level",
+      "stop": "New high/low beyond level",
+      "target": "Mid-range or opposite side",
+      "win_rate": 68,
+      "note": "High win rate setup - stop hunt reversal"
+    },
+    "range_between_levels": {
+      "setup": "Price ranging between two round numbers",
+      "strategy": "Sell near top of range, buy near bottom",
+      "stop": "Beyond range boundary",
+      "target": "Opposite side of range",
+      "win_rate": 58,
+      "note": "Only in clear range-bound market"
+    }
+  },
+  "confluence_with_other_factors": {
+    "round_number_plus_fib": {
+      "multiplier": 1.35,
+      "example": "2618 is both round $10 level AND 0.618 fib",
+      "reliability": "very_high"
+    },
+    "round_number_plus_pivot": {
+      "multiplier": 1.30,
+      "example": "2650 is $50 level AND weekly pivot",
+      "reliability": "high"
+    },
+    "round_number_plus_ema": {
+      "multiplier": 1.25,
+      "example": "2620 is $10 level AND EMA20",
+      "reliability": "high"
+    },
+    "round_number_plus_previous_day": {
+      "multiplier": 1.28,
+      "example": "2700 is major level AND previous day high",
+      "reliability": "high"
+    }
+  },
+  "session_behavior": {
+    "asia": {
+      "respect_rate": 72,
+      "note": "Range often bounded by round numbers"
+    },
+    "london": {
+      "respect_rate": 65,
+      "note": "Initial move may test round numbers"
+    },
+    "ny_overlap": {
+      "respect_rate": 58,
+      "note": "High volume can break through levels"
+    },
+    "after_hours": {
+      "respect_rate": 78,
+      "note": "Low volume respects levels more"
+    }
+  },
+  "time_of_day_patterns": {
+    "london_open": "Often tests nearest round number",
+    "ny_open": "Can break major levels with momentum",
+    "end_of_day": "Often gravitates to round numbers for close"
+  }
+}

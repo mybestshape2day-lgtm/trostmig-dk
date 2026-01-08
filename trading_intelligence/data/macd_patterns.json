@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures", "settings": "12, 26, 9"},
+  "macd_crossover": {"bullish": "MACD line crosses above signal", "bearish": "MACD line crosses below signal", "reliability_in_trend": 72, "reliability_in_range": 55},
+  "histogram_patterns": {"growing": "Momentum strengthening", "shrinking": "Momentum weakening", "divergence": "Warning signal"},
+  "zero_line_cross": {"bullish_cross": "Strong momentum signal", "bearish_cross": "Momentum shift down", "significance": "high"},
+  "divergence": {"regular": "Reversal signal", "hidden": "Continuation signal", "reliability": 70}
+}

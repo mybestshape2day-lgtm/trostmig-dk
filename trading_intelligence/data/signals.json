@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "instrument": "MGCG2026",
+    "generated_at": "2025-12-29T14:05:00+01:00",
+    "data_points_used": 0,
+    "confidence_level": "low"
+  },
+  "current_context": {
+    "price": null,
+    "session": null,
+    "day_of_week": null,
+    "nearest_support": null,
+    "nearest_resistance": null,
+    "distance_to_support_ticks": null,
+    "distance_to_resistance_ticks": null,
+    "zone": null,
+    "volatility": null
+  },
+  "signals": {
+    "move_5_up": {
+      "probability": null,
+      "target": null,
+      "confidence": null,
+      "reasons": [],
+      "recommended_strategy": null,
+      "suggested_stop_ticks": null,
+      "max_contracts": null
+    },
+    "move_5_down": {
+      "probability": null,
+      "target": null,
+      "confidence": null,
+      "reasons": [],
+      "recommended_strategy": null,
+      "suggested_stop_ticks": null,
+      "max_contracts": null
+    },
+    "move_10_up": {
+      "probability": null,
+      "target": null,
+      "confidence": null,
+      "reasons": [],
+      "recommended_strategy": null,
+      "suggested_stop_ticks": null,
+      "max_contracts": null
+    },
+    "move_10_down": {
+      "probability": null,
+      "target": null,
+      "confidence": null,
+      "reasons": [],
+      "recommended_strategy": null,
+      "suggested_stop_ticks": null,
+      "max_contracts": null
+    }
+  },
+  "composite_signal": {
+    "direction": null,
+    "strength": null,
+    "probability": null,
+    "action": null,
+    "reasons": [],
+    "warnings": []
+  },
+  "active_setups": [],
+  "signal_history": []
+}

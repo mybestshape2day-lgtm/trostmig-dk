@@ -1,0 +1,8 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "market_order": {"when": "Strong momentum, need immediate fill", "slippage": "1-2 points typical", "pros": "Guaranteed fill", "cons": "Price uncertainty"},
+  "limit_order": {"when": "Specific price target", "placement": "At support/resistance", "pros": "Price control", "cons": "May not fill"},
+  "stop_order": {"when": "Breakout entries", "placement": "Above resistance/below support", "pros": "Catches breakouts", "cons": "Slippage on fast moves"},
+  "pullback_entry": {"when": "Wait for retest", "win_rate": 72, "pros": "Better R:R", "cons": "May miss move"},
+  "scale_in": {"method": "50% at break, 50% at retest", "win_rate": 68, "pros": "Balanced", "cons": "Complex"}
+}

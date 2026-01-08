@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "indicator": "Stochastic %K/%D",
+    "settings": "14, 3, 3",
+    "instrument": "MGC Gold Futures"
+  },
+  "zones": {
+    "extreme_oversold": {
+      "range": [0, 10],
+      "description": "Stærkt oversolgt - høj sandsynlighed for bounce",
+      "up_multiplier": 1.42,
+      "down_multiplier": 0.58,
+      "avg_bounce_points": 9,
+      "win_rate_long": 73,
+      "avg_time_to_move_minutes": 10,
+      "best_action": "prepare_long",
+      "confirmation_signals": ["bullish candle", "volume spike", "support hold"]
+    },
+    "oversold": {
+      "range": [10, 20],
+      "description": "Oversolgt - bullish bias",
+      "up_multiplier": 1.23,
+      "down_multiplier": 0.72,
+      "avg_bounce_points": 6,
+      "win_rate_long": 66,
+      "best_action": "look_for_long"
+    },
+    "neutral_low": {
+      "range": [20, 40],
+      "description": "Neutral med svag bullish bias",
+      "up_multiplier": 1.06,
+      "down_multiplier": 0.94,
+      "best_action": "follow_trend"
+    },
+    "neutral": {
+      "range": [40, 60],
+      "description": "Neutral - ingen bias",
+      "up_multiplier": 1.00,
+      "down_multiplier": 1.00,
+      "best_action": "wait_for_setup"
+    },
+    "neutral_high": {
+      "range": [60, 80],
+      "description": "Neutral med svag bearish bias",
+      "up_multiplier": 0.94,
+      "down_multiplier": 1.06,
+      "best_action": "follow_trend"
+    },
+    "overbought": {
+      "range": [80, 90],
+      "description": "Overkøbt - bearish bias",
+      "up_multiplier": 0.73,
+      "down_multiplier": 1.22,
+      "avg_drop_points": 6,
+      "win_rate_short": 64,
+      "best_action": "look_for_short"
+    },
+    "extreme_overbought": {
+      "range": [90, 100],
+      "description": "Stærkt overkøbt - høj sandsynlighed for drop",
+      "up_multiplier": 0.56,
+      "down_multiplier": 1.38,
+      "avg_drop_points": 8,
+      "win_rate_short": 70,
+      "avg_time_to_move_minutes": 11,
+      "best_action": "prepare_short",
+      "confirmation_signals": ["bearish candle", "resistance rejection", "volume"]
+    }
+  },
+  "crossovers": {
+    "bullish_cross_from_extreme_oversold": {
+      "condition": "%K krydser over %D når begge er under 10",
+      "probability_5_point_up": 73,
+      "probability_10_point_up": 50,
+      "avg_move_points": 10,
+      "avg_time_minutes": 12,
+      "reliability": "high"
+    },
+    "bullish_cross_from_oversold": {
+      "condition": "%K krydser over %D når begge er under 20",
+      "probability_5_point_up": 65,
+      "probability_10_point_up": 43,
+      "avg_move_points": 6,
+      "avg_time_minutes": 15,
+      "reliability": "medium-high"
+    },
+    "bearish_cross_from_extreme_overbought": {
+      "condition": "%K krydser under %D når begge er over 90",
+      "probability_5_point_down": 70,
+      "probability_10_point_down": 47,
+      "avg_move_points": 9,
+      "avg_time_minutes": 12,
+      "reliability": "high"
+    },
+    "bearish_cross_from_overbought": {
+      "condition": "%K krydser under %D når begge er over 80",
+      "probability_5_point_down": 63,
+      "probability_10_point_down": 40,
+      "avg_move_points": 6,
+      "avg_time_minutes": 15,
+      "reliability": "medium-high"
+    }
+  },
+  "divergence": {
+    "bullish_regular": {
+      "condition": "Pris laver lower low, stokastik laver higher low",
+      "probability_reversal": 73,
+      "avg_reversal_points": 11,
+      "reliability": "high",
+      "best_timeframe": "5-15 min chart"
+    },
+    "bullish_hidden": {
+      "condition": "Pris laver higher low, stokastik laver lower low (trend continuation)",
+      "probability_continuation": 67,
+      "avg_move_points": 7,
+      "reliability": "medium"
+    },
+    "bearish_regular": {
+      "condition": "Pris laver higher high, stokastik laver lower high",
+      "probability_reversal": 70,
+      "avg_reversal_points": 9,
+      "reliability": "high"
+    },
+    "bearish_hidden": {
+      "condition": "Pris laver lower high, stokastik laver higher high (trend continuation)",
+      "probability_continuation": 65,
+      "avg_move_points": 7,
+      "reliability": "medium"
+    }
+  },
+  "combined_signals": {
+    "oversold_at_support": {
+      "description": "Stokastik oversolgt OG pris ved support niveau",
+      "combined_up_multiplier": 1.60,
+      "win_rate": 77
+    },
+    "overbought_at_resistance": {
+      "description": "Stokastik overkøbt OG pris ved resistance niveau",
+      "combined_down_multiplier": 1.55,
+      "win_rate": 75
+    },
+    "crossover_with_trend": {
+      "description": "Bullish cross i uptrend eller bearish cross i downtrend",
+      "multiplier_boost": 1.20
+    },
+    "crossover_against_trend": {
+      "description": "Bullish cross i downtrend (reversal) - mere risikabelt",
+      "multiplier_reduction": 0.80,
+      "note": "Kræver stærkere bekræftelse"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures vs US Dollar Index",
+    "correlation": -0.82,
+    "importance": "DXY is single best leading indicator for gold"
+  },
+  "dxy_trend_impact": {
+    "strong_up": {
+      "dxy_move": ">1% daily",
+      "gold_impact": "Strong pressure down",
+      "gold_multiplier": 0.55
+    },
+    "moderate_up": {
+      "dxy_move": "0.5-1% daily",
+      "gold_impact": "Moderate pressure",
+      "gold_multiplier": 0.75
+    },
+    "weak": {
+      "dxy_move": "<0.25%",
+      "gold_impact": "Minimal impact",
+      "gold_multiplier": 1.00
+    },
+    "moderate_down": {
+      "dxy_move": "-0.5 to -1%",
+      "gold_impact": "Moderate support",
+      "gold_multiplier": 1.25
+    },
+    "strong_down": {
+      "dxy_move": "<-1% daily",
+      "gold_impact": "Strong support up",
+      "gold_multiplier": 1.45
+    }
+  },
+  "key_dxy_levels": {
+    "105.00": "Major resistance - if holds, gold support",
+    "104.00": "Pivot level",
+    "103.00": "Support - if breaks, gold rally",
+    "102.00": "Major support - break = significant gold rally"
+  },
+  "divergence_signals": {
+    "gold_up_dxy_flat": {
+      "interpretation": "Gold has independent catalyst",
+      "probability_continuation": 65,
+      "multiplier": 1.15
+    },
+    "gold_flat_dxy_down": {
+      "interpretation": "Gold should follow DXY down soon",
+      "probability_gold_up": 72,
+      "multiplier": 1.20
+    }
+  },
+  "timing": {
+    "lead_time": "DXY often leads gold by 5-15 minutes",
+    "check_before_entry": "Always verify DXY direction before gold trade"
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "purpose": "Automatic range identification and quality scoring",
+    "update_frequency": "Every 5 candles",
+    "importance": "CRITICAL - Determines which strategies to use"
+  },
+  "detection_method": {
+    "name": "Statistical Range Analysis",
+    "parameters": {
+      "lookback_period": 50,
+      "range_threshold": 0.7,
+      "adx_threshold": 20,
+      "price_tolerance_points": 3
+    }
+  },
+  "detection_criteria": {
+    "price_oscillation": {
+      "calculation": "High - Low over 50 candles",
+      "threshold": "Range < 1.5x ATR",
+      "indication": "Tight range - good for scalping",
+      "formula": "(max_high_50 - min_low_50) < (ATR * 1.5)"
+    },
+    "adx_level": {
+      "threshold": "ADX < 20",
+      "indication": "No trend, likely ranging",
+      "formula": "ADX(14) < 20"
+    },
+    "equal_highs_lows": {
+      "calculation": "Count similar highs/lows within tolerance",
+      "threshold": "3+ equal highs AND 3+ equal lows",
+      "tolerance": "Within 3 points",
+      "indication": "Clear range boundaries",
+      "formula": "count_highs_within_3_points >= 3 AND count_lows_within_3_points >= 3"
+    },
+    "volume_profile": {
+      "calculation": "Volume concentrated in middle 60% of range",
+      "indication": "Range-bound behavior",
+      "note": "Requires volume data - optional"
+    },
+    "bollinger_band_width": {
+      "calculation": "(Upper Band - Lower Band) / Middle Band",
+      "threshold": "< 0.02 (narrow)",
+      "indication": "Range squeeze - breakout imminent",
+      "formula": "BB_width < 0.02"
+    }
+  },
+  "range_boundaries": {
+    "support_level": {
+      "method": "Most common low price (mode) over 50 candles",
+      "tolerance": "Within 3 points",
+      "strength_calculation": "Number of touches within tolerance",
+      "strength_levels": {
+        "weak": "1-2 touches",
+        "medium": "3-4 touches",
+        "strong": "5+ touches"
+      }
+    },
+    "resistance_level": {
+      "method": "Most common high price (mode) over 50 candles",
+      "tolerance": "Within 3 points",
+      "strength_calculation": "Number of touches within tolerance",
+      "strength_levels": {
+        "weak": "1-2 touches",
+        "medium": "3-4 touches",
+        "strong": "5+ touches"
+      }
+    },
+    "range_height": {
+      "calculation": "Resistance - Support",
+      "minimum_tradeable": "Must be > 2x ATR",
+      "optimal": "3-5x ATR = best scalping range",
+      "too_wide": "> 8x ATR = not a range, likely trending"
+    }
+  },
+  "range_quality_score": {
+    "scoring_factors": {
+      "adx_score": {
+        "adx_under_15": 3,
+        "adx_15_to_20": 2,
+        "adx_20_to_25": 1,
+        "adx_over_25": 0
+      },
+      "boundary_clarity": {
+        "clear_boundaries_5_plus_touches": 3,
+        "moderate_boundaries_3_to_4_touches": 2,
+        "weak_boundaries_1_to_2_touches": 1,
+        "no_clear_boundaries": 0
+      },
+      "range_tightness": {
+        "range_under_1_2x_atr": 3,
+        "range_1_2_to_1_5x_atr": 2,
+        "range_1_5_to_2x_atr": 1,
+        "range_over_2x_atr": 0
+      },
+      "volume_profile": {
+        "volume_concentrated_middle": 2,
+        "volume_even_distribution": 1,
+        "volume_at_extremes": 0,
+        "no_volume_data": 0
+      },
+      "time_in_range": {
+        "range_50_plus_candles": 2,
+        "range_30_to_50_candles": 1,
+        "range_under_30_candles": 0
+      }
+    },
+    "score_interpretation": {
+      "excellent_range": {
+        "score_range": "10-13",
+        "criteria": "Clear boundaries, ADX <15, tight range, volume confirming",
+        "tradeability": "HIGH - best conditions for range scalping",
+        "strategy": "Aggressive range scalping, larger position size",
+        "win_rate_expected": "70-75%"
+      },
+      "good_range": {
+        "score_range": "7-9",
+        "criteria": "Some boundaries, ADX 15-20, moderate range",
+        "tradeability": "MEDIUM - tradeable but be cautious",
+        "strategy": "Standard range scalping, normal position size",
+        "win_rate_expected": "65-70%"
+      },
+      "weak_range": {
+        "score_range": "4-6",
+        "criteria": "Unclear boundaries, ADX 20-25, wide range",
+        "tradeability": "LOW - be very cautious",
+        "strategy": "Reduced position size, tight stops",
+        "win_rate_expected": "55-65%"
+      },
+      "no_range": {
+        "score_range": "0-3",
+        "criteria": "ADX >25, trending, no clear boundaries",
+        "tradeability": "NONE - do not use range strategies",
+        "strategy": "Switch to trend pullback strategies",
+        "win_rate_expected": "N/A - wrong strategy"
+      }
+    }
+  },
+  "range_expansion_detection": {
+    "signal_name": "Range Expansion Warning",
+    "detection": {
+      "current_range": "Last 20 candles high - low",
+      "previous_range": "Previous 20 candles high - low",
+      "expansion_threshold": "Current range > 1.5x previous range",
+      "calculation": "current_range / previous_range > 1.5"
+    },
+    "danger_level": "HIGH",
+    "action": "EXIT RANGE TRADES, PREPARE FOR BREAKOUT",
+    "reason": "Range expanding = volatility increasing = breakout likely",
+    "reliability": 68,
+    "visual_indicator": "ORANGE"
+  },
+  "range_breakout_detection": {
+    "signal_name": "Range Breakout",
+    "detection": {
+      "range_established": "Range detected for 20+ candles",
+      "breakout": "Price closes above resistance OR below support",
+      "volume_confirmation": "Volume >1.5x average (if available)",
+      "retest": "Price retests broken level, holds, continues"
+    },
+    "action": "EXIT ALL RANGE TRADES, SWITCH TO TREND MODE",
+    "reliability": 78
+  },
+  "indicators": {
+    "adx": {
+      "period": 14,
+      "ranging": "< 20",
+      "trending": "> 25",
+      "choppy": "20-25"
+    },
+    "bollinger_band_width": {
+      "narrow": "< 0.02",
+      "normal": "0.02 - 0.04",
+      "wide": "> 0.04"
+    },
+    "price_oscillation_ratio": {
+      "calculation": "(High - Low) / ATR over 50 candles",
+      "tight_range": "< 1.2",
+      "normal_range": "1.2 - 1.8",
+      "expanding": "> 1.8"
+    },
+    "support_resistance_touch_count": {
+      "high_touches": "5+ = strong range boundaries",
+      "few_touches": "1-2 = weak range, likely to break"
+    }
+  },
+  "implementation": {
+    "update_frequency": "Every 5 candles",
+    "visualization": {
+      "show_range_boundaries": true,
+      "show_range_quality_score": true,
+      "show_expansion_warning": true,
+      "color_coding": {
+        "excellent": "GREEN",
+        "good": "YELLOW",
+        "weak": "ORANGE",
+        "no_range": "RED"
+      }
+    },
+    "alerts": {
+      "range_detected": true,
+      "range_quality_change": true,
+      "range_expansion": true,
+      "range_breakout": true
+    }
+  },
+  "testing": {
+    "validation_method": "Manual verification against chart",
+    "accuracy_target": "80%+ correct range identification",
+    "backtest_period": "3-6 months",
+    "success_metric": "Range strategies perform better when range detected vs not detected"
+  }
+}

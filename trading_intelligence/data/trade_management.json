@@ -1,0 +1,11 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "move_to_breakeven": {"when": "After 1R or 1.5R profit", "pros": "Risk-free trade", "cons": "Often stopped at BE"},
+  "trail_stop": {"how_tight": "1.5-2x ATR behind price", "when": "After 2R profit"},
+  "add_to_position": {"rules": "Only add to winners, max 2-3 adds", "when": "Pullback in strong trend"},
+  "take_partial": {"when": "At predefined targets", "typical": "50% at 1R"},
+  "let_runner": {"when": "Strong trend, momentum", "trail": "Wide trailing stop"},
+  "cut_loser_early": {"when": "Original thesis invalid", "action": "Exit immediately, don't wait for stop"},
+  "time_management": {"max_time": "Exit if no movement after X hours"},
+  "news_during_trade": {"before_major_news": "Consider closing or tightening stop"}
+}

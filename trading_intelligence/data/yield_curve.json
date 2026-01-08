@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "key_yields": "US 10-Year, 2-Year, TIPS (real yields)"
+  },
+  "real_yields": {
+    "calculation": "Nominal yield - inflation expectations",
+    "instrument": "10-Year TIPS yield",
+    "relationship": "Strongest correlation with gold",
+    "negative_real_yields": {
+      "threshold": "<0%",
+      "gold_impact": "Very bullish",
+      "multiplier": 1.40
+    },
+    "positive_real_yields": {
+      "threshold": ">0%",
+      "gold_impact": "Headwind",
+      "multiplier": 0.75
+    }
+  },
+  "nominal_10y": {
+    "rising": {
+      "above_4_5_percent": "Significant gold pressure",
+      "gold_multiplier": 0.70
+    },
+    "falling": {
+      "below_3_5_percent": "Significant gold support",
+      "gold_multiplier": 1.30
+    }
+  },
+  "2y10y_spread": {
+    "inversion": {
+      "condition": "2Y > 10Y",
+      "interpretation": "Recession fear = gold bid",
+      "multiplier": 1.20
+    },
+    "steepening": {
+      "interpretation": "Economic recovery = gold pressure",
+      "multiplier": 0.90
+    }
+  }
+}

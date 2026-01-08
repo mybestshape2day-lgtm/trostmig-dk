@@ -1,0 +1,263 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "purpose": "Early warning system for regime changes and dangerous market conditions",
+    "update_frequency": "Real-time (every 5 seconds)",
+    "priority": "CRITICAL - Prevents account-destroying moves"
+  },
+  "signals": {
+    "atr_expansion_breakout": {
+      "signal_name": "ATR Expansion - Range Breaking",
+      "detection": {
+        "baseline_atr": "14-period ATR (5-period low)",
+        "current_atr": "Current 14-period ATR",
+        "threshold": "ATR increases >30% from 5-period low",
+        "timeframe": "Within 5 candles",
+        "calculation": "(current_atr - baseline_atr) / baseline_atr > 0.30"
+      },
+      "danger_level": "HIGH",
+      "action": "EXIT ALL RANGE TRADES IMMEDIATELY",
+      "reason": "Volatility expansion = range breaking down, range strategies will fail",
+      "reliability": 72,
+      "visual_indicator": "RED",
+      "audio_alert": true,
+      "auto_exit": {
+        "enabled": true,
+        "delay_seconds": 10,
+        "reason": "Give trader 10 seconds to manually exit, then auto-exit"
+      }
+    },
+    "atr_spike_news": {
+      "signal_name": "ATR Spike - News Event",
+      "detection": {
+        "baseline_atr": "14-period ATR",
+        "current_atr": "Current ATR",
+        "threshold": "ATR doubles (>2.0x) within 1-2 candles",
+        "volume_confirmation": "Volume >2.0x average (if available)",
+        "calculation": "current_atr / baseline_atr > 2.0"
+      },
+      "danger_level": "CRITICAL",
+      "action": "CLOSE ALL POSITIONS IMMEDIATELY - NO NEW TRADES",
+      "reason": "News spike = unpredictable volatility, can wipe account",
+      "reliability": 85,
+      "visual_indicator": "RED FLASHING",
+      "audio_alert": true,
+      "auto_exit": {
+        "enabled": true,
+        "delay_seconds": 5,
+        "reason": "Immediate exit - news volatility is dangerous"
+      }
+    },
+    "volume_climax_exhaustion": {
+      "signal_name": "Volume Climax - Exhaustion",
+      "detection": {
+        "volume_ratio": ">2.5x 20-period average",
+        "price_action": "Large candle at extreme (new high/low)",
+        "stochastic": "Extreme overbought (>90) OR oversold (<10)",
+        "timeframe": "Single candle",
+        "calculation": "volume / avg_volume_20 > 2.5 AND (stoch > 90 OR stoch < 10)"
+      },
+      "danger_level": "HIGH",
+      "action": "TAKE PROFIT IMMEDIATELY, PREPARE FOR REVERSAL",
+      "reason": "Climax = exhaustion, reversal likely within 10-20 minutes",
+      "reliability": 62,
+      "avg_reversal_time_minutes": 15,
+      "visual_indicator": "ORANGE",
+      "audio_alert": true,
+      "auto_exit": {
+        "enabled": false,
+        "reason": "Trader should take profit, not necessarily exit"
+      }
+    },
+    "volume_divergence_warning": {
+      "signal_name": "Volume Divergence - Weak Move",
+      "detection": {
+        "bullish_divergence": "Price makes higher high, volume makes lower high",
+        "bearish_divergence": "Price makes lower low, volume makes higher low",
+        "timeframe": "5-10 candles",
+        "calculation": "Compare price peaks/troughs vs volume peaks/troughs"
+      },
+      "danger_level": "MEDIUM-HIGH",
+      "action": "REDUCE POSITION SIZE, WATCH FOR REVERSAL",
+      "reason": "Price moving without volume = weak move, likely to fail",
+      "reliability": 58,
+      "visual_indicator": "YELLOW",
+      "audio_alert": false
+    },
+    "dxy_correlation_break": {
+      "signal_name": "DXY Correlation Break",
+      "detection": {
+        "normal_correlation": -0.45,
+        "break_threshold": "Correlation moves to >-0.20 OR <0.20",
+        "timeframe": "Within 30 minutes",
+        "price_action": "Gold moving opposite to DXY (should be inverse)",
+        "calculation": "abs(correlation) < 0.20"
+      },
+      "danger_level": "HIGH",
+      "action": "CAUTION - Unusual behavior, reduce size or exit",
+      "reason": "Correlation break = fundamental shift or news",
+      "reliability": 68,
+      "visual_indicator": "ORANGE",
+      "audio_alert": true,
+      "note": "Requires DXY data feed"
+    },
+    "yield_correlation_break": {
+      "signal_name": "Yield Correlation Break",
+      "detection": {
+        "normal_correlation": -0.82,
+        "break_threshold": "Gold rising while yields rising (should be inverse)",
+        "timeframe": "15-30 minutes",
+        "calculation": "gold_direction == yield_direction (should be opposite)"
+      },
+      "danger_level": "MEDIUM-HIGH",
+      "action": "VERIFY NEWS, REDUCE SIZE",
+      "reason": "Fundamental driver breaking down",
+      "reliability": 65,
+      "visual_indicator": "YELLOW",
+      "audio_alert": false,
+      "note": "Requires yield data feed"
+    },
+    "stochastic_divergence_warning": {
+      "signal_name": "Stochastic Divergence",
+      "detection": {
+        "bearish_divergence": "Price higher high, Stochastic lower high",
+        "bullish_divergence": "Price lower low, Stochastic higher low",
+        "timeframe": "5-15 minute chart",
+        "strength": "Clear visual divergence (manual check recommended)"
+      },
+      "danger_level": "MEDIUM-HIGH",
+      "action": "PREPARE FOR REVERSAL",
+      "reason": "Momentum weakening before price reversal",
+      "reliability": 73,
+      "avg_reversal_time_minutes": 20,
+      "visual_indicator": "YELLOW",
+      "audio_alert": false
+    },
+    "rsi_divergence_warning": {
+      "signal_name": "RSI Divergence",
+      "detection": {
+        "bearish_divergence": "Price higher high, RSI lower high (at >70)",
+        "bullish_divergence": "Price lower low, RSI higher low (at <30)",
+        "timeframe": "5-15 minute chart"
+      },
+      "danger_level": "MEDIUM",
+      "action": "WATCH FOR REVERSAL SIGNALS",
+      "reliability": 68,
+      "visual_indicator": "YELLOW",
+      "audio_alert": false
+    },
+    "exhaustion_candle": {
+      "signal_name": "Exhaustion Candle Pattern",
+      "detection": {
+        "shooting_star": "Long upper wick, small body, at resistance",
+        "hammer": "Long lower wick, small body, at support",
+        "doji_at_extreme": "Doji at new high/low",
+        "engulfing_reversal": "Opposite color engulfing at extreme",
+        "location": "At support/resistance or new high/low"
+      },
+      "danger_level": "MEDIUM",
+      "action": "TAKE PROFIT, PREPARE FOR REVERSAL",
+      "reliability": 65,
+      "confirmation": "Require volume spike for higher reliability",
+      "visual_indicator": "YELLOW",
+      "audio_alert": false
+    },
+    "range_breakout_confirmed": {
+      "signal_name": "Range Breakout Confirmed",
+      "detection": {
+        "range_established": "Price in range for 20+ candles",
+        "breakout": "Price closes above/below range",
+        "volume_confirmation": "Volume >1.5x average (if available)",
+        "retest_hold": "Price retests broken level, holds, continues",
+        "timeframe": "Within 10 candles of breakout"
+      },
+      "danger_level": "HIGH for range trades",
+      "action": "EXIT ALL RANGE SCALPS, SWITCH TO TREND MODE",
+      "reason": "Range broken = new regime, range strategies fail",
+      "reliability": 78,
+      "visual_indicator": "ORANGE",
+      "audio_alert": true,
+      "auto_exit": {
+        "enabled": true,
+        "delay_seconds": 15,
+        "reason": "Exit range trades, but allow trend trades to continue"
+      }
+    },
+    "sr_flip_confirmed": {
+      "signal_name": "Support/Resistance Flip",
+      "detection": {
+        "support_flip": "Previous support broken, retested as resistance, holds",
+        "resistance_flip": "Previous resistance broken, retested as support, holds",
+        "volume_confirmation": "Volume >1.2x on flip test",
+        "timeframe": "Within 15 candles"
+      },
+      "danger_level": "HIGH",
+      "action": "INVALIDATE OLD LEVELS, UPDATE STRATEGY",
+      "reason": "Structural change in market",
+      "reliability": 75,
+      "visual_indicator": "ORANGE",
+      "audio_alert": true
+    },
+    "session_end_warning": {
+      "signal_name": "Session End Warning",
+      "detection": {
+        "london_end": "15:30 UTC (17:30 DK)",
+        "ny_end": "22:00 UTC (23:00 DK)",
+        "time_before_end": "30 minutes",
+        "position_status": "Open range scalps"
+      },
+      "danger_level": "MEDIUM",
+      "action": "CLOSE RANGE TRADES, HOLD TREND TRADES ONLY",
+      "reason": "Liquidity drops, spreads widen, false moves common",
+      "reliability": 70,
+      "visual_indicator": "YELLOW",
+      "audio_alert": true,
+      "auto_exit": {
+        "enabled": true,
+        "delay_seconds": 60,
+        "reason": "Exit range trades 30 min before session end"
+      }
+    },
+    "news_imminent": {
+      "signal_name": "High-Impact News Imminent",
+      "detection": {
+        "high_impact_news": ["FOMC", "NFP", "CPI", "PPI", "GDP", "Fed Rate Decision"],
+        "time_before": "30 minutes",
+        "current_volatility": "ATR already elevated (>1.2x normal)"
+      },
+      "danger_level": "CRITICAL",
+      "action": "CLOSE ALL POSITIONS, WAIT FOR NEWS",
+      "reason": "Unpredictable volatility spike",
+      "reliability": 85,
+      "visual_indicator": "RED FLASHING",
+      "audio_alert": true,
+      "auto_exit": {
+        "enabled": true,
+        "delay_seconds": 5,
+        "reason": "Exit all positions before news"
+      },
+      "note": "Requires economic calendar integration"
+    }
+  },
+  "signal_priorities": {
+    "critical": ["atr_spike_news", "news_imminent"],
+    "high": ["atr_expansion_breakout", "volume_climax_exhaustion", "range_breakout_confirmed", "sr_flip_confirmed", "dxy_correlation_break"],
+    "medium_high": ["volume_divergence_warning", "yield_correlation_break", "stochastic_divergence_warning"],
+    "medium": ["rsi_divergence_warning", "exhaustion_candle", "session_end_warning"]
+  },
+  "implementation_notes": {
+    "data_requirements": {
+      "required": ["price", "atr", "stochastic", "rsi"],
+      "optional_but_recommended": ["volume", "dxy", "yields"],
+      "external": ["economic_calendar"]
+    },
+    "update_frequency": "Every 5 seconds for real-time monitoring",
+    "alert_threshold": "Show alert if danger_level >= MEDIUM",
+    "auto_exit_enabled": "Only for CRITICAL and HIGH danger signals"
+  },
+  "testing": {
+    "backtest_period": "3-6 months historical data",
+    "validation": "Compare performance with vs without danger signal exits",
+    "expected_improvement": "20-30% reduction in max drawdown"
+  }
+}

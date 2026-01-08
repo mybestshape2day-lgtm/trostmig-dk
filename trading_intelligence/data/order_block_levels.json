@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "concept": "Institutional accumulation/distribution zones",
+    "origin": "Smart Money Concepts (SMC) trading methodology"
+  },
+  "concept": {
+    "definition": "Candle or series of candles before strong move where institutions accumulated position",
+    "why_important": "Institutions often return to these zones to add more",
+    "reliability": 65
+  },
+  "identification": {
+    "bullish_order_block": {
+      "description": "Last bearish candle before strong rally",
+      "characteristics": [
+        "Down candle (red)",
+        "Followed immediately by strong up move",
+        "Often long lower wick",
+        "Volume may be elevated"
+      ],
+      "reliability": 68,
+      "use": "Support zone for pullbacks"
+    },
+    "bearish_order_block": {
+      "description": "Last bullish candle before strong decline",
+      "characteristics": [
+        "Up candle (green)",
+        "Followed immediately by strong down move",
+        "Often long upper wick",
+        "Volume may be elevated"
+      ],
+      "reliability": 66,
+      "use": "Resistance zone for rallies"
+    }
+  },
+  "trading_strategies": {
+    "entry_at_ob": {
+      "setup": "Price returns to order block zone",
+      "entry": "Rejection candle within OB zone",
+      "stop": "Beyond OB zone",
+      "target": "Previous high/low or next OB",
+      "win_rate": 65
+    },
+    "ob_with_liquidity_sweep": {
+      "setup": "OB + liquidity sweep combo",
+      "entry": "After sweep into OB, reversal confirmed",
+      "win_rate": 75,
+      "note": "Most powerful OB setup"
+    }
+  },
+  "validity_rules": {
+    "valid_until": "OB valid until price closes through it",
+    "retests": "First retest strongest, each additional retest weakens",
+    "time_decay": "Older OBs less reliable",
+    "fresh_ob": "Within last 20-50 candles most reliable"
+  },
+  "multipliers": {
+    "fresh_ob": 1.30,
+    "ob_at_round_number": 1.35,
+    "ob_with_liquidity_sweep": 1.45,
+    "ob_with_imbalance": 1.40
+  }
+}

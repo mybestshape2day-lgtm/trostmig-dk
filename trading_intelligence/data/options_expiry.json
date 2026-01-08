@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "monthly_expiry": {"pattern": "Last trading day of month for GC options", "impact": "medium", "behavior": "Pin risk - price drawn to strike"},
+  "futures_rollover": {"pattern": "Front month to next month", "timing": "Several days before expiry", "impact": "Increased volume, potential whipsaw"},
+  "quarterly_expiry": {"impact": "higher", "note": "Larger open interest"},
+  "trading_adjustments": {"size_reduction": "25-50%", "wider_stops": "Expect increased volatility"}
+}

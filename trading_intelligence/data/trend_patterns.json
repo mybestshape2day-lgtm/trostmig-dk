@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "primary_timeframe": "1-5 min"
+  },
+  "trend_detection": {
+    "strong_uptrend": {
+      "criteria": [
+        "3 eller flere consecutive higher lows",
+        "Pris over EMA20",
+        "EMA20 over EMA50",
+        "Stigende momentum"
+      ],
+      "with_trend_multiplier": 1.35,
+      "against_trend_multiplier": 0.45,
+      "continuation_probability": 74,
+      "pullback_to_ema20_win_rate": 76,
+      "avg_continuation_points": 11,
+      "description": "Etableret uptrend med stærk momentum"
+    },
+    "moderate_uptrend": {
+      "criteria": [
+        "2 higher lows",
+        "Pris nær eller over EMA20",
+        "EMA20 flad eller stigende"
+      ],
+      "with_trend_multiplier": 1.20,
+      "against_trend_multiplier": 0.68,
+      "continuation_probability": 63,
+      "description": "Udvikler uptrend"
+    },
+    "weak_uptrend": {
+      "criteria": [
+        "1-2 higher lows",
+        "Pris oscillerer omkring EMA20"
+      ],
+      "with_trend_multiplier": 1.10,
+      "against_trend_multiplier": 0.85,
+      "continuation_probability": 55,
+      "description": "Svag eller usikker uptrend"
+    },
+    "ranging": {
+      "criteria": [
+        "Ingen klare higher lows eller lower highs",
+        "Pris krydser EMA20 ofte",
+        "Lav ADX (under 20)"
+      ],
+      "up_multiplier": 1.00,
+      "down_multiplier": 1.00,
+      "breakout_probability": 45,
+      "fade_probability": 55,
+      "description": "Sidelæns bevægelse, vent på breakout"
+    },
+    "weak_downtrend": {
+      "criteria": [
+        "1-2 lower highs",
+        "Pris oscillerer omkring EMA20"
+      ],
+      "with_trend_multiplier": 1.10,
+      "against_trend_multiplier": 0.85,
+      "description": "Svag eller usikker downtrend"
+    },
+    "moderate_downtrend": {
+      "criteria": [
+        "2 lower highs",
+        "Pris nær eller under EMA20",
+        "EMA20 flad eller faldende"
+      ],
+      "with_trend_multiplier": 1.20,
+      "against_trend_multiplier": 0.68,
+      "continuation_probability": 60
+    },
+    "strong_downtrend": {
+      "criteria": [
+        "3 eller flere consecutive lower highs",
+        "Pris under EMA20",
+        "EMA20 under EMA50",
+        "Faldende momentum"
+      ],
+      "with_trend_multiplier": 1.33,
+      "against_trend_multiplier": 0.47,
+      "continuation_probability": 72,
+      "pullback_to_ema20_win_rate": 74
+    }
+  },
+  "candle_patterns": {
+    "bullish_engulfing": {
+      "description": "Stor grøn candle engulfer forrige rød candle",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_at_support": 70,
+      "reliability_mid_range": 54,
+      "avg_follow_through_points": 6,
+      "best_context": ["at support", "after pullback in uptrend", "oversold stochastic"]
+    },
+    "bearish_engulfing": {
+      "description": "Stor rød candle engulfer forrige grøn candle",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_at_resistance": 68,
+      "reliability_mid_range": 52,
+      "avg_follow_through_points": 5
+    },
+    "hammer": {
+      "description": "Lille body, lang lower wick, lidt eller ingen upper wick",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability_at_support": 67,
+      "avg_bounce_points": 4,
+      "confirmation_needed": true
+    },
+    "shooting_star": {
+      "description": "Lille body, lang upper wick, lidt eller ingen lower wick",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability_at_resistance": 65,
+      "avg_drop_points": 4,
+      "confirmation_needed": true
+    },
+    "doji": {
+      "description": "Open og close næsten samme, lang wick(s)",
+      "type": "indecision",
+      "reliability": 50,
+      "note": "Kræver kontekst - reversal ved levels, continuation mid-trend"
+    },
+    "marubozu_bullish": {
+      "description": "Stor grøn candle uden wicks",
+      "type": "continuation",
+      "direction": "bullish",
+      "momentum_signal": "strong",
+      "continuation_probability": 70
+    },
+    "marubozu_bearish": {
+      "description": "Stor rød candle uden wicks",
+      "type": "continuation",
+      "direction": "bearish",
+      "momentum_signal": "strong",
+      "continuation_probability": 68
+    },
+    "morning_star": {
+      "description": "Tre-candle bullish reversal pattern",
+      "type": "reversal",
+      "direction": "bullish",
+      "reliability": 73,
+      "best_context": "at support after downtrend"
+    },
+    "evening_star": {
+      "description": "Tre-candle bearish reversal pattern",
+      "type": "reversal",
+      "direction": "bearish",
+      "reliability": 71,
+      "best_context": "at resistance after uptrend"
+    }
+  },
+  "ema_signals": {
+    "price_bounces_ema20_in_uptrend": {
+      "description": "Pris rører EMA20 og bouncer op i etableret uptrend",
+      "probability_continuation": 73,
+      "avg_move_points": 7,
+      "best_entry": "candle close above EMA20"
+    },
+    "price_bounces_ema20_in_downtrend": {
+      "description": "Pris rører EMA20 og falder i etableret downtrend",
+      "probability_continuation": 70,
+      "avg_move_points": 7
+    },
+    "ema20_crosses_ema50_bullish": {
+      "description": "EMA20 krydser over EMA50 (golden cross mini)",
+      "probability_uptrend_starts": 63,
+      "avg_initial_move": 11,
+      "lag": "signal kommer ofte sent"
+    },
+    "ema20_crosses_ema50_bearish": {
+      "description": "EMA20 krydser under EMA50 (death cross mini)",
+      "probability_downtrend_starts": 60,
+      "avg_initial_move": 9
+    },
+    "price_breaks_ema20_with_volume": {
+      "description": "Pris bryder EMA20 med højere end normal volume",
+      "probability_trend_change": 60,
+      "confirmation": "need close beyond EMA"
+    }
+  },
+  "momentum_assessment": {
+    "strong_momentum": {
+      "indicators": ["Steep EMA angle", "Consecutive trend candles", "Volume increasing"],
+      "multiplier": 1.40,
+      "description": "Trend accelererer"
+    },
+    "moderate_momentum": {
+      "indicators": ["Steady EMA", "Mixed candles but trend intact"],
+      "multiplier": 1.20,
+      "description": "Sund trend"
+    },
+    "weak_momentum": {
+      "indicators": ["Flattening EMA", "Smaller candles", "Lower volume"],
+      "multiplier": 0.85,
+      "description": "Trend svækkes"
+    },
+    "no_momentum": {
+      "indicators": ["Flat EMA", "Doji/small candles", "Low volume"],
+      "multiplier": 0.70,
+      "description": "Ingen klar retning"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "daily_limit": {"trigger": "-3% for day", "action": "STOP trading immediately", "rationale": "Prevent revenge trading"},
+  "weekly_limit": {"trigger": "-6% for week", "action": "STOP, review all trades", "rationale": "Something wrong, need analysis"},
+  "monthly_limit": {"trigger": "-10% for month", "action": "Take break, full review", "rationale": "Major adjustment needed"},
+  "max_drawdown": {"trigger": "-15 to -20%", "action": "Circuit breaker, stop all trading", "rationale": "Account protection"},
+  "recovery_protocol": {"5_percent_down": "Reduce size to 75%", "10_percent_down": "Reduce to 50%", "15_percent_down": "Stop trading"},
+  "consecutive_losses": {"3_losses": "Review strategy", "5_losses": "Reduce size 50%", "7_losses": "STOP trading"}
+}

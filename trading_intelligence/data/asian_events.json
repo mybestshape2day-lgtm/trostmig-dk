@@ -1,0 +1,8 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "china_data": {"pmi": {"impact": "medium", "typical_move": 4}, "trade_balance": {"impact": "low-medium"}},
+  "boj_meetings": {"impact": "medium", "note": "Yen impact affects gold"},
+  "pboc_actions": {"yuan_fixing": "Daily impact on gold", "rate_decisions": "Medium impact"},
+  "china_holidays": {"golden_week": "Oct 1-7", "spring_festival": "Jan-Feb", "impact": "Reduced demand during holidays"},
+  "india_events": {"diwali": "Oct-Nov", "wedding_season": "Increased demand", "multiplier": 1.10}
+}

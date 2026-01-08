@@ -1,0 +1,31 @@
+{
+  "sessions": [
+    {"timestamp":"2025-12-20T15:00:00Z","session":"overlap","day":"Friday","high":4612,"low":4585,"close":4590,"range_ticks":270,"trend":"bearish","volatility":"high","notes":"Strong selloff into weekend"},
+    {"timestamp":"2025-12-20T10:00:00Z","session":"london","day":"Friday","high":4625,"low":4608,"close":4615,"range_ticks":170,"trend":"ranging","volatility":"medium","notes":"Consolidation before NY"},
+    {"timestamp":"2025-12-19T15:00:00Z","session":"overlap","day":"Thursday","high":4635,"low":4610,"close":4620,"range_ticks":250,"trend":"bearish","volatility":"medium","notes":"Rejection at 4635 resistance"},
+    {"timestamp":"2025-12-19T10:00:00Z","session":"london","day":"Thursday","high":4640,"low":4620,"close":4632,"range_ticks":200,"trend":"bullish","volatility":"medium","notes":"Morning rally"},
+    {"timestamp":"2025-12-18T15:00:00Z","session":"overlap","day":"Wednesday","high":4628,"low":4595,"close":4605,"range_ticks":330,"trend":"bearish","volatility":"high","notes":"FOMC aftermath selloff"},
+    {"timestamp":"2025-12-18T10:00:00Z","session":"london","day":"Wednesday","high":4615,"low":4600,"close":4610,"range_ticks":150,"trend":"bullish","volatility":"low","notes":"Pre-FOMC quiet"},
+    {"timestamp":"2025-12-17T15:00:00Z","session":"overlap","day":"Tuesday","high":4620,"low":4590,"close":4612,"range_ticks":300,"trend":"bullish","volatility":"high","notes":"Strong bounce from support"},
+    {"timestamp":"2025-12-17T10:00:00Z","session":"london","day":"Tuesday","high":4598,"low":4580,"close":4592,"range_ticks":180,"trend":"ranging","volatility":"medium","notes":"Testing support zone"},
+    {"timestamp":"2025-12-16T15:00:00Z","session":"overlap","day":"Monday","high":4605,"low":4575,"close":4580,"range_ticks":300,"trend":"bearish","volatility":"high","notes":"Monday selloff"},
+    {"timestamp":"2025-12-16T10:00:00Z","session":"london","day":"Monday","high":4615,"low":4600,"close":4608,"range_ticks":150,"trend":"bearish","volatility":"medium","notes":"Gap down open"},
+    {"timestamp":"2025-12-23T15:00:00Z","session":"overlap","day":"Monday","high":4590,"low":4555,"close":4560,"range_ticks":350,"trend":"bearish","volatility":"high","notes":"Pre-holiday selling"},
+    {"timestamp":"2025-12-23T10:00:00Z","session":"london","day":"Monday","high":4598,"low":4582,"close":4588,"range_ticks":160,"trend":"ranging","volatility":"low","notes":"Low volume"},
+    {"timestamp":"2025-12-26T15:00:00Z","session":"overlap","day":"Thursday","high":4575,"low":4545,"close":4555,"range_ticks":300,"trend":"bearish","volatility":"medium","notes":"Post-holiday continuation"},
+    {"timestamp":"2025-12-27T15:00:00Z","session":"overlap","day":"Friday","high":4568,"low":4530,"close":4540,"range_ticks":380,"trend":"bearish","volatility":"high","notes":"End of week selloff"},
+    {"timestamp":"2025-12-27T10:00:00Z","session":"london","day":"Friday","high":4565,"low":4550,"close":4560,"range_ticks":150,"trend":"ranging","volatility":"low","notes":"Quiet morning"},
+    {"timestamp":"2025-12-29T05:00:00Z","session":"asia","day":"Monday","high":4545,"low":4476,"close":4485,"range_ticks":690,"trend":"bearish","volatility":"high","notes":"Strong Asia selloff"}
+  ],
+  "daily": [
+    {"date":"2025-12-29","open":4536,"high":4545,"low":4464,"close":4485,"range_ticks":810,"trend":"bearish","day":"Monday"},
+    {"date":"2025-12-27","open":4555,"high":4568,"low":4530,"close":4540,"range_ticks":380,"trend":"bearish","day":"Friday"},
+    {"date":"2025-12-26","open":4560,"high":4575,"low":4545,"close":4555,"range_ticks":300,"trend":"bearish","day":"Thursday"},
+    {"date":"2025-12-23","open":4595,"high":4598,"low":4555,"close":4560,"range_ticks":430,"trend":"bearish","day":"Monday"},
+    {"date":"2025-12-20","open":4618,"high":4625,"low":4585,"close":4590,"range_ticks":400,"trend":"bearish","day":"Friday"},
+    {"date":"2025-12-19","open":4620,"high":4640,"low":4610,"close":4620,"range_ticks":300,"trend":"ranging","day":"Thursday"},
+    {"date":"2025-12-18","open":4608,"high":4628,"low":4595,"close":4605,"range_ticks":330,"trend":"bearish","day":"Wednesday"},
+    {"date":"2025-12-17","open":4585,"high":4620,"low":4580,"close":4612,"range_ticks":400,"trend":"bullish","day":"Tuesday"},
+    {"date":"2025-12-16","open":4615,"high":4618,"low":4575,"close":4580,"range_ticks":430,"trend":"bearish","day":"Monday"}
+  ]
+}

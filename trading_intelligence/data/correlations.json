@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "instrument": "MGCG2026",
+    "last_updated": "2025-12-29T14:05:00+01:00",
+    "description": "Correlation data for multi-asset analysis"
+  },
+  "daily_snapshot": [
+    {
+      "date": "2025-12-29",
+      "gold_close": 4485.2,
+      "gold_change_pct": -1.68,
+      "dxy": null,
+      "dxy_change_pct": null,
+      "us_10y_yield": null,
+      "us_10y_change_bps": null,
+      "us_real_yield": null,
+      "vix": null,
+      "spx_change_pct": null,
+      "silver_close": null,
+      "gold_silver_ratio": null,
+      "notes": ""
+    }
+  ],
+  "correlations": {
+    "gold_dxy": {
+      "theoretical": -0.45,
+      "observed_30d": null,
+      "observed_7d": null,
+      "current_regime": "unknown",
+      "notes": "Inverse correlation, weakened in 2024-2025 due to CB buying"
+    },
+    "gold_real_yields": {
+      "theoretical": -0.82,
+      "observed_30d": null,
+      "observed_7d": null,
+      "current_regime": "unknown",
+      "notes": "Strongest fundamental driver historically"
+    },
+    "gold_vix": {
+      "theoretical": 0.3,
+      "observed_30d": null,
+      "observed_7d": null,
+      "current_regime": "unknown",
+      "notes": "Positive during risk-off, safe haven flows"
+    },
+    "gold_silver": {
+      "theoretical": 0.85,
+      "observed_30d": null,
+      "observed_7d": null,
+      "current_regime": "unknown",
+      "notes": "High correlation, silver more volatile"
+    }
+  },
+  "regime_signals": {
+    "dxy_breaking_down": {
+      "condition": "DXY < 100 and falling",
+      "gold_bias": "bullish",
+      "confidence": "high",
+      "active": false
+    },
+    "dxy_breaking_up": {
+      "condition": "DXY > 105 and rising",
+      "gold_bias": "bearish",
+      "confidence": "medium",
+      "active": false
+    },
+    "yields_falling": {
+      "condition": "10Y yield falling > 10bps/week",
+      "gold_bias": "bullish",
+      "confidence": "high",
+      "active": false
+    },
+    "yields_rising": {
+      "condition": "10Y yield rising > 10bps/week",
+      "gold_bias": "bearish",
+      "confidence": "high",
+      "active": false
+    },
+    "risk_off": {
+      "condition": "VIX > 20 and SPX falling",
+      "gold_bias": "bullish",
+      "confidence": "medium",
+      "active": false
+    }
+  },
+  "cot_data": {
+    "last_report_date": "2025-12-16",
+    "managed_money_net_long": 252206,
+    "commercial_net_short": 375794,
+    "extreme_bullish_threshold": 200000,
+    "extreme_bearish_threshold": 50000,
+    "current_signal": "extreme_bullish_positioning",
+    "contrarian_warning": true,
+    "notes": "Specs at record high - potential pullback when held >3 weeks"
+  }
+}

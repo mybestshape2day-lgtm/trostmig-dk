@@ -1,0 +1,16 @@
+{
+  "meta": {"instrument": "MGC Gold Futures", "importance": "Economic data drives volatility"},
+  "us_events": {
+    "nfp": {"name": "Non-Farm Payrolls", "day": "First Friday each month", "time_utc": "13:30", "impact": "high", "typical_move": 12, "avoid_minutes": 45},
+    "cpi": {"name": "Consumer Price Index", "frequency": "monthly", "time_utc": "13:30", "impact": "high", "typical_move": 10, "avoid_minutes": 30},
+    "fomc": {"name": "FOMC Rate Decision", "frequency": "8 per year", "time_utc": "18:00-19:00", "impact": "very_high", "typical_move": 18, "avoid_minutes": 60},
+    "ppi": {"impact": "medium", "typical_move": 6},
+    "retail_sales": {"impact": "medium", "typical_move": 5},
+    "gdp": {"impact": "medium", "typical_move": 7},
+    "ism": {"impact": "medium", "typical_move": 5},
+    "jobless_claims": {"impact": "low", "typical_move": 3}
+  },
+  "eu_events": {"ecb": {"impact": "medium", "typical_move": 6}, "eurozone_cpi": {"impact": "medium", "typical_move": 5}},
+  "uk_events": {"boe": {"impact": "medium", "typical_move": 5}},
+  "china_events": {"pmi": {"impact": "medium", "typical_move": 4}, "pboc": {"impact": "medium"}}
+}

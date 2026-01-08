@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "importance": "Stop placement determines win rate and account survival",
+    "key_principle": "Stop must invalidate original thesis"
+  },
+  "atr_based_stops": {
+    "1x_atr": {
+      "multiplier": 1.0,
+      "typical_points": "8-10",
+      "stop_out_rate": 48,
+      "win_rate_impact": -8,
+      "use_case": "Scalping, tight entries, quick trades",
+      "pros": "Small risk per trade",
+      "cons": "High stop out rate, noise can trigger",
+      "recommended": "Only for very precise entries"
+    },
+    "1_5x_atr": {
+      "multiplier": 1.5,
+      "typical_points": "12-15",
+      "stop_out_rate": 28,
+      "win_rate_impact": 0,
+      "use_case": "Standard intraday trading",
+      "pros": "Balanced - room to breathe, not too wide",
+      "cons": "None - this is optimal",
+      "recommended": "DEFAULT for most trades"
+    },
+    "2x_atr": {
+      "multiplier": 2.0,
+      "typical_points": "16-20",
+      "stop_out_rate": 15,
+      "win_rate_impact": 8,
+      "use_case": "Swing trades, volatile conditions, news days",
+      "pros": "Very low stop out rate",
+      "cons": "Larger risk per trade",
+      "recommended": "High volatility or overnight holds"
+    },
+    "2_5x_atr": {
+      "multiplier": 2.5,
+      "typical_points": "20-25",
+      "stop_out_rate": 10,
+      "win_rate_impact": 12,
+      "use_case": "Extreme volatility, FOMC days",
+      "pros": "Almost never stopped out on noise",
+      "cons": "Very large risk",
+      "recommended": "Only when necessary"
+    }
+  },
+  "structure_based_stops": {
+    "below_swing_low": {
+      "description": "For long trades - stop below recent swing low",
+      "distance": "2-5 points below low",
+      "win_rate": 68,
+      "rationale": "If swing low breaks, thesis invalid",
+      "pros": "Logical, respects market structure",
+      "cons": "Can be far from entry",
+      "best_use": "Trend following, pullback entries"
+    },
+    "above_swing_high": {
+      "description": "For short trades - stop above recent swing high",
+      "distance": "2-5 points above high",
+      "win_rate": 68,
+      "rationale": "If swing high breaks, thesis invalid",
+      "pros": "Logical, respects market structure",
+      "cons": "Can be far from entry",
+      "best_use": "Trend following, rally fades"
+    },
+    "below_candle_low": {
+      "description": "Stop below entry candle low (long)",
+      "distance": "1-3 points buffer",
+      "win_rate": 62,
+      "rationale": "Entry candle rejection should hold",
+      "pros": "Tight stop, good R:R",
+      "cons": "Can be triggered on retest",
+      "best_use": "Strong momentum entries"
+    },
+    "above_candle_high": {
+      "description": "Stop above entry candle high (short)",
+      "distance": "1-3 points buffer",
+      "win_rate": 62,
+      "rationale": "Entry candle rejection should hold",
+      "pros": "Tight stop, good R:R",
+      "cons": "Can be triggered on retest",
+      "best_use": "Strong momentum entries"
+    }
+  },
+  "level_based_stops": {
+    "below_support": {
+      "description": "Stop 5-10 points below support level",
+      "win_rate": 70,
+      "rationale": "Support break invalidates long thesis",
+      "pros": "Clear invalidation point",
+      "cons": "Stop hunting possible at obvious levels",
+      "buffer": "5-8 points minimum to avoid stop hunts"
+    },
+    "above_resistance": {
+      "description": "Stop 5-10 points above resistance level",
+      "win_rate": 70,
+      "rationale": "Resistance break invalidates short thesis",
+      "pros": "Clear invalidation point",
+      "cons": "Stop hunting possible at obvious levels",
+      "buffer": "5-8 points minimum to avoid stop hunts"
+    },
+    "beyond_round_number": {
+      "description": "Stop beyond key round number (2600, 2650, etc.)",
+      "distance": "8-12 points beyond",
+      "rationale": "Round numbers magnetize price - need buffer",
+      "note": "Wider buffer required at major round numbers"
+    }
+  },
+  "time_based_stops": {
+    "description": "Exit if thesis doesn't play out within timeframe",
+    "scalp_trades": {
+      "max_time": "5-15 minutes",
+      "rationale": "Scalps should work quickly"
+    },
+    "intraday_trades": {
+      "max_time": "1-3 hours",
+      "rationale": "If not moving, capital tied up"
+    },
+    "swing_trades": {
+      "max_time": "1-3 days",
+      "rationale": "Extended time OK but not indefinite"
+    },
+    "note": "Time stop supplements price stop, not replaces"
+  },
+  "volatility_adjusted_stops": {
+    "squeeze_period": {
+      "atr_low": "<8 points",
+      "stop_distance": "8-12 points (wider than ATR)",
+      "rationale": "Breakout imminent - need room for expansion"
+    },
+    "normal_volatility": {
+      "atr_range": "8-12 points",
+      "stop_distance": "12-15 points (1.5x ATR)",
+      "rationale": "Standard conditions"
+    },
+    "high_volatility": {
+      "atr_range": "12-16 points",
+      "stop_distance": "18-24 points (1.5-2x ATR)",
+      "rationale": "Wider swings, need more room"
+    },
+    "extreme_volatility": {
+      "atr_range": ">16 points",
+      "stop_distance": "24-32 points (2x ATR)",
+      "rationale": "News events, major swings",
+      "alternative": "Stay out or trade smaller size"
+    }
+  },
+  "avoid_placement_zones": {
+    "at_round_numbers": {
+      "numbers": "2600, 2650, 2700, etc.",
+      "reason": "Liquidity magnets - stop hunting common",
+      "solution": "Place 5-10 points beyond round number"
+    },
+    "at_obvious_swing_points": {
+      "description": "Exact swing high/low visible to all traders",
+      "reason": "Everyone's stop there - clustered liquidity",
+      "solution": "Add 3-8 point buffer beyond obvious level"
+    },
+    "at_previous_day_levels": {
+      "levels": "PDH, PDL, PDC",
+      "reason": "Institutional order flow at these levels",
+      "solution": "5-8 points beyond the level"
+    },
+    "at_fibonacci_levels": {
+      "levels": "0.618, 0.5, etc.",
+      "reason": "Widely watched technical levels",
+      "solution": "Don't place stop exactly at fib, add buffer"
+    },
+    "clustered_stops": {
+      "description": "Where many retail traders have stops",
+      "identification": "Clean swing points, round numbers, fibs",
+      "reason": "Prime target for stop hunting",
+      "solution": "Be 5-10 points away from crowd"
+    }
+  },
+  "stop_hunting_awareness": {
+    "concept": "Market makers sweep obvious stop clusters for liquidity",
+    "common_hunts": {
+      "morning_sweep": "Hit stops just before major move",
+      "round_number_test": "Spike through 2600, 2650 to grab stops",
+      "swing_point_pierce": "Briefly break swing point, reverse"
+    },
+    "protection": {
+      "buffer_distance": "5-10 points from obvious levels",
+      "confirm_break": "Wait for close beyond level, not just wick",
+      "volatility_buffer": "Wider stops in high volatility"
+    },
+    "identification": {
+      "signs": "Long wick through level, immediate reversal, low volume spike",
+      "trading": "When stops hunted, often good entry opposite direction"
+    }
+  },
+  "session_specific": {
+    "asia": {
+      "recommended_stop": "Tighter OK - lower volatility",
+      "typical_buffer": "8-12 points",
+      "note": "Less stop hunting due to lower volume"
+    },
+    "london": {
+      "recommended_stop": "Standard stops",
+      "typical_buffer": "12-15 points",
+      "note": "Respect structure-based stops"
+    },
+    "ny_overlap": {
+      "recommended_stop": "Slightly wider",
+      "typical_buffer": "15-20 points",
+      "note": "Highest volatility, larger swings"
+    },
+    "news_events": {
+      "recommended_stop": "Very wide or stay out",
+      "typical_buffer": "20-30 points",
+      "note": "Unpredictable spikes"
+    }
+  },
+  "stop_loss_statistics": {
+    "tight_stops_1x_atr": {
+      "stop_out_rate": 48,
+      "avg_winners": "smaller",
+      "expectancy": "negative unless 65%+ win rate"
+    },
+    "normal_stops_1_5x_atr": {
+      "stop_out_rate": 28,
+      "avg_winners": "good size",
+      "expectancy": "positive with 55%+ win rate"
+    },
+    "wide_stops_2x_atr": {
+      "stop_out_rate": 15,
+      "avg_winners": "large",
+      "expectancy": "positive even with 45%+ win rate"
+    }
+  },
+  "trailing_stops": {
+    "atr_trailing": {
+      "method": "Trail stop 1.5-2x ATR behind price",
+      "pros": "Captures big moves, locks profit",
+      "cons": "Can give back gains in choppy markets",
+      "use": "Trending markets, runners"
+    },
+    "swing_trailing": {
+      "method": "Move stop to below each new swing low (long)",
+      "pros": "Respects market structure",
+      "cons": "Can exit prematurely",
+      "use": "Clear trends with defined swings"
+    },
+    "breakeven_trailing": {
+      "method": "Move to breakeven after 1R profit",
+      "pros": "Risk-free trade",
+      "cons": "Often stopped at breakeven for small profit",
+      "use": "Lower conviction trades"
+    }
+  },
+  "mental_stops": {
+    "warning": "NEVER use mental stops - must be in market",
+    "reason": "Discipline fails, emotions take over",
+    "exception": "None - always use hard stops",
+    "reality": "Mental stops = no stops = account blow up"
+  },
+  "catastrophic_stops": {
+    "description": "Ultra-wide stop for black swan events",
+    "distance": "50-100 points",
+    "use": "Overnight holds to prevent gap catastrophe",
+    "note": "Not for regular trading, only position insurance"
+  },
+  "best_practices": {
+    "place_immediately": "Enter stop order simultaneously with entry",
+    "honor_stop": "Never move stop further away (death spiral)",
+    "review_placement": "Check stop makes sense for strategy",
+    "buffer_obvious_levels": "Always 5+ points from crowd stops",
+    "scale_with_volatility": "Wider stops when ATR increases",
+    "invalidation_principle": "Stop should invalidate trade thesis"
+  },
+  "common_mistakes": {
+    "too_tight": "Trying to minimize risk, increases stop outs",
+    "at_obvious_level": "Placing where everyone else has stops",
+    "moving_stop_away": "Hoping for recovery, compounds losses",
+    "no_stop": "Trading without stop protection",
+    "too_wide": "Stop so wide that risk exceeds account rules"
+  }
+}

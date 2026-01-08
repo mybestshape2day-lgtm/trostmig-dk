@@ -1,0 +1,10 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "divergence_types": {
+    "gold_vs_dxy": {"description": "Gold up while DXY up = unusual", "reliability": 65, "resolution": "Usually DXY wins"},
+    "gold_vs_silver": {"description": "Gold up, silver down = weakness", "reliability": 72, "action": "Caution on gold longs"},
+    "gold_vs_yields": {"description": "Gold up, yields up = divergence", "reliability": 62}
+  },
+  "bullish_divergence": {"description": "Correlated market weak, gold strong", "probability_gold_continuation": 68},
+  "bearish_divergence": {"description": "Correlated market strong, gold weak", "probability_gold_reversal": 65}
+}

@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "v_reversal": {"characteristics": "Sharp spike, immediate reversal", "reliability": 58, "speed": "very_fast", "typical_move": 8},
+  "climax_reversal": {"description": "Volume spike, exhaustion", "identification": "Extreme volume + extended move", "reliability": 70, "typical_move": 10},
+  "key_reversal_day": {"definition": "New high/low, closes opposite direction", "reliability": 65, "typical_move": 8},
+  "island_reversal": {"description": "Gap up, consolidation, gap down", "reliability": 75, "typical_move": 12, "note": "Powerful reversal signal"}
+}

@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "update_frequency": "Real-time monitoring required",
+    "importance": "Correlations give edge on direction and timing"
+  },
+  "dxy": {
+    "name": "US Dollar Index",
+    "correlation_coefficient": -0.82,
+    "relationship": "inverse",
+    "strength": "very_strong",
+    "lead_lag": "DXY often leads by 5-15 minutes",
+    "signals": {
+      "dxy_up_gold_up": {
+        "interpretation": "Divergence - unusual, bearish for gold",
+        "probability_gold_reversal_down": 65,
+        "multiplier": 0.70,
+        "action": "Caution on long gold - correlation breaking"
+      },
+      "dxy_up_gold_down": {
+        "interpretation": "Normal correlation - bearish gold confirmed",
+        "probability_gold_continuation_down": 72,
+        "multiplier": 1.30,
+        "action": "Short gold with confidence"
+      },
+      "dxy_down_gold_up": {
+        "interpretation": "Normal correlation - bullish gold confirmed",
+        "probability_gold_continuation_up": 75,
+        "multiplier": 1.35,
+        "action": "Long gold with confidence"
+      },
+      "dxy_down_gold_down": {
+        "interpretation": "Divergence - unusual, bullish for gold soon",
+        "probability_gold_reversal_up": 62,
+        "multiplier": 0.75,
+        "action": "Look for gold long - divergence may resolve"
+      },
+      "dxy_flat_gold_moving": {
+        "interpretation": "Gold has own catalyst - independent move",
+        "multiplier": 1.00,
+        "action": "Focus on gold-specific factors"
+      }
+    },
+    "key_dxy_levels": {
+      "105.00": "Major resistance - gold support if holds",
+      "104.00": "Pivot level",
+      "103.00": "Support - gold resistance if breaks",
+      "102.00": "Major support - gold bullish if breaks"
+    },
+    "trading_strategy": "Always check DXY before gold entry - confirms or warns"
+  },
+  "us10y": {
+    "name": "US 10-Year Treasury Yield",
+    "correlation_coefficient": -0.68,
+    "relationship": "inverse",
+    "strength": "strong",
+    "lead_lag": "Yields can lead by 10-20 minutes",
+    "signals": {
+      "yields_rising_gold_falling": {
+        "interpretation": "Normal - higher yields pressure gold",
+        "probability_continuation": 70,
+        "multiplier": 1.25,
+        "action": "Bearish gold confirmed"
+      },
+      "yields_falling_gold_rising": {
+        "interpretation": "Normal - lower yields support gold",
+        "probability_continuation": 72,
+        "multiplier": 1.28,
+        "action": "Bullish gold confirmed"
+      },
+      "yields_rising_gold_rising": {
+        "interpretation": "Divergence - gold ignoring yields, strong catalyst",
+        "probability_gold_reversal": 45,
+        "multiplier": 1.10,
+        "action": "Watch for gold exhaustion"
+      },
+      "yields_falling_gold_falling": {
+        "interpretation": "Risk-off but gold weak - unusual",
+        "probability_gold_reversal_up": 58,
+        "multiplier": 0.85,
+        "action": "May be temporary gold weakness"
+      }
+    },
+    "key_yield_levels": {
+      "4.50%": "Above this = significant gold pressure",
+      "4.00%": "Neutral zone",
+      "3.50%": "Below this = significant gold support"
+    },
+    "real_yields": {
+      "importance": "TIPS yields (real yields) even more important",
+      "negative_real_yields": "Very bullish for gold",
+      "positive_real_yields": "Headwind for gold"
+    }
+  },
+  "eurusd": {
+    "name": "Euro/US Dollar",
+    "correlation_coefficient": 0.76,
+    "relationship": "positive",
+    "strength": "strong",
+    "lead_lag": "Often moves together, occasional 5-10 min lead",
+    "signals": {
+      "eur_up_gold_up": {
+        "interpretation": "Normal - weak USD benefits both",
+        "probability_continuation": 70,
+        "multiplier": 1.25,
+        "action": "Bullish gold confirmed"
+      },
+      "eur_down_gold_down": {
+        "interpretation": "Normal - strong USD pressures both",
+        "probability_continuation": 68,
+        "multiplier": 1.22,
+        "action": "Bearish gold confirmed"
+      },
+      "eur_up_gold_down": {
+        "interpretation": "Divergence - gold weakness independent",
+        "probability_gold_reversal_up": 55,
+        "multiplier": 0.80,
+        "action": "Gold may be oversold"
+      },
+      "eur_down_gold_up": {
+        "interpretation": "Divergence - gold strength independent",
+        "probability_gold_reversal_down": 52,
+        "multiplier": 0.85,
+        "action": "Gold may be overbought"
+      }
+    },
+    "key_eur_levels": {
+      "1.1000": "Major psychological - EUR strength = gold support",
+      "1.0800": "Pivot",
+      "1.0500": "Support - EUR weakness = gold pressure"
+    }
+  },
+  "silver": {
+    "name": "Silver Futures",
+    "correlation_coefficient": 0.88,
+    "relationship": "positive",
+    "strength": "very_strong",
+    "lead_lag": "Silver often leads by 2-5 minutes - more volatile",
+    "signals": {
+      "silver_up_gold_up": {
+        "interpretation": "Normal - precious metals bullish",
+        "probability_continuation": 78,
+        "multiplier": 1.30,
+        "action": "Strong bullish confirmation"
+      },
+      "silver_down_gold_down": {
+        "interpretation": "Normal - precious metals bearish",
+        "probability_continuation": 75,
+        "multiplier": 1.28,
+        "action": "Strong bearish confirmation"
+      },
+      "silver_up_gold_flat": {
+        "interpretation": "Silver leading - gold should follow",
+        "probability_gold_follows": 72,
+        "multiplier": 1.15,
+        "action": "Anticipate gold upside"
+      },
+      "silver_down_gold_flat": {
+        "interpretation": "Silver leading - gold should follow",
+        "probability_gold_follows": 70,
+        "multiplier": 1.12,
+        "action": "Anticipate gold downside"
+      },
+      "silver_breakout_gold_lagging": {
+        "interpretation": "Gold will likely catch up",
+        "probability_gold_follows": 75,
+        "multiplier": 1.25,
+        "action": "Enter gold following silver breakout"
+      }
+    },
+    "gold_silver_ratio": {
+      "normal_range": "70-85",
+      "ratio_high": ">85 = Silver undervalued relative to gold",
+      "ratio_low": "<70 = Silver overvalued relative to gold",
+      "trading_use": "Ratio extremes can signal mean reversion trades"
+    },
+    "volatility_comparison": {
+      "note": "Silver is ~2x more volatile than gold",
+      "implication": "Silver moves bigger, faster - useful leading indicator"
+    }
+  },
+  "correlation_matrix": {
+    "all_confirm_bullish": {
+      "conditions": "DXY down, Yields down, EUR up, Silver up",
+      "gold_probability_up": 85,
+      "multiplier": 1.50,
+      "confidence": "very_high",
+      "action": "Maximum bullish conviction"
+    },
+    "all_confirm_bearish": {
+      "conditions": "DXY up, Yields up, EUR down, Silver down",
+      "gold_probability_down": 82,
+      "multiplier": 1.45,
+      "confidence": "very_high",
+      "action": "Maximum bearish conviction"
+    },
+    "mixed_signals": {
+      "conditions": "Correlations conflicting",
+      "gold_probability_range": 45,
+      "multiplier": 0.75,
+      "confidence": "low",
+      "action": "Stay out or reduce size - unclear picture"
+    },
+    "three_of_four_confirm": {
+      "conditions": "3 out of 4 correlations align",
+      "gold_probability": 72,
+      "multiplier": 1.25,
+      "confidence": "high",
+      "action": "Good conviction for trade"
+    }
+  },
+  "real_time_monitoring": {
+    "importance": "Check correlations BEFORE every trade",
+    "tools": "Multi-chart with DXY, US10Y, EURUSD, Silver",
+    "frequency": "Continuous during trading hours",
+    "divergence_alert": "When gold moves opposite expected correlation"
+  },
+  "session_specific": {
+    "asia": {
+      "correlation_strength": "Weaker - low volume",
+      "note": "Correlations can diverge more"
+    },
+    "london": {
+      "correlation_strength": "Strong - EUR active",
+      "note": "EUR/USD correlation tighter"
+    },
+    "ny_overlap": {
+      "correlation_strength": "Strongest - all markets active",
+      "note": "Correlations most reliable here"
+    }
+  }
+}

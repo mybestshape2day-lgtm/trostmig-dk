@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures", "settings": "20, 2"},
+  "squeeze": {"description": "Bands narrow, volatility contraction", "breakout_setup": true, "probability_breakout": 75},
+  "walk_the_band": {"description": "Price hugs upper/lower band", "signal": "Strong trend", "continuation_probability": 70},
+  "band_touch": {"upper_band": "Resistance in range", "lower_band": "Support in range", "bounce_probability": 65},
+  "double_bottom_at_band": {"description": "Two touches of lower band", "reversal_pattern": true, "reliability": 68}
+}

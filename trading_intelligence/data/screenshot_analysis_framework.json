@@ -1,0 +1,199 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-29",
+    "purpose": "Systematic framework for analyzing trading screenshots"
+  },
+  
+  "analysis_layers": {
+    "layer_1_market_structure": {
+      "priority": 1,
+      "questions": [
+        "Is the market trending or ranging?",
+        "What is the higher timeframe direction (1H/4H/Daily)?",
+        "Are we making higher highs/lows or lower highs/lows?",
+        "Where is price relative to key moving averages?"
+      ],
+      "key_patterns": {
+        "uptrend": "Higher highs + higher lows, price above 20 EMA",
+        "downtrend": "Lower highs + lower lows, price below 20 EMA",
+        "range": "Equal highs and lows, price oscillating around mean",
+        "transition": "Breaking of prior structure, watch for confirmation"
+      },
+      "output": "TRENDING / RANGING / TRANSITIONING"
+    },
+    
+    "layer_2_key_levels": {
+      "priority": 2,
+      "identify": [
+        "Swing highs and lows",
+        "Previous day/week high and low",
+        "Asian session high and low",
+        "Round numbers (e.g., $2600, $2650)",
+        "VWAP (if visible)",
+        "Prior support/resistance flips"
+      ],
+      "level_strength": {
+        "strong": "Tested 3+ times, multiple timeframes, volume rejection",
+        "moderate": "Tested 2 times, clear reaction",
+        "weak": "Only touched once, no significant reaction"
+      },
+      "output": "List of key levels with strength rating"
+    },
+    
+    "layer_3_current_position": {
+      "priority": 3,
+      "questions": [
+        "Where is price now relative to key levels?",
+        "Is price at support, resistance, or mid-range?",
+        "How far from nearest level?",
+        "Room to move before next obstacle?"
+      ],
+      "zones": {
+        "buy_zone": "Near support in uptrend/range",
+        "sell_zone": "Near resistance in downtrend/range",
+        "no_trade_zone": "Middle of range, no clear edge"
+      },
+      "output": "Current position assessment and nearest levels"
+    },
+    
+    "layer_4_candle_patterns": {
+      "priority": 4,
+      "bullish_reversals": [
+        {"pattern": "Hammer", "description": "Long lower wick, small body at top, at support"},
+        {"pattern": "Bullish Engulfing", "description": "Green candle fully engulfs prior red candle"},
+        {"pattern": "Morning Star", "description": "3-candle pattern: down, doji/small, strong up"},
+        {"pattern": "Piercing Line", "description": "Gap down, then strong close above midpoint of prior candle"}
+      ],
+      "bearish_reversals": [
+        {"pattern": "Shooting Star", "description": "Long upper wick, small body at bottom, at resistance"},
+        {"pattern": "Bearish Engulfing", "description": "Red candle fully engulfs prior green candle"},
+        {"pattern": "Evening Star", "description": "3-candle pattern: up, doji/small, strong down"},
+        {"pattern": "Dark Cloud Cover", "description": "Gap up, then strong close below midpoint of prior candle"}
+      ],
+      "continuation": [
+        {"pattern": "Inside Bar", "description": "Consolidation, expect breakout"},
+        {"pattern": "Doji", "description": "Indecision, wait for next candle"},
+        {"pattern": "Three White Soldiers/Black Crows", "description": "Strong trend continuation"}
+      ],
+      "output": "Identified patterns and their implications"
+    },
+    
+    "layer_5_volume_analysis": {
+      "priority": 5,
+      "questions": [
+        "Is volume increasing or decreasing?",
+        "Volume spikes at which levels?",
+        "Volume confirmation of price moves?"
+      ],
+      "interpretation": {
+        "high_volume_breakout": "Strong, likely continuation",
+        "low_volume_breakout": "Weak, likely false breakout",
+        "volume_spike_at_level": "Rejection or absorption depending on candle",
+        "decreasing_volume_in_trend": "Trend weakening, reversal possible",
+        "increasing_volume_in_range": "Breakout imminent"
+      },
+      "output": "Volume context and implications"
+    },
+    
+    "layer_6_indicators": {
+      "priority": 6,
+      "if_visible": {
+        "RSI": {
+          "oversold": "< 30, look for bullish divergence",
+          "overbought": "> 70, look for bearish divergence",
+          "neutral": "30-70, follow trend",
+          "divergence": "Price making new high/low, RSI not confirming = warning"
+        },
+        "MACD": {
+          "bullish_cross": "MACD crossing above signal line",
+          "bearish_cross": "MACD crossing below signal line",
+          "histogram": "Growing = momentum increasing, shrinking = momentum fading"
+        },
+        "moving_averages": {
+          "20_EMA": "Short-term trend, dynamic support/resistance",
+          "50_EMA": "Medium-term trend",
+          "200_SMA": "Long-term trend, major support/resistance"
+        },
+        "ATR": {
+          "use": "Measure volatility, set stops proportional to ATR",
+          "low_ATR": "Range-bound, tighter stops",
+          "high_ATR": "Trending/volatile, wider stops"
+        }
+      },
+      "output": "Indicator readings and signals"
+    },
+    
+    "layer_7_time_context": {
+      "priority": 7,
+      "questions": [
+        "What session is it? (Asia/London/NY)",
+        "Time until next session?",
+        "Any economic events coming?",
+        "Day of week (Monday slow, Tue-Thu best)?"
+      ],
+      "time_specific": {
+        "asian_highs_lows": "Often tested at London open",
+        "london_highs_lows": "Often tested at NY open",
+        "8_30_AM_ET": "US data release, expect volatility",
+        "2_PM_ET": "FOMC days, extreme moves"
+      },
+      "output": "Time-based context and implications"
+    }
+  },
+  
+  "trade_evaluation_matrix": {
+    "go_criteria": {
+      "required": [
+        "Clear market structure identified",
+        "Price at key level (support/resistance)",
+        "Candle pattern confirmation",
+        "Risk:Reward minimum 1.5:1",
+        "Session supports trade (not Asia for aggressive)"
+      ],
+      "bonus": [
+        "Volume confirmation",
+        "Multi-timeframe alignment",
+        "Correlated instruments confirming",
+        "No major news imminent"
+      ]
+    },
+    
+    "no_go_criteria": [
+      "Choppy, unclear structure",
+      "Price in mid-range, no edge",
+      "Against higher timeframe trend",
+      "Major news in next 30 min",
+      "End of session (position squaring)",
+      "After big move (overextended)"
+    ],
+    
+    "scoring": {
+      "5_stars": "All required + 3 bonus = strong setup",
+      "4_stars": "All required + 1-2 bonus = good setup",
+      "3_stars": "All required = acceptable setup",
+      "2_stars": "Missing 1 required = weak, reduce size",
+      "1_star": "Missing 2+ required = no trade"
+    }
+  },
+  
+  "output_template": {
+    "structure": "",
+    "key_levels": [],
+    "current_position": "",
+    "patterns": [],
+    "volume": "",
+    "indicators": {},
+    "time_context": "",
+    "trade_idea": {
+      "direction": "",
+      "entry": "",
+      "stop": "",
+      "target": "",
+      "risk_reward": "",
+      "score": ""
+    },
+    "risks": [],
+    "recommendation": ""
+  }
+}

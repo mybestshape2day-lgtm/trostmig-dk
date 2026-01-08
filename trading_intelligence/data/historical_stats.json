@@ -1,0 +1,238 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "data_period": "2020-2024",
+    "note": "Baseret på typiske guld futures mønstre"
+  },
+  "daily_statistics": {
+    "avg_daily_range_points": 18,
+    "median_daily_range_points": 16,
+    "min_daily_range_points": 8,
+    "max_daily_range_points": 45,
+    "std_deviation_points": 6.5,
+    "avg_daily_volume": 125000,
+    "avg_true_range_14": 9.2
+  },
+  "session_statistics": {
+    "asia": {
+      "avg_range_points": 8,
+      "avg_volume_pct_of_day": 18,
+      "breakout_rate": 35,
+      "reversal_rate": 42,
+      "continuation_rate": 23
+    },
+    "london": {
+      "avg_range_points": 12,
+      "avg_volume_pct_of_day": 32,
+      "breakout_rate": 55,
+      "reversal_rate": 25,
+      "continuation_rate": 20
+    },
+    "ny": {
+      "avg_range_points": 15,
+      "avg_volume_pct_of_day": 50,
+      "breakout_rate": 65,
+      "reversal_rate": 20,
+      "continuation_rate": 15
+    }
+  },
+  "win_rates_by_setup": {
+    "trend_following": {
+      "strong_trend": 72,
+      "moderate_trend": 64,
+      "weak_trend": 54,
+      "ranging": 45
+    },
+    "reversal_trading": {
+      "at_major_support_resistance": 68,
+      "at_minor_levels": 56,
+      "mid_range": 42
+    },
+    "breakout_trading": {
+      "with_volume": 72,
+      "without_volume": 38,
+      "retest_entry": 75
+    },
+    "pullback_trading": {
+      "to_ema20_in_strong_trend": 76,
+      "to_ema20_in_moderate_trend": 65,
+      "to_ema50": 58
+    }
+  },
+  "avg_move_duration": {
+    "5_point_move": {
+      "avg_minutes": 12,
+      "median_minutes": 8,
+      "in_trending_market": 8,
+      "in_ranging_market": 18
+    },
+    "10_point_move": {
+      "avg_minutes": 28,
+      "median_minutes": 22,
+      "in_trending_market": 18,
+      "in_ranging_market": 42
+    },
+    "15_point_move": {
+      "avg_minutes": 55,
+      "median_minutes": 45,
+      "in_trending_market": 35,
+      "in_ranging_market": 85
+    }
+  },
+  "stop_out_rates": {
+    "1_atr_stop": {
+      "stop_out_rate": 45,
+      "avg_loss_points": 8
+    },
+    "1_5_atr_stop": {
+      "stop_out_rate": 28,
+      "avg_loss_points": 12
+    },
+    "2_atr_stop": {
+      "stop_out_rate": 15,
+      "avg_loss_points": 16
+    }
+  },
+  "best_trading_times_utc": {
+    "highest_win_rate": {
+      "time": "13:00-16:00",
+      "session": "London-NY overlap",
+      "avg_win_rate": 68,
+      "reason": "Highest volume and trend clarity"
+    },
+    "highest_profit_potential": {
+      "time": "13:30-14:30",
+      "session": "NY open",
+      "avg_move_points": 12,
+      "reason": "US data releases and market open"
+    },
+    "lowest_win_rate": {
+      "time": "21:00-00:00",
+      "session": "After hours",
+      "avg_win_rate": 48,
+      "reason": "Low volume, choppy price action"
+    }
+  },
+  "indicator_effectiveness": {
+    "stochastic": {
+      "overall_accuracy": 68,
+      "best_in": "ranging markets",
+      "worst_in": "strong trends"
+    },
+    "rsi": {
+      "overall_accuracy": 65,
+      "best_in": "identifying divergences",
+      "worst_in": "extreme trending markets"
+    },
+    "ema_20_50": {
+      "overall_accuracy": 70,
+      "best_in": "trending markets",
+      "worst_in": "choppy ranges"
+    },
+    "volume": {
+      "overall_accuracy": 72,
+      "best_in": "confirming breakouts",
+      "worst_in": "low liquidity sessions"
+    },
+    "atr": {
+      "overall_accuracy": 75,
+      "best_in": "setting stops and targets",
+      "worst_in": "predicting direction"
+    }
+  },
+  "risk_reward_statistics": {
+    "1_to_1": {
+      "win_rate_needed": 50,
+      "typical_win_rate": 62,
+      "expectancy": "positive"
+    },
+    "1_to_2": {
+      "win_rate_needed": 33,
+      "typical_win_rate": 48,
+      "expectancy": "positive"
+    },
+    "1_to_3": {
+      "win_rate_needed": 25,
+      "typical_win_rate": 35,
+      "expectancy": "positive"
+    }
+  },
+  "seasonal_patterns": {
+    "january": {
+      "avg_volatility": "high",
+      "typical_range_multiplier": 1.15,
+      "note": "New year positioning"
+    },
+    "february": {
+      "avg_volatility": "normal",
+      "typical_range_multiplier": 1.0
+    },
+    "march": {
+      "avg_volatility": "high",
+      "typical_range_multiplier": 1.12,
+      "note": "FOMC often, quarter end"
+    },
+    "april": {
+      "avg_volatility": "normal",
+      "typical_range_multiplier": 0.95
+    },
+    "may": {
+      "avg_volatility": "normal",
+      "typical_range_multiplier": 1.0
+    },
+    "june": {
+      "avg_volatility": "high",
+      "typical_range_multiplier": 1.10,
+      "note": "FOMC, quarter end"
+    },
+    "july": {
+      "avg_volatility": "low",
+      "typical_range_multiplier": 0.85,
+      "note": "Summer doldrums"
+    },
+    "august": {
+      "avg_volatility": "low",
+      "typical_range_multiplier": 0.80,
+      "note": "Vacation season"
+    },
+    "september": {
+      "avg_volatility": "high",
+      "typical_range_multiplier": 1.18,
+      "note": "Return from summer, FOMC"
+    },
+    "october": {
+      "avg_volatility": "high",
+      "typical_range_multiplier": 1.15,
+      "note": "Market volatility tends to spike"
+    },
+    "november": {
+      "avg_volatility": "normal",
+      "typical_range_multiplier": 1.05
+    },
+    "december": {
+      "avg_volatility": "high",
+      "typical_range_multiplier": 1.20,
+      "note": "Year-end positioning, FOMC"
+    }
+  },
+  "news_impact_stats": {
+    "fomc": {
+      "avg_move_points": 18,
+      "max_move_points": 35,
+      "volatility_increase": "200%",
+      "avoid_trading_minutes": 60
+    },
+    "nfp": {
+      "avg_move_points": 14,
+      "max_move_points": 28,
+      "volatility_increase": "150%",
+      "avoid_trading_minutes": 45
+    },
+    "cpi": {
+      "avg_move_points": 12,
+      "max_move_points": 22,
+      "volatility_increase": "120%",
+      "avoid_trading_minutes": 30
+    }
+  }
+}

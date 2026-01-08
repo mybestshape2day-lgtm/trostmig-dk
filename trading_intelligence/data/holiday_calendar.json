@@ -1,0 +1,8 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "us_holidays": ["New Year's Day", "MLK Day", "Presidents Day", "Memorial Day", "Juneteenth", "Independence Day", "Labor Day", "Thanksgiving", "Christmas"],
+  "uk_holidays": ["Early May Bank Holiday", "Spring Bank Holiday", "Summer Bank Holiday"],
+  "impact": {"liquidity": "Reduced significantly", "spreads": "Wider", "recommendation": "Avoid trading"},
+  "day_before_holiday": {"behavior": "Often quiet, early close tendency", "multiplier": 0.70},
+  "day_after_holiday": {"behavior": "Gap risk, positioning", "multiplier": 0.85}
+}

@@ -1,0 +1,8 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "fixed_target": {"method": "1:1.5, 1:2, 1:3 R:R", "pros": "Clear plan", "cons": "May exit too early", "win_rate": 65},
+  "trailing_stop": {"atr_trailing": "Trail 1.5-2x ATR", "swing_trailing": "Trail swing lows/highs", "pros": "Captures big moves", "cons": "Gives back profit"},
+  "partial_exits": {"method": "50% at 1R, 25% at 2R, runner", "pros": "Locks profit, keeps exposure", "win_rate": 68},
+  "time_based_exit": {"when": "End of session or after X hours", "pros": "No overnight risk", "cons": "Cuts winners short"},
+  "signal_based": {"when": "Opposite signal appears", "pros": "Dynamic", "cons": "May be late"}
+}

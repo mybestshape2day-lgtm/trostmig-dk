@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "instrument": "MGCG2026",
+    "last_updated": "2025-12-29T14:05:00+01:00",
+    "min_samples_for_signal": 5
+  },
+  "session_patterns": {
+    "asia": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "ranging": 0,
+      "avg_range_ticks": 0,
+      "bull_probability": null,
+      "best_strategy": null
+    },
+    "london": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "ranging": 0,
+      "avg_range_ticks": 0,
+      "bull_probability": null,
+      "best_strategy": null
+    },
+    "new_york": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "ranging": 0,
+      "avg_range_ticks": 0,
+      "bull_probability": null,
+      "best_strategy": null
+    },
+    "overlap": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "ranging": 0,
+      "avg_range_ticks": 0,
+      "bull_probability": null,
+      "best_strategy": null
+    }
+  },
+  "day_patterns": {
+    "Monday": { "samples": 0, "bullish": 0, "bearish": 0, "avg_range": 0 },
+    "Tuesday": { "samples": 0, "bullish": 0, "bearish": 0, "avg_range": 0 },
+    "Wednesday": { "samples": 0, "bullish": 0, "bearish": 0, "avg_range": 0 },
+    "Thursday": { "samples": 0, "bullish": 0, "bearish": 0, "avg_range": 0 },
+    "Friday": { "samples": 0, "bullish": 0, "bearish": 0, "avg_range": 0 }
+  },
+  "level_patterns": {
+    "support_bounce": {
+      "samples": 0,
+      "successes": 0,
+      "failures": 0,
+      "success_rate": null,
+      "avg_bounce_ticks": 0,
+      "best_time_to_trade": null
+    },
+    "resistance_rejection": {
+      "samples": 0,
+      "successes": 0,
+      "failures": 0,
+      "success_rate": null,
+      "avg_rejection_ticks": 0,
+      "best_time_to_trade": null
+    },
+    "support_break": {
+      "samples": 0,
+      "continuation_rate": null,
+      "avg_follow_through_ticks": 0
+    },
+    "resistance_break": {
+      "samples": 0,
+      "continuation_rate": null,
+      "avg_follow_through_ticks": 0
+    }
+  },
+  "range_patterns": {
+    "asia_range_breakout": {
+      "samples": 0,
+      "breakout_up": 0,
+      "breakout_down": 0,
+      "no_breakout": 0,
+      "up_probability": null,
+      "down_probability": null,
+      "avg_asia_range": 0
+    },
+    "first_hour_reversal": {
+      "samples": 0,
+      "reversals": 0,
+      "continuations": 0,
+      "reversal_rate": null
+    }
+  },
+  "volatility_patterns": {
+    "low_vol_days": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "avg_range": 0,
+      "definition": "range < 40 ticks"
+    },
+    "medium_vol_days": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "avg_range": 0,
+      "definition": "range 40-80 ticks"
+    },
+    "high_vol_days": {
+      "samples": 0,
+      "bullish": 0,
+      "bearish": 0,
+      "avg_range": 0,
+      "definition": "range > 80 ticks"
+    }
+  },
+  "time_patterns": {
+    "best_entry_hours": [],
+    "worst_entry_hours": [],
+    "avg_range_by_hour": {}
+  },
+  "custom_patterns": []
+}

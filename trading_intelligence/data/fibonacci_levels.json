@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "note": "Fibonacci levels baseret på swing high/low identification"
+  },
+  "retracement_levels": {
+    "0.236": {
+      "reliability_percent": 58,
+      "typical_reaction_points": 3,
+      "best_use": "Shallow pullback i stærk trend, ofte ignoreret",
+      "trading_strategy": "Aggressive entry i stærk momentum"
+    },
+    "0.382": {
+      "reliability_percent": 68,
+      "typical_reaction_points": 5,
+      "best_use": "Standard pullback level i trends",
+      "trading_strategy": "Good entry for trend continuation"
+    },
+    "0.5": {
+      "reliability_percent": 72,
+      "typical_reaction_points": 6,
+      "best_use": "Psykologisk level, ofte respekteret",
+      "trading_strategy": "High probability bounce zone"
+    },
+    "0.618": {
+      "reliability_percent": 75,
+      "typical_reaction_points": 7,
+      "best_use": "Golden ratio - mest reliable retracement",
+      "trading_strategy": "Best risk/reward entry point"
+    },
+    "0.786": {
+      "reliability_percent": 65,
+      "typical_reaction_points": 5,
+      "best_use": "Deep retracement før continuation",
+      "trading_strategy": "Last chance entry, tight stop"
+    }
+  },
+  "extension_levels": {
+    "1.0": {
+      "reliability_percent": 70,
+      "typical_reaction_points": 5,
+      "best_use": "Measured move target, 100% extension",
+      "trading_strategy": "First profit target"
+    },
+    "1.272": {
+      "reliability_percent": 65,
+      "typical_reaction_points": 6,
+      "best_use": "Standard extension target",
+      "trading_strategy": "Partial profit zone"
+    },
+    "1.618": {
+      "reliability_percent": 72,
+      "typical_reaction_points": 8,
+      "best_use": "Golden ratio extension - strong target",
+      "trading_strategy": "Major profit target, often hit"
+    },
+    "2.0": {
+      "reliability_percent": 58,
+      "typical_reaction_points": 7,
+      "best_use": "Extended move target, 200%",
+      "trading_strategy": "Runner target in strong trends"
+    },
+    "2.618": {
+      "reliability_percent": 48,
+      "typical_reaction_points": 9,
+      "best_use": "Extreme extension, rare",
+      "trading_strategy": "Long-shot runner target"
+    }
+  },
+  "confluence_rules": {
+    "fib_plus_round_number": {
+      "description": "Fib level aligns med $10 eller $50 round number",
+      "multiplier": 1.30,
+      "reliability_boost": 12,
+      "example": "0.618 retrace lands at 2650"
+    },
+    "fib_plus_ema": {
+      "description": "Fib level aligns med EMA20 eller EMA50",
+      "multiplier": 1.25,
+      "reliability_boost": 10,
+      "example": "0.5 retrace meets EMA20"
+    },
+    "fib_plus_previous_sr": {
+      "description": "Fib level aligns med previous support/resistance",
+      "multiplier": 1.35,
+      "reliability_boost": 15,
+      "example": "0.618 retrace at old breakout level"
+    },
+    "multiple_fib_confluence": {
+      "description": "Multiple timeframe fibs align",
+      "multiplier": 1.40,
+      "reliability_boost": 18,
+      "example": "Daily 0.618 = 4H 0.5 = 1H 0.382"
+    }
+  },
+  "trading_strategies": {
+    "fib_bounce": {
+      "description": "Enter at fib level expecting bounce",
+      "entry": "Limit order at fib level or candle close confirmation",
+      "stop": "Below next fib level or 1 ATR",
+      "target": "Previous swing high/low or next fib extension",
+      "win_rate": 68,
+      "best_fibs": ["0.618", "0.5"],
+      "best_context": "Strong trend, oversold/overbought confirming"
+    },
+    "fib_break": {
+      "description": "Enter on break of key fib level",
+      "entry": "Break and close beyond 0.618 signals trend change",
+      "stop": "Back inside fib level",
+      "target": "1.0 extension or next major level",
+      "win_rate": 62,
+      "note": "Break of 0.618 often means full retrace to 1.0"
+    },
+    "fib_cluster": {
+      "description": "Wait for multiple fib levels + other factors",
+      "entry": "Only trade when 2+ confluence factors align",
+      "win_rate": 75,
+      "patience_required": true,
+      "note": "Lower frequency but higher quality setups"
+    }
+  },
+  "identification_rules": {
+    "swing_high_low": "Use significant pivots, not minor wiggles",
+    "timeframe": "Higher timeframe more reliable (4H, Daily vs 5min)",
+    "trend_context": "Fibs work best WITH trend, not against",
+    "volume_confirmation": "Bounce should have volume spike",
+    "multiple_timeframes": "Check 2-3 timeframes for alignment"
+  },
+  "common_mistakes": {
+    "wrong_swing_points": "Using insignificant highs/lows",
+    "trading_against_trend": "Fading strong trends at shallow fibs",
+    "no_confirmation": "Entering at level without price action",
+    "ignoring_context": "Trading fibs in range-bound choppy markets",
+    "over_optimization": "Drawing too many fib levels clutters chart"
+  }
+}

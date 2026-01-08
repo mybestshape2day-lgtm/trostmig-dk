@@ -1,0 +1,195 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "purpose": "Alternative risk management without traditional stop loss",
+    "concept": "If setup doesn't work within expected time, it's wrong",
+    "update_frequency": "Real-time (every second for countdown)"
+  },
+  "strategies": {
+    "scalp_5": {
+      "strategy_name": "$5 Scalp",
+      "max_time_minutes": 5,
+      "target_points": 5,
+      "action_if_no_profit": {
+        "at_3_minutes": "Check if price moved 2+ points in favor - if not, prepare exit",
+        "at_5_minutes": "Exit at market if no profit",
+        "rationale": "5 min = enough time for quick scalp, if no profit = wrong setup"
+      },
+      "breakeven_rule": {
+        "trigger": "After 2 points profit",
+        "action": "Move to breakeven, never let go negative",
+        "rationale": "Protect profit once move develops"
+      },
+      "countdown_display": true,
+      "audio_alert": {
+        "at_1_minute_remaining": true,
+        "at_30_seconds_remaining": true
+      }
+    },
+    "scalp_10": {
+      "strategy_name": "$10 Scalp",
+      "max_time_minutes": 15,
+      "target_points": 10,
+      "action_if_no_profit": {
+        "at_10_minutes": "Check if price moved 5+ points in favor - if not, prepare exit",
+        "at_15_minutes": "Exit at breakeven or small loss (max 2 points)",
+        "rationale": "15 min = enough time for move to develop"
+      },
+      "breakeven_rule": {
+        "trigger": "After 5 points profit",
+        "action": "Move to breakeven, protect profit",
+        "rationale": "Lock in profit once halfway to target"
+      },
+      "countdown_display": true,
+      "audio_alert": {
+        "at_5_minutes_remaining": true,
+        "at_2_minutes_remaining": true,
+        "at_30_seconds_remaining": true
+      }
+    },
+    "range_scalp": {
+      "strategy_name": "Range Scalp",
+      "max_time_minutes": 30,
+      "target_points": "80% of range height",
+      "action_if_no_profit": {
+        "at_20_minutes": "Check if price moved 50% toward target - if not, prepare exit",
+        "at_30_minutes": "Exit - range may be breaking or setup invalid",
+        "rationale": "30 min = enough time for range bounce"
+      },
+      "breakeven_rule": {
+        "trigger": "After 50% of target reached",
+        "action": "Move to breakeven",
+        "rationale": "Protect profit once move develops"
+      },
+      "countdown_display": true,
+      "audio_alert": {
+        "at_10_minutes_remaining": true,
+        "at_5_minutes_remaining": true,
+        "at_1_minute_remaining": true
+      }
+    },
+    "trend_pullback": {
+      "strategy_name": "Trend Pullback",
+      "max_time_minutes": 60,
+      "target_points": "Previous swing high/low",
+      "action_if_no_profit": {
+        "at_40_minutes": "Check if price moved 50% toward target - if not, prepare exit",
+        "at_60_minutes": "Exit if no progress toward target",
+        "rationale": "Trend trades can take longer, but should show progress"
+      },
+      "breakeven_rule": {
+        "trigger": "After 1/3 of target reached",
+        "action": "Move to breakeven",
+        "rationale": "Protect profit once trend confirms"
+      },
+      "countdown_display": true,
+      "audio_alert": {
+        "at_20_minutes_remaining": true,
+        "at_10_minutes_remaining": true
+      }
+    }
+  },
+  "general_rules": {
+    "breakeven_rule": {
+      "concept": "Once trade moves in favor, protect profit",
+      "trigger_points": {
+        "scalp_5": 2,
+        "scalp_10": 5,
+        "range_scalp": "50% of target",
+        "trend_pullback": "33% of target"
+      },
+      "action": "Move stop to entry price (breakeven)",
+      "rationale": "Never let winning trade become losing trade"
+    },
+    "trailing_profit": {
+      "concept": "Lock in profit as trade moves",
+      "trigger": "After breakeven rule triggered",
+      "method": "Move stop to +2 points profit, then trail",
+      "rationale": "Let winners run but protect profit"
+    },
+    "partial_exits": {
+      "concept": "Scale out to lock profit",
+      "method": {
+        "at_50_percent_target": "Close 50% of position",
+        "at_100_percent_target": "Close 30% of position",
+        "at_150_percent_target": "Close 20% of position, let rest run"
+      },
+      "rationale": "Lock profit while letting winners run"
+    }
+  },
+  "invalidation_signals": {
+    "support_break": {
+      "description": "If long at support, exit if support clearly broken",
+      "threshold": "Price closes 3+ points below support",
+      "action": "Exit immediately",
+      "rationale": "Support broken = setup invalidated"
+    },
+    "resistance_break": {
+      "description": "If short at resistance, exit if resistance clearly broken",
+      "threshold": "Price closes 3+ points above resistance",
+      "action": "Exit immediately",
+      "rationale": "Resistance broken = setup invalidated"
+    },
+    "stochastic_reversal": {
+      "description": "If long and stochastic crosses down from overbought",
+      "threshold": "Stochastic crosses down from >80",
+      "action": "Consider exit or reduce size",
+      "rationale": "Momentum reversing"
+    },
+    "volume_climax": {
+      "description": "If volume climax occurs",
+      "threshold": "Volume >2.5x average at extreme",
+      "action": "Take profit immediately",
+      "rationale": "Exhaustion = reversal likely"
+    },
+    "correlation_break": {
+      "description": "If DXY/yield correlation breaks",
+      "threshold": "Correlation moves outside normal range",
+      "action": "Exit or reduce size",
+      "rationale": "Fundamental driver breaking down"
+    }
+  },
+  "implementation": {
+    "countdown_timer": {
+      "display": "MM:SS format",
+      "color_coding": {
+        "green": ">50% time remaining",
+        "yellow": "25-50% time remaining",
+        "orange": "10-25% time remaining",
+        "red": "<10% time remaining"
+      },
+      "position": "Top right of trade monitor"
+    },
+    "auto_exit": {
+      "enabled": true,
+      "delay_seconds": 5,
+      "reason": "Give trader 5 seconds to manually exit before auto-exit"
+    },
+    "alerts": {
+      "audio": {
+        "enabled": true,
+        "volume": "Medium",
+        "sounds": {
+          "warning": "Soft beep",
+          "critical": "Loud beep"
+        }
+      },
+      "visual": {
+        "flash_screen": false,
+        "popup_notification": true
+      }
+    }
+  },
+  "best_practices": {
+    "discipline": "Stick to time limits - if setup doesn't work in time, it's wrong",
+    "breakeven": "Always move to breakeven once profit develops",
+    "partial_exits": "Scale out to lock profit, let winners run",
+    "invalidation": "Respect invalidation signals - exit immediately",
+    "review": "Track which time-based exits saved money vs cost money"
+  },
+  "testing": {
+    "backtest_method": "Compare performance with vs without time-based exits",
+    "expected_improvement": "Reduced drawdowns, better risk management",
+    "success_metric": "Fewer trades held too long, better win rate"
+  }
+}

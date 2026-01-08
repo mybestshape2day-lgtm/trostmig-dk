@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "instrument": "MGCG2026",
+    "account_size": 150000,
+    "risk_per_trade_pct": 1,
+    "last_updated": "2025-12-29T14:05:00+01:00"
+  },
+  "trades": [],
+  "statistics": {
+    "total_trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "breakeven": 0,
+    "win_rate": null,
+    "total_pnl": 0,
+    "avg_win": 0,
+    "avg_loss": 0,
+    "largest_win": 0,
+    "largest_loss": 0,
+    "profit_factor": null,
+    "avg_rr_achieved": null,
+    "expectancy": null
+  },
+  "by_strategy": {
+    "scalp_5": { "trades": 0, "wins": 0, "pnl": 0 },
+    "scalp_10": { "trades": 0, "wins": 0, "pnl": 0 },
+    "range_scalp": { "trades": 0, "wins": 0, "pnl": 0 },
+    "trend_pullback": { "trades": 0, "wins": 0, "pnl": 0 },
+    "breakout": { "trades": 0, "wins": 0, "pnl": 0 },
+    "reversal": { "trades": 0, "wins": 0, "pnl": 0 }
+  },
+  "by_session": {
+    "asia": { "trades": 0, "wins": 0, "pnl": 0 },
+    "london": { "trades": 0, "wins": 0, "pnl": 0 },
+    "new_york": { "trades": 0, "wins": 0, "pnl": 0 },
+    "overlap": { "trades": 0, "wins": 0, "pnl": 0 }
+  },
+  "by_day": {
+    "Monday": { "trades": 0, "wins": 0, "pnl": 0 },
+    "Tuesday": { "trades": 0, "wins": 0, "pnl": 0 },
+    "Wednesday": { "trades": 0, "wins": 0, "pnl": 0 },
+    "Thursday": { "trades": 0, "wins": 0, "pnl": 0 },
+    "Friday": { "trades": 0, "wins": 0, "pnl": 0 }
+  },
+  "trade_template": {
+    "id": "trade_001",
+    "timestamp_entry": "2025-12-29T14:30:00+01:00",
+    "timestamp_exit": null,
+    "session": "new_york",
+    "day": "Monday",
+    "strategy": "range_scalp",
+    "direction": "long",
+    "entry_price": 4465.0,
+    "stop_loss": 4455.0,
+    "target": 4480.0,
+    "contracts": 100,
+    "risk_ticks": 100,
+    "reward_ticks": 150,
+    "planned_rr": 1.5,
+    "exit_price": null,
+    "outcome": null,
+    "pnl_ticks": null,
+    "pnl_dollars": null,
+    "actual_rr": null,
+    "setup_notes": "Bounce off daily low support",
+    "exit_notes": null,
+    "screenshot": null
+  }
+}

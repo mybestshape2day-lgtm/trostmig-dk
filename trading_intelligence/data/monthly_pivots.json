@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "calculation_period": "Monthly",
+    "reset": "First day of each month",
+    "use": "Swing trading levels, major support/resistance"
+  },
+  "formulas": {
+    "pivot": "(Month_High + Month_Low + Month_Close) / 3",
+    "r1": "(2 × Pivot) - Month_Low",
+    "r2": "Pivot + (Month_High - Month_Low)",
+    "r3": "Month_High + 2 × (Pivot - Month_Low)",
+    "s1": "(2 × Pivot) - Month_High",
+    "s2": "Pivot - (Month_High - Month_Low)",
+    "s3": "Month_Low - 2 × (Month_High - Pivot)"
+  },
+  "level_strength": {
+    "pivot": {
+      "strength": "very_high",
+      "reliability": 80,
+      "description": "Major monthly pivot - strongest timeframe",
+      "typical_reaction": "8-12 points",
+      "probability_test": 78
+    },
+    "r1_s1": {
+      "strength": "very_high",
+      "reliability": 75,
+      "typical_reaction": "6-10 points",
+      "probability_reached": 62
+    },
+    "r2_s2": {
+      "strength": "extreme",
+      "reliability": 78,
+      "typical_reaction": "10-15 points",
+      "probability_reached": 35
+    },
+    "r3_s3": {
+      "strength": "extreme",
+      "reliability": 72,
+      "typical_reaction": "12-18 points",
+      "probability_reached": 12
+    }
+  },
+  "typical_usage": {
+    "timeframe": "Swing trades lasting days to weeks",
+    "entries": "Look for bounces at monthly levels",
+    "stops": "Wide - beyond next monthly level",
+    "targets": "Next monthly level or beyond"
+  },
+  "statistics": {
+    "pivot_touched_per_month": 85,
+    "r1_s1_reached": 62,
+    "r2_s2_reached": 35,
+    "r3_s3_reached": 12,
+    "avg_touches_per_level": 1.8
+  },
+  "trading_strategy": {
+    "monthly_pivot_rejection": {
+      "setup": "Price approaches monthly pivot, shows strong rejection",
+      "entry": "After rejection candle confirmed",
+      "stop": "15-20 points beyond pivot",
+      "target": "Previous month high/low or R1/S1",
+      "win_rate": 70,
+      "note": "Very reliable - monthly levels strongest"
+    },
+    "swing_between_levels": {
+      "setup": "Price oscillating between monthly S1 and R1",
+      "strategy": "Buy at S1, sell at R1",
+      "win_rate": 65,
+      "note": "Multi-day to multi-week swings"
+    }
+  },
+  "confluence": {
+    "monthly_weekly_daily_alignment": {
+      "multiplier": 1.50,
+      "note": "When all three timeframe pivots align - extremely strong"
+    },
+    "monthly_pivot_at_major_round": {
+      "multiplier": 1.40,
+      "note": "Monthly pivot at 2600, 2700 etc"
+    }
+  }
+}

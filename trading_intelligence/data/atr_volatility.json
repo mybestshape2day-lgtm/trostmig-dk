@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "indicator": "ATR (Average True Range)",
+    "settings": "14",
+    "instrument": "MGC Gold Futures",
+    "note": "ATR måles i points - 1 point = $1 = $10 per kontrakt"
+  },
+  "atr_usage": {
+    "stop_loss_multiplier": {
+      "conservative": {
+        "multiplier": 1.0,
+        "description": "Tight stop - højere risk for stop out",
+        "win_rate_impact": -5,
+        "use_case": "Scalping, quick moves"
+      },
+      "normal": {
+        "multiplier": 1.5,
+        "description": "Standard stop - balance mellem risk og room",
+        "win_rate_impact": 0,
+        "use_case": "Normal trading, 5-10 point targets"
+      },
+      "wide": {
+        "multiplier": 2.0,
+        "description": "Wide stop - bedre win rate men større risk",
+        "win_rate_impact": 8,
+        "use_case": "Swing trades, volatile conditions"
+      },
+      "very_wide": {
+        "multiplier": 2.5,
+        "description": "Meget wide stop - for volatile perioder",
+        "win_rate_impact": 12,
+        "use_case": "News events, high volatility"
+      }
+    },
+    "target_multiplier": {
+      "scalp": {
+        "multiplier": 1.0,
+        "description": "Quick profit target",
+        "avg_time_minutes": 5,
+        "probability": 75
+      },
+      "normal": {
+        "multiplier": 2.0,
+        "description": "Standard target - 2:1 reward",
+        "avg_time_minutes": 12,
+        "probability": 58
+      },
+      "swing": {
+        "multiplier": 3.0,
+        "description": "Larger target - 3:1 reward",
+        "avg_time_minutes": 25,
+        "probability": 42
+      },
+      "runner": {
+        "multiplier": 5.0,
+        "description": "Let it run - trend trades",
+        "avg_time_minutes": 45,
+        "probability": 28
+      }
+    }
+  },
+  "volatility_regimes": {
+    "squeeze": {
+      "atr_ratio": "<0.6",
+      "description": "Compressed volatility - breakout imminent",
+      "move_probability_multiplier": 0.70,
+      "breakout_multiplier": 1.50,
+      "avg_move_after_breakout": 15,
+      "note": "Low vol, breakout imminent - wait for expansion",
+      "best_strategy": "wait_for_breakout",
+      "typical_atr_value": "<5 points"
+    },
+    "low": {
+      "atr_ratio": "0.6-0.8",
+      "description": "Below normal volatility",
+      "move_probability_multiplier": 0.85,
+      "note": "Smaller moves expected",
+      "best_strategy": "scalp_tight_stops",
+      "typical_atr_value": "5-7 points"
+    },
+    "normal": {
+      "atr_ratio": "0.8-1.2",
+      "description": "Normal volatility regime",
+      "move_probability_multiplier": 1.00,
+      "note": "Standard trading conditions",
+      "best_strategy": "normal_trading",
+      "typical_atr_value": "7-10 points"
+    },
+    "high": {
+      "atr_ratio": "1.2-1.5",
+      "description": "Above normal volatility",
+      "move_probability_multiplier": 1.20,
+      "note": "Larger moves, wider stops needed",
+      "best_strategy": "wider_stops_bigger_targets",
+      "typical_atr_value": "10-13 points"
+    },
+    "extreme": {
+      "atr_ratio": ">1.5",
+      "description": "Extreme volatility",
+      "move_probability_multiplier": 1.35,
+      "note": "Very large moves, high risk - wide stops essential",
+      "best_strategy": "reduce_size_or_stay_out",
+      "typical_atr_value": ">13 points",
+      "risk_warning": "Significantly increased stop out risk"
+    }
+  },
+  "expected_ranges": {
+    "asia_session": {
+      "atr_multiplier": 0.50,
+      "expected_range_formula": "ATR * 0.50",
+      "typical_range_points": "4-8",
+      "note": "Low volatility session"
+    },
+    "london_session": {
+      "atr_multiplier": 0.80,
+      "expected_range_formula": "ATR * 0.80",
+      "typical_range_points": "7-12",
+      "note": "Moderate to high volatility"
+    },
+    "ny_session": {
+      "atr_multiplier": 1.00,
+      "expected_range_formula": "ATR * 1.00",
+      "typical_range_points": "8-15",
+      "note": "Full daily range often achieved"
+    },
+    "overlap_session": {
+      "atr_multiplier": 1.20,
+      "expected_range_formula": "ATR * 1.20",
+      "typical_range_points": "10-18",
+      "note": "Highest volatility period"
+    },
+    "after_hours": {
+      "atr_multiplier": 0.30,
+      "expected_range_formula": "ATR * 0.30",
+      "typical_range_points": "2-5",
+      "note": "Very low volatility"
+    },
+    "news_day": {
+      "atr_multiplier": 1.50,
+      "expected_range_formula": "ATR * 1.50",
+      "typical_range_points": "12-25",
+      "note": "FOMC, NFP, CPI days - expect expansion"
+    },
+    "fomc_day": {
+      "atr_multiplier": 2.00,
+      "expected_range_formula": "ATR * 2.00",
+      "typical_range_points": "15-30",
+      "note": "Extreme volatility expected"
+    }
+  },
+  "position_sizing": {
+    "low_volatility": {
+      "atr_range": "<7 points",
+      "size_adjustment": 1.20,
+      "note": "Can increase size slightly - smaller stops"
+    },
+    "normal_volatility": {
+      "atr_range": "7-10 points",
+      "size_adjustment": 1.00,
+      "note": "Standard position size"
+    },
+    "high_volatility": {
+      "atr_range": "10-13 points",
+      "size_adjustment": 0.75,
+      "note": "Reduce size - wider stops needed"
+    },
+    "extreme_volatility": {
+      "atr_range": ">13 points",
+      "size_adjustment": 0.50,
+      "note": "Significantly reduce size or stay out"
+    }
+  },
+  "atr_based_strategies": {
+    "atr_expansion_breakout": {
+      "description": "ATR expands significantly after squeeze",
+      "trigger": "ATR increases >30% from recent low",
+      "probability_sustained_move": 68,
+      "avg_move_points": 12,
+      "strategy": "Trade breakout direction with wider targets"
+    },
+    "atr_contraction": {
+      "description": "ATR contracting over time",
+      "trigger": "ATR decreasing for 5+ periods",
+      "probability_breakout_soon": 62,
+      "strategy": "Prepare for breakout, reduce position size until expansion"
+    },
+    "atr_spike": {
+      "description": "Sudden ATR spike (news event)",
+      "trigger": "ATR doubles in 1-2 periods",
+      "note": "Extreme volatility - often followed by quieter period",
+      "strategy": "Wait for ATR to normalize before trading"
+    }
+  },
+  "risk_management": {
+    "max_risk_per_trade": {
+      "conservative": "1 x ATR",
+      "moderate": "1.5 x ATR",
+      "aggressive": "2 x ATR"
+    },
+    "account_risk_percentage": {
+      "note": "With $10 per point per contract",
+      "1_percent_risk_100k_account": "10 points = 1 x typical ATR",
+      "calculation": "Account * Risk% / (ATR * $10)"
+    }
+  }
+}

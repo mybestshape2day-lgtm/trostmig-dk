@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "note": "Secondary correlations - context dependent, weaker than primary"
+  },
+  "spx": {
+    "name": "S&P 500 Index",
+    "correlation": "context_dependent",
+    "risk_on": {
+      "correlation": -0.45,
+      "behavior": "SPX up, gold pressure",
+      "multiplier": 0.85
+    },
+    "risk_off": {
+      "correlation": -0.65,
+      "behavior": "SPX down, gold safe haven bid",
+      "multiplier": 1.25
+    }
+  },
+  "vix": {
+    "name": "Volatility Index",
+    "correlation": 0.62,
+    "relationship": "positive",
+    "interpretation": "Fear = gold up",
+    "vix_spike": {
+      "threshold": ">25",
+      "gold_behavior": "Safe haven rally",
+      "multiplier": 1.30
+    }
+  },
+  "oil": {
+    "name": "Crude Oil",
+    "correlation": 0.35,
+    "relationship": "weak_positive",
+    "link": "Inflation expectations",
+    "when_relevant": "Oil spikes signal inflation fear = gold up"
+  },
+  "bitcoin": {
+    "name": "Bitcoin",
+    "correlation": 0.28,
+    "relationship": "emerging_positive",
+    "narrative": "Digital gold vs physical gold",
+    "note": "Correlation strengthening but still weak"
+  }
+}

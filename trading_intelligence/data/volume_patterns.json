@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "baseline": "20-period volume moving average",
+    "note": "Volume er afgørende for at bekræfte price action"
+  },
+  "volume_levels": {
+    "very_high": {
+      "ratio": ">2.0",
+      "description": "Ekstrem høj volume - major event eller climax",
+      "multiplier": 1.35,
+      "significance": "very high",
+      "interpretation": "Strong conviction, likely trend continuation or major reversal",
+      "caution": "Watch for exhaustion if at extremes"
+    },
+    "high": {
+      "ratio": "1.5-2.0",
+      "description": "Høj volume - stærk interest",
+      "multiplier": 1.20,
+      "significance": "high",
+      "interpretation": "Good momentum, trustworthy moves"
+    },
+    "above_average": {
+      "ratio": "1.1-1.5",
+      "description": "Over gennemsnit - sund aktivitet",
+      "multiplier": 1.08,
+      "significance": "medium",
+      "interpretation": "Normal healthy trading"
+    },
+    "average": {
+      "ratio": "0.9-1.1",
+      "description": "Normal volume",
+      "multiplier": 1.00,
+      "significance": "neutral",
+      "interpretation": "Baseline trading activity"
+    },
+    "below_average": {
+      "ratio": "0.5-0.9",
+      "description": "Lav volume - manglende conviction",
+      "multiplier": 0.85,
+      "significance": "low",
+      "interpretation": "Weak moves, likely to fail",
+      "caution": "Avoid trading breakouts without volume"
+    },
+    "very_low": {
+      "ratio": "<0.5",
+      "description": "Meget lav volume - dead market",
+      "multiplier": 0.65,
+      "significance": "very low",
+      "interpretation": "Range-bound, wait for volume to return",
+      "best_action": "stay_out"
+    }
+  },
+  "volume_price_patterns": {
+    "price_up_volume_up": {
+      "description": "Pris stiger med stigende volume",
+      "interpretation": "Healthy uptrend - strong buying pressure",
+      "continuation_probability": 72,
+      "avg_continuation_points": 7,
+      "signal_strength": "strong bullish",
+      "action": "follow the trend"
+    },
+    "price_up_volume_down": {
+      "description": "Pris stiger men volume falder",
+      "interpretation": "Weakening uptrend - lack of conviction",
+      "reversal_warning": "high",
+      "probability_reversal_soon": 58,
+      "signal_strength": "weak bullish",
+      "action": "be cautious, watch for reversal"
+    },
+    "price_down_volume_up": {
+      "description": "Pris falder med stigende volume",
+      "interpretation": "Healthy downtrend - strong selling pressure",
+      "continuation_probability": 70,
+      "avg_continuation_points": 6,
+      "signal_strength": "strong bearish",
+      "action": "follow the trend"
+    },
+    "price_down_volume_down": {
+      "description": "Pris falder men volume falder",
+      "interpretation": "Weakening downtrend - lack of conviction",
+      "reversal_warning": "high",
+      "probability_reversal_soon": 56,
+      "signal_strength": "weak bearish",
+      "action": "be cautious, watch for reversal"
+    },
+    "price_flat_volume_high": {
+      "description": "Pris sidelæns men høj volume",
+      "interpretation": "Accumulation or distribution - breakout imminent",
+      "breakout_probability": 68,
+      "avg_breakout_points": 8,
+      "timeframe": "within next 5-15 minutes"
+    },
+    "price_flat_volume_low": {
+      "description": "Pris sidelæns, lav volume",
+      "interpretation": "Market is asleep - wait for catalyst",
+      "best_action": "stay_out"
+    }
+  },
+  "climax_signals": {
+    "buying_climax": {
+      "description": "Ekstrem volume spike under uptrend med stort upward move",
+      "conditions": ["Volume >2.5x average", "Large green candle", "At resistance or new high"],
+      "probability_reversal": 62,
+      "avg_reversal_points": 8,
+      "timeframe": "reversal within 10-20 minutes",
+      "interpretation": "Exhaustion - buyers fully committed, sellers step in"
+    },
+    "selling_climax": {
+      "description": "Ekstrem volume spike under downtrend med stort downward move",
+      "conditions": ["Volume >2.5x average", "Large red candle", "At support or new low"],
+      "probability_reversal": 60,
+      "avg_reversal_points": 7,
+      "timeframe": "reversal within 10-20 minutes",
+      "interpretation": "Capitulation - sellers exhausted, buyers step in"
+    }
+  },
+  "breakout_confirmation": {
+    "breakout_with_volume": {
+      "description": "Pris bryder niveau med volume >1.5x average",
+      "reliability": 72,
+      "probability_continuation": 70,
+      "avg_follow_through_points": 8,
+      "signal_strength": "strong",
+      "action": "trade the breakout"
+    },
+    "breakout_without_volume": {
+      "description": "Pris bryder niveau men volume <1.0x average",
+      "reliability": 38,
+      "probability_failure": 62,
+      "signal_strength": "weak",
+      "note": "Breakouts without volume often fail - fade or avoid",
+      "action": "wait for volume or fade the move"
+    }
+  },
+  "volume_at_key_levels": {
+    "high_volume_at_support": {
+      "description": "Volume spike når pris rammer support",
+      "interpretation": "Strong buying interest - support likely to hold",
+      "probability_bounce": 68,
+      "multiplier": 1.25
+    },
+    "high_volume_at_resistance": {
+      "description": "Volume spike når pris rammer resistance",
+      "interpretation": "Strong selling interest - resistance likely to hold",
+      "probability_rejection": 66,
+      "multiplier": 1.22
+    },
+    "low_volume_at_support": {
+      "description": "Lav volume når pris rammer support",
+      "interpretation": "Lack of buying interest - support may break",
+      "probability_break": 58,
+      "caution": "high"
+    },
+    "low_volume_at_resistance": {
+      "description": "Lav volume når pris rammer resistance",
+      "interpretation": "Lack of selling interest - resistance may break",
+      "probability_break": 56,
+      "multiplier": 1.10
+    }
+  },
+  "volume_trends": {
+    "increasing_volume_trend": {
+      "description": "Volume gradvist stigende over flere candles",
+      "interpretation": "Building momentum - trend getting stronger",
+      "multiplier": 1.18,
+      "note": "Trend likely to continue"
+    },
+    "decreasing_volume_trend": {
+      "description": "Volume gradvist faldende over flere candles",
+      "interpretation": "Weakening momentum - trend losing steam",
+      "multiplier": 0.82,
+      "note": "Watch for reversal"
+    }
+  }
+}

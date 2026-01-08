@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "indicator": "Volume Weighted Average Price",
+    "calculation": "Cumulative (Price × Volume) / Cumulative Volume",
+    "reset": "Daily at market open or session start"
+  },
+  "vwap_basics": {
+    "concept": "Average price weighted by volume - institutional reference",
+    "why_important": "Institutions use VWAP for execution benchmarks",
+    "behavior": "Acts as dynamic support/resistance throughout day"
+  },
+  "deviation_bands": {
+    "plus_1_std": {
+      "calculation": "VWAP + 1 standard deviation",
+      "reliability": 68,
+      "typical_reaction": "4-6 points",
+      "use": "First resistance above VWAP"
+    },
+    "plus_2_std": {
+      "calculation": "VWAP + 2 standard deviations",
+      "reliability": 75,
+      "typical_reaction": "6-8 points",
+      "use": "Strong resistance, overbought signal"
+    },
+    "minus_1_std": {
+      "calculation": "VWAP - 1 standard deviation",
+      "reliability": 68,
+      "typical_reaction": "4-6 points",
+      "use": "First support below VWAP"
+    },
+    "minus_2_std": {
+      "calculation": "VWAP - 2 standard deviations",
+      "reliability": 75,
+      "typical_reaction": "6-8 points",
+      "use": "Strong support, oversold signal"
+    }
+  },
+  "trading_rules": {
+    "above_vwap": {
+      "bias": "bullish",
+      "strategy": "Look for long opportunities, buy dips to VWAP",
+      "probability_stay_above": 62
+    },
+    "below_vwap": {
+      "bias": "bearish",
+      "strategy": "Look for short opportunities, sell rallies to VWAP",
+      "probability_stay_below": 62
+    },
+    "at_vwap": {
+      "bias": "neutral",
+      "strategy": "Wait for clear direction, VWAP acting as pivot"
+    }
+  },
+  "bounce_statistics": {
+    "vwap_touch_probability": 72,
+    "bounce_probability": 65,
+    "break_probability": 35,
+    "avg_bounce_points": 5,
+    "multiple_touches": "Each touch increases break probability"
+  },
+  "cross_significance": {
+    "bullish_cross": {
+      "description": "Price crosses above VWAP from below",
+      "signal": "Trend change to bullish",
+      "continuation_probability": 68,
+      "action": "Look for long entries"
+    },
+    "bearish_cross": {
+      "description": "Price crosses below VWAP from above",
+      "signal": "Trend change to bearish",
+      "continuation_probability": 65,
+      "action": "Look for short entries"
+    }
+  },
+  "session_vwap": {
+    "daily_vwap": {
+      "reset": "Market open (usually Sunday evening)",
+      "use": "Full day reference"
+    },
+    "session_vwap": {
+      "reset": "Each major session (Asia, London, NY)",
+      "use": "Session-specific trading"
+    }
+  },
+  "trading_strategies": {
+    "vwap_bounce": {
+      "setup": "Price pulls back to VWAP in trending market",
+      "entry": "Rejection candle at VWAP",
+      "stop": "Beyond opposite deviation band",
+      "target": "+1 or +2 std dev band",
+      "win_rate": 68
+    },
+    "deviation_fade": {
+      "setup": "Price reaches +2 or -2 std dev",
+      "entry": "Mean reversion trade back to VWAP",
+      "stop": "Beyond deviation band",
+      "target": "VWAP",
+      "win_rate": 65
+    },
+    "vwap_cross": {
+      "setup": "Price crosses VWAP decisively",
+      "entry": "After confirmed cross with volume",
+      "stop": "Back across VWAP",
+      "target": "Deviation bands",
+      "win_rate": 62
+    }
+  },
+  "multipliers": {
+    "vwap_at_round_number": 1.30,
+    "vwap_at_pivot_point": 1.25,
+    "vwap_with_ema_confluence": 1.20,
+    "multiple_deviation_touch": 0.85
+  }
+}

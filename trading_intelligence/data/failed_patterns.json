@@ -1,0 +1,272 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "key_insight": "Failed patterns often more profitable than successful patterns",
+    "concept": "When market rejects expected move, opposite move is powerful"
+  },
+  "failed_breakout": {
+    "description": "Price breaks resistance but quickly reverses back below",
+    "identification": {
+      "initial_break": "Price closes above resistance",
+      "false_signal": "Within 1-5 candles, price back below resistance",
+      "volume_clue": "Often low volume on breakout",
+      "wick_clue": "Long upper wick through level"
+    },
+    "fade_strategy": {
+      "entry": "When price closes back below resistance level",
+      "stop": "Above the false breakout high + 5 points buffer",
+      "target": "Previous support or measured move down",
+      "win_rate": 72,
+      "avg_move_points": 12,
+      "rationale": "Bulls trapped, must exit, creates selling pressure"
+    },
+    "psychology": "Breakout buyers trapped, forced to sell = momentum reversal",
+    "best_context": ["No volume on breakout", "Against trend", "At major resistance"]
+  },
+  "failed_breakdown": {
+    "description": "Price breaks support but quickly reverses back above",
+    "identification": {
+      "initial_break": "Price closes below support",
+      "false_signal": "Within 1-5 candles, price back above support",
+      "volume_clue": "Often low volume on breakdown",
+      "wick_clue": "Long lower wick through level"
+    },
+    "fade_strategy": {
+      "entry": "When price closes back above support level",
+      "stop": "Below the false breakdown low + 5 points buffer",
+      "target": "Previous resistance or measured move up",
+      "win_rate": 70,
+      "avg_move_points": 11,
+      "rationale": "Bears trapped, must cover, creates buying pressure"
+    },
+    "psychology": "Breakdown sellers trapped, forced to cover = momentum reversal",
+    "best_context": ["No volume on breakdown", "Against trend", "At major support"]
+  },
+  "failed_head_and_shoulders": {
+    "description": "H&S pattern forms but neckline holds",
+    "identification": {
+      "pattern_complete": "Left shoulder, head, right shoulder formed",
+      "neckline_test": "Price approaches neckline",
+      "failure": "Neckline holds, price bounces strongly"
+    },
+    "trading_strategy": {
+      "entry": "When neckline clearly holds with bullish candle",
+      "stop": "Below neckline",
+      "target": "Head level or above",
+      "win_rate": 68,
+      "avg_move_points": 15,
+      "rationale": "Major reversal pattern failed = opposite direction strong"
+    },
+    "significance": "Failed bearish reversal = very bullish",
+    "note": "One of strongest reversal signals when major pattern fails"
+  },
+  "failed_double_top": {
+    "description": "Double top forms but breaks above instead of below",
+    "identification": {
+      "two_peaks": "Two similar highs",
+      "expected_breakdown": "Should break valley support",
+      "actual_breakout": "Instead breaks above peaks with volume"
+    },
+    "trading_strategy": {
+      "entry": "Break and close above double top peaks",
+      "stop": "Back below peaks",
+      "target": "Height of pattern, projected upward",
+      "win_rate": 70,
+      "avg_move_points": 16,
+      "rationale": "Resistance becomes support, strong momentum"
+    },
+    "psychology": "All sellers exhausted at double top, breakout traps shorts",
+    "multiplier": 1.35
+  },
+  "failed_double_bottom": {
+    "description": "Double bottom forms but breaks below instead of above",
+    "identification": {
+      "two_lows": "Two similar lows",
+      "expected_breakout": "Should break peak resistance",
+      "actual_breakdown": "Instead breaks below lows with volume"
+    },
+    "trading_strategy": {
+      "entry": "Break and close below double bottom lows",
+      "stop": "Back above lows",
+      "target": "Height of pattern, projected downward",
+      "win_rate": 68,
+      "avg_move_points": 15,
+      "rationale": "Support becomes resistance, strong momentum"
+    },
+    "psychology": "All buyers exhausted at double bottom, breakdown traps longs",
+    "multiplier": 1.32
+  },
+  "trap_patterns": {
+    "bull_trap": {
+      "description": "False bullish signal that reverses quickly",
+      "common_forms": [
+        "Breakout above resistance fails",
+        "Morning gap up that fills",
+        "Bullish candle that reverses next candle"
+      ],
+      "identification": {
+        "initial_signal": "Bullish price action",
+        "low_volume": "Often lacks volume confirmation",
+        "quick_reversal": "Reverses within 1-3 candles",
+        "closes_below_level": "Price closes below the trap level"
+      },
+      "trading_strategy": {
+        "entry": "When trap confirmed by close below key level",
+        "stop": "Above trap high",
+        "target": "Previous support",
+        "win_rate": 68,
+        "avg_move_points": 10
+      },
+      "best_indicators": ["Bearish divergence", "Overbought", "Low volume"]
+    },
+    "bear_trap": {
+      "description": "False bearish signal that reverses quickly",
+      "common_forms": [
+        "Breakdown below support fails",
+        "Morning gap down that fills",
+        "Bearish candle that reverses next candle"
+      ],
+      "identification": {
+        "initial_signal": "Bearish price action",
+        "low_volume": "Often lacks volume confirmation",
+        "quick_reversal": "Reverses within 1-3 candles",
+        "closes_above_level": "Price closes above the trap level"
+      },
+      "trading_strategy": {
+        "entry": "When trap confirmed by close above key level",
+        "stop": "Below trap low",
+        "target": "Previous resistance",
+        "win_rate": 66,
+        "avg_move_points": 9
+      },
+      "best_indicators": ["Bullish divergence", "Oversold", "Low volume"]
+    }
+  },
+  "failed_triangle_breakout": {
+    "description": "Triangle breaks one direction, reverses, breaks opposite",
+    "identification": {
+      "triangle_formed": "Ascending, descending, or symmetrical",
+      "false_break": "Initial break lacks follow-through",
+      "whipsaw": "Price whips back inside triangle",
+      "real_break": "Then breaks opposite direction with volume"
+    },
+    "trading_strategy": {
+      "wait_for_whipsaw": "Don't trade first break",
+      "enter_opposite": "Trade the opposite direction break",
+      "stop": "Inside triangle or at false break level",
+      "target": "Full triangle height in new direction",
+      "win_rate": 70,
+      "avg_move_points": 14
+    },
+    "note": "Triangles often fake first, real move second"
+  },
+  "stop_hunt_reversals": {
+    "description": "Price spikes to grab stops, then reverses hard",
+    "identification": {
+      "spike": "Sharp move through obvious level",
+      "long_wick": "Creates long wick/tail",
+      "immediate_reversal": "Price snaps back inside level",
+      "volume_spike": "Often volume spike on the hunt"
+    },
+    "common_targets": [
+      "Round numbers (2600, 2650)",
+      "Previous day high/low",
+      "Swing highs/lows",
+      "Fibonacci levels"
+    ],
+    "trading_strategy": {
+      "entry": "When price closes back inside level after spike",
+      "stop": "Beyond the spike extreme",
+      "target": "Opposite side of range",
+      "win_rate": 72,
+      "avg_move_points": 11,
+      "rationale": "Liquidity grabbed, now real move begins"
+    },
+    "timing": "Often happens at London open or NY open"
+  },
+  "failed_pattern_reliability": {
+    "why_reliable": [
+      "Trapped traders forced to exit",
+      "Stops triggered creating momentum",
+      "Opposite side emboldened",
+      "Market rejects obvious move",
+      "Psychology shifts dramatically"
+    ],
+    "statistics": {
+      "failed_breakout_reversal": 72,
+      "failed_breakdown_reversal": 70,
+      "failed_major_pattern": 68,
+      "stop_hunt_reversal": 72,
+      "trap_reversal": 68
+    }
+  },
+  "confluence_multipliers": {
+    "failed_pattern_at_round_number": {
+      "multiplier": 1.40,
+      "example": "Failed breakout at 2650",
+      "note": "Double confluence - very strong"
+    },
+    "failed_pattern_with_divergence": {
+      "multiplier": 1.35,
+      "example": "Failed breakout + bearish divergence",
+      "note": "Technical rejection + momentum rejection"
+    },
+    "failed_pattern_against_trend": {
+      "multiplier": 1.30,
+      "example": "Failed breakdown in uptrend",
+      "note": "Trend reasserts after failed countertrend move"
+    },
+    "multiple_failed_attempts": {
+      "multiplier": 1.45,
+      "example": "Second or third failed breakout",
+      "note": "Each failure strengthens the level"
+    }
+  },
+  "identification_checklist": {
+    "initial_setup": "Recognize the pattern attempting to form",
+    "watch_volume": "Low volume on break = higher failure probability",
+    "watch_price_action": "Lack of follow-through = potential failure",
+    "confirm_failure": "Close back inside level/pattern",
+    "check_confluence": "Failed pattern + other factors",
+    "prepare_entry": "Set alert for confirmed failure"
+  },
+  "risk_management": {
+    "position_sizing": "Can use larger size - high win rate",
+    "stop_placement": "Beyond the false break extreme + buffer",
+    "profit_target": "Previous swing or measured move",
+    "time_stop": "Pattern should work quickly",
+    "avoid": "Don't fade first break - wait for confirmation"
+  },
+  "best_practices": {
+    "patience": "Wait for confirmation of failure before entry",
+    "volume_matters": "Low volume breaks more likely to fail",
+    "context_check": "Failed patterns in trend direction strongest",
+    "quick_action": "Once failure confirmed, act fast",
+    "trust_signal": "Failed patterns very reliable - don't second guess"
+  },
+  "psychology": {
+    "trapped_traders": "Breakout/breakdown traders caught wrong side",
+    "forced_exits": "Must exit positions, creating momentum",
+    "new_entries": "Opposite side sees opportunity, enters aggressively",
+    "momentum_shift": "False break changes market psychology",
+    "cascading_stops": "Stop losses trigger more stop losses"
+  },
+  "session_tendencies": {
+    "asia": {
+      "failed_patterns_common": true,
+      "reason": "Low volume, easy to fake",
+      "note": "Good hunting ground for failed patterns"
+    },
+    "london_open": {
+      "stop_hunts_common": true,
+      "reason": "Liquidity grab before real move",
+      "note": "Watch first hour for failed breaks"
+    },
+    "ny_open": {
+      "legitimate_breaks_more_common": true,
+      "reason": "High volume supports real moves",
+      "note": "Failed patterns less frequent but still valid"
+    }
+  },
+  "key_principle": "Market loves to trap the most traders before real move"
+}

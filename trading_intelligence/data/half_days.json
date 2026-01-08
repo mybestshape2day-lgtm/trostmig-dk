@@ -1,0 +1,7 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "us_half_days": ["Day after Thanksgiving", "Christmas Eve", "Day before New Year"],
+  "closing_times": {"typical": "Early close 13:00-14:00 ET"},
+  "behavior": {"volume": "Very low", "spreads": "Wide", "range": "Compressed"},
+  "trading_rules": {"recommendation": "Avoid or minimal size", "multiplier": 0.50}
+}

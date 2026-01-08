@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "instrument": "MGCG2026",
+    "last_updated": "2025-12-29T14:05:00+01:00"
+  },
+  "resistance": [
+    {
+      "price": 4580.0,
+      "strength": "strong",
+      "times_tested": 3,
+      "times_held": 3,
+      "times_broken": 0,
+      "hold_rate": 100,
+      "first_identified": "2025-12-28",
+      "last_tested": "2025-12-29",
+      "type": "swing_high",
+      "notes": "Major resistance, multiple rejections"
+    },
+    {
+      "price": 4545.0,
+      "strength": "medium",
+      "times_tested": 2,
+      "times_held": 1,
+      "times_broken": 1,
+      "hold_rate": 50,
+      "first_identified": "2025-12-29",
+      "last_tested": "2025-12-29",
+      "type": "intraday_high",
+      "notes": "Asia session high, broke down"
+    },
+    {
+      "price": 4510.0,
+      "strength": "weak",
+      "times_tested": 2,
+      "times_held": 0,
+      "times_broken": 2,
+      "hold_rate": 0,
+      "first_identified": "2025-12-29",
+      "last_tested": "2025-12-29",
+      "type": "minor",
+      "notes": "Failed to hold as support, now resistance"
+    }
+  ],
+  "support": [
+    {
+      "price": 4480.0,
+      "strength": "medium",
+      "times_tested": 2,
+      "times_held": 1,
+      "times_broken": 1,
+      "hold_rate": 50,
+      "first_identified": "2025-12-29",
+      "last_tested": "2025-12-29",
+      "type": "intraday_low",
+      "notes": "Bounced once, then broke"
+    },
+    {
+      "price": 4464.4,
+      "strength": "strong",
+      "times_tested": 1,
+      "times_held": 1,
+      "times_broken": 0,
+      "hold_rate": 100,
+      "first_identified": "2025-12-29",
+      "last_tested": "2025-12-29",
+      "type": "daily_low",
+      "notes": "Today's low so far"
+    },
+    {
+      "price": 4450.0,
+      "strength": "untested",
+      "times_tested": 0,
+      "times_held": 0,
+      "times_broken": 0,
+      "hold_rate": null,
+      "first_identified": "2025-12-29",
+      "last_tested": null,
+      "type": "psychological",
+      "notes": "Round number, potential target"
+    }
+  ],
+  "zones": [
+    {
+      "type": "supply",
+      "high": 4585.0,
+      "low": 4575.0,
+      "strength": "strong",
+      "description": "Major supply zone - multiple rejections"
+    },
+    {
+      "type": "demand",
+      "high": 4470.0,
+      "low": 4450.0,
+      "strength": "untested",
+      "description": "Potential demand zone at round number"
+    }
+  ]
+}

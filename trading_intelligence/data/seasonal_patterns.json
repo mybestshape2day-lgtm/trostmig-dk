@@ -1,0 +1,13 @@
+{
+  "meta": {"instrument": "MGC Gold Futures"},
+  "monthly": {
+    "january": {"volatility": "high", "multiplier": 1.15},
+    "july": {"volatility": "low", "multiplier": 0.85, "note": "Summer doldrums"},
+    "august": {"volatility": "very_low", "multiplier": 0.80, "note": "Vacation season"},
+    "september": {"volatility": "high", "multiplier": 1.18, "note": "Return from summer"},
+    "december": {"volatility": "high", "multiplier": 1.20, "note": "Year-end positioning"}
+  },
+  "quarterly": {"q1": "Strong", "q2": "Moderate", "q3": "Weak", "q4": "Strong"},
+  "wedding_season": {"india": "Oct-Nov, Jan-Feb", "demand": "Increased", "multiplier": 1.10},
+  "chinese_new_year": {"timing": "Jan-Feb", "demand": "spike", "multiplier": 1.15}
+}

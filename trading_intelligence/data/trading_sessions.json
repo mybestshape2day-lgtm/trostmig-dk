@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-29",
+    "timezone_reference": "All times in ET (Eastern Time) unless noted"
+  },
+  
+  "trading_sessions": {
+    "asia": {
+      "name": "Asian Session (Tokyo)",
+      "hours_et": "7:00 PM - 4:00 AM",
+      "hours_gmt": "00:00 - 09:00",
+      "characteristics": {
+        "volatility": "low",
+        "volume": "lowest",
+        "typical_range_usd": 11,
+        "behavior": "range_bound",
+        "spreads": "wider"
+      },
+      "trading_style_fit": ["scalping", "mean_reversion"],
+      "key_events": ["China data", "Japan data", "RBA decisions"],
+      "notes": "Clean, slower price action. Good for disciplined scalpers. Often sets initial levels."
+    },
+    
+    "london": {
+      "name": "European Session (London)",
+      "hours_et": "3:00 AM - 11:30 AM",
+      "hours_gmt": "08:00 - 16:30",
+      "characteristics": {
+        "volatility": "high",
+        "volume": "high",
+        "behavior": "trend_initiation",
+        "spreads": "tighter"
+      },
+      "trading_style_fit": ["breakout", "trend_following"],
+      "key_events": ["ECB decisions", "UK data", "European PMI"],
+      "notes": "LBMA sets benchmark price. Breakouts often begin here. Highs/lows of day often established."
+    },
+    
+    "new_york": {
+      "name": "US Session (New York)",
+      "hours_et": "8:00 AM - 5:00 PM",
+      "hours_gmt": "13:00 - 22:00",
+      "characteristics": {
+        "volatility": "highest",
+        "volume": "highest",
+        "behavior": "reactive_momentum",
+        "spreads": "tightest"
+      },
+      "trading_style_fit": ["momentum", "news_trading", "trend_continuation"],
+      "key_events": ["FOMC", "NFP", "CPI", "Fed speeches", "GDP"],
+      "notes": "Most US economic data released at 8:30 AM ET. Highest volatility, highest opportunity, highest risk."
+    }
+  },
+  
+  "session_overlaps": {
+    "london_new_york": {
+      "hours_et": "8:00 AM - 12:00 PM",
+      "hours_gmt": "13:00 - 17:00",
+      "duration_hours": 4,
+      "characteristics": {
+        "liquidity": "peak",
+        "volatility": "peak",
+        "spreads": "minimum",
+        "opportunity": "maximum"
+      },
+      "statistical_evidence": {
+        "percent_moves_over_11_usd": 40,
+        "average_range": "significantly_above_asian",
+        "data_period": "2006-2023"
+      },
+      "recommendation": "BEST time to trade gold. Focus efforts here.",
+      "denmark_local_time": "14:00 - 18:00 CET"
+    },
+    
+    "asia_london": {
+      "hours_et": "3:00 AM - 4:00 AM",
+      "hours_gmt": "08:00 - 09:00",
+      "duration_hours": 1,
+      "characteristics": {
+        "behavior": "transitional",
+        "opportunity": "moderate"
+      },
+      "notes": "Early positioning ahead of full London session"
+    }
+  },
+  
+  "day_of_week_patterns": {
+    "monday": {
+      "quality": "low",
+      "notes": "Slower as market adjusts to weekend news. Liquidity builds gradually. Not ideal for aggressive trading."
+    },
+    "tuesday": {
+      "quality": "high",
+      "notes": "Most productive day. High volatility, frequent economic data, reliable technical patterns."
+    },
+    "wednesday": {
+      "quality": "high",
+      "notes": "Most productive day. FOMC often on Wednesday. High activity."
+    },
+    "thursday": {
+      "quality": "high",
+      "notes": "Most productive day. Weekly jobless claims. Good follow-through."
+    },
+    "friday": {
+      "quality": "moderate",
+      "notes": "NFP first Friday of month = extreme volatility. Otherwise position squaring toward weekend, lower PM volume."
+    }
+  },
+  
+  "optimal_windows_for_thomas": {
+    "primary_window": {
+      "hours_et": "8:00 AM - 12:00 PM",
+      "hours_denmark": "14:00 - 18:00 CET",
+      "reason": "London-NY overlap, highest probability setups",
+      "duration_hours": 4
+    },
+    "secondary_window": {
+      "hours_et": "3:00 AM - 8:00 AM",
+      "hours_denmark": "09:00 - 14:00 CET",
+      "reason": "London session, trend initiation",
+      "duration_hours": 5
+    },
+    "avoid": {
+      "hours_et": "5:00 PM - 7:00 PM",
+      "reason": "Daily break, thin liquidity, wide spreads"
+    }
+  },
+  
+  "key_economic_events": {
+    "high_impact_gold": [
+      {"event": "FOMC Rate Decision", "typical_time_et": "2:00 PM", "volatility": "extreme"},
+      {"event": "FOMC Press Conference", "typical_time_et": "2:30 PM", "volatility": "extreme"},
+      {"event": "Non-Farm Payrolls (NFP)", "typical_time_et": "8:30 AM", "day": "First Friday", "volatility": "extreme"},
+      {"event": "CPI Inflation", "typical_time_et": "8:30 AM", "volatility": "very_high"},
+      {"event": "PPI", "typical_time_et": "8:30 AM", "volatility": "high"},
+      {"event": "GDP", "typical_time_et": "8:30 AM", "volatility": "high"},
+      {"event": "Jobless Claims", "typical_time_et": "8:30 AM", "day": "Thursday", "volatility": "moderate"},
+      {"event": "PCE Inflation", "typical_time_et": "8:30 AM", "volatility": "high"},
+      {"event": "ISM Manufacturing", "typical_time_et": "10:00 AM", "volatility": "moderate"},
+      {"event": "Fed Speeches", "varies": true, "volatility": "moderate_to_high"}
+    ],
+    "trading_rules": {
+      "before_high_impact": "Reduce position size or stay flat 30 min before",
+      "during_release": "Avoid immediate entry, wait for initial reaction to fade",
+      "after_release": "Best setups often 15-30 min after initial spike"
+    }
+  },
+  
+  "micro_gold_specific": {
+    "contract": "MGCG2026",
+    "hours": "Nearly 24/5 on CME Globex",
+    "daily_break": "5:00 PM - 6:00 PM ET",
+    "tick_value": 1.00,
+    "optimal_hold_time": "Minutes to few hours based on session",
+    "max_position_rule": {
+      "account": 150000,
+      "risk_per_trade_percent": 1,
+      "max_risk_usd": 1500
+    }
+  }
+}

@@ -1,0 +1,258 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "concept": "Previous day's high, low, and close act as key reference points",
+    "institutional_use": "Banks and funds watch these levels closely"
+  },
+  "levels": {
+    "pdh": {
+      "name": "Previous Day High",
+      "description": "Highest price reached previous trading day",
+      "strength": "very_high",
+      "retest_probability": 62,
+      "break_probability": 45,
+      "typical_reaction_points": 6,
+      "role": "Resistance until broken, then support",
+      "significance": "Breaking PDH signals bullish momentum"
+    },
+    "pdl": {
+      "name": "Previous Day Low",
+      "description": "Lowest price reached previous trading day",
+      "strength": "very_high",
+      "retest_probability": 62,
+      "break_probability": 45,
+      "typical_reaction_points": 6,
+      "role": "Support until broken, then resistance",
+      "significance": "Breaking PDL signals bearish momentum"
+    },
+    "pdc": {
+      "name": "Previous Day Close",
+      "description": "Closing price of previous trading day",
+      "strength": "high",
+      "retest_probability": 58,
+      "cross_probability": 68,
+      "typical_reaction_points": 4,
+      "role": "Pivot point - above = bullish bias, below = bearish bias",
+      "significance": "Opening above/below PDC sets tone for day"
+    }
+  },
+  "trading_strategies": {
+    "fade_pdh": {
+      "description": "Short when price reaches PDH and shows rejection",
+      "setup": "Price approaches PDH, forms reversal candle (shooting star, bearish engulf)",
+      "entry": "Rejection candle close or break of candle low",
+      "stop": "5-10 points above PDH",
+      "target": "PDC or PDL",
+      "win_rate": 65,
+      "best_context": "Ranging market, no strong bullish catalyst",
+      "multiplier": 1.25
+    },
+    "fade_pdl": {
+      "description": "Long when price reaches PDL and shows rejection",
+      "setup": "Price approaches PDL, forms reversal candle (hammer, bullish engulf)",
+      "entry": "Rejection candle close or break of candle high",
+      "stop": "5-10 points below PDL",
+      "target": "PDC or PDH",
+      "win_rate": 65,
+      "best_context": "Ranging market, no strong bearish catalyst",
+      "multiplier": 1.25
+    },
+    "pdh_breakout": {
+      "description": "Buy breakout above PDH",
+      "setup": "Strong momentum, price breaks PDH with volume",
+      "entry": "Close above PDH or retest of PDH as support",
+      "stop": "Back below PDH",
+      "target": "Distance from PDL to PDH, projected above PDH",
+      "win_rate": 62,
+      "best_context": "Uptrend, bullish news, strong momentum",
+      "note": "Retest entry safer - wait for PDH to flip to support",
+      "multiplier": 1.30
+    },
+    "pdl_breakdown": {
+      "description": "Short breakdown below PDL",
+      "setup": "Bearish momentum, price breaks PDL with volume",
+      "entry": "Close below PDL or retest of PDL as resistance",
+      "stop": "Back above PDL",
+      "target": "Distance from PDH to PDL, projected below PDL",
+      "win_rate": 60,
+      "best_context": "Downtrend, bearish news, strong momentum",
+      "note": "Retest entry safer - wait for PDL to flip to resistance",
+      "multiplier": 1.28
+    },
+    "pdc_as_pivot": {
+      "description": "Use PDC as pivot for intraday bias",
+      "above_pdc": {
+        "bias": "bullish",
+        "strategy": "Look for long opportunities, buy dips",
+        "targets": "PDH or higher",
+        "win_rate": 58
+      },
+      "below_pdc": {
+        "bias": "bearish",
+        "strategy": "Look for short opportunities, sell rallies",
+        "targets": "PDL or lower",
+        "win_rate": 58
+      },
+      "at_pdc": {
+        "bias": "neutral",
+        "strategy": "Wait for break and direction confirmation",
+        "note": "Often consolidates around PDC before decisive move"
+      }
+    },
+    "opening_gaps": {
+      "gap_above_pdh": {
+        "interpretation": "Very bullish - strong overnight sentiment",
+        "strategy": "Look for continuation or wait for pullback to PDH",
+        "probability_continuation": 68
+      },
+      "gap_below_pdl": {
+        "interpretation": "Very bearish - strong overnight sentiment",
+        "strategy": "Look for continuation or wait for bounce to PDL",
+        "probability_continuation": 68
+      },
+      "gap_to_pdc": {
+        "interpretation": "Gap fill toward previous close common",
+        "strategy": "Fade gap, expect move toward PDC",
+        "probability": 72
+      }
+    }
+  },
+  "session_behavior": {
+    "asia": {
+      "pdh_pdl_respect": 72,
+      "typical_behavior": "Often ranges between PDH and PDL",
+      "breakout_probability": 35,
+      "note": "Low volume, levels tend to hold"
+    },
+    "london": {
+      "pdh_pdl_respect": 65,
+      "typical_behavior": "May test and break levels",
+      "breakout_probability": 55,
+      "note": "Increased volume can break previous day levels"
+    },
+    "ny_open": {
+      "pdh_pdl_respect": 58,
+      "typical_behavior": "Often decisive - clear break or clear bounce",
+      "breakout_probability": 65,
+      "note": "Most likely time for PDH/PDL breaks"
+    },
+    "ny_close": {
+      "typical_behavior": "Often gravitates back toward PDC",
+      "note": "Mean reversion tendency"
+    }
+  },
+  "time_of_day_patterns": {
+    "first_hour": {
+      "description": "Often tests PDH or PDL in first hour",
+      "probability": 68,
+      "note": "Initial probe to establish range"
+    },
+    "mid_day": {
+      "description": "Levels often hold during consolidation",
+      "probability": 62,
+      "note": "Range-bound between previous day levels"
+    },
+    "last_hour": {
+      "description": "May push through levels or retreat to PDC",
+      "probability": 55,
+      "note": "End-of-day positioning"
+    }
+  },
+  "statistics": {
+    "probability_pdh_touched": 62,
+    "probability_pdl_touched": 62,
+    "probability_both_touched_same_day": 45,
+    "probability_neither_touched": 12,
+    "avg_distance_pdh_to_pdl": 18,
+    "probability_open_between_levels": 78
+  },
+  "confluence_multipliers": {
+    "pdh_at_round_number": {
+      "multiplier": 1.35,
+      "example": "PDH at 2650",
+      "note": "Double barrier - very strong resistance"
+    },
+    "pdl_at_round_number": {
+      "multiplier": 1.35,
+      "example": "PDL at 2600",
+      "note": "Double support - very strong"
+    },
+    "pdc_at_weekly_pivot": {
+      "multiplier": 1.40,
+      "note": "Multiple timeframe alignment"
+    },
+    "pdh_pdl_at_fib_level": {
+      "multiplier": 1.30,
+      "note": "Technical confluence"
+    },
+    "previous_week_high_low": {
+      "multiplier": 1.25,
+      "note": "Weekly levels add strength"
+    }
+  },
+  "day_of_week_behavior": {
+    "monday": {
+      "pdh_pdl_respect": 75,
+      "note": "Weekend gap often stays within Friday's range initially",
+      "strategy": "Fade extremes, expect reversion"
+    },
+    "tuesday": {
+      "pdh_pdl_respect": 62,
+      "note": "Most volatile day, higher break probability",
+      "strategy": "Breakout plays more reliable"
+    },
+    "wednesday": {
+      "pdh_pdl_respect": 65,
+      "note": "Mid-week, levels moderately respected"
+    },
+    "thursday": {
+      "pdh_pdl_respect": 68,
+      "note": "Consolidation tendency, levels hold better"
+    },
+    "friday": {
+      "pdh_pdl_respect": 72,
+      "note": "Profit taking, mean reversion to PDC",
+      "strategy": "Fade extremes, expect compression"
+    }
+  },
+  "advanced_concepts": {
+    "virgin_level": {
+      "description": "PDH or PDL not yet tested today",
+      "probability_test": 78,
+      "trading": "Anticipate test, position accordingly"
+    },
+    "second_touch": {
+      "description": "Level touched, held, now touched again",
+      "probability_break": 65,
+      "note": "Second test often breaks through"
+    },
+    "failed_break": {
+      "description": "Broke PDH/PDL but quickly reversed",
+      "probability_strong_reversal": 68,
+      "trading": "Fade the false break - high win rate"
+    },
+    "previous_week_levels": {
+      "description": "Previous week's high/low also relevant",
+      "strength": "Weaker than daily but still significant",
+      "use": "Secondary confirmation"
+    }
+  },
+  "risk_management": {
+    "stop_placement": {
+      "when_fading": "5-10 points beyond level",
+      "when_breaking": "Back inside the level",
+      "avoid": "Stops exactly at level (stop hunting)"
+    },
+    "position_sizing": {
+      "first_touch": "Standard size",
+      "second_touch": "Can increase 25%",
+      "third_touch": "Level likely breaks - fade or avoid"
+    }
+  },
+  "common_mistakes": {
+    "ignoring_context": "Trading level without checking trend/news",
+    "no_confirmation": "Entering at level without rejection candle",
+    "tight_stops": "Stop too close to level gets hunted",
+    "chasing_breaks": "Entering late after big move through level"
+  }
+}

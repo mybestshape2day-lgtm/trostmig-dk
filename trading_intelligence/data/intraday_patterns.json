@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "instrument": "MGC Gold Futures",
+    "timeframe": "Intraday patterns (hourly)",
+    "timezone": "UTC"
+  },
+  "hourly_patterns": {
+    "00:00": {
+      "session": "Asia open",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low",
+      "best_strategy": "avoid or tight scalp",
+      "typical_behavior": "Quiet, range-bound"
+    },
+    "01:00": {
+      "session": "Asia",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Continuation of overnight range"
+    },
+    "02:00": {
+      "session": "Asia",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Dead zone"
+    },
+    "03:00": {
+      "session": "Asia",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Very quiet"
+    },
+    "04:00": {
+      "session": "Asia",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Minimal movement"
+    },
+    "05:00": {
+      "session": "Asia",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Pre-European quiet"
+    },
+    "06:00": {
+      "session": "Pre-London",
+      "avg_range_points": 3,
+      "volatility": "low-moderate",
+      "volume": "low-moderate",
+      "best_strategy": "watch for early positioning",
+      "typical_behavior": "Starting to wake up"
+    },
+    "07:00": {
+      "session": "Pre-London",
+      "avg_range_points": 4,
+      "volatility": "moderate",
+      "volume": "moderate",
+      "best_strategy": "prepare for London open",
+      "typical_behavior": "Building momentum"
+    },
+    "08:00": {
+      "session": "London open",
+      "avg_range_points": 6,
+      "volatility": "high",
+      "volume": "high",
+      "best_strategy": "trade breakouts with trend",
+      "typical_behavior": "First major move of day",
+      "key_time": true
+    },
+    "09:00": {
+      "session": "London",
+      "avg_range_points": 5,
+      "volatility": "moderate-high",
+      "volume": "high",
+      "best_strategy": "continuation trades",
+      "typical_behavior": "Follow-through from open"
+    },
+    "10:00": {
+      "session": "London",
+      "avg_range_points": 4,
+      "volatility": "moderate",
+      "volume": "moderate-high",
+      "best_strategy": "pullback entries",
+      "typical_behavior": "Pullback or consolidation"
+    },
+    "11:00": {
+      "session": "London",
+      "avg_range_points": 3,
+      "volatility": "moderate",
+      "volume": "moderate",
+      "best_strategy": "range trading or wait",
+      "typical_behavior": "Mid-session quiet"
+    },
+    "12:00": {
+      "session": "Pre-NY",
+      "avg_range_points": 4,
+      "volatility": "moderate",
+      "volume": "moderate",
+      "best_strategy": "prepare for NY overlap",
+      "typical_behavior": "Building towards US open"
+    },
+    "13:00": {
+      "session": "London-NY overlap",
+      "avg_range_points": 7,
+      "volatility": "very high",
+      "volume": "very high",
+      "best_strategy": "aggressive trend trading",
+      "typical_behavior": "Highest volatility period",
+      "key_time": true
+    },
+    "14:00": {
+      "session": "London-NY overlap",
+      "avg_range_points": 6,
+      "volatility": "high",
+      "volume": "very high",
+      "best_strategy": "momentum trades",
+      "typical_behavior": "Strong directional moves",
+      "key_time": true
+    },
+    "15:00": {
+      "session": "London-NY overlap",
+      "avg_range_points": 5,
+      "volatility": "high",
+      "volume": "high",
+      "best_strategy": "continuation or reversal",
+      "typical_behavior": "Sustained moves or reversals"
+    },
+    "16:00": {
+      "session": "NY (London close)",
+      "avg_range_points": 4,
+      "volatility": "moderate-high",
+      "volume": "moderate-high",
+      "best_strategy": "watch for reversals",
+      "typical_behavior": "London close can trigger reversals"
+    },
+    "17:00": {
+      "session": "NY",
+      "avg_range_points": 3,
+      "volatility": "moderate",
+      "volume": "moderate",
+      "best_strategy": "pullback trades",
+      "typical_behavior": "Afternoon consolidation"
+    },
+    "18:00": {
+      "session": "NY",
+      "avg_range_points": 3,
+      "volatility": "moderate",
+      "volume": "moderate",
+      "best_strategy": "range bound",
+      "typical_behavior": "Slowing down"
+    },
+    "19:00": {
+      "session": "NY late",
+      "avg_range_points": 2,
+      "volatility": "low-moderate",
+      "volume": "moderate",
+      "best_strategy": "end of day positioning",
+      "typical_behavior": "Final moves or consolidation"
+    },
+    "20:00": {
+      "session": "NY close",
+      "avg_range_points": 2,
+      "volatility": "low",
+      "volume": "low-moderate",
+      "best_strategy": "avoid or scalp",
+      "typical_behavior": "Winding down"
+    },
+    "21:00": {
+      "session": "After hours",
+      "avg_range_points": 1,
+      "volatility": "very low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Dead market"
+    },
+    "22:00": {
+      "session": "After hours",
+      "avg_range_points": 1,
+      "volatility": "very low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Very quiet"
+    },
+    "23:00": {
+      "session": "After hours",
+      "avg_range_points": 1,
+      "volatility": "very low",
+      "volume": "low",
+      "best_strategy": "avoid",
+      "typical_behavior": "Minimal activity"
+    }
+  },
+  "recurring_patterns": {
+    "asian_range_breakout": {
+      "description": "Breakout fra Asian session range ved London open",
+      "time_utc": "08:00-09:00",
+      "probability": 65,
+      "avg_move_points": 8,
+      "best_entry": "Break og retest af range high/low"
+    },
+    "london_reversal": {
+      "description": "Reversal efter initial London move",
+      "time_utc": "09:30-10:30",
+      "probability": 45,
+      "avg_move_points": 5,
+      "note": "Trap move - falsk breakout"
+    },
+    "ny_open_continuation": {
+      "description": "Fortsættelse af London trend ved NY open",
+      "time_utc": "13:00-14:00",
+      "probability": 68,
+      "avg_move_points": 10,
+      "best_entry": "Pullback entry in direction of trend"
+    },
+    "lunch_consolidation": {
+      "description": "Consolidation i NY middag",
+      "time_utc": "17:00-19:00",
+      "probability": 58,
+      "avg_range_points": 3,
+      "best_strategy": "Range trade eller vent"
+    },
+    "end_of_day_reversal": {
+      "description": "Reversal af dagens move i late session",
+      "time_utc": "19:00-20:00",
+      "probability": 42,
+      "avg_move_points": 4,
+      "note": "Profit taking kan trigger reversal"
+    }
+  },
+  "weekly_patterns": {
+    "monday": {
+      "opening_gap_frequency": 65,
+      "avg_gap_points": 5,
+      "gap_fill_probability": 58,
+      "trend_continuation_from_friday": 52,
+      "best_strategy": "Wait for gap fill or breakout confirmation"
+    },
+    "tuesday": {
+      "volatility_level": "highest",
+      "avg_range_multiplier": 1.15,
+      "trend_reliability": "high",
+      "best_strategy": "Aggressive trend following"
+    },
+    "wednesday": {
+      "volatility_level": "high",
+      "avg_range_multiplier": 1.10,
+      "reversal_probability": 48,
+      "best_strategy": "Mid-week momentum trades"
+    },
+    "thursday": {
+      "volatility_level": "moderate",
+      "avg_range_multiplier": 1.02,
+      "consolidation_probability": 52,
+      "best_strategy": "Pullback entries in trends"
+    },
+    "friday": {
+      "volatility_level": "lower",
+      "avg_range_multiplier": 0.90,
+      "profit_taking_probability": 62,
+      "reversal_in_afternoon": 55,
+      "best_strategy": "Early session trades, reduce exposure by NY afternoon"
+    }
+  },
+  "support_resistance_intraday": {
+    "previous_day_high_low": {
+      "respect_rate": 72,
+      "breakout_continuation": 65,
+      "false_breakout_rate": 35
+    },
+    "asian_session_high_low": {
+      "respect_rate": 68,
+      "london_breakout_probability": 58
+    },
+    "round_numbers": {
+      "respect_rate": 62,
+      "psychological_levels": "Every $10 (2620, 2630, 2640 etc)",
+      "strong_at": "Every $50 levels"
+    },
+    "vwap": {
+      "respect_rate": 65,
+      "bounce_probability_in_trend": 70,
+      "cross_significance": "Trend change warning"
+    }
+  },
+  "optimal_trading_windows": {
+    "scalping": {
+      "best_times_utc": ["08:00-09:30", "13:00-15:00"],
+      "avg_trades_per_window": 3,
+      "avg_profit_per_trade_points": 2
+    },
+    "swing_intraday": {
+      "best_times_utc": ["08:00-10:00", "13:00-16:00"],
+      "avg_trades_per_window": 1,
+      "avg_profit_per_trade_points": 8
+    },
+    "avoid_trading": {
+      "times_utc": ["00:00-07:00", "21:00-23:59"],
+      "reason": "Low volume, choppy, unpredictable"
+    }
+  }
+}
