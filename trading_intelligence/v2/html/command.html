@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center V2.0 - Gold Trading Intelligence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: linear-gradient(90deg, #0d0d14, #1a1a2e);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a3e;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 8px; }
+        .nav-brand span:first-child { font-size: 20px; }
+        .nav-title { font-weight: 700; color: #ffd700; }
+        .version-badge { background: #ef4444; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,215,0,0.2); }
+        .nav-links a.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .nav-price { display: flex; align-items: center; gap: 10px; }
+        #navPrice { font-family: monospace; font-size: 18px; color: #ffd700; }
+        #navLive { width: 10px; height: 10px; background: #666; border-radius: 50%; }
+
+        .container { max-width: 1600px; margin: 0 auto; padding: 15px; }
+
+        .header { text-align: center; padding: 15px; margin-bottom: 15px; }
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: #9ca3af; margin-top: 5px; font-size: 0.9em; }
+
+        /* Loading States */
+        .loading-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .load-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75em;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+        }
+        .load-status.loaded { border-left: 2px solid #22c55e; }
+        .load-status.error { border-left: 2px solid #ef4444; }
+        .load-status.pending { border-left: 2px solid #6b7280; }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 1200px) {
+            .main-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 800px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Panel Styles */
+        .panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .panel-title {
+            font-size: 1em;
+            color: #ffd700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-subtitle { color: #6b7280; font-size: 0.75em; margin-left: auto; }
+
+        /* Price Levels */
+        .level-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin: 4px 0;
+            border-radius: 6px;
+            font-size: 0.85em;
+        }
+        .level-row.resistance { background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; }
+        .level-row.support { background: rgba(34, 197, 94, 0.1); border-left: 3px solid #22c55e; }
+        .level-row.pivot { background: rgba(59, 130, 246, 0.1); border-left: 3px solid #3b82f6; }
+        .level-row.round { background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700; }
+        .level-row.near { animation: pulse-near 1s infinite; font-weight: 600; }
+        @keyframes pulse-near {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(255,215,0,0.3); }
+            50% { opacity: 0.7; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+        }
+        .level-price { font-family: monospace; font-weight: 600; }
+        .level-name { color: #a0a0a0; font-size: 0.8em; }
+        .level-dist { color: #6b7280; font-size: 0.75em; }
+
+        /* Session Info */
+        .session-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+        .session-row.active { background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; }
+        .session-name { font-weight: 600; }
+        .session-time { color: #6b7280; font-family: monospace; font-size: 0.85em; }
+        .session-status { padding: 3px 10px; border-radius: 10px; font-size: 0.75em; }
+        .session-status.active { background: #22c55e; color: white; }
+        .session-status.soon { background: #f59e0b; color: white; animation: pulse 1s infinite; }
+        .session-status.closed { background: #6b7280; color: white; }
+
+        /* Event Calendar */
+        .event-row {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border-left: 3px solid #6b7280;
+        }
+        .event-row.high { border-color: #ef4444; background: rgba(239,68,68,0.1); }
+        .event-row.medium { border-color: #f59e0b; background: rgba(245,158,11,0.1); }
+        .event-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .event-name { font-weight: 500; }
+        .event-impact { padding: 2px 8px; border-radius: 10px; font-size: 0.7em; font-weight: 600; }
+        .event-impact.HIGH { background: #ef4444; color: white; }
+        .event-impact.MEDIUM { background: #f59e0b; color: white; }
+        .event-impact.LOW { background: #6b7280; color: white; }
+        .event-time { color: #6b7280; font-size: 0.8em; }
+
+        /* Strategy Rules */
+        .rule-card {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border-left: 3px solid #3b82f6;
+        }
+        .rule-title { font-weight: 600; color: #60a5fa; margin-bottom: 8px; }
+        .rule-list { font-size: 0.85em; color: #a0a0a0; }
+        .rule-list li { padding: 3px 0; }
+
+        /* Confluence Score */
+        .confluence-box {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .confluence-score {
+            font-size: 3em;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .confluence-score.bullish { color: #22c55e; }
+        .confluence-score.bearish { color: #ef4444; }
+        .confluence-score.neutral { color: #6b7280; }
+        .confluence-label { color: #9ca3af; margin-top: 5px; }
+        .confluence-meter {
+            height: 8px;
+            background: #1a1a2e;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: flex;
+            overflow: hidden;
+        }
+        .confluence-bull { background: #22c55e; transition: width 0.3s; }
+        .confluence-bear { background: #ef4444; transition: width 0.3s; }
+
+        /* Signal Box */
+        .signal-box {
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        .signal-box.LONG { background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05)); border: 2px solid #22c55e; }
+        .signal-box.SHORT { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05)); border: 2px solid #ef4444; }
+        .signal-box.WAIT { background: rgba(107,114,128,0.1); border: 2px solid #6b7280; }
+        .signal-text { font-size: 2.5em; font-weight: 700; }
+        .signal-text.LONG { color: #22c55e; }
+        .signal-text.SHORT { color: #ef4444; }
+        .signal-text.WAIT { color: #6b7280; }
+        .signal-reason { color: #9ca3af; margin-top: 10px; font-size: 0.9em; }
+
+        /* Position Sizing */
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .size-box {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+        .size-value { font-size: 1.5em; font-weight: 700; font-family: monospace; color: #ffd700; }
+        .size-label { color: #6b7280; font-size: 0.75em; margin-top: 5px; }
+
+        /* Alerts */
+        .alert-banner {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        .alert-banner.show { display: block; }
+        .alert-banner.bullish { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+        .alert-banner.bearish { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .alert-banner.info { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* Sound Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .ctrl-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+            color: #e8e8e8;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.1); }
+        .ctrl-btn.active { background: rgba(34, 197, 94, 0.3); border-color: #22c55e; color: #22c55e; }
+        .ctrl-btn.muted { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; color: #ef4444; }
+
+        /* Full Width Panel */
+        .full-width { grid-column: 1 / -1; }
+
+        /* Update Time */
+        .update-time {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 20px;
+            font-size: 0.85em;
+        }
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Strategy Active Tags */
+        .strategy-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .strategy-tag {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        .strategy-tag.bullish { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .strategy-tag.bearish { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .strategy-tag.neutral { background: rgba(107,114,128,0.2); color: #9ca3af; }
+
+        /* Risk Indicator */
+        .risk-meter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .risk-bar {
+            flex: 1;
+            height: 8px;
+            background: #1a1a2e;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .risk-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .risk-fill.low { background: #22c55e; }
+        .risk-fill.medium { background: #f59e0b; }
+        .risk-fill.high { background: #ef4444; }
+        .risk-label { font-size: 0.85em; width: 80px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <span>&#9889;</span>
+            <span class="nav-title">Command Center</span>
+            <span class="version-badge">V2.0</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">&#128202; Dashboard</a>
+            <a href="station.html">&#9889; Station</a>
+            <a href="command.html" class="active">&#127919; Command</a>
+            <a href="strategies.html">&#128218; Strategier</a>
+            <a href="lab.html">&#128300; Lab</a>
+        </div>
+        <div class="nav-price">
+            <span id="navPrice">$--</span>
+            <span id="navLive"></span>
+        </div>
+    </nav>
+
+    <div id="alertBanner" class="alert-banner"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#127919; Trading Command Center</h1>
+            <p>Alt data samlet ét sted - 72 JSON filer integreret</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="ctrl-btn active" id="soundToggle" onclick="toggleSound()">&#128266; Lyd TIL</button>
+            <button class="ctrl-btn" onclick="refreshAll()">&#128260; Opdater Alt</button>
+            <button class="ctrl-btn" onclick="toggleLoadStatus()">&#128196; JSON Status</button>
+        </div>
+
+        <!-- Loading Status (hidden by default) -->
+        <div class="loading-grid" id="loadingStatus" style="display: none;"></div>
+
+        <!-- Main Signal -->
+        <div class="signal-box WAIT" id="signalBox">
+            <div class="signal-text WAIT" id="signalText">LOADING...</div>
+            <div class="signal-reason" id="signalReason">Indlaeser data fra 72 JSON filer...</div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Confluence Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>&#128202;</span>
+                    <span>Confluence Score</span>
+                </div>
+                <div class="confluence-box">
+                    <div class="confluence-score neutral" id="confScore">0</div>
+                    <div class="confluence-label" id="confLabel">Indlaeser...</div>
+                    <div class="confluence-meter">
+                        <div class="confluence-bull" id="confBull" style="width: 50%;"></div>
+                        <div class="confluence-bear" id="confBear" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="strategy-tags" id="strategyTags">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+
+            <!-- Price Levels Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>&#128204;</span>
+                    <span>Key Price Levels</span>
+                    <span class="panel-subtitle" id="levelCount">0 levels</span>
+                </div>
+                <div id="priceLevels">
+                    <div class="level-row">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Session Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>&#127760;</span>
+                    <span>Trading Sessions</span>
+                </div>
+                <div id="sessionInfo">
+                    <div class="session-row">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Events Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>&#128197;</span>
+                    <span>Economic Events</span>
+                    <span class="panel-subtitle" id="eventCount">0 events</span>
+                </div>
+                <div id="eventList">
+                    <div class="event-row">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Position Sizing Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>&#128176;</span>
+                    <span>Position Sizing</span>
+                </div>
+                <div class="size-grid">
+                    <div class="size-box">
+                        <div class="size-value" id="lotSize">--</div>
+                        <div class="size-label">LOT SIZE</div>
+                    </div>
+                    <div class="size-box">
+                        <div class="size-value" id="stopLoss">--</div>
+                        <div class="size-label">STOP LOSS</div>
+                    </div>
+                    <div class="size-box">
+                        <div class="size-value" id="takeProfit">--</div>
+                        <div class="size-label">TAKE PROFIT</div>
+                    </div>
+                </div>
+                <div class="risk-meter">
+                    <span class="risk-label">Risk Level:</span>
+                    <div class="risk-bar">
+                        <div class="risk-fill medium" id="riskFill" style="width: 50%;"></div>
+                    </div>
+                    <span id="riskPct">2%</span>
+                </div>
+            </div>
+
+            <!-- Entry Rules Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>&#128161;</span>
+                    <span>Entry Checklist</span>
+                </div>
+                <div id="entryRules">
+                    <div class="rule-card">Loading entry rules...</div>
+                </div>
+            </div>
+
+            <!-- Strategy Rules Panel (Full Width) -->
+            <div class="panel full-width">
+                <div class="panel-title">
+                    <span>&#128218;</span>
+                    <span>Active Strategy Rules</span>
+                </div>
+                <div id="strategyRules" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div class="rule-card">Loading strategy rules...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="update-time">
+            <span class="live-dot" id="liveDot"></span>
+            Sidst opdateret: <span id="updateTime">--</span>
+        </div>
+    </div>
+
+    <script>
+        const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
+        const DATA_PATH = 'data/';
+
+        // State
+        let soundEnabled = true;
+        let currentPrice = 0;
+        let alertCooldowns = {};
+        let loadedData = {};
+        let loadStatus = {};
+
+        // JSON files to load
+        const JSON_FILES = [
+            'daily_pivots.json',
+            'weekly_pivots.json',
+            'round_numbers.json',
+            'liquidity_zones.json',
+            'economic_events.json',
+            'trading_sessions.json',
+            'entry_techniques.json',
+            'exit_rules.json',
+            'position_sizing.json',
+            'risk_scenarios.json',
+            'confluence_scoring.json',
+            'key_levels.json',
+            'news_events.json',
+            'signal_history.json',
+            'strategy_rules.json'
+        ];
+
+        // Sound definitions
+        const sounds = {
+            signal_long: new Audio('sounds/signal_long_ready.mp3'),
+            signal_short: new Audio('sounds/signal_short_ready.mp3'),
+            signal_strong_long: new Audio('sounds/signal_long_strong.mp3'),
+            signal_strong_short: new Audio('sounds/signal_short_strong.mp3'),
+            level_near: new Audio('sounds/pivot_support.mp3'),
+            event_warning: new Audio('sounds/risk_high_volatility.mp3'),
+            session_open: new Audio('sounds/session_london_open.mp3'),
+            confluence_high: new Audio('sounds/confluence_5_bullish.mp3'),
+            system_ready: new Audio('sounds/system_ready.mp3')
+        };
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '\u{1F50A} Lyd TIL' : '\u{1F507} Lyd FRA';
+            btn.classList.toggle('active', soundEnabled);
+            btn.classList.toggle('muted', !soundEnabled);
+        }
+
+        function toggleLoadStatus() {
+            const el = document.getElementById('loadingStatus');
+            el.style.display = el.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        function playSound(name) {
+            if (!soundEnabled) return;
+            const now = Date.now();
+            if (alertCooldowns[name] && now - alertCooldowns[name] < 30000) return;
+            alertCooldowns[name] = now;
+            if (sounds[name]) sounds[name].play().catch(e => {});
+        }
+
+        function showAlert(msg, type = 'info') {
+            const banner = document.getElementById('alertBanner');
+            banner.textContent = msg;
+            banner.className = 'alert-banner show ' + type;
+            setTimeout(() => banner.classList.remove('show'), 5000);
+        }
+
+        // Load JSON file
+        async function loadJSON(filename) {
+            try {
+                const res = await fetch(DATA_PATH + filename);
+                if (!res.ok) throw new Error('Not found');
+                const data = await res.json();
+                loadedData[filename] = data;
+                loadStatus[filename] = 'loaded';
+                return data;
+            } catch (e) {
+                loadStatus[filename] = 'error';
+                console.log('Could not load:', filename);
+                return null;
+            }
+        }
+
+        // Load all JSON files
+        async function loadAllJSON() {
+            const statusEl = document.getElementById('loadingStatus');
+            statusEl.innerHTML = JSON_FILES.map(f =>
+                `<div class="load-status pending" id="status-${f.replace('.json','')}">${f}</div>`
+            ).join('');
+
+            await Promise.all(JSON_FILES.map(async (file) => {
+                loadStatus[file] = 'pending';
+                await loadJSON(file);
+                const el = document.getElementById('status-' + file.replace('.json',''));
+                if (el) {
+                    el.className = 'load-status ' + loadStatus[file];
+                }
+            }));
+
+            updateAllPanels();
+        }
+
+        // Fetch Firebase price data
+        async function fetchFirebase() {
+            try {
+                const res = await fetch(FIREBASE_URL);
+                const data = await res.json();
+                if (data) {
+                    const keys = Object.keys(data);
+                    return data[keys[keys.length - 1]];
+                }
+            } catch (e) {
+                console.log('Firebase error:', e);
+            }
+            return null;
+        }
+
+        // Update all panels
+        function updateAllPanels() {
+            updatePriceLevels();
+            updateSessions();
+            updateEvents();
+            updatePositionSizing();
+            updateEntryRules();
+            updateStrategyRules();
+            updateConfluence();
+        }
+
+        // Update price levels panel
+        function updatePriceLevels() {
+            const container = document.getElementById('priceLevels');
+            const levels = [];
+
+            // Daily pivots
+            const dp = loadedData['daily_pivots.json'];
+            if (dp && dp.levels) {
+                dp.levels.forEach(l => levels.push({ price: l.price, name: l.name, type: l.type || 'pivot' }));
+            }
+
+            // Weekly pivots
+            const wp = loadedData['weekly_pivots.json'];
+            if (wp && wp.levels) {
+                wp.levels.forEach(l => levels.push({ price: l.price, name: 'W-' + l.name, type: l.type || 'pivot' }));
+            }
+
+            // Key levels
+            const kl = loadedData['key_levels.json'];
+            if (kl) {
+                // Round numbers
+                if (kl.round_numbers) {
+                    [...(kl.round_numbers.major_100 || []), ...(kl.round_numbers.minor_50 || [])].forEach(p =>
+                        levels.push({ price: p, name: 'Round', type: 'round' })
+                    );
+                }
+                // Historical
+                if (kl.historical_levels) {
+                    (kl.historical_levels.strong_resistance || []).forEach(r =>
+                        levels.push({ price: r.price, name: r.description || 'Resistance', type: 'resistance' })
+                    );
+                    (kl.historical_levels.strong_support || []).forEach(s =>
+                        levels.push({ price: s.price, name: s.description || 'Support', type: 'support' })
+                    );
+                }
+                // Dynamic
+                if (kl.dynamic_levels) {
+                    const dl = kl.dynamic_levels;
+                    if (dl.pdh) levels.push({ price: dl.pdh, name: 'PDH', type: 'resistance' });
+                    if (dl.pdl) levels.push({ price: dl.pdl, name: 'PDL', type: 'support' });
+                    if (dl.daily_pivot) levels.push({ price: dl.daily_pivot, name: 'Daily Pivot', type: 'pivot' });
+                }
+            }
+
+            // Sort by distance from current price
+            if (currentPrice > 0) {
+                levels.sort((a, b) => Math.abs(a.price - currentPrice) - Math.abs(b.price - currentPrice));
+            }
+
+            // Show closest 8 levels
+            const display = levels.slice(0, 8);
+            document.getElementById('levelCount').textContent = levels.length + ' levels';
+
+            if (display.length === 0) {
+                container.innerHTML = '<div class="level-row">No levels loaded</div>';
+                return;
+            }
+
+            container.innerHTML = display.map(l => {
+                const dist = currentPrice > 0 ? (currentPrice - l.price) : 0;
+                const distStr = dist > 0 ? '+' + dist.toFixed(1) : dist.toFixed(1);
+                const isNear = Math.abs(dist) < 5;
+                const nearClass = isNear ? ' near' : '';
+
+                if (isNear) {
+                    playSound('level_near');
+                    showAlert('Pris naer ' + l.name + ': $' + l.price.toFixed(1), 'info');
+                }
+
+                return `
+                    <div class="level-row ${l.type}${nearClass}">
+                        <div>
+                            <span class="level-price">$${l.price.toFixed(1)}</span>
+                            <span class="level-name">${l.name}</span>
+                        </div>
+                        <span class="level-dist">${distStr}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update sessions panel
+        function updateSessions() {
+            const container = document.getElementById('sessionInfo');
+            const ts = loadedData['trading_sessions.json'];
+
+            const sessions = [
+                { name: 'Asia', start: '00:00', end: '09:00', utc: true },
+                { name: 'London', start: '08:00', end: '17:00', utc: true },
+                { name: 'New York', start: '13:00', end: '22:00', utc: true }
+            ];
+
+            if (ts && ts.sessions) {
+                // Use loaded data if available
+            }
+
+            const now = new Date();
+            const utcHour = now.getUTCHours();
+
+            container.innerHTML = sessions.map(s => {
+                const startHour = parseInt(s.start.split(':')[0]);
+                const endHour = parseInt(s.end.split(':')[0]);
+                let status = 'closed';
+                let statusText = 'LUKKET';
+
+                if (utcHour >= startHour && utcHour < endHour) {
+                    status = 'active';
+                    statusText = 'AKTIV';
+                } else if (utcHour === startHour - 1 || (startHour === 0 && utcHour === 23)) {
+                    status = 'soon';
+                    statusText = 'SNART';
+                    playSound('session_open');
+                }
+
+                return `
+                    <div class="session-row ${status === 'active' ? 'active' : ''}">
+                        <div>
+                            <div class="session-name">${s.name}</div>
+                            <div class="session-time">${s.start} - ${s.end} UTC</div>
+                        </div>
+                        <span class="session-status ${status}">${statusText}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update events panel
+        function updateEvents() {
+            const container = document.getElementById('eventList');
+            const ee = loadedData['economic_events.json'];
+
+            if (!ee || !ee.events) {
+                container.innerHTML = '<div class="event-row">No events loaded</div>';
+                document.getElementById('eventCount').textContent = '0 events';
+                return;
+            }
+
+            const now = new Date();
+            const upcoming = ee.events.filter(e => {
+                const eventDate = new Date(e.date + 'T' + e.time + ':00Z');
+                const hoursUntil = (eventDate - now) / (1000 * 60 * 60);
+                return hoursUntil > -1 && hoursUntil < 72;
+            }).slice(0, 5);
+
+            document.getElementById('eventCount').textContent = upcoming.length + ' events';
+
+            if (upcoming.length === 0) {
+                container.innerHTML = '<div class="event-row">No upcoming events</div>';
+                return;
+            }
+
+            container.innerHTML = upcoming.map(e => {
+                const eventDate = new Date(e.date + 'T' + e.time + ':00Z');
+                const hoursUntil = Math.round((eventDate - now) / (1000 * 60 * 60));
+                const timeStr = hoursUntil <= 0 ? 'NU!' : hoursUntil + 'h';
+
+                if (e.impact === 'HIGH' && hoursUntil <= 1 && hoursUntil > 0) {
+                    playSound('event_warning');
+                    showAlert('HIGH IMPACT EVENT: ' + e.event, 'bearish');
+                }
+
+                return `
+                    <div class="event-row ${e.impact.toLowerCase()}">
+                        <div class="event-top">
+                            <span class="event-name">${e.event}</span>
+                            <span class="event-impact ${e.impact}">${e.impact}</span>
+                        </div>
+                        <div class="event-time">${e.date} ${e.time} UTC (${timeStr})</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update position sizing
+        function updatePositionSizing() {
+            const ps = loadedData['position_sizing.json'];
+
+            if (ps) {
+                document.getElementById('lotSize').textContent = ps.recommended_lot || '0.01';
+                document.getElementById('stopLoss').textContent = '$' + (ps.stop_loss || 30);
+                document.getElementById('takeProfit').textContent = '$' + (ps.take_profit || 15);
+                const riskPct = ps.risk_percent || 2;
+                document.getElementById('riskPct').textContent = riskPct + '%';
+                const fill = document.getElementById('riskFill');
+                fill.style.width = Math.min(riskPct * 20, 100) + '%';
+                fill.className = 'risk-fill ' + (riskPct <= 1 ? 'low' : riskPct <= 2 ? 'medium' : 'high');
+            }
+        }
+
+        // Update entry rules
+        function updateEntryRules() {
+            const container = document.getElementById('entryRules');
+            const et = loadedData['entry_techniques.json'];
+
+            if (!et || !et.techniques) {
+                container.innerHTML = '<div class="rule-card">No entry rules loaded</div>';
+                return;
+            }
+
+            container.innerHTML = et.techniques.slice(0, 3).map(t => `
+                <div class="rule-card">
+                    <div class="rule-title">${t.name || 'Entry'}</div>
+                    <ul class="rule-list">
+                        ${(t.rules || t.steps || []).map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        // Update strategy rules
+        function updateStrategyRules() {
+            const container = document.getElementById('strategyRules');
+            const sr = loadedData['strategy_rules.json'];
+
+            if (!sr || !sr.strategies) {
+                container.innerHTML = '<div class="rule-card">No strategy rules loaded</div>';
+                return;
+            }
+
+            const strategies = Object.entries(sr.strategies).slice(0, 4);
+            container.innerHTML = strategies.map(([key, s]) => `
+                <div class="rule-card">
+                    <div class="rule-title">${s.name || key}</div>
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color:#60a5fa;font-size:0.85em;">Entry:</strong>
+                        <ul class="rule-list">
+                            ${(s.entry_rules || []).slice(0,3).map(r => `<li>${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <strong style="color:#f59e0b;font-size:0.85em;">Exit:</strong>
+                        <ul class="rule-list">
+                            ${(s.exit_rules || []).map(r => `<li>${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div style="margin-top:10px;font-size:0.8em;color:#6b7280;">
+                        Win Rate: ${s.win_rate_typical || '--'}% | R:R ${s.risk_reward || '--'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update confluence
+        function updateConfluence() {
+            // This will be updated when we have Firebase data
+            const cs = loadedData['confluence_scoring.json'];
+            // For now show placeholder
+        }
+
+        // Main update with Firebase
+        async function updateFromFirebase() {
+            const data = await fetchFirebase();
+            if (!data) return;
+
+            currentPrice = data.price || 0;
+            document.getElementById('navPrice').textContent = '$' + currentPrice.toFixed(1);
+            document.getElementById('navLive').style.background = '#00d4aa';
+            document.getElementById('liveDot').style.background = '#22c55e';
+            document.getElementById('updateTime').textContent = new Date().toLocaleString('da-DK');
+
+            // Update signal
+            const scoreLong = data.score_long || 0;
+            const scoreShort = data.score_short || 0;
+            let signal = 'WAIT';
+            let reason = 'Venter paa signal...';
+
+            if (scoreLong > 60 && scoreLong > scoreShort) {
+                signal = 'LONG';
+                reason = 'Score: ' + scoreLong + ' | Confluence bullish';
+                playSound('signal_long');
+            } else if (scoreShort > 60 && scoreShort > scoreLong) {
+                signal = 'SHORT';
+                reason = 'Score: ' + scoreShort + ' | Confluence bearish';
+                playSound('signal_short');
+            }
+
+            const signalBox = document.getElementById('signalBox');
+            const signalText = document.getElementById('signalText');
+            const signalReason = document.getElementById('signalReason');
+            signalBox.className = 'signal-box ' + signal;
+            signalText.className = 'signal-text ' + signal;
+            signalText.textContent = signal;
+            signalReason.textContent = reason;
+
+            // Update confluence
+            const bullCount = (data.fvg_bullish ? 1 : 0) + (data.ob_bullish ? 1 : 0) + (data.bos_bullish ? 1 : 0);
+            const bearCount = (data.fvg_bearish ? 1 : 0) + (data.ob_bearish ? 1 : 0) + (data.bos_bearish ? 1 : 0);
+            const total = Math.max(bullCount + bearCount, 1);
+
+            document.getElementById('confScore').textContent = Math.max(scoreLong, scoreShort);
+            document.getElementById('confScore').className = 'confluence-score ' + (scoreLong > scoreShort ? 'bullish' : scoreShort > scoreLong ? 'bearish' : 'neutral');
+            document.getElementById('confLabel').textContent = `Bull: ${bullCount} | Bear: ${bearCount}`;
+            document.getElementById('confBull').style.width = (bullCount / total * 100) + '%';
+            document.getElementById('confBear').style.width = (bearCount / total * 100) + '%';
+
+            // Strategy tags
+            const tags = [];
+            if (data.fvg_bullish) tags.push({ name: 'FVG Bullish', type: 'bullish' });
+            if (data.fvg_bearish) tags.push({ name: 'FVG Bearish', type: 'bearish' });
+            if (data.ob_bullish) tags.push({ name: 'OB Bullish', type: 'bullish' });
+            if (data.ob_bearish) tags.push({ name: 'OB Bearish', type: 'bearish' });
+            if (data.bos_bullish) tags.push({ name: 'BOS Bullish', type: 'bullish' });
+            if (data.bos_bearish) tags.push({ name: 'BOS Bearish', type: 'bearish' });
+
+            document.getElementById('strategyTags').innerHTML = tags.length > 0
+                ? tags.map(t => `<span class="strategy-tag ${t.type}">${t.name}</span>`).join('')
+                : '<span class="strategy-tag neutral">Ingen aktive strategier</span>';
+
+            // Update levels with new price
+            updatePriceLevels();
+        }
+
+        // Refresh all
+        function refreshAll() {
+            loadAllJSON().then(() => {
+                updateFromFirebase();
+            });
+        }
+
+        // Initialize
+        loadAllJSON().then(() => {
+            updateFromFirebase();
+            playSound('system_ready');
+        });
+
+        // Auto-refresh
+        setInterval(updateFromFirebase, 5000);
+        setInterval(updateEvents, 60000);
+        setInterval(updateSessions, 60000);
+    </script>
+</body>
+</html>

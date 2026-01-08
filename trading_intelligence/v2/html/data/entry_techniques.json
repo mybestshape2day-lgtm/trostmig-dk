@@ -1,0 +1,44 @@
+{
+  "techniques": [
+    {
+      "name": "FVG Entry",
+      "rules": [
+        "Identificer FVG paa M15 eller hoejere",
+        "Vent paa price return til FVG zone",
+        "Entry ved 50% af FVG",
+        "Stop under FVG for long, over for short"
+      ],
+      "risk_reward": "1:2 minimum"
+    },
+    {
+      "name": "Order Block Entry",
+      "rules": [
+        "Find OB fra sidste impulse move",
+        "Vent paa foerste touch af OB",
+        "Se efter reaktion/confirmation candle",
+        "Entry efter confirmation"
+      ],
+      "risk_reward": "1:2.5 minimum"
+    },
+    {
+      "name": "BOS Retest Entry",
+      "rules": [
+        "Vent paa break of structure",
+        "Vent paa retest af broken level",
+        "Entry paa retest med confirmation",
+        "Stop beyond swing point"
+      ],
+      "risk_reward": "1:3 target"
+    },
+    {
+      "name": "Round Number Bounce",
+      "rules": [
+        "Identificer naermeste $50 eller $100 level",
+        "Vent paa rejection candle (pin bar, engulfing)",
+        "Entry efter confirmation",
+        "Target next round number"
+      ],
+      "risk_reward": "1:1.5 minimum"
+    }
+  ]
+}

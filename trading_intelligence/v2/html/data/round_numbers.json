@@ -1,0 +1,6 @@
+{
+  "major_100": [2600, 2700, 2800],
+  "minor_50": [2550, 2650, 2750],
+  "minor_25": [2625, 2675, 2725],
+  "note": "Gold round number levels - update based on current price range"
+}

@@ -1,0 +1,11 @@
+{
+  "week": "2026-W02",
+  "levels": [
+    {"name": "R2", "price": 2710, "type": "resistance"},
+    {"name": "R1", "price": 2690, "type": "resistance"},
+    {"name": "Pivot", "price": 2670, "type": "pivot"},
+    {"name": "S1", "price": 2650, "type": "support"},
+    {"name": "S2", "price": 2630, "type": "support"}
+  ],
+  "note": "Update weekly"
+}

@@ -1,0 +1,26 @@
+{
+  "scoring_rules": {
+    "fvg_active": 15,
+    "order_block_touch": 15,
+    "bos_confirmed": 12,
+    "divergence_present": 10,
+    "at_round_number": 8,
+    "at_pivot_level": 10,
+    "session_timing_good": 5,
+    "trend_aligned": 10,
+    "volume_confirmation": 8,
+    "candle_pattern": 7
+  },
+  "thresholds": {
+    "minimum_entry": 40,
+    "good_entry": 60,
+    "strong_entry": 75,
+    "maximum": 100
+  },
+  "weights": {
+    "structure": 0.3,
+    "momentum": 0.25,
+    "levels": 0.25,
+    "patterns": 0.2
+  }
+}

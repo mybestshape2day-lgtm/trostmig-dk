@@ -1,0 +1,33 @@
+{
+  "sessions": [
+    {
+      "name": "Asia/Sydney",
+      "open_utc": "22:00",
+      "close_utc": "07:00",
+      "characteristics": ["Low volatility", "Range-bound", "Often sets daily high/low"],
+      "best_strategy": "Range trading"
+    },
+    {
+      "name": "London",
+      "open_utc": "07:00",
+      "close_utc": "16:00",
+      "characteristics": ["High volatility", "Trend starts", "Breakouts common"],
+      "best_strategy": "Breakout trading"
+    },
+    {
+      "name": "New York",
+      "open_utc": "12:00",
+      "close_utc": "21:00",
+      "characteristics": ["High volume", "News driven", "Often reverses London move"],
+      "best_strategy": "News trading, reversals"
+    },
+    {
+      "name": "London/NY Overlap",
+      "open_utc": "12:00",
+      "close_utc": "16:00",
+      "characteristics": ["Highest volatility", "Best trading window", "Major moves"],
+      "best_strategy": "All strategies"
+    }
+  ],
+  "timezone": "UTC"
+}

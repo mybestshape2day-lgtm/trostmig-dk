@@ -1,0 +1,14 @@
+{
+  "date": "2026-01-08",
+  "base_price": 2660,
+  "levels": [
+    {"name": "R3", "price": 2695, "type": "resistance"},
+    {"name": "R2", "price": 2685, "type": "resistance"},
+    {"name": "R1", "price": 2675, "type": "resistance"},
+    {"name": "Pivot", "price": 2665, "type": "pivot"},
+    {"name": "S1", "price": 2655, "type": "support"},
+    {"name": "S2", "price": 2645, "type": "support"},
+    {"name": "S3", "price": 2635, "type": "support"}
+  ],
+  "note": "Update daily with actual pivot calculations"
+}
