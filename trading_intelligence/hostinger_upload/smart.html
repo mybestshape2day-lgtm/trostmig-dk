@@ -433,8 +433,9 @@
         const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
 
         // Default params - will be overwritten by Lab settings
+        // User wants low threshold (40) to catch more opportunities for $3-5 trades
         let params = {
-            minScore: 60,
+            minScore: 40,
             stochOversold: 20,
             stochOverbought: 80,
             rsiOversold: 30,
@@ -579,13 +580,22 @@
                 }
             }
 
-            // Session
-            const isActiveSession = session.toLowerCase().includes('london') ||
-                                   session.toLowerCase().includes('new york') ||
-                                   session.toLowerCase().includes('overlap');
-            if (isActiveSession) {
+            // Session - ALL sessions are opportunities (including Asia)
+            const sessionLower = session.toLowerCase();
+            const isActiveSession = sessionLower.includes('london') ||
+                                   sessionLower.includes('new york') ||
+                                   sessionLower.includes('overlap') ||
+                                   sessionLower.includes('asia');
+
+            if (sessionLower.includes('overlap')) {
+                longPoints += 2; // Best session
+                longReasons.push({ text: `OVERLAP session: ${session} - bedste volatilitet!`, good: true });
+            } else if (sessionLower.includes('london') || sessionLower.includes('new york')) {
                 longPoints += 1;
                 longReasons.push({ text: `Aktiv session: ${session}`, good: true });
+            } else if (sessionLower.includes('asia')) {
+                longPoints += 1;
+                longReasons.push({ text: `Asia session: ${session} - range trading`, good: true });
             }
 
             // ====== SHORT ANALYSIS ======
@@ -633,10 +643,16 @@
                 }
             }
 
-            // Session
-            if (isActiveSession) {
+            // Session - ALL sessions are opportunities
+            if (sessionLower.includes('overlap')) {
+                shortPoints += 2;
+                shortReasons.push({ text: `OVERLAP session: ${session} - bedste volatilitet!`, good: true });
+            } else if (sessionLower.includes('london') || sessionLower.includes('new york')) {
                 shortPoints += 1;
                 shortReasons.push({ text: `Aktiv session: ${session}`, good: true });
+            } else if (sessionLower.includes('asia')) {
+                shortPoints += 1;
+                shortReasons.push({ text: `Asia session: ${session} - range trading`, good: true });
             }
 
             // ====== DETERMINE SIGNAL ======
