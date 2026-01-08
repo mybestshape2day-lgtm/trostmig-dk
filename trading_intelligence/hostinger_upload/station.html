@@ -303,9 +303,9 @@
                     <div class="stoch-marker" id="stochMarker" style="left: 50%;"></div>
                 </div>
                 <div class="stoch-labels">
-                    <span>Oversold (25)</span>
+                    <span id="stochOversoldLabel">Oversold (20)</span>
                     <span>Neutral</span>
-                    <span>Overbought (75)</span>
+                    <span id="stochOverboughtLabel">Overbought (80)</span>
                 </div>
             </div>
 
@@ -342,28 +342,154 @@
     <script>
         const FIREBASE_URL = 'https://online-shopping-a7061.firebaseio.com/gold-live.json';
 
+        // Load params from Lab settings (localStorage)
+        let params = {
+            stochOversold: 20,
+            stochOverbought: 80,
+            rsiOversold: 30,
+            rsiOverbought: 70,
+            minScore: 60,
+            atrStop: 2.0,
+            atrTp: 3.0
+        };
+
+        // Load saved params from lab.html
+        function loadParams() {
+            const saved = localStorage.getItem('tradingParams');
+            if (saved) {
+                try {
+                    params = JSON.parse(saved);
+                    console.log('Loaded params from Lab:', params);
+                } catch (e) {
+                    console.log('Using default params');
+                }
+            }
+        }
+        loadParams();
+
         // Sound System
         let soundEnabled = true;
         let soundLevel = 'all'; // 'all', 'important', 'signals'
         let lastSignal = 'WAIT';
         let lastStochZone = 'neutral';
+        let lastRsiZone = 'neutral';
         let lastSession = '';
+        let lastTrend = '';
+        let lastData = {};
         let alertCooldowns = {};
 
-        // Preload audio files (du skal uploade disse)
+        // ALL 96 sound files
         const sounds = {
+            // Signals (11)
             signal_long_strong: new Audio('sounds/signal_long_strong.mp3'),
             signal_short_strong: new Audio('sounds/signal_short_strong.mp3'),
             signal_long_ready: new Audio('sounds/signal_long_ready.mp3'),
             signal_short_ready: new Audio('sounds/signal_short_ready.mp3'),
+            signal_wait: new Audio('sounds/signal_wait.mp3'),
+            signal_expired: new Audio('sounds/signal_expired.mp3'),
             score_building_long: new Audio('sounds/score_building_long.mp3'),
             score_building_short: new Audio('sounds/score_building_short.mp3'),
-            stoch_oversold: new Audio('sounds/stoch_oversold.mp3'),
-            stoch_overbought: new Audio('sounds/stoch_overbought.mp3'),
+            score_threshold_70: new Audio('sounds/score_threshold_70.mp3'),
+            score_threshold_80: new Audio('sounds/score_threshold_80.mp3'),
+            score_dropping: new Audio('sounds/score_dropping.mp3'),
+            // ICT Strategies (11)
+            fvg_bullish: new Audio('sounds/fvg_bullish.mp3'),
+            fvg_bearish: new Audio('sounds/fvg_bearish.mp3'),
+            fvg_filled: new Audio('sounds/fvg_filled.mp3'),
+            orderblock_bullish: new Audio('sounds/orderblock_bullish.mp3'),
+            orderblock_bearish: new Audio('sounds/orderblock_bearish.mp3'),
+            orderblock_touch: new Audio('sounds/orderblock_touch.mp3'),
+            bos_bullish: new Audio('sounds/bos_bullish.mp3'),
+            bos_bearish: new Audio('sounds/bos_bearish.mp3'),
+            liquidity_sweep_high: new Audio('sounds/liquidity_sweep_high.mp3'),
+            liquidity_sweep_low: new Audio('sounds/liquidity_sweep_low.mp3'),
+            liquidity_zone: new Audio('sounds/liquidity_zone.mp3'),
+            // Divergence (4)
+            divergence_bullish_rsi: new Audio('sounds/divergence_bullish_rsi.mp3'),
+            divergence_bearish_rsi: new Audio('sounds/divergence_bearish_rsi.mp3'),
+            divergence_bullish_macd: new Audio('sounds/divergence_bullish_macd.mp3'),
+            divergence_bearish_macd: new Audio('sounds/divergence_bearish_macd.mp3'),
+            // Breakouts (5)
+            breakout_pdh: new Audio('sounds/breakout_pdh.mp3'),
+            breakout_pdl: new Audio('sounds/breakout_pdl.mp3'),
+            breakout_weekly_high: new Audio('sounds/breakout_weekly_high.mp3'),
+            breakout_weekly_low: new Audio('sounds/breakout_weekly_low.mp3'),
+            breakout_failed: new Audio('sounds/breakout_failed.mp3'),
+            // Pivots (3)
+            pivot_support: new Audio('sounds/pivot_support.mp3'),
+            pivot_resistance: new Audio('sounds/pivot_resistance.mp3'),
+            pivot_main: new Audio('sounds/pivot_main.mp3'),
+            // VWAP (3)
+            vwap_cross_above: new Audio('sounds/vwap_cross_above.mp3'),
+            vwap_cross_below: new Audio('sounds/vwap_cross_below.mp3'),
+            vwap_touch: new Audio('sounds/vwap_touch.mp3'),
+            // Price Action (9)
+            engulfing_bullish: new Audio('sounds/engulfing_bullish.mp3'),
+            engulfing_bearish: new Audio('sounds/engulfing_bearish.mp3'),
+            pinbar_bullish: new Audio('sounds/pinbar_bullish.mp3'),
+            pinbar_bearish: new Audio('sounds/pinbar_bearish.mp3'),
+            hammer: new Audio('sounds/hammer.mp3'),
+            shooting_star: new Audio('sounds/shooting_star.mp3'),
+            doji: new Audio('sounds/doji.mp3'),
+            doji_at_high: new Audio('sounds/doji_at_high.mp3'),
+            doji_at_low: new Audio('sounds/doji_at_low.mp3'),
+            // Round Numbers (3)
+            round_number_10: new Audio('sounds/round_number_10.mp3'),
+            round_number_50: new Audio('sounds/round_number_50.mp3'),
+            round_number_100: new Audio('sounds/round_number_100.mp3'),
+            // Sessions (6)
+            session_asia_open: new Audio('sounds/session_asia_open.mp3'),
             session_london_open: new Audio('sounds/session_london_open.mp3'),
             session_newyork_open: new Audio('sounds/session_newyork_open.mp3'),
+            session_overlap: new Audio('sounds/session_overlap.mp3'),
+            session_closing: new Audio('sounds/session_closing.mp3'),
+            session_closed: new Audio('sounds/session_closed.mp3'),
+            // Confluence (6)
+            confluence_3_bullish: new Audio('sounds/confluence_3_bullish.mp3'),
+            confluence_3_bearish: new Audio('sounds/confluence_3_bearish.mp3'),
+            confluence_5_bullish: new Audio('sounds/confluence_5_bullish.mp3'),
+            confluence_5_bearish: new Audio('sounds/confluence_5_bearish.mp3'),
             confluence_high: new Audio('sounds/confluence_high.mp3'),
-            system_ready: new Audio('sounds/system_ready.mp3')
+            confluence_max: new Audio('sounds/confluence_max.mp3'),
+            // Indicators (18)
+            rsi_oversold: new Audio('sounds/rsi_oversold.mp3'),
+            rsi_overbought: new Audio('sounds/rsi_overbought.mp3'),
+            rsi_extreme_low: new Audio('sounds/rsi_extreme_low.mp3'),
+            rsi_extreme_high: new Audio('sounds/rsi_extreme_high.mp3'),
+            stoch_oversold: new Audio('sounds/stoch_oversold.mp3'),
+            stoch_overbought: new Audio('sounds/stoch_overbought.mp3'),
+            stoch_cross_up: new Audio('sounds/stoch_cross_up.mp3'),
+            stoch_cross_down: new Audio('sounds/stoch_cross_down.mp3'),
+            macd_cross_bullish: new Audio('sounds/macd_cross_bullish.mp3'),
+            macd_cross_bearish: new Audio('sounds/macd_cross_bearish.mp3'),
+            adx_trending: new Audio('sounds/adx_trending.mp3'),
+            adx_ranging: new Audio('sounds/adx_ranging.mp3'),
+            ema_bullish_stack: new Audio('sounds/ema_bullish_stack.mp3'),
+            ema_bearish_stack: new Audio('sounds/ema_bearish_stack.mp3'),
+            ema_cross_golden: new Audio('sounds/ema_cross_golden.mp3'),
+            ema_cross_death: new Audio('sounds/ema_cross_death.mp3'),
+            // Regime & Trend (5)
+            regime_change_bullish: new Audio('sounds/regime_change_bullish.mp3'),
+            regime_change_bearish: new Audio('sounds/regime_change_bearish.mp3'),
+            trend_strong_up: new Audio('sounds/trend_strong_up.mp3'),
+            trend_strong_down: new Audio('sounds/trend_strong_down.mp3'),
+            trend_weakening: new Audio('sounds/trend_weakening.mp3'),
+            // Risk & Targets (8)
+            target_hit: new Audio('sounds/target_hit.mp3'),
+            stop_warning: new Audio('sounds/stop_warning.mp3'),
+            stop_triggered: new Audio('sounds/stop_triggered.mp3'),
+            trailing_active: new Audio('sounds/trailing_active.mp3'),
+            risk_high_volatility: new Audio('sounds/risk_high_volatility.mp3'),
+            new_high: new Audio('sounds/new_high.mp3'),
+            new_low: new Audio('sounds/new_low.mp3'),
+            volatility_spike: new Audio('sounds/volatility_spike.mp3'),
+            // System (6)
+            system_ready: new Audio('sounds/system_ready.mp3'),
+            system_error: new Audio('sounds/system_error.mp3'),
+            data_updated: new Audio('sounds/data_updated.mp3'),
+            connection_lost: new Audio('sounds/connection_lost.mp3'),
+            connection_restored: new Audio('sounds/connection_restored.mp3'),
+            all_clear: new Audio('sounds/all_clear.mp3')
         };
 
         function playSound(soundName, priority = 'normal') {
@@ -442,75 +568,173 @@
             const scoreLong = data.score_long || 0;
             const scoreShort = data.score_short || 0;
             const stoch = data.stoch || 50;
+            const rsi = data.rsi || 50;
             const session = data.session || '';
+            const trend = data.trend || '';
 
-            // Determine current signal
+            // Use params from Lab settings
+            const minScore = params.minScore || 60;
+            const strongScore = minScore + 20; // Strong signal threshold
+
+            // === SIGNAL ALERTS ===
             let currentSignal = 'WAIT';
-            if (scoreLong > 80 && scoreLong > scoreShort) currentSignal = 'LONG_STRONG';
-            else if (scoreShort > 80 && scoreShort > scoreLong) currentSignal = 'SHORT_STRONG';
-            else if (scoreLong > 70 && scoreLong > scoreShort) currentSignal = 'LONG';
-            else if (scoreShort > 70 && scoreShort > scoreLong) currentSignal = 'SHORT';
+            if (scoreLong > strongScore && scoreLong > scoreShort) currentSignal = 'LONG_STRONG';
+            else if (scoreShort > strongScore && scoreShort > scoreLong) currentSignal = 'SHORT_STRONG';
+            else if (scoreLong > minScore && scoreLong > scoreShort) currentSignal = 'LONG';
+            else if (scoreShort > minScore && scoreShort > scoreLong) currentSignal = 'SHORT';
 
-            // Signal alerts
             if (currentSignal !== lastSignal) {
                 if (currentSignal === 'LONG_STRONG') {
                     playSound('signal_long_strong', 'high');
-                    showAlert('🚀 STÆRKT LONG SIGNAL! Score: ' + scoreLong, 'long');
+                    showAlert('STÆRKT LONG SIGNAL! Score: ' + scoreLong, 'long');
                 } else if (currentSignal === 'SHORT_STRONG') {
                     playSound('signal_short_strong', 'high');
-                    showAlert('🔻 STÆRKT SHORT SIGNAL! Score: ' + scoreShort, 'short');
+                    showAlert('STÆRKT SHORT SIGNAL! Score: ' + scoreShort, 'short');
                 } else if (currentSignal === 'LONG') {
                     playSound('signal_long_ready', 'normal');
-                    showAlert('📈 Long signal klar. Score: ' + scoreLong, 'long');
+                    showAlert('Long signal klar. Score: ' + scoreLong, 'long');
                 } else if (currentSignal === 'SHORT') {
                     playSound('signal_short_ready', 'normal');
-                    showAlert('📉 Short signal klar. Score: ' + scoreShort, 'short');
+                    showAlert('Short signal klar. Score: ' + scoreShort, 'short');
+                } else if (lastSignal !== 'WAIT' && currentSignal === 'WAIT') {
+                    playSound('signal_wait', 'low');
                 }
                 lastSignal = currentSignal;
             }
 
-            // Score building alerts
-            if (scoreLong > 60 && scoreLong < 70 && lastSignal === 'WAIT') {
+            // === SCORE BUILDING ===
+            const buildingThreshold = minScore - 10;
+            if (scoreLong > buildingThreshold && scoreLong < minScore && lastSignal === 'WAIT') {
                 playSound('score_building_long', 'low');
             }
-            if (scoreShort > 60 && scoreShort < 70 && lastSignal === 'WAIT') {
+            if (scoreShort > buildingThreshold && scoreShort < minScore && lastSignal === 'WAIT') {
                 playSound('score_building_short', 'low');
             }
+            // Score thresholds
+            if (scoreLong >= 70 && (lastData.score_long || 0) < 70) playSound('score_threshold_70', 'normal');
+            if (scoreShort >= 70 && (lastData.score_short || 0) < 70) playSound('score_threshold_70', 'normal');
+            if (scoreLong >= 80 && (lastData.score_long || 0) < 80) playSound('score_threshold_80', 'high');
+            if (scoreShort >= 80 && (lastData.score_short || 0) < 80) playSound('score_threshold_80', 'high');
 
-            // Stochastic zone alerts
+            // === STOCHASTIC ALERTS ===
             let stochZone = 'neutral';
-            if (stoch < 25) stochZone = 'oversold';
-            else if (stoch > 75) stochZone = 'overbought';
+            if (stoch < params.stochOversold) stochZone = 'oversold';
+            else if (stoch > params.stochOverbought) stochZone = 'overbought';
 
             if (stochZone !== lastStochZone) {
                 if (stochZone === 'oversold') {
                     playSound('stoch_oversold', 'normal');
-                    showAlert('📊 Stokastisk oversold - mulig bund', 'info');
+                    showAlert('Stokastisk oversold - mulig bund', 'info');
                 } else if (stochZone === 'overbought') {
                     playSound('stoch_overbought', 'normal');
-                    showAlert('📊 Stokastisk overbought - mulig top', 'info');
+                    showAlert('Stokastisk overbought - mulig top', 'info');
                 }
                 lastStochZone = stochZone;
             }
 
-            // Session alerts
-            if (session !== lastSession && session) {
-                if (session.toLowerCase().includes('london') && !lastSession.toLowerCase().includes('london')) {
+            // === RSI ALERTS ===
+            let rsiZone = 'neutral';
+            if (rsi < 20) rsiZone = 'extreme_low';
+            else if (rsi < params.rsiOversold) rsiZone = 'oversold';
+            else if (rsi > 80) rsiZone = 'extreme_high';
+            else if (rsi > params.rsiOverbought) rsiZone = 'overbought';
+
+            if (rsiZone !== lastRsiZone) {
+                if (rsiZone === 'extreme_low') playSound('rsi_extreme_low', 'high');
+                else if (rsiZone === 'oversold') playSound('rsi_oversold', 'normal');
+                else if (rsiZone === 'extreme_high') playSound('rsi_extreme_high', 'high');
+                else if (rsiZone === 'overbought') playSound('rsi_overbought', 'normal');
+                lastRsiZone = rsiZone;
+            }
+
+            // === SESSION ALERTS ===
+            if (session && session !== lastSession) {
+                const s = session.toLowerCase();
+                const ls = lastSession.toLowerCase();
+                if (s.includes('asia') && !ls.includes('asia')) playSound('session_asia_open', 'normal');
+                if (s.includes('london') && !ls.includes('london') && !s.includes('overlap')) {
                     playSound('session_london_open', 'normal');
-                    showAlert('🇬🇧 London session åbner!', 'info');
+                    showAlert('London session åbner!', 'info');
                 }
-                if ((session.toLowerCase().includes('new york') || session.toLowerCase().includes('ny')) &&
-                    !lastSession.toLowerCase().includes('new york') && !lastSession.toLowerCase().includes('ny')) {
+                if ((s.includes('new york') || s.includes('ny')) && !ls.includes('new york') && !ls.includes('ny') && !s.includes('overlap')) {
                     playSound('session_newyork_open', 'normal');
-                    showAlert('🇺🇸 New York session åbner!', 'info');
+                    showAlert('New York session åbner!', 'info');
+                }
+                if (s.includes('overlap')) {
+                    playSound('session_overlap', 'high');
+                    showAlert('London/NY Overlap - Prime time!', 'info');
                 }
                 lastSession = session;
             }
 
-            // High confluence alert
+            // === TREND ALERTS ===
+            if (trend && trend !== lastTrend) {
+                const t = trend.toLowerCase();
+                const lt = lastTrend.toLowerCase();
+                if (t.includes('strong') && t.includes('up') && !lt.includes('strong')) playSound('trend_strong_up', 'normal');
+                if (t.includes('strong') && t.includes('down') && !lt.includes('strong')) playSound('trend_strong_down', 'normal');
+                if ((t.includes('bullish') || t.includes('up')) && (lt.includes('bearish') || lt.includes('down'))) {
+                    playSound('regime_change_bullish', 'high');
+                    showAlert('Regime skifter til BULLISH!', 'long');
+                }
+                if ((t.includes('bearish') || t.includes('down')) && (lt.includes('bullish') || lt.includes('up'))) {
+                    playSound('regime_change_bearish', 'high');
+                    showAlert('Regime skifter til BEARISH!', 'short');
+                }
+                lastTrend = trend;
+            }
+
+            // === V2.0 STRATEGY ALERTS (if data available) ===
+            // FVG
+            if (data.fvg_bullish && !lastData.fvg_bullish) playSound('fvg_bullish', 'normal');
+            if (data.fvg_bearish && !lastData.fvg_bearish) playSound('fvg_bearish', 'normal');
+            // Order Blocks
+            if (data.ob_bullish && !lastData.ob_bullish) playSound('orderblock_bullish', 'normal');
+            if (data.ob_bearish && !lastData.ob_bearish) playSound('orderblock_bearish', 'normal');
+            // BOS
+            if (data.bos_bullish && !lastData.bos_bullish) playSound('bos_bullish', 'high');
+            if (data.bos_bearish && !lastData.bos_bearish) playSound('bos_bearish', 'high');
+            // Breakouts
+            if (data.breakout_high && !lastData.breakout_high) playSound('breakout_pdh', 'high');
+            if (data.breakout_low && !lastData.breakout_low) playSound('breakout_pdl', 'high');
+            // Divergence
+            if (data.rsi_bull_div && !lastData.rsi_bull_div) playSound('divergence_bullish_rsi', 'normal');
+            if (data.rsi_bear_div && !lastData.rsi_bear_div) playSound('divergence_bearish_rsi', 'normal');
+            // Patterns
+            if (data.bull_engulfing && !lastData.bull_engulfing) playSound('engulfing_bullish', 'normal');
+            if (data.bear_engulfing && !lastData.bear_engulfing) playSound('engulfing_bearish', 'normal');
+            if (data.hammer && !lastData.hammer) playSound('hammer', 'normal');
+            if (data.shooting_star && !lastData.shooting_star) playSound('shooting_star', 'normal');
+            if (data.doji && !lastData.doji) playSound('doji', 'low');
+            // Pivots
+            if (data.near_daily_pivot && !lastData.near_daily_pivot) playSound('pivot_main', 'low');
+            // Round numbers
+            if (data.near_round_number && !lastData.near_round_number) playSound('round_number_50', 'low');
+            // MACD cross
+            if (data.macd_cross === 'cross_up' && lastData.macd_cross !== 'cross_up') playSound('macd_cross_bullish', 'normal');
+            if (data.macd_cross === 'cross_down' && lastData.macd_cross !== 'cross_down') playSound('macd_cross_bearish', 'normal');
+
+            // === CONFLUENCE ALERTS ===
+            const bullStrats = data.active_bull_strategies || 0;
+            const bearStrats = data.active_bear_strategies || 0;
+            if (bullStrats >= 5 && (lastData.active_bull_strategies || 0) < 5) {
+                playSound('confluence_5_bullish', 'high');
+                showAlert('5+ Bullish strategier aktive!', 'long');
+            }
+            if (bearStrats >= 5 && (lastData.active_bear_strategies || 0) < 5) {
+                playSound('confluence_5_bearish', 'high');
+                showAlert('5+ Bearish strategier aktive!', 'short');
+            }
+            if (bullStrats >= 3 && (lastData.active_bull_strategies || 0) < 3) playSound('confluence_3_bullish', 'normal');
+            if (bearStrats >= 3 && (lastData.active_bear_strategies || 0) < 3) playSound('confluence_3_bearish', 'normal');
+
+            // High confluence general
             if ((scoreLong > 75 || scoreShort > 75) && Math.abs(scoreLong - scoreShort) > 20) {
                 playSound('confluence_high', 'normal');
             }
+
+            // Store for next comparison
+            lastData = {...data};
         }
 
         function updateUI(data) {
@@ -534,12 +758,12 @@
             changeEl.textContent = (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%';
             changeEl.className = 'price-change ' + (changePct >= 0 ? 'positive' : 'negative');
 
-            // Signal
+            // Signal (using params.minScore from Lab)
             const scoreLong = data.score_long || 0;
             const scoreShort = data.score_short || 0;
             let signal = 'WAIT';
-            if (scoreLong > 60 && scoreLong > scoreShort) signal = 'LONG';
-            else if (scoreShort > 60 && scoreShort > scoreLong) signal = 'SHORT';
+            if (scoreLong > params.minScore && scoreLong > scoreShort) signal = 'LONG';
+            else if (scoreShort > params.minScore && scoreShort > scoreLong) signal = 'SHORT';
 
             const signalEl = document.getElementById('signal');
             signalEl.textContent = signal;
@@ -569,7 +793,14 @@
             document.getElementById('liveDot').style.background = '#22c55e';
         }
 
+        // Update labels with params values
+        function updateLabels() {
+            document.getElementById('stochOversoldLabel').textContent = 'Oversold (' + params.stochOversold + ')';
+            document.getElementById('stochOverboughtLabel').textContent = 'Overbought (' + params.stochOverbought + ')';
+        }
+
         // Initial load
+        updateLabels();
         fetchData().then(data => {
             updateUI(data);
             // Play system ready on first load
