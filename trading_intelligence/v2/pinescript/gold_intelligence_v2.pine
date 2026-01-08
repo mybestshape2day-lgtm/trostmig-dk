@@ -287,59 +287,38 @@ if barstate.islast
 // ===========================================
 // ALERTS (for webhook to Firebase)
 // ===========================================
-// Create JSON payload for Firebase
-// Note: In practice, you'd use a webhook service to send this data
+// Send data on every bar close via alert()
+// Build JSON in parts to avoid line length issues
 
-alertcondition(true, "Gold Intelligence V2 Data",
-    '{"price":' + str.tostring(close) +
-    ',"open":' + str.tostring(open) +
-    ',"high":' + str.tostring(high) +
-    ',"low":' + str.tostring(low) +
-    ',"rsi":' + str.tostring(math.round(rsi)) +
-    ',"stoch":' + str.tostring(math.round(k)) +
-    ',"stoch_d":' + str.tostring(math.round(d)) +
-    ',"macd":' + str.tostring(math.round(macdLine * 100) / 100) +
-    ',"macd_signal":' + str.tostring(math.round(signalLine * 100) / 100) +
-    ',"atr":' + str.tostring(math.round(atr * 10) / 10) +
-    ',"adx":' + str.tostring(math.round(adx)) +
-    ',"ema9":' + str.tostring(math.round(ema9 * 10) / 10) +
-    ',"ema20":' + str.tostring(math.round(ema20 * 10) / 10) +
-    ',"ema50":' + str.tostring(math.round(ema50 * 10) / 10) +
-    ',"vwap":' + str.tostring(math.round(vwap_value * 10) / 10) +
-    ',"trend":"' + trend + '"' +
-    ',"session":"' + session_name + '"' +
-    ',"score_long":' + str.tostring(score_long) +
-    ',"score_short":' + str.tostring(score_short) +
-    ',"fvg_bullish":' + (fvg_bullish ? 'true' : 'false') +
-    ',"fvg_bearish":' + (fvg_bearish ? 'true' : 'false') +
-    ',"fvg_bull_level":' + str.tostring(nz(fvg_bull_level, 0)) +
-    ',"fvg_bear_level":' + str.tostring(nz(fvg_bear_level, 0)) +
-    ',"ob_bullish":' + (ob_bullish ? 'true' : 'false') +
-    ',"ob_bearish":' + (ob_bearish ? 'true' : 'false') +
-    ',"ob_bull_level":' + str.tostring(nz(ob_bull_level, 0)) +
-    ',"ob_bear_level":' + str.tostring(nz(ob_bear_level, 0)) +
-    ',"bos_bullish":' + (bos_bullish ? 'true' : 'false') +
-    ',"bos_bearish":' + (bos_bearish ? 'true' : 'false') +
-    ',"prev_day_high":' + str.tostring(prev_day_high) +
-    ',"prev_day_low":' + str.tostring(prev_day_low) +
-    ',"breakout_high":' + (breakout_high ? 'true' : 'false') +
-    ',"breakout_low":' + (breakout_low ? 'true' : 'false') +
-    ',"daily_pivot":' + str.tostring(math.round(daily_pivot * 10) / 10) +
-    ',"weekly_pivot":' + str.tostring(math.round(weekly_pivot * 10) / 10) +
-    ',"near_daily_pivot":' + (near_daily_pivot ? 'true' : 'false') +
-    ',"near_weekly_pivot":' + (near_weekly_pivot ? 'true' : 'false') +
-    ',"rsi_bull_div":' + (rsi_bull_div ? 'true' : 'false') +
-    ',"rsi_bear_div":' + (rsi_bear_div ? 'true' : 'false') +
-    ',"macd_cross":"' + macd_signal_type + '"' +
-    ',"bull_engulfing":' + (bull_engulfing ? 'true' : 'false') +
-    ',"bear_engulfing":' + (bear_engulfing ? 'true' : 'false') +
-    ',"hammer":' + (hammer ? 'true' : 'false') +
-    ',"shooting_star":' + (shooting_star ? 'true' : 'false') +
-    ',"doji":' + (doji ? 'true' : 'false') +
-    ',"near_round_number":' + (near_round_number ? 'true' : 'false') +
-    ',"nearest_round":' + str.tostring(nearest_round) +
-    ',"mins_to_london":' + str.tostring(mins_to_london) +
-    ',"mins_to_ny":' + str.tostring(mins_to_ny) +
-    ',"active_bull_strategies":' + str.tostring(active_bull_strategies) +
-    ',"active_bear_strategies":' + str.tostring(active_bear_strategies) +
-    '}')
+var string json_full = ""
+json_full := '{"price":' + str.tostring(close) + ',"open":' + str.tostring(open) + ',"high":' + str.tostring(high) + ',"low":' + str.tostring(low)
+json_full := json_full + ',"rsi":' + str.tostring(math.round(rsi)) + ',"stoch":' + str.tostring(math.round(k)) + ',"stoch_d":' + str.tostring(math.round(d))
+json_full := json_full + ',"macd":' + str.tostring(math.round(macdLine * 100) / 100) + ',"macd_signal":' + str.tostring(math.round(signalLine * 100) / 100)
+json_full := json_full + ',"atr":' + str.tostring(math.round(atr * 10) / 10) + ',"adx":' + str.tostring(math.round(adx))
+json_full := json_full + ',"ema9":' + str.tostring(math.round(ema9 * 10) / 10) + ',"ema20":' + str.tostring(math.round(ema20 * 10) / 10)
+json_full := json_full + ',"ema50":' + str.tostring(math.round(ema50 * 10) / 10) + ',"vwap":' + str.tostring(math.round(vwap_value * 10) / 10)
+json_full := json_full + ',"trend":"' + trend + '","session":"' + session_name + '"'
+json_full := json_full + ',"score_long":' + str.tostring(score_long) + ',"score_short":' + str.tostring(score_short)
+json_full := json_full + ',"fvg_bullish":' + (fvg_bullish ? 'true' : 'false') + ',"fvg_bearish":' + (fvg_bearish ? 'true' : 'false')
+json_full := json_full + ',"fvg_bull_level":' + str.tostring(nz(fvg_bull_level, 0)) + ',"fvg_bear_level":' + str.tostring(nz(fvg_bear_level, 0))
+json_full := json_full + ',"ob_bullish":' + (ob_bullish ? 'true' : 'false') + ',"ob_bearish":' + (ob_bearish ? 'true' : 'false')
+json_full := json_full + ',"ob_bull_level":' + str.tostring(nz(ob_bull_level, 0)) + ',"ob_bear_level":' + str.tostring(nz(ob_bear_level, 0))
+json_full := json_full + ',"bos_bullish":' + (bos_bullish ? 'true' : 'false') + ',"bos_bearish":' + (bos_bearish ? 'true' : 'false')
+json_full := json_full + ',"prev_day_high":' + str.tostring(prev_day_high) + ',"prev_day_low":' + str.tostring(prev_day_low)
+json_full := json_full + ',"breakout_high":' + (breakout_high ? 'true' : 'false') + ',"breakout_low":' + (breakout_low ? 'true' : 'false')
+json_full := json_full + ',"daily_pivot":' + str.tostring(math.round(daily_pivot * 10) / 10)
+json_full := json_full + ',"weekly_pivot":' + str.tostring(math.round(weekly_pivot * 10) / 10)
+json_full := json_full + ',"near_daily_pivot":' + (near_daily_pivot ? 'true' : 'false') + ',"near_weekly_pivot":' + (near_weekly_pivot ? 'true' : 'false')
+json_full := json_full + ',"rsi_bull_div":' + (rsi_bull_div ? 'true' : 'false') + ',"rsi_bear_div":' + (rsi_bear_div ? 'true' : 'false')
+json_full := json_full + ',"macd_cross":"' + macd_signal_type + '"'
+json_full := json_full + ',"bull_engulfing":' + (bull_engulfing ? 'true' : 'false') + ',"bear_engulfing":' + (bear_engulfing ? 'true' : 'false')
+json_full := json_full + ',"hammer":' + (hammer ? 'true' : 'false') + ',"shooting_star":' + (shooting_star ? 'true' : 'false')
+json_full := json_full + ',"doji":' + (doji ? 'true' : 'false') + ',"near_round_number":' + (near_round_number ? 'true' : 'false')
+json_full := json_full + ',"nearest_round":' + str.tostring(nearest_round)
+json_full := json_full + ',"mins_to_london":' + str.tostring(mins_to_london) + ',"mins_to_ny":' + str.tostring(mins_to_ny)
+json_full := json_full + ',"active_bull_strategies":' + str.tostring(active_bull_strategies)
+json_full := json_full + ',"active_bear_strategies":' + str.tostring(active_bear_strategies) + '}'
+
+// Fire alert on every bar (configure webhook in TradingView alert settings)
+if barstate.isconfirmed
+    alert(json_full, alert.freq_once_per_bar)
